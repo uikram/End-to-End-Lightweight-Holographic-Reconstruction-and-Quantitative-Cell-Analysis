@@ -1,0 +1,13 @@
+# In-line Gabor arm of the modality comparison.
+# Identical to off_axis.yaml in every respect except the input modality, so that
+# any difference in the reported metrics is attributable to the hologram type.
+extends: base.yaml
+
+experiment_name: gabor
+
+data:
+  modality: gabor
+
+model:
+  frontend:
+    kind: none          # angular-spectrum demodulation is off-axis only

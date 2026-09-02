@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+runs/
+data/mask/
+data/splits.json
+data/manifest.csv
+data/prepare_report.json
+*.onnx
+*.TIF
+*.pt
+*.bin
+.DS_Store

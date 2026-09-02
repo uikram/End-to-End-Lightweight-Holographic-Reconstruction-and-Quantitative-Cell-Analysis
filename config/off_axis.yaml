@@ -1,0 +1,12 @@
+# Off-axis arm of the modality comparison.
+# Inherits every value from base.yaml; only the differences appear below.
+extends: base.yaml
+
+experiment_name: off_axis
+
+data:
+  modality: off_axis
+
+model:
+  frontend:
+    kind: none          # set to angular_spectrum to feed the demodulated field

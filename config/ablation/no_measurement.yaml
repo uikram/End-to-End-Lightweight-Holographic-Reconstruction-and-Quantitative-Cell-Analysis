@@ -1,0 +1,12 @@
+# Ablation: the previous study's physics terms, without the new ones.
+# Keeps phase-mask contrast, boundary-gradient alignment and phase-volume
+# preservation, and removes only the two measurement-consistency terms this
+# study adds. Isolates what the new terms contribute.
+extends: ../base.yaml
+
+experiment_name: no_measurement
+
+loss:
+  weights:
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0

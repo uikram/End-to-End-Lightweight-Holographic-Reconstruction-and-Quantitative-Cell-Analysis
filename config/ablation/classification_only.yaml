@@ -1,0 +1,22 @@
+# Control for the off-axis / Gabor classification gap.
+# Trains the condition classifier alone, with every reconstruction and
+# segmentation term switched off. If off-axis accuracy rises to meet Gabor's,
+# the gap in the joint model is multi-task interference; if it does not, the
+# gap is in the data.
+extends: ../base.yaml
+
+experiment_name: classification_only
+
+training:
+  checkpoint_metric: cls_accuracy
+
+loss:
+  weights:
+    phase: 0.0
+    segmentation: 0.0
+    classification: 1.0
+    phase_mask_contrast: 0.0
+    boundary_gradient_alignment: 0.0
+    phase_volume: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0

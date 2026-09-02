@@ -1,0 +1,15 @@
+# Ablation: supervised terms only.
+# Removes every physics-aware and measurement term, leaving phase regression,
+# segmentation and classification. This is the baseline the paper compares the
+# full objective against.
+extends: ../base.yaml
+
+experiment_name: no_physics
+
+loss:
+  weights:
+    phase_mask_contrast: 0.0
+    boundary_gradient_alignment: 0.0
+    phase_volume: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0

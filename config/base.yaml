@@ -1,0 +1,278 @@
+# =============================================================================
+# HoloQPI - base configuration
+#
+# Every physical constant, model hyper-parameter and loss weight used anywhere
+# in the codebase is declared here. The Python sources read these values and
+# define no numeric defaults of their own.
+#
+# See docs/documentation.md for the meaning and units of each entry.
+# =============================================================================
+
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+
+# -----------------------------------------------------------------------------
+# Filesystem layout
+# -----------------------------------------------------------------------------
+paths:
+  data_root: data
+  phase_dir: phase                      # float32 .bin quantitative phase (ground truth)
+  hologram_dirs:                        # one entry per imaging modality
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask                        # written by `prepare` (phase-derived masks)
+  manual_mask_dir: null                 # set to a folder of manual annotations to override mask_dir
+  splits_file: splits.json              # relative to data_root
+  manifest_file: manifest.csv           # relative to data_root
+  output_root: runs
+
+# -----------------------------------------------------------------------------
+# File formats
+# -----------------------------------------------------------------------------
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23                    # bytes preceding the pixel payload
+    dtype: float32
+    byte_order: little                  # little | big
+    width_offset: 6                     # uint32 offset of image width inside the header
+    height_offset: 10                   # uint32 offset of image height inside the header
+    pitch_x_offset: 14                  # float32 offset of x pixel pitch (metres)
+    pitch_y_offset: 18                  # float32 offset of y pixel pitch (metres)
+  hologram:
+    suffixes:                           # per modality, appended to the sample stem
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+
+# -----------------------------------------------------------------------------
+# Optical / physical constants
+#
+# dry mass  m = (lambda / (2 * pi * alpha)) * sum(phi_i) * dx * dy      [pg]
+# The pitch values below were decoded from the .bin headers of the current
+# dataset. Set `trust_header_pitch: true` to read them per file instead.
+# -----------------------------------------------------------------------------
+optics:
+  wavelength_um: 0.666                  # illumination wavelength
+  refraction_increment_ml_per_g: 0.185  # alpha, specific refraction increment
+  pixel_pitch_x_um: 0.284871            # dx in the reconstructed phase plane
+  pixel_pitch_y_um: 0.211994            # dy in the reconstructed phase plane
+  trust_header_pitch: false             # true -> take dx, dy from each .bin header
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+
+# -----------------------------------------------------------------------------
+# Dataset
+# -----------------------------------------------------------------------------
+data:
+  modality: off_axis                    # off_axis | gabor  (the comparison axis)
+  phase_size: 900
+  align: center_crop                    # center_crop | resize  (hologram -> phase grid)
+  train_crop: 512                       # random square crop during training; null disables
+  eval_size: null                       # null -> evaluate on the full phase_size field
+  hologram_normalisation: zscore        # zscore | unit | none
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+
+  split:
+    train: 0.70
+    val: 0.15
+    test: 0.15
+    stratify_by: [cell_line, condition]
+    min_per_stratum: 3
+
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+    # Intensity-domain augmentation is deliberately absent: it would break the
+    # quantitative relationship between fringe contrast and optical path length.
+
+# -----------------------------------------------------------------------------
+# Labels
+#
+# Sample stems look like:  NCI_01, NCI_Blebbistatin_5uM_07, SNU_staurosporine_23
+# Matching is case-insensitive and the concentration token is optional.
+# -----------------------------------------------------------------------------
+labels:
+  cell_lines: [NCI, SNU, T24]
+  conditions: [control, blebbistatin, fccp, staurosporine, rotenone]
+  condition_aliases:
+    control: [control, ctrl, ""]
+    blebbistatin: [blebbistatin, bleb]
+    fccp: [fccp]
+    staurosporine: [staurosporine, stauro, sts]
+    rotenone: [rotenone, rot]
+  segmentation_classes: [background, cell]
+
+# -----------------------------------------------------------------------------
+# Phase-derived segmentation masks (written by `prepare`)
+# -----------------------------------------------------------------------------
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu                # otsu | fixed
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0                       # multiplies the Otsu level before binarising
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+
+# -----------------------------------------------------------------------------
+# Model
+# -----------------------------------------------------------------------------
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2                 # mobilenet_v2 | mobilenet_v3_large | resnet18
+  pretrained_encoder: true
+  in_channels: 1                        # raised automatically when a front end is active
+  decoder_channels: [256, 128, 64, 32]
+  segmentation_classes: 2               # background + cell
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false                  # true -> one trunk with two 1x1 output heads
+  size_divisor: 32                      # input is padded to a multiple of this internally
+
+  frontend:
+    kind: none                          # none | angular_spectrum
+    # angular_spectrum options (off-axis only; produces extra input channels)
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase             # amplitude_phase | real_imag
+    detach: true                        # treat the front end as a fixed preprocessing stage
+
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only              # encoder_only | attention_blocks | bottleneck
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns: [decoder, head, classifier, final]
+
+# -----------------------------------------------------------------------------
+# Joint physics-aware objective
+#
+#   L = w_phase * L_phase
+#     + w_seg   * L_seg
+#     + w_cls   * L_cls
+#     + w_pmc   * L_PMC + w_bga * L_BGA + w_pv * L_PV
+#     + w_mass  * L_mass + w_area * L_area
+# -----------------------------------------------------------------------------
+loss:
+  weights:
+    phase: 1.0
+    segmentation: 1.0
+    classification: 0.2
+    phase_mask_contrast: 0.1
+    boundary_gradient_alignment: 0.05
+    phase_volume: 0.1
+    dry_mass_consistency: 0.1
+    projected_area_consistency: 0.05
+
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0                # radians spanned by the phase target
+
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights: [0.5, 1.0]           # background, cell
+    dice_smooth: 1.0
+
+  classification:
+    label_smoothing: 0.05
+    class_weights: null                 # null -> uniform
+
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred                 # pred | gt  (which phase field anchors the boundary)
+    bga_epsilon: 1.0e-8
+    volume_epsilon: 1.0e-4
+    skip_empty_targets: true
+    # The measurement terms are relative errors. A crop holding only a sliver of
+    # a cell divides by a near-zero reference and produces a loss spike, so such
+    # crops are excluded. 512 px is roughly one cell at the configured pitch,
+    # matching mask_generation.min_object_area_um2.
+    min_foreground_pixels: 512
+    max_relative_error: 10.0            # per-term cap; null disables
+
+# -----------------------------------------------------------------------------
+# Training
+# -----------------------------------------------------------------------------
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 3.0e-4
+  weight_decay: 1.0e-4
+  betas: [0.9, 0.999]
+  scheduler: cosine                     # cosine | step | none
+  min_learning_rate: 1.0e-6
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16                    # float16 | bfloat16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  checkpoint_metric: composite          # composite | phase_mae | seg_dice | dry_mass_mape
+  checkpoint_mode: auto                 # auto resolves min/max from the metric name
+  save_last: true
+  early_stopping_patience: null
+
+  composite_metric:                     # used when checkpoint_metric == composite
+    seg_dice: 0.4
+    phase_pearson: 0.3
+    dry_mass_accuracy: 0.3              # 1 - MAPE, clipped to [0, 1]
+
+# -----------------------------------------------------------------------------
+# Evaluation and per-cell measurement
+# -----------------------------------------------------------------------------
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed            # watershed | connected_components
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5            # predicted cell <-> GT cell pairing
+    report_bland_altman: true
+  save_per_cell_csv: true
+
+# -----------------------------------------------------------------------------
+# Deployment / benchmarking
+# -----------------------------------------------------------------------------
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names: [phase, segmentation, condition_logits]
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions: [fp32, fp16]
+    runtimes: [pytorch, onnx]
+    batch_size: 1
+    input_size: 900
+    measure_flops: true

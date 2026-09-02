@@ -1,0 +1,22 @@
+# Conda environment for HoloQPI.
+#
+#   conda env create -f environment.yml
+#   conda activate qpi_extended
+#
+# Python 3.11 is the floor that matters: the codebase uses PEP 604 annotations
+# and PyTorch 2.x, neither of which exists before 3.9/3.8 respectively. Pip
+# resolves torch to a CUDA build automatically on Linux; if the driver on this
+# machine needs a specific CUDA runtime, install torch separately first from
+# https://pytorch.org/get-started/locally/ and then run
+# `pip install -r requirements.txt`.
+
+name: qpi_extended
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - -r requirements.txt
