@@ -12,11 +12,16 @@ the caller can mask out fields of view that contain no cells.
 
 from __future__ import annotations
 
+import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from ..config import Config
+from ..utils import get_logger
+
+LOGGER = get_logger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -263,3 +268,146 @@ class ProjectedAreaConsistency(nn.Module):
         predicted = foreground.squeeze(1).sum(dim=[1, 2])
         reference = target_foreground.squeeze(1).sum(dim=[1, 2])
         return (predicted - reference).abs() / (reference + self.epsilon)
+
+
+class ForwardModelConsistency(nn.Module):
+    """Data fidelity against the hologram that was actually recorded.
+
+    This is the constraint the reference literature means by physics
+    consistency, and the one the rest of this objective was missing. Every other
+    term relates the network's two outputs to each other or to their targets;
+    this one propagates the predicted field back to the sensor and asks whether
+    it could have produced the measurement:
+
+        L = || standardise( |P_z(A_hat exp(i phi_hat))|-formed hologram )
+              - standardise(I_measured) ||
+
+    The raw hologram enters the network as input and, without this term, never
+    appears in the loss again. Adding it introduces evidence no other term
+    exploits, which is precisely why it is not redundant with the phase
+    reconstruction loss the way the mask-phase coupling terms are.
+
+    Three details matter for it to mean anything.
+
+    STANDARDISATION.  Illumination brightness, camera gain and exposure differ
+    between a synthesised and a recorded hologram for reasons unrelated to the
+    field. Both sides are reduced to zero mean and unit variance so the residual
+    measures structure, not scale.
+
+    BORDER EXCLUSION.  The FFT treats the array as periodic, so on a training
+    crop the light that should have arrived from outside instead wraps around
+    from the opposite edge. The field is reflection-padded before propagation and
+    a margin of the same width is dropped from the residual.
+
+    GEOMETRY.  In-line and off-axis form intensity differently, and the
+    difference is physical rather than a convention: at zero defocus a pure phase
+    object produces no in-line intensity contrast at all, so this term has no
+    gradient for the Gabor arm unless z is large enough. Off-axis carries the
+    phase in the fringe modulation and stays informative at any distance. Run
+    ``scripts/calibrate_z.py`` to see the sensitivity of both arms before
+    trusting this term.
+    """
+
+    def __init__(self, cfg, optics):
+        super().__init__()
+        self.wavelength_um = float(optics.wavelength_um)
+        self.pitch_x_um = float(optics.pixel_pitch_x_um)
+        self.pitch_y_um = float(optics.pixel_pitch_y_um)
+
+        self.distance_um = cfg.distance_um
+        self.pad_px = cfg.pad_px
+        self.border_px = cfg.border_px
+        self.feature_um = float(cfg.feature_um)
+        self.reference_ratio = float(cfg.reference_ratio)
+        self.dc_exclusion_px = int(cfg.dc_exclusion_px)
+        self.criterion = cfg.criterion
+        if self.criterion not in ("l1", "l2", "correlation"):
+            raise ValueError(f"unknown forward-model criterion {self.criterion!r}")
+        self._warned = False
+
+    # -- helpers ----------------------------------------------------------
+    def required_pad(self) -> int:
+        """Diffraction spread over z, in pixels: the context the field needs."""
+        if self.pad_px is not None:
+            return int(self.pad_px)
+        if not self.distance_um:
+            return 0
+        spread_um = abs(self.wavelength_um * float(self.distance_um)) / self.feature_um
+        return int(math.ceil(spread_um / min(self.pitch_x_um, self.pitch_y_um)))
+
+    def _pad_for(self, size: int) -> int:
+        """Pad actually applied, with a one-time warning when it falls short.
+
+        Light scattered inside the crop travels lambda*z/feature micrometres
+        sideways before reaching the sensor, and light from outside travels the
+        same distance inward. Neither is available on a crop smaller than that
+        spread, so the synthesised hologram is then missing real contributions
+        and the residual partly measures the missing context rather than the
+        reconstruction. Padding is capped at half the array to keep the FFT
+        affordable; the shortfall is reported once, so it is a known
+        approximation rather than a silent one.
+        """
+        required = self.required_pad()
+        affordable = max(0, size // 2 - 1)
+        applied = min(required, affordable)
+        if required > applied and not self._warned:
+            self._warned = True
+            LOGGER.warning(
+                "forward model at z = %.1f um needs %d px of diffraction context but a "
+                "%d px field allows only %d. The residual is approximate on this crop. "
+                "Train on larger crops (data.train_crop), lower "
+                "loss.forward_model.distance_um, or set loss.forward_model.pad_px "
+                "explicitly to accept the approximation deliberately.",
+                float(self.distance_um), required, size, applied,
+            )
+        return applied
+
+    @staticmethod
+    def _standardise(x: torch.Tensor) -> torch.Tensor:
+        flat = x.flatten(1)
+        mean = flat.mean(dim=1).view(-1, 1, 1, 1)
+        std = flat.std(dim=1).view(-1, 1, 1, 1).clamp(min=1e-6)
+        return (x - mean) / std
+
+    def forward(
+        self,
+        phase: torch.Tensor,
+        amplitude: torch.Tensor,
+        hologram: torch.Tensor,
+        modality: str,
+    ) -> torch.Tensor:
+        from ..physics import estimate_carrier, form_hologram
+
+        if self.distance_um is None:
+            raise ValueError(
+                "loss.forward_model.distance_um is null. Run scripts/calibrate_z.py "
+                "or obtain the acquisition distance before enabling this term."
+            )
+
+        pad = self._pad_for(min(phase.shape[-2], phase.shape[-1]))
+        carrier = (
+            estimate_carrier(hologram, self.dc_exclusion_px)
+            if modality == "off_axis" else None
+        )
+
+        synthetic = form_hologram(
+            phase, amplitude, modality,
+            self.wavelength_um, self.pitch_x_um, self.pitch_y_um,
+            float(self.distance_um), carrier=carrier,
+            reference_ratio=self.reference_ratio, pad=pad,
+        )
+
+        border = int(self.border_px) if self.border_px is not None else pad
+        if border > 0 and min(synthetic.shape[-2:]) > 2 * border + 8:
+            synthetic = synthetic[..., border:-border, border:-border]
+            hologram = hologram[..., border:-border, border:-border]
+
+        predicted = self._standardise(synthetic)
+        measured = self._standardise(hologram)
+
+        if self.criterion == "l1":
+            return (predicted - measured).abs().flatten(1).mean(dim=1)
+        if self.criterion == "l2":
+            return ((predicted - measured) ** 2).flatten(1).mean(dim=1)
+        # correlation: 1 - r, bounded and insensitive to residual scale error
+        return 1.0 - (predicted * measured).flatten(1).mean(dim=1)

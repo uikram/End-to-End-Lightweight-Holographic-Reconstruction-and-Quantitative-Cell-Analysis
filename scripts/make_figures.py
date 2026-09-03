@@ -1156,6 +1156,290 @@ def figure_convergence(cfg, args, out_dir: Path) -> None:
     save(fig, out_dir, 12, "convergence")
 
 
+
+# ===========================================================================
+# FIGURE 13 -- forward-model consistency                          [ESSENTIAL]
+# ===========================================================================
+def figure_forward_model(cfg, args, out_dir: Path) -> None:
+    """Whether the reconstruction is consistent with the measurement it came from.
+
+    Essential once the forward-model term exists, because it is the only figure
+    that scores a reconstruction without a reference. The residual compares the
+    hologram synthesised from the predicted field with the hologram actually
+    recorded, so it asks a question ground-truth phase cannot answer and one that
+    transfers to data where no ground truth exists.
+
+    Two comparisons carry the meaning. Against the *reference* residual -- the
+    same quantity computed from the ground-truth phase -- which is the floor set
+    by everything the forward model cannot explain (amplitude, aberration, an
+    imperfect z) rather than by any error the network made. And across ablation
+    arms, which shows what optimising the term buys, since arms that never
+    optimised it are still scored on it.
+    """
+    output_root = Path(cfg.paths.output_root)
+    files = sorted(output_root.glob("*_modality_comparison.json"))
+    if not files:
+        skip(13, "forward_model", "no *_modality_comparison.json")
+        return
+
+    payloads = {p.name.replace("_modality_comparison.json", ""): read_json(p) for p in files}
+    experiments = [
+        name for name in sorted(payloads)
+        if any(isinstance((payloads[name].get(m) or {}).get("forward_residual"), (int, float))
+               for m in args.modalities)
+    ]
+    if not experiments:
+        skip(13, "forward_model",
+             "no run reports forward_residual; set loss.forward_model.distance_um "
+             "and re-evaluate")
+        return
+
+    fig, axes = plt.subplots(1, 2, figsize=(11.5, 4.2))
+    bar_ax, floor_ax = axes
+
+    positions = np.arange(len(experiments))
+    width = 0.36
+    for offset, modality in zip(np.linspace(-width / 2, width / 2, len(args.modalities)),
+                                args.modalities):
+        values = [
+            (payloads[name].get(modality) or {}).get("forward_residual", np.nan)
+            for name in experiments
+        ]
+        bar_ax.bar(positions + offset, values, width,
+                   color=COLOUR.get(modality, GREY), label=LABEL.get(modality, modality))
+    bar_ax.set_xticks(positions)
+    bar_ax.set_xticklabels([n.replace("_", "\n") for n in experiments], fontsize=7)
+    bar_ax.set_ylabel("Forward-model residual  (1 - correlation)")
+    bar_ax.set_title("Consistency with the recorded hologram\nlower is more physically plausible")
+    bar_ax.legend()
+
+    # Prediction against the floor the reference phase itself achieves.
+    for modality in args.modalities:
+        predicted, reference, labels = [], [], []
+        for name in experiments:
+            entry = payloads[name].get(modality) or {}
+            if isinstance(entry.get("forward_residual_reference"), (int, float)):
+                predicted.append(entry["forward_residual"])
+                reference.append(entry["forward_residual_reference"])
+                labels.append(name)
+        if not predicted:
+            continue
+        floor_ax.scatter(reference, predicted, s=70, color=COLOUR.get(modality, GREY),
+                         label=LABEL.get(modality, modality), zorder=3)
+        for x, y, name in zip(reference, predicted, labels):
+            floor_ax.annotate(name.replace("_", " "), (x, y), fontsize=6.5,
+                              textcoords="offset points", xytext=(6, 3))
+    limits = floor_ax.get_xlim()
+    if limits[1] > limits[0]:
+        span = np.linspace(*limits, 10)
+        floor_ax.plot(span, span, color="k", lw=0.9, ls="--")
+        floor_ax.text(span[-1], span[-1], "  prediction equals\n  the reference floor",
+                      fontsize=7, va="center")
+    floor_ax.set_xlabel("Residual from the reference phase (the achievable floor)")
+    floor_ax.set_ylabel("Residual from the predicted phase")
+    floor_ax.set_title("How much of the achievable consistency is reached")
+    floor_ax.legend(fontsize=7)
+
+    fig.tight_layout()
+    save(fig, out_dir, 13, "forward_model_consistency")
+
+
+# ===========================================================================
+# FIGURE 14 -- learned against classical                          [ESSENTIAL]
+# ===========================================================================
+def figure_conventional_baseline(cfg, args, out_dir: Path) -> None:
+    """What the network buys over the textbook reconstruction.
+
+    Essential, and the figure a reviewer looks for first. Every number the study
+    reports is uninterpretable without a floor: a Dice of 0.83 is excellent or
+    unremarkable depending entirely on what the classical pipeline achieves on
+    the same images. Because both are scored by the same evaluator, the same
+    instance labelling and the same measurement chain, the gap between them is
+    attributable to reconstruction and to nothing else.
+
+    The expected asymmetry is the study's motivation made quantitative: for
+    off-axis the classical method is strong, because the sideband separates
+    analytically, so the network has to justify itself. For in-line the twin
+    image is inseparable and the classical method should fail, which is where
+    learning earns its place.
+    """
+    output_root = Path(cfg.paths.output_root)
+    baseline = read_json(output_root / f"conventional_baseline_{args.split}.json")
+    learned = read_json(output_root / f"{cfg.experiment_name}_modality_comparison.json")
+    if not baseline or not learned:
+        skip(14, "conventional_baseline",
+             "run scripts/conventional_baseline.py and main.py compare first")
+        return
+
+    metrics = [
+        ("phase_pearson_r", "Phase correlation r", False),
+        ("phase_mae_rad_in_cell", "In-cell phase MAE", True),
+        ("seg_dice", "Dice", False),
+        ("seg_aji", "Instance AJI", False),
+        ("detection_f1", "Detection F1", False),
+        ("area_mape", "Area MAPE", True),
+        ("dry_mass_mape", "Dry mass MAPE", True),
+    ]
+    modalities = [m for m in args.modalities if m in baseline and m in learned]
+    if not modalities:
+        skip(14, "conventional_baseline", "no modality present in both tables")
+        return
+
+    fig, axes = plt.subplots(1, len(modalities), figsize=(6.0 * len(modalities), 4.4),
+                             squeeze=False)
+
+    for column, modality in enumerate(modalities):
+        ax = axes[0][column]
+        valid = baseline[modality].get("reconstruction_valid", True)
+        rows, labels, clipped = [], [], []
+        for key, name, lower_better in metrics:
+            a = learned[modality].get(key)
+            b = baseline[modality].get(key)
+            if not (isinstance(a, (int, float)) and isinstance(b, (int, float))):
+                continue
+            if not (np.isfinite(a) and np.isfinite(b)):
+                continue
+            # A relative advantage is meaningless when the baseline is ~0: the
+            # ratio explodes and one bar swallows the axis. Report those as a
+            # capped bar and say so, rather than plotting 10^13 percent.
+            floor = 0.02 * max(abs(a), 1e-9)
+            if abs(b) < floor:
+                advantage, was_clipped = 200.0 if a > b else -200.0, True
+            else:
+                advantage = 100.0 * (a - b) / abs(b)
+                if lower_better:
+                    advantage = -advantage
+                was_clipped = abs(advantage) > 200.0
+                advantage = float(np.clip(advantage, -200.0, 200.0))
+            rows.append(advantage)
+            clipped.append(was_clipped)
+            labels.append(f"{name}\n{a:.3f} vs {b:.3f}")
+        if not rows:
+            ax.set_visible(False)
+            continue
+
+        positions = np.arange(len(rows))[::-1]
+        bars = ax.barh(positions, rows, 0.6,
+                       color=[COLOUR.get(modality, GREY) if v > 0 else "#8d99ae"
+                              for v in rows])
+        for rect, value, was_clipped in zip(bars, rows, clipped):
+            if was_clipped:
+                ax.text(value, rect.get_y() + rect.get_height() / 2,
+                        "  capped" if value > 0 else "capped  ",
+                        va="center", ha="left" if value > 0 else "right", fontsize=6.5)
+        ax.set_xlim(-215, 215)
+        ax.axvline(0, color="k", lw=1.0)
+        ax.set_yticks(positions)
+        ax.set_yticklabels(labels, fontsize=7)
+        ax.set_xlabel("% advantage of the network over classical reconstruction")
+        title = f"{LABEL.get(modality, modality)}   (learned vs classical)"
+        if not valid:
+            title += "\nCLASSICAL RECONSTRUCTION FAILED - not a valid baseline"
+            ax.set_facecolor("#00000008")
+        ax.set_title(title, fontsize=9.5)
+
+    fig.tight_layout()
+    save(fig, out_dir, 14, "learned_vs_classical")
+
+
+# ===========================================================================
+# FIGURE 15 -- which cells are lost                               [IMPORTANT]
+# ===========================================================================
+def figure_recall_by_size(cfg, args, out_dir: Path) -> None:
+    """Detection recall as a function of cell size.
+
+    Important, and it pre-empts the strongest objection to the measurement
+    results: that dry-mass agreement holds because the model preferentially
+    finds large, easy cells. It does. This figure states by how much, and in
+    which size range the method should not be trusted, which is exactly the
+    information a biologist needs before applying it to a population whose size
+    distribution shifts under treatment.
+    """
+    directories = run_dirs(cfg, args.modalities)
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.0))
+    curve_ax, mass_ax = axes
+    drawn = False
+
+    for modality in args.modalities:
+        matched = read_csv_rows(directories[modality] / f"per_cell_{args.split}.csv")
+        unmatched = read_csv_rows(directories[modality] / f"unmatched_{args.split}.csv")
+        if not matched:
+            continue
+        found = column(matched, "area_um2_ref")
+        missed = np.asarray(
+            [float(r["area_um2"]) for r in unmatched
+             if r.get("kind") == "missed_reference" and r.get("area_um2")], dtype=float
+        )
+        if missed.size == 0:
+            continue
+        drawn = True
+
+        every = np.concatenate([found[np.isfinite(found)], missed])
+        edges = np.percentile(every, np.linspace(0, 100, 13))
+        edges = np.unique(edges)
+        centres, recall, counts = [], [], []
+        for low, high in zip(edges[:-1], edges[1:]):
+            in_found = int(((found >= low) & (found < high)).sum())
+            in_missed = int(((missed >= low) & (missed < high)).sum())
+            if in_found + in_missed < 10:
+                continue
+            centres.append(np.sqrt(low * high))         # geometric centre, log axis
+            recall.append(in_found / (in_found + in_missed))
+            counts.append(in_found + in_missed)
+
+        colour = COLOUR.get(modality, GREY)
+        curve_ax.plot(centres, recall, marker="o", ms=4, color=colour,
+                      label=LABEL.get(modality, modality))
+        # Binomial standard error, so a bin with few cells is visibly uncertain.
+        error = [np.sqrt(r * (1 - r) / n) for r, n in zip(recall, counts)]
+        curve_ax.fill_between(centres, np.array(recall) - 1.96 * np.array(error),
+                              np.array(recall) + 1.96 * np.array(error),
+                              color=colour, alpha=0.15)
+
+        # What fraction of total reference mass the misses carry, by size.
+        found_mass = column(matched, "dry_mass_pg_ref")
+        missed_mass = np.asarray(
+            [float(r["dry_mass_pg"]) for r in unmatched
+             if r.get("kind") == "missed_reference" and r.get("dry_mass_pg")], dtype=float
+        )
+        if missed_mass.size:
+            mass_ax.hist(
+                [found_mass[np.isfinite(found_mass)], missed_mass],
+                bins=np.logspace(
+                    np.log10(max(np.nanmin(found_mass), 1e-2)),
+                    np.log10(np.nanmax(found_mass)), 26),
+                stacked=True, density=False,
+                color=[colour, "#00000000"], histtype="stepfilled", alpha=0.35,
+                label=[f"{LABEL.get(modality, modality)}: found", "missed"],
+            )
+            mass_ax.hist(missed_mass, bins=np.logspace(
+                np.log10(max(np.nanmin(found_mass), 1e-2)),
+                np.log10(np.nanmax(found_mass)), 26),
+                histtype="step", color=colour, ls="--", lw=1.3)
+
+    if not drawn:
+        skip(15, "recall_by_size", "no unmatched_<split>.csv; re-run the evaluation")
+        plt.close(fig)
+        return
+
+    curve_ax.axhline(1.0, color="k", lw=0.8, ls=":")
+    curve_ax.set_xscale("log")
+    curve_ax.set_ylim(0, 1.05)
+    curve_ax.set_xlabel("Reference cell area (um^2, log scale)")
+    curve_ax.set_ylabel("Detection recall")
+    curve_ax.set_title("Recall by cell size\nshaded band = 95% binomial interval")
+    curve_ax.legend(fontsize=7, loc="lower right")
+
+    mass_ax.set_xscale("log")
+    mass_ax.set_xlabel("Reference dry mass per cell (pg, log scale)")
+    mass_ax.set_ylabel("Cells")
+    mass_ax.set_title("Where the missed mass sits\ndashed = missed cells")
+    mass_ax.legend(fontsize=7)
+
+    fig.tight_layout()
+    save(fig, out_dir, 15, "recall_by_cell_size")
+
+
 # ---------------------------------------------------------------------------
 FIGURES = {
     1: ("qualitative_panel", "ESSENTIAL", figure_qualitative),
@@ -1170,6 +1454,9 @@ FIGURES = {
     10: ("label_audit", "IMPORTANT", figure_label_audit),
     11: ("confusion_matrices", "IMPORTANT", figure_confusion),
     12: ("convergence", "IMPORTANT", figure_convergence),
+    13: ("forward_model_consistency", "ESSENTIAL", figure_forward_model),
+    14: ("learned_vs_classical", "ESSENTIAL", figure_conventional_baseline),
+    15: ("recall_by_cell_size", "IMPORTANT", figure_recall_by_size),
 }
 
 

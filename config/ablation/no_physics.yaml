@@ -8,6 +8,7 @@ experiment_name: no_physics
 
 loss:
   weights:
+    forward_model: 0.0
     phase_mask_contrast: 0.0
     boundary_gradient_alignment: 0.0
     phase_volume: 0.0

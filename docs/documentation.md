@@ -281,6 +281,68 @@ MobileNet-UNet did in the previous study.
 
 ---
 
+## 5a. Forward model and hologram formation
+
+`holoqpi/physics/propagation.py` holds the scalar diffraction the rest of the
+framework was missing. It is used in three places -- the forward-model loss, the
+conventional baseline, and z calibration -- so all three share one implementation
+and one set of conventions.
+
+**Angular spectrum propagation.** A field is propagated over z by
+
+```
+U(z) = F^-1 { F{u_0} . H },
+H    = exp( i 2 pi z / lambda sqrt(1 - (lambda fx)^2 - (lambda fy)^2) )
+```
+
+Evanescent components (the square-root argument negative) are *attenuated* by
+`exp(-k |z| sqrt(-arg))`, not zeroed. The distinction matters: zeroing them makes
+the kernel a low-pass filter even at z = 0, so propagating by zero would not
+return the field it was given, and an in-line hologram of a pure phase object
+would acquire a contrast it does not physically have. The self-test checks that
+propagating by zero is the identity to 1e-5.
+
+**Hologram formation differs by geometry, and the difference is the study.**
+
+```
+in-line Gabor   I = |P_z(o)|^2
+off-axis        I = |R + P_z(o)|^2      R = tilted plane reference
+```
+
+For in-line the unscattered beam travels with the object beam, so the two are
+superposed and the twin image is inseparable. For off-axis a separate tilted
+reference places the object in a sideband that can be isolated. The carrier is
+read from the measured hologram's own spectrum rather than assumed, since the
+reference tilt is a property of the setup and not of the specimen.
+
+**A consequence worth stating in the paper.** At z = 0 an in-line hologram of a
+pure phase object is *flat*: `|A exp(i phi)|^2 = A^2` does not contain phi. The
+off-axis carrier records phase at any distance. Measured sensitivity of the
+synthesised hologram to a 1-radian change in phase contrast:
+
+| z (um) | in-line Gabor | off-axis |
+|---:|---:|---:|
+| 0 | 0.000 | 0.267 |
+| 10 | 0.013 | 0.267 |
+| 50 | 0.073 | 0.270 |
+| 150 | 0.271 | 0.300 |
+| 400 | 0.444 | 0.347 |
+
+In-line holography needs defocus to encode phase; off-axis does not. The
+forward-model term is therefore informative for the off-axis arm at any distance
+and for the Gabor arm only away from focus, and `scripts/calibrate_z.py` reports
+this sensitivity so the asymmetry is known before training rather than after.
+
+**Crop size is a physical constraint.** Light scattered inside a training crop
+travels `lambda z / feature` micrometres sideways before reaching the sensor, and
+light from outside travels the same distance inward. Neither is available on a
+crop smaller than that spread. The field is reflection-padded by the required
+radius and the same margin is dropped from the residual; when the crop cannot
+support the full radius the shortfall is logged once, so the approximation is
+known rather than silent.
+
+---
+
 ## 6. Joint physics-aware objective
 
 `holoqpi/losses/composite.py`
@@ -316,6 +378,55 @@ placed. SSIM is implemented locally with a Gaussian window; no extra dependency.
 
 Class-weighted Dice plus cross-entropy, with Laplace smoothing on the Dice
 denominator for numerical stability under mixed precision.
+
+### 6.2a Forward-model consistency -- the term the reference literature means
+
+```
+L_forward = || standardise(I_synthesised) - standardise(I_measured) ||
+I_synthesised = form_hologram( A_hat exp(i phi_hat), z, geometry )
+```
+
+**This is the only term that reads the raw hologram**, and therefore the only one
+that introduces information the supervised losses have not already consumed. The
+raw hologram enters the network as input and, without this term, never appears in
+the objective again -- so nothing in training checks that the predicted field is
+consistent with the measurement it came from.
+
+It is what all four reference papers mean by physics consistency:
+
+* Huang, Chen, Liu & Ozcan, *Nature Machine Intelligence* 2023 (GedankenNet) --
+  trained with *no* labelled data at all, using only the residual between the
+  input hologram and the hologram predicted by forward-propagating the network's
+  output complex field.
+* Galande et al., *J. Biomed. Opt.* (HDPhysNet) -- "the data fidelity term
+  promotes data consistency using the hologram formation model."
+* Lee, Mammadova, Barg & Jang, *APL Mach. Learn.* 4, 026106 (2026) and
+  arXiv:2507.00482 -- object-to-sensor distance treated as an implicit style,
+  inverse mapping learned from intensity measurements only.
+
+Three implementation details carry weight.
+
+**Standardisation.** Illumination brightness, camera gain and exposure differ
+between a synthesised and a recorded hologram for reasons unrelated to the field.
+Both sides are reduced to zero mean and unit variance, so the residual measures
+structure rather than scale.
+
+**Border exclusion.** See "crop size is a physical constraint" in section 5a.
+
+**Amplitude.** A hologram is formed by a complex field, so synthesising one from
+phase alone assumes a purely refractive specimen. `model.amplitude.enabled` adds
+a head for transmitted amplitude, bounded to `1 +/- deviation` and
+zero-initialised so it starts from the pure-phase assumption. It has no ground
+truth and is trained *only* by this residual, exactly as in the self-supervised
+hologram-reconstruction literature.
+
+**z is required and is not in the data.** The phase `.bin` header carries width,
+height and the two pixel pitches and nothing else. Obtain the distance from the
+acquisition, or recover it with `scripts/calibrate_z.py`, which matches the
+hologram against the reference phase in both directions and refuses to return a
+number when the agreement curves are flat. Training this term with a wrong z is
+worse than not training it: the residual then measures the error in z rather than
+the error in the reconstruction.
 
 ### 6.3 Physics coupling terms
 
@@ -584,6 +695,46 @@ build.
 
 Colour is consistent across the set: off-axis blue, Gabor red. Modalities appear
 in the order given by `--modalities`, so panels line up between figures.
+
+---
+
+## 10b. Conventional reconstruction baseline
+
+`scripts/conventional_baseline.py` runs the textbook pipeline for each geometry
+and scores it through the *same* evaluator, instance labelling and measurement
+chain as the network, so the difference between them is attributable to
+reconstruction and nothing else.
+
+```
+off-axis   isolate a first-order sideband -> shift the carrier to the origin
+           -> back-propagate -> argument
+in-line    back-propagate the recorded intensity -> argument
+           (optionally N Gerchberg-Saxton iterations first)
+```
+
+Three corrections are applied, and each is necessary for the baseline to be a
+fair opponent rather than a strawman:
+
+1. **Conjugate selection.** The two first-order sidebands are conjugates and
+   taking the wrong one returns the *negated* phase -- which looks plausible and
+   scores as an anti-correlation. Which peak is numerically larger is arbitrary,
+   so the choice is made physically: cells add optical path, so the correct
+   reconstruction is right-skewed in phase.
+2. **Unwrapping.** Reconstructed phase is known modulo 2 pi. Uses scikit-image's
+   quality-guided unwrapper, with a least-squares Poisson solve as fallback.
+3. **Numerical aberration compensation.** The objective imposes curvature and the
+   reference beam a tilt; together they dominate the recovered phase. A
+   polynomial surface is fitted to the background and subtracted. **A plane fit
+   is not enough on this data** -- order 3 is needed before the recovered in-cell
+   phase contrast matches the reference.
+
+**Read `reconstruction_valid` before quoting any baseline number.** The script
+reports the recovered in-cell phase contrast and marks the run invalid when it is
+not positive. A failed classical reconstruction is not a baseline, and reporting
+one as if it were would overstate what the network achieves. The usual causes, in
+order: the propagation distance is wrong; the aberration order is too low; or,
+for the in-line arm at z = 0, the reconstruction is degenerate by construction
+(section 5a).
 
 ---
 

@@ -252,6 +252,9 @@ class Trainer:
                 "phase": batch["phase"].to(self.device, non_blocking=True),
                 "mask": batch["mask"].to(self.device, non_blocking=True),
                 "condition": batch["condition"].to(self.device, non_blocking=True),
+                # The forward-model term compares against the measurement itself,
+                # so the input has to reach the loss as well as the network.
+                "hologram": hologram,
             }
 
             with torch.autocast(

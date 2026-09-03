@@ -3,14 +3,30 @@
     L = w_phase * L_phase
       + w_seg   * L_seg
       + w_cls   * L_cls
-      + w_pmc   * L_PMC + w_bga * L_BGA + w_pv * L_PV
-      + w_mass  * L_mass + w_area * L_area
+      + w_fwd   * L_forward_model                       <- reads the raw hologram
+      + w_pmc   * L_PMC + w_bga * L_BGA + w_pv * L_PV    <- mask <-> phase
+      + w_mass  * L_mass + w_area * L_area               <- measurement
 
-The first three terms supervise each head against its own target. The remaining
-five are the extension of the previous study's physics-aware loss to the
-end-to-end setting: they act on the *predicted* phase and the *predicted* mask
-together, so the network cannot satisfy them by getting either output right in
-isolation. That coupling is what makes the reconstruction measurement-ready.
+The first three terms supervise each head against its own target.
+
+The physics group splits into two families that behave very differently, and
+keeping them separate is the point of the ablation.
+
+L_forward_model propagates the predicted field to the sensor and compares it
+with the hologram that was actually recorded. It is the only term that reads the
+measurement, so it is the only one that introduces information the supervised
+losses have not already consumed. This is what the reference literature means by
+physics consistency (Huang et al., Nat. Mach. Intell. 2023; Galande et al.,
+J. Biomed. Opt.; Lee et al., APL Mach. Learn. 4, 026106).
+
+The remaining five couple the predicted mask to the predicted phase. They are
+the previous study's physics-aware loss carried into the end-to-end setting,
+where its information source has changed: in that study the phase was a measured
+input and only the boundary was learned, so the coupling supplied the mask head
+with knowledge of the optical field. Here both operands are network outputs and
+both are directly supervised, and the mask target is itself a threshold of the
+phase target, so the coupled quantity is already determined. Expect them to be
+close to inert, and see docs/documentation.md for the measurement that shows it.
 
 Every weight is read from ``loss.weights`` in the configuration; setting one to
 zero removes its term, which is how the component-wise ablation is run.
@@ -26,6 +42,7 @@ from ..config import Config
 from .terms import (
     BoundaryGradientAlignment,
     DryMassConsistency,
+    ForwardModelConsistency,
     PhaseMaskContrast,
     PhaseReconstructionLoss,
     ProjectedAreaConsistency,
@@ -34,6 +51,7 @@ from .terms import (
 )
 
 _PHYSICS_KEYS = (
+    "forward_model",
     "phase_mask_contrast",
     "boundary_gradient_alignment",
     "phase_volume",
@@ -77,6 +95,11 @@ class JointPhysicsAwareLoss(nn.Module):
         self.phase_volume = PhaseVolumePreservation(physics_cfg.volume_epsilon)
         self.dry_mass = DryMassConsistency(physics_cfg.volume_epsilon)
         self.projected_area = ProjectedAreaConsistency(physics_cfg.volume_epsilon)
+
+        # The only term that reads the raw hologram. Built unconditionally so a
+        # misconfiguration surfaces at construction rather than at epoch 1.
+        self.forward_model = ForwardModelConsistency(loss_cfg.forward_model, cfg.optics)
+        self.modality = cfg.data.modality
 
     @property
     def active_physics_terms(self) -> list[str]:
@@ -132,6 +155,27 @@ class JointPhysicsAwareLoss(nn.Module):
         denominator = has_cells.sum().clamp(min=1.0)
 
         raw_terms: dict[str, torch.Tensor] = {}
+
+        # -- forward-model consistency ------------------------------------
+        # Unlike every other physics term this one is not gated by the
+        # foreground count: it constrains the whole field, including the
+        # background, and a crop without cells still has to be consistent with
+        # the hologram it came from.
+        if self.weights.get("forward_model", 0.0):
+            hologram = batch.get("hologram")
+            if hologram is None:
+                raise KeyError(
+                    "loss.weights.forward_model is non-zero but the batch carries no "
+                    "'hologram'. The trainer and evaluator must pass it through."
+                )
+            amplitude = outputs.get("amplitude")
+            if amplitude is None:
+                amplitude = torch.ones_like(phase_pred)
+            forward_term = self.forward_model(
+                phase_pred, amplitude, hologram, self.modality
+            )
+            total = total + self.weights["forward_model"] * forward_term
+            components["forward_model"] = float(forward_term.mean().detach())
 
         if self.weights.get("phase_mask_contrast", 0.0):
             raw_terms["phase_mask_contrast"] = self.pmc(foreground, phase_pred)

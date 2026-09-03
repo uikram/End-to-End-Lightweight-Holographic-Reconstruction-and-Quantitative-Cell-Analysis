@@ -3,8 +3,13 @@
 A single shared encoder feeds two decoders and one classifier:
 
     hologram -> [front end] -> encoder -> phase decoder      -> phase   (radians)
+                                       -> [amplitude head]   -> transmittance
                                        -> segmentation dec.  -> cell logits
                                        -> bottleneck pool    -> condition logits
+
+The optional amplitude head exists only to complete the complex field for the
+forward-model consistency term; it has no supervision of its own and is absent
+unless model.amplitude.enabled is set.
 
 Sharing the encoder is the point of the design rather than an economy: the same
 latent description of the fringe field has to support both reconstruction and
@@ -23,7 +28,7 @@ from ..utils import get_logger
 from .blocks import UNetDecoder, pad_to_multiple, unpad
 from .encoders import build_encoder
 from .frontend import build_frontend
-from .heads import ConditionClassifier, PhaseHead, SegmentationHead
+from .heads import AmplitudeHead, ConditionClassifier, PhaseHead, SegmentationHead
 from . import lora as lora_utils
 
 LOGGER = get_logger(__name__)
@@ -58,6 +63,13 @@ class HoloQPINet(nn.Module):
 
         head_hidden = decoder_channels[-1]
         self.phase_head = PhaseHead(trunk_channels, head_hidden)
+        # Only built when the forward model is allowed to fit amplitude; keeping
+        # it absent otherwise means the exported graph and the parameter count
+        # are unchanged for every configuration that does not use it.
+        self.amplitude_head = (
+            AmplitudeHead(trunk_channels, head_hidden, model_cfg.amplitude.deviation)
+            if model_cfg.amplitude.enabled else None
+        )
         self.segmentation_head = SegmentationHead(
             trunk_channels, head_hidden, model_cfg.segmentation_classes
         )
@@ -94,7 +106,12 @@ class HoloQPINet(nn.Module):
         )
         condition = self.condition_classifier(features[-1])
 
-        return {"phase": phase, "segmentation": segmentation, "condition": condition}
+        outputs = {"phase": phase, "segmentation": segmentation, "condition": condition}
+        if self.amplitude_head is not None:
+            outputs["amplitude"] = self._to_input_size(
+                self.amplitude_head(phase_trunk), padding, original_size
+            )
+        return outputs
 
     def _to_input_size(
         self, x: torch.Tensor, padding: tuple[int, int], target: torch.Size

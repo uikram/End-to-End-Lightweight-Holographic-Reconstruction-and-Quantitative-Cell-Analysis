@@ -8,3 +8,5 @@ data/prepare_report.json
 *.onnx
 *.pt
 .DS_Store
+*.TIF
+*.bin

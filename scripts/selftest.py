@@ -281,6 +281,104 @@ def test_loss_terms(cfg) -> None:
           f"{degraded['total']:.4f} > {components['total']:.4f}")
 
 
+def test_physics(cfg) -> None:
+    print("\n[6] forward model: propagation, hologram formation, consistency loss")
+    from holoqpi.physics import form_hologram, propagate, unwrap_phase_2d
+    from holoqpi.losses.terms import ForwardModelConsistency
+
+    optics = cfg.optics
+    wavelength = optics.wavelength_um
+    dx, dy = optics.pixel_pitch_x_um, optics.pixel_pitch_y_um
+
+    size = 128
+    # A band-limited field, deliberately. A hard-edged disc carries energy above
+    # the propagating cutoff, and those evanescent components genuinely do not
+    # survive propagation, so a round trip could not return them and the test
+    # would be measuring physics rather than the implementation.
+    grid_y, grid_x = np.mgrid[0:size, 0:size]
+    smooth = 1.5 * np.exp(
+        -(((grid_y - size / 2) ** 2 + (grid_x - size / 2) ** 2) / (2 * 14.0 ** 2))
+    ).astype(np.float32)
+    phase_t = torch.from_numpy(smooth).view(1, 1, size, size)
+    amplitude_t = torch.ones_like(phase_t)
+
+    # Propagating forward and back must return the original field: the angular
+    # spectrum kernel is unitary on the propagating components, so a round trip
+    # is the sharpest available check that the transfer function is correct.
+    field = torch.polar(amplitude_t, phase_t)
+    there = propagate(field, wavelength, dx, dy, 120.0)
+    back = propagate(there, wavelength, dx, dy, -120.0)
+    error = (back - field).abs().max()
+    check("propagation round trip returns the field", float(error) < 1e-3,
+          f"max |error| {float(error):.2e}")
+
+    energy_ratio = float(there.abs().pow(2).sum() / field.abs().pow(2).sum())
+    check("propagation conserves energy", abs(energy_ratio - 1.0) < 1e-3,
+          f"ratio {energy_ratio:.6f}")
+
+    identity = propagate(field, wavelength, dx, dy, 0.0)
+    check("propagating by zero is the identity",
+          float((identity - field).abs().max()) < 1e-5,
+          f"max |error| {float((identity - field).abs().max()):.2e}")
+
+    # The physical asymmetry the study is about. At zero defocus a pure phase
+    # object produces no in-line intensity contrast, while the off-axis carrier
+    # still records it. This is why the forward-model term can teach the
+    # off-axis arm at any distance and the in-line arm only away from focus.
+    carrier = (torch.tensor([0.12]), torch.tensor([0.10]))
+    inline_at_zero = form_hologram(phase_t, amplitude_t, "gabor",
+                                   wavelength, dx, dy, 0.0)
+    check("in-line intensity is flat at zero defocus",
+          float(inline_at_zero.std()) < 1e-5, f"std {float(inline_at_zero.std()):.2e}")
+
+    inline_defocused = form_hologram(phase_t, amplitude_t, "gabor",
+                                     wavelength, dx, dy, 200.0)
+    check("in-line intensity gains contrast with defocus",
+          float(inline_defocused.std()) > 1e-2,
+          f"std {float(inline_defocused.std()):.4f}")
+
+    off_axis_at_zero = form_hologram(phase_t, amplitude_t, "off_axis",
+                                     wavelength, dx, dy, 0.0, carrier=carrier)
+    check("off-axis carries phase at zero defocus",
+          float(off_axis_at_zero.std()) > 1e-2,
+          f"std {float(off_axis_at_zero.std()):.4f}")
+
+    # The loss must vanish when the phase is exactly right and rise when it is not.
+    overrides = {"distance_um": 200.0, "criterion": "correlation", "feature_um": 1.0,
+                 "pad_px": 0, "border_px": 8, "reference_ratio": 1.0,
+                 "dc_exclusion_px": 20}
+    forward_cfg = type("Cfg", (), overrides)()
+    term = ForwardModelConsistency(forward_cfg, optics)
+
+    measured = form_hologram(phase_t, amplitude_t, "gabor",
+                             wavelength, dx, dy, 200.0)
+    exact = term(phase_t, amplitude_t, measured, "gabor")
+    wrong = term(phase_t * 0.3, amplitude_t, measured, "gabor")
+    check("forward-model loss vanishes on the true phase",
+          float(exact.mean()) < 1e-4, f"{float(exact.mean()):.3e}")
+    check("forward-model loss rises on a wrong phase",
+          float(wrong.mean()) > float(exact.mean()) + 1e-3,
+          f"{float(wrong.mean()):.4f} > {float(exact.mean()):.4f}")
+
+    gradient_probe = phase_t.clone().requires_grad_(True)
+    term(gradient_probe, amplitude_t, measured, "gabor").sum().backward()
+    check("forward-model loss is differentiable w.r.t. phase",
+          gradient_probe.grad is not None
+          and torch.isfinite(gradient_probe.grad).all()
+          and float(gradient_probe.grad.abs().sum()) > 0)
+
+    # Unwrapping must undo a wrap it did not create.
+    ramp = torch.linspace(0, 6 * math.pi, size).view(1, 1, 1, size).expand(1, 1, size, size)
+    wrapped = torch.atan2(torch.sin(ramp), torch.cos(ramp))
+    unwrapped = unwrap_phase_2d(wrapped)
+    aligned = unwrapped - unwrapped.mean() + ramp.mean()
+    correlation = float(
+        torch.corrcoef(torch.stack([aligned.flatten(), ramp.flatten()]))[0, 1]
+    )
+    check("phase unwrapping recovers a multi-turn ramp", correlation > 0.99,
+          f"r = {correlation:.4f}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="config/base.yaml")
@@ -294,6 +392,7 @@ def main() -> int:
     test_measurement_agreement(cfg)
     test_phase_masked_errors(cfg)
     test_loss_terms(cfg)
+    test_physics(cfg)
 
     print("\n" + "=" * 60)
     if _failures:

@@ -152,6 +152,13 @@ model:
     output: amplitude_phase             # amplitude_phase | real_imag
     detach: true                        # treat the front end as a fixed preprocessing stage
 
+  amplitude:
+    # Transmitted amplitude at the sample plane. Only used by the forward-model
+    # consistency term; with this off the specimen is treated as purely
+    # refractive (A = 1), which is the standard thin-phase-object assumption.
+    enabled: false
+    deviation: 0.3                      # head output is bounded to 1 +/- this
+
   lora:
     enabled: false
     rank: 8
@@ -179,6 +186,7 @@ loss:
     phase_mask_contrast: 0.1
     boundary_gradient_alignment: 0.05
     phase_volume: 0.1
+    forward_model: 0.0                  # see loss.forward_model; needs a known z
     dry_mass_consistency: 0.1
     projected_area_consistency: 0.05
 
@@ -199,6 +207,29 @@ loss:
   classification:
     label_smoothing: 0.05
     class_weights: null                 # null -> uniform
+
+  # ---------------------------------------------------------------------------
+  # Forward-model (hologram) consistency.
+  #
+  # Propagates the predicted field to the sensor and compares it with the
+  # hologram that was actually recorded. This is the only term that reads the
+  # measurement, and therefore the only one that supplies information the
+  # supervised losses have not already consumed.
+  #
+  # distance_um MUST be set before loss.weights.forward_model is raised above
+  # zero. Obtain it from the acquisition, or recover it with
+  #     python scripts/calibrate_z.py --config config/base.yaml
+  # Leaving it null and the weight at zero is the safe default: the residual is
+  # then still reported as a metric wherever a distance is available.
+  # ---------------------------------------------------------------------------
+  forward_model:
+    distance_um: null                   # sample-to-sensor distance, micrometres
+    criterion: correlation              # correlation | l1 | l2
+    feature_um: 1.0                     # smallest object feature, sets the pad width
+    pad_px: null                        # null = derived from distance and feature_um
+    border_px: null                     # null = same as pad_px; margin dropped from the residual
+    reference_ratio: 1.0                # off-axis reference amplitude relative to the object beam
+    dc_exclusion_px: 60                 # carrier search excludes this radius around DC
 
   physics:
     pmc_margin: 0.1
@@ -256,6 +287,11 @@ evaluation:
     max_cell_area_um2: 6000.0
     match_iou_threshold: 0.5            # predicted cell <-> GT cell pairing
     report_bland_altman: true
+  forward_model:
+    # Reported as a metric regardless of the loss weight, so ablation arms that
+    # do not optimise it can still be scored on it. Needs loss.forward_model.
+    # distance_um; silently skipped when that is null.
+    report_residual: true
   save_per_cell_csv: true
 
 # -----------------------------------------------------------------------------

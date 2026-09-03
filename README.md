@@ -131,13 +131,41 @@ the previous study's three terms and drops only the two this study adds;
 `classification_only` trains the condition head alone, as a control for the
 off-axis / Gabor classification gap.
 
+## Running the whole study
+
+```bash
+bash run_study.sh                 # everything, in dependency order
+bash run_study.sh --stage 5       # one stage
+NO_TRAIN=1 bash run_study.sh      # reuse checkpoints, re-evaluate only
+QUICK=1 bash run_study.sh         # tiny settings, to prove the plumbing works
+```
+
+Eleven stages, each logged separately under `logs/study_<timestamp>/`, continuing
+past failures. Three logs to read first: `02_calibrate_z.log` (is z
+identifiable? gates the physics ablation), `07_conventional_baseline.log` (is the
+classical reconstruction valid?), and `03_audit_labels.log` (does the label
+threshold drift with condition?).
+
 ## Diagnostics
 
 ```bash
 python scripts/selftest.py --config config/base.yaml       # measurement chain and losses
 python scripts/diagnose_bias.py --config config/base.yaml  # boundary error or phase error?
 python scripts/audit_labels.py --config config/base.yaml   # are the silver labels sound?
+python scripts/calibrate_z.py --config config/base.yaml    # recover the propagation distance
+python scripts/conventional_baseline.py --config config/base.yaml   # the classical floor
 ```
+
+`calibrate_z` recovers the sample-to-sensor distance the forward-model loss
+needs, by matching each hologram against its reference phase in both directions.
+It reports whether z is identifiable and **refuses to return a number when it is
+not**, rather than handing back a confident-looking guess. It also reports how
+sensitive each geometry's hologram is to phase at that distance, which is what
+decides whether the forward-model term can teach that arm anything at all.
+
+`conventional_baseline` runs the textbook reconstruction for both geometries
+through the same evaluator as the network. Check `reconstruction_valid` in its
+output before quoting any number from it.
 
 `audit_labels` answers the two questions the phase-derived masks raise: whether
 the per-image Otsu level drifts with drug condition (which would confound the

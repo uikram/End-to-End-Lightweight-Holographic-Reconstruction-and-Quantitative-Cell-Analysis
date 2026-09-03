@@ -62,3 +62,33 @@ class ConditionClassifier(nn.Module):
 
     def forward(self, bottleneck: torch.Tensor) -> torch.Tensor:
         return self.net(self.pool(bottleneck))
+
+
+class AmplitudeHead(nn.Module):
+    """Transmitted amplitude at the sample plane, for the forward model.
+
+    A hologram is formed by a complex field, so synthesising one from the
+    predicted phase alone assumes the specimen is purely refractive. Live cells
+    scatter and absorb a little, and the illumination is never perfectly flat, so
+    that assumption puts a floor on how well any forward-model term can fit the
+    measurement.
+
+    There is no amplitude ground truth, so this head is trained only by the
+    forward-model residual -- exactly as in the self-supervised hologram
+    reconstruction literature. It is initialised and biased toward unit
+    transmittance so it starts from the pure-phase assumption and departs from it
+    only where the measurement demands.
+    """
+
+    def __init__(self, in_channels: int, hidden_channels: int, deviation: float = 0.3):
+        super().__init__()
+        self.body = ConvBNAct(in_channels, hidden_channels, kernel_size=3)
+        self.project = nn.Conv2d(hidden_channels, 1, kernel_size=1)
+        nn.init.zeros_(self.project.weight)
+        nn.init.zeros_(self.project.bias)
+        self.deviation = float(deviation)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # tanh keeps transmittance in [1 - d, 1 + d]; zero-initialised so the
+        # first forward pass returns exactly 1.0 everywhere.
+        return 1.0 + self.deviation * torch.tanh(self.project(self.body(x)))

@@ -1,0 +1,23 @@
+# Ablation: forward-model consistency only.
+#
+# The second arm of the four-way physics ablation. Keeps the term that reads the
+# raw hologram and drops every mask-phase coupling, isolating the contribution of
+# the constraint the reference literature actually means by "physics-aware"
+# (Huang et al. 2023; Galande et al.; Lee et al. 2026).
+#
+# REQUIRES loss.forward_model.distance_um. Run scripts/calibrate_z.py first, or
+# set it from the acquisition record. Training with a wrong z is worse than not
+# training this term at all: the residual then measures the error in z rather
+# than the error in the reconstruction.
+extends: ../base.yaml
+
+experiment_name: physics_forward_only
+
+loss:
+  weights:
+    forward_model: 0.1
+    phase_mask_contrast: 0.0
+    boundary_gradient_alignment: 0.0
+    phase_volume: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0

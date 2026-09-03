@@ -17,6 +17,7 @@ from ..config import Config
 from ..data.masks import split_instances
 from ..metrics import (
     ClassificationMetrics,
+    ForwardModelMetrics,
     MeasurementMetrics,
     PhaseMetrics,
     SegmentationMetrics,
@@ -50,22 +51,39 @@ class Evaluator:
         self.measurement_metrics = MeasurementMetrics(
             report_bland_altman=self.measurement_cfg.report_bland_altman
         )
+        self.forward_metrics = (
+            ForwardModelMetrics(cfg.loss.forward_model, cfg.optics, cfg.data.modality)
+            if evaluation.forward_model.report_residual else None
+        )
 
     def reset(self) -> None:
         self.phase_metrics.reset()
         self.segmentation_metrics.reset()
         self.classification_metrics.reset()
         self.measurement_metrics.reset()
+        if self.forward_metrics is not None:
+            self.forward_metrics.reset()
 
     @torch.no_grad()
     def run(
         self,
-        model: torch.nn.Module,
+        model: torch.nn.Module | None,
         loader,
         collect_per_cell: bool = False,
         loss_fn=None,
+        predict_fn=None,
     ) -> dict:
-        model.eval()
+        """Score a model, or any predictor, on one dataloader.
+
+        ``predict_fn`` replaces the model call with an arbitrary callable taking
+        the batch and returning the same output dictionary. The conventional
+        reconstruction baseline uses it, which is what makes the classical and
+        the learned pipeline comparable: they are scored by the same code, the
+        same instance labelling and the same measurement chain, so a difference
+        between them is a difference in reconstruction and nothing else.
+        """
+        if model is not None:
+            model.eval()
         self.reset()
 
         per_cell_rows: list[dict] = []
@@ -78,13 +96,14 @@ class Evaluator:
             mask_target = batch["mask"].to(self.device, non_blocking=True)
             condition_target = batch["condition"].to(self.device, non_blocking=True)
 
-            outputs = model(hologram)
+            outputs = predict_fn(batch) if predict_fn is not None else model(hologram)
 
             if loss_fn is not None:
                 moved = {
                     "phase": phase_target,
                     "mask": mask_target,
                     "condition": condition_target,
+                    "hologram": hologram,
                 }
                 _, components = loss_fn(outputs, moved)
                 for key, value in components.items():
@@ -115,6 +134,11 @@ class Evaluator:
             ]
 
             self.phase_metrics.update(phase_prediction, phase_reference, mask=mask_reference)
+            if self.forward_metrics is not None:
+                self.forward_metrics.update(
+                    outputs["phase"].float(), outputs.get("amplitude"),
+                    hologram, reference_phase=phase_target.float(),
+                )
             self.segmentation_metrics.update(
                 mask_prediction, mask_reference,
                 prediction_instances=predicted_instances,
@@ -142,6 +166,8 @@ class Evaluator:
         results.update(self.segmentation_metrics.compute())
         results.update(self.classification_metrics.compute())
         results.update(self.measurement_metrics.compute())
+        if self.forward_metrics is not None:
+            results.update(self.forward_metrics.compute())
 
         if batches:
             for key, value in loss_totals.items():

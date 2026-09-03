@@ -1,0 +1,19 @@
+# Ablation: every physics term together.
+#
+# The fourth arm. If forward-model consistency and the mask-phase coupling
+# constrain genuinely different things, this should not simply reproduce
+# physics_forward_only.
+#
+# REQUIRES loss.forward_model.distance_um.
+extends: ../base.yaml
+
+experiment_name: physics_all
+
+loss:
+  weights:
+    forward_model: 0.1
+    phase_mask_contrast: 0.1
+    boundary_gradient_alignment: 0.05
+    phase_volume: 0.1
+    dry_mass_consistency: 0.1
+    projected_area_consistency: 0.05

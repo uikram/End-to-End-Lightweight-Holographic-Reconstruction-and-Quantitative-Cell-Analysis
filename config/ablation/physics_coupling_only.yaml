@@ -1,0 +1,20 @@
+# Ablation: mask-phase coupling only.
+#
+# The third arm of the four-way physics ablation, and the configuration the
+# previous study's loss becomes when it is carried into the end-to-end setting
+# unchanged. Expect it to be close to inert: both operands are network outputs,
+# both are directly supervised, and the mask target is a threshold of the phase
+# target, so the coupled quantity is already determined. That prediction is the
+# point of running it.
+extends: ../base.yaml
+
+experiment_name: physics_coupling_only
+
+loss:
+  weights:
+    forward_model: 0.0
+    phase_mask_contrast: 0.1
+    boundary_gradient_alignment: 0.05
+    phase_volume: 0.1
+    dry_mass_consistency: 0.1
+    projected_area_consistency: 0.05
