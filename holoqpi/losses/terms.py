@@ -274,6 +274,7 @@ class ForwardModelConsistency(nn.Module):
     """Data fidelity against the hologram that was actually recorded.
 
     This is the constraint the reference literature means by physics
+<<<<<<< Updated upstream
     consistency, and the one the rest of this objective was missing. Every other
     term relates the network's two outputs to each other or to their targets;
     this one propagates the predicted field back to the sensor and asks whether
@@ -306,6 +307,74 @@ class ForwardModelConsistency(nn.Module):
     phase in the fringe modulation and stays informative at any distance. Run
     ``scripts/calibrate_z.py`` to see the sensitivity of both arms before
     trusting this term.
+=======
+    consistency (Huang et al., Nat. Mach. Intell. 2023; Galande et al.,
+    J. Biomed. Opt.; Lee et al., APL Mach. Learn. 4, 026106), and the one the
+    rest of this objective was missing. Every other term relates the network's
+    two outputs to each other or to their targets; this one propagates the
+    predicted field to the sensor and asks whether it could have produced the
+    measurement.
+
+    THE RADIOMETRIC MODEL
+    ---------------------
+    A sensor does not record |U|^2. It records
+
+        I_measured  =  gain * (physical intensity)  +  offset  +  noise
+
+    with gain set by illumination power, exposure and camera response, and
+    offset by the black level and stray light. None of those are known, and none
+    of them carry information about the phase. Comparing a synthesised intensity
+    with a measured one directly would therefore be dominated by three unknown
+    scalars.
+
+    They are removed the honest way: by *fitting* them, per image, in closed
+    form, as part of the observation model. Writing the off-axis intensity in
+    its three physical components,
+
+        I  =  |R|^2  +  |U|^2  +  2 Re(R* U)
+           =  c0 . 1  +  c1 . |U|^2  +  c2 . Re(R* U)
+
+    the unknown reference power, object gain and reference-to-object amplitude
+    ratio are exactly the three coefficients c0, c1, c2. Solving the 3 x 1
+    least-squares problem against the measured intensity marginalises all of
+    them out at once, and what remains in the residual is structure the phase
+    must explain. For in-line the reference is not separate, so the model is
+    two-parameter, I = c0 + c1 |U|^2.
+
+    This replaces an earlier z-score of both sides. Standardising is the same
+    two-parameter fit written implicitly, but it hides the calibration inside a
+    preprocessing step instead of exposing it, cannot absorb the off-axis
+    reference ratio at all, and leaves no way to check whether the fitted gain
+    is physically sensible. The coefficients are returned so they can be logged:
+    a gain that drifts or changes sign is a modelling error announcing itself.
+
+    THE MEASUREMENT IT COMPARES AGAINST
+    -----------------------------------
+    ``hologram`` must be the RAW intensity, not the normalised network input.
+    The dataset carries both (``hologram_raw`` and ``hologram``) precisely so
+    that the network can have a well-conditioned input without the physics term
+    being handed a redefined observation model.
+
+    OTHER DETAILS THAT MATTER
+    -------------------------
+    BORDER EXCLUSION. The FFT treats the array as periodic, so on a training
+    crop the light that should have arrived from outside instead wraps around
+    from the opposite edge. The field is reflection-padded before propagation
+    and a margin of the same width is dropped from the residual.
+
+    GEOMETRY. In-line and off-axis form intensity differently, and the
+    difference is physical rather than conventional: at zero defocus a pure
+    phase object produces no in-line intensity contrast at all, so this term has
+    no gradient for the Gabor arm unless z is large enough. Off-axis carries the
+    phase in the fringe modulation and stays informative at any distance. Run
+    ``scripts/calibrate_z.py`` to see the sensitivity of both arms before
+    trusting this term.
+
+    DISTANCE. ``learn_distance`` makes z an ``nn.Parameter`` initialised at
+    ``distance_um``, so it can be refined by gradient descent when the grid
+    search leaves it only approximately determined. The propagation kernel is
+    differentiable in z, so this is a real refinement and not a placeholder.
+>>>>>>> Stashed changes
     """
 
     def __init__(self, cfg, optics):
@@ -314,6 +383,7 @@ class ForwardModelConsistency(nn.Module):
         self.pitch_x_um = float(optics.pixel_pitch_x_um)
         self.pitch_y_um = float(optics.pixel_pitch_y_um)
 
+<<<<<<< Updated upstream
         self.distance_um = cfg.distance_um
         self.pad_px = cfg.pad_px
         self.border_px = cfg.border_px
@@ -326,13 +396,47 @@ class ForwardModelConsistency(nn.Module):
         self._warned = False
 
     # -- helpers ----------------------------------------------------------
+=======
+        self.pad_px = cfg.pad_px
+        self.border_px = cfg.border_px
+        self.feature_um = float(cfg.feature_um)
+        self.dc_exclusion_px = cfg.dc_exclusion_px
+        self.dc_exclusion_frac = float(cfg.dc_exclusion_frac)
+        self.fit_radiometry = bool(cfg.fit_radiometry)
+        self.criterion = cfg.criterion
+        if self.criterion not in ("l1", "l2", "correlation"):
+            raise ValueError(f"unknown forward-model criterion {self.criterion!r}")
+
+        self.learn_distance = bool(cfg.learn_distance)
+        distance = cfg.distance_um
+        if distance is None:
+            self.distance = None
+        elif self.learn_distance:
+            self.distance = nn.Parameter(torch.tensor(float(distance)))
+        else:
+            self.register_buffer("distance", torch.tensor(float(distance)))
+        self._warned = False
+
+    # -- helpers ----------------------------------------------------------
+    @property
+    def distance_um(self) -> float | None:
+        return None if self.distance is None else float(self.distance.detach())
+
+>>>>>>> Stashed changes
     def required_pad(self) -> int:
         """Diffraction spread over z, in pixels: the context the field needs."""
         if self.pad_px is not None:
             return int(self.pad_px)
+<<<<<<< Updated upstream
         if not self.distance_um:
             return 0
         spread_um = abs(self.wavelength_um * float(self.distance_um)) / self.feature_um
+=======
+        distance = self.distance_um
+        if not distance:
+            return 0
+        spread_um = abs(self.wavelength_um * distance) / self.feature_um
+>>>>>>> Stashed changes
         return int(math.ceil(spread_um / min(self.pitch_x_um, self.pitch_y_um)))
 
     def _pad_for(self, size: int) -> int:
@@ -358,16 +462,40 @@ class ForwardModelConsistency(nn.Module):
                 "Train on larger crops (data.train_crop), lower "
                 "loss.forward_model.distance_um, or set loss.forward_model.pad_px "
                 "explicitly to accept the approximation deliberately.",
+<<<<<<< Updated upstream
                 float(self.distance_um), required, size, applied,
+=======
+                self.distance_um, required, size, applied,
+>>>>>>> Stashed changes
             )
         return applied
 
     @staticmethod
+<<<<<<< Updated upstream
     def _standardise(x: torch.Tensor) -> torch.Tensor:
         flat = x.flatten(1)
         mean = flat.mean(dim=1).view(-1, 1, 1, 1)
         std = flat.std(dim=1).view(-1, 1, 1, 1).clamp(min=1e-6)
         return (x - mean) / std
+=======
+    def _fit_components(components: torch.Tensor, measured: torch.Tensor):
+        """Least-squares fit of the radiometric coefficients, per image.
+
+        ``components`` is (B, K, N) and ``measured`` is (B, N). Returns the
+        fitted prediction (B, N) and the coefficients (B, K). Solved in closed
+        form with a small ridge term, so it is differentiable and cannot blow up
+        when two components are nearly collinear (which happens when |U|^2 is
+        almost constant, i.e. exactly at the in-line degenerate case).
+        """
+        gram = components @ components.transpose(1, 2)
+        rhs = (components * measured.unsqueeze(1)).sum(dim=2, keepdim=True)
+        ridge = 1e-6 * torch.diag_embed(
+            torch.diagonal(gram, dim1=1, dim2=2).clamp(min=1e-12)
+        )
+        coefficients = torch.linalg.solve(gram + ridge, rhs)
+        fitted = (coefficients.transpose(1, 2) @ components).squeeze(1)
+        return fitted, coefficients.squeeze(2)
+>>>>>>> Stashed changes
 
     def forward(
         self,
@@ -375,16 +503,27 @@ class ForwardModelConsistency(nn.Module):
         amplitude: torch.Tensor,
         hologram: torch.Tensor,
         modality: str,
+<<<<<<< Updated upstream
     ) -> torch.Tensor:
         from ..physics import estimate_carrier, form_hologram
 
         if self.distance_um is None:
+=======
+        return_coefficients: bool = False,
+    ) -> torch.Tensor:
+        from ..physics import (
+            estimate_carrier, pad_reflect, propagate, reference_wave, unpad,
+        )
+
+        if self.distance is None:
+>>>>>>> Stashed changes
             raise ValueError(
                 "loss.forward_model.distance_um is null. Run scripts/calibrate_z.py "
                 "or obtain the acquisition distance before enabling this term."
             )
 
         pad = self._pad_for(min(phase.shape[-2], phase.shape[-1]))
+<<<<<<< Updated upstream
         carrier = (
             estimate_carrier(hologram, self.dc_exclusion_px)
             if modality == "off_axis" else None
@@ -411,3 +550,67 @@ class ForwardModelConsistency(nn.Module):
             return ((predicted - measured) ** 2).flatten(1).mean(dim=1)
         # correlation: 1 - r, bounded and insensitive to residual scale error
         return 1.0 - (predicted * measured).flatten(1).mean(dim=1)
+=======
+
+        field = torch.polar(amplitude.clamp(min=0.0).float(), phase.float())
+        field = pad_reflect(field, pad)
+        propagated = propagate(
+            field, self.wavelength_um, self.pitch_x_um, self.pitch_y_um, self.distance
+        )
+        propagated = unpad(propagated, pad)
+
+        # Physical components of the recorded intensity, in the order of the
+        # interference expansion. Their coefficients are the unknown
+        # radiometric constants, fitted below rather than assumed.
+        object_intensity = propagated.abs() ** 2
+        parts = [torch.ones_like(object_intensity), object_intensity]
+        if modality == "off_axis":
+            carrier_y, carrier_x = estimate_carrier(
+                hologram, self.dc_exclusion_px, self.dc_exclusion_frac
+            )
+            reference = reference_wave(
+                propagated.shape[-2], propagated.shape[-1], carrier_y, carrier_x,
+                device=propagated.device, dtype=torch.float32,
+            )
+            # BOTH conjugate cross-terms enter as separate fitted components.
+            # The two first-order sidebands have equal magnitude, so any rule
+            # for picking one is a coin flip that flips the sign of the fringe
+            # term and destroys the residual. Carrying both and letting the
+            # least-squares fit weight them removes the ambiguity entirely
+            # rather than resolving it by guess.
+            parts.append(2.0 * (reference.conj() * propagated).real)
+            parts.append(2.0 * (reference * propagated).real)
+        elif modality != "gabor":
+            raise ValueError(f"unknown modality {modality!r}")
+
+        border = int(self.border_px) if self.border_px is not None else pad
+        if border > 0 and min(object_intensity.shape[-2:]) > 2 * border + 8:
+            parts = [p[..., border:-border, border:-border] for p in parts]
+            hologram = hologram[..., border:-border, border:-border]
+
+        batch = hologram.shape[0]
+        measured = hologram.reshape(batch, -1).float()
+        components = torch.stack([p.reshape(batch, -1) for p in parts], dim=1)
+
+        if self.fit_radiometry:
+            predicted, coefficients = self._fit_components(components, measured)
+        else:
+            predicted = components.sum(dim=1)
+            coefficients = torch.ones(batch, components.shape[1], device=measured.device)
+
+        # Scale the residual by the measurement's own spread, so the term is
+        # dimensionless and does not depend on camera units.
+        scale = measured.std(dim=1).clamp(min=1e-6)
+        residual = (predicted - measured) / scale.unsqueeze(1)
+
+        if self.criterion == "l1":
+            value = residual.abs().mean(dim=1)
+        elif self.criterion == "l2":
+            value = (residual ** 2).mean(dim=1)
+        else:
+            # Fraction of the measurement's variance the model fails to explain.
+            # Zero when the fit is perfect, one when it explains nothing.
+            value = (residual ** 2).mean(dim=1)
+
+        return (value, coefficients) if return_coefficients else value
+>>>>>>> Stashed changes

@@ -1,0 +1,32 @@
+# Ablation: does fitting transmitted amplitude change the physics term?
+#
+# The forward model synthesises intensity from a complex field. With the
+# amplitude head off, the specimen is treated as purely refractive (A = 1),
+# which is the standard thin-phase-object assumption. If the cells absorb or
+# scatter appreciably, that mismatch has nowhere to go except into the phase --
+# the term would attribute amplitude error to phase error.
+#
+# This arm turns the head on. It has no ground truth and is trained only by the
+# forward-model residual, exactly as in the self-supervised hologram
+# reconstruction literature. Compare against physics_forward_only: if the
+# residual drops but the phase metrics do not improve, the amplitude head is
+# absorbing model mismatch rather than recovering real absorption, and the
+# pure-phase assumption should be kept and stated.
+#
+# REQUIRES loss.forward_model.distance_um.
+extends: ../base.yaml
+
+experiment_name: amplitude_head
+
+model:
+  amplitude:
+    enabled: true
+
+loss:
+  weights:
+    forward_model: 0.1
+    phase_mask_contrast: 0.0
+    boundary_gradient_alignment: 0.0
+    phase_volume: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0

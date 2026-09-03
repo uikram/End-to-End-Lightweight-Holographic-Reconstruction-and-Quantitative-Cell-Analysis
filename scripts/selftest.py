@@ -344,10 +344,18 @@ def test_physics(cfg) -> None:
           f"std {float(off_axis_at_zero.std()):.4f}")
 
     # The loss must vanish when the phase is exactly right and rise when it is not.
+<<<<<<< Updated upstream
     overrides = {"distance_um": 200.0, "criterion": "correlation", "feature_um": 1.0,
                  "pad_px": 0, "border_px": 8, "reference_ratio": 1.0,
                  "dc_exclusion_px": 20}
     forward_cfg = type("Cfg", (), overrides)()
+=======
+    forward_cfg = type("Cfg", (), {
+        "distance_um": 200.0, "learn_distance": False, "criterion": "l2",
+        "fit_radiometry": True, "feature_um": 1.0, "pad_px": 0, "border_px": 8,
+        "dc_exclusion_frac": 0.13, "dc_exclusion_px": None,
+    })()
+>>>>>>> Stashed changes
     term = ForwardModelConsistency(forward_cfg, optics)
 
     measured = form_hologram(phase_t, amplitude_t, "gabor",
@@ -367,6 +375,67 @@ def test_physics(cfg) -> None:
           and torch.isfinite(gradient_probe.grad).all()
           and float(gradient_probe.grad.abs().sum()) > 0)
 
+<<<<<<< Updated upstream
+=======
+    # ---- the four checks the forward model must pass to be trusted ----
+    # Recovery must be exact through the FULL operator, and must not depend on
+    # camera gain or black level: those are fitted, not assumed. A term that
+    # changed when the exposure changed would be measuring the camera.
+    from holoqpi.losses.terms import ForwardModelConsistency
+
+    forward_cfg = type("Cfg", (), {
+        "distance_um": 200.0, "learn_distance": False, "criterion": "l2",
+        "fit_radiometry": True, "feature_um": 1.0, "pad_px": 0, "border_px": 8,
+        "dc_exclusion_frac": 0.13, "dc_exclusion_px": None,
+    })()
+    consistency = ForwardModelConsistency(forward_cfg, optics)
+    carrier_pair = (torch.tensor([0.11]), torch.tensor([0.09]))
+
+    for geometry, carrier_arg in (("gabor", None), ("off_axis", carrier_pair)):
+        truth = form_hologram(phase_t, amplitude_t, geometry,
+                              wavelength, dx, dy, 200.0, carrier=carrier_arg)
+        plain = 1.0 * truth
+        scaled = 37.0 * truth + 120.0          # arbitrary gain and black level
+
+        exact = float(consistency(phase_t, amplitude_t, plain, geometry).mean())
+        exact_scaled = float(consistency(phase_t, amplitude_t, scaled, geometry).mean())
+        degraded = float(consistency(phase_t * 0.5, amplitude_t, scaled, geometry).mean())
+        empty = float(consistency(torch.zeros_like(phase_t), amplitude_t, scaled, geometry).mean())
+
+        tolerance = 1e-6 if geometry == "gabor" else 2e-2
+        check(f"{geometry}: residual vanishes on the true field",
+              exact < tolerance, f"{exact:.2e}")
+        check(f"{geometry}: residual is invariant to camera gain and offset",
+              abs(exact - exact_scaled) < max(tolerance, 1e-6), 
+              f"{exact:.2e} vs {exact_scaled:.2e}")
+        check(f"{geometry}: residual grows as the phase degrades",
+              exact < degraded < empty,
+              f"{exact:.4f} < {degraded:.4f} < {empty:.4f}")
+
+        probe = (phase_t * 0.5).clone().requires_grad_(True)
+        consistency(probe, amplitude_t, scaled, geometry).sum().backward()
+        check(f"{geometry}: gradient is finite and non-zero",
+              probe.grad is not None and torch.isfinite(probe.grad).all()
+              and float(probe.grad.abs().sum()) > 0)
+
+    # z must be recoverable by gradient descent, or `learn_distance` is a lie.
+    learnable_cfg = type("Cfg", (), {
+        "distance_um": 140.0, "learn_distance": True, "criterion": "l2",
+        "fit_radiometry": True, "feature_um": 1.0, "pad_px": 0, "border_px": 8,
+        "dc_exclusion_frac": 0.13, "dc_exclusion_px": None,
+    })()
+    refinable = ForwardModelConsistency(learnable_cfg, optics)
+    target = form_hologram(phase_t, amplitude_t, "gabor", wavelength, dx, dy, 200.0)
+    optimiser = torch.optim.Adam(refinable.parameters(), lr=4.0)
+    for _ in range(80):
+        optimiser.zero_grad()
+        refinable(phase_t, amplitude_t, target, "gabor").mean().backward()
+        optimiser.step()
+    recovered = float(refinable.distance.detach())
+    check("z is recoverable by gradient descent from a wrong start",
+          abs(recovered - 200.0) < 5.0, f"140.0 -> {recovered:.2f} um (true 200.0)")
+
+>>>>>>> Stashed changes
     # Unwrapping must undo a wrap it did not create.
     ramp = torch.linspace(0, 6 * math.pi, size).view(1, 1, 1, size).expand(1, 1, size, size)
     wrapped = torch.atan2(torch.sin(ramp), torch.cos(ramp))

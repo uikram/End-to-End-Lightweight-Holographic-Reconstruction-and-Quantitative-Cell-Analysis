@@ -8,6 +8,7 @@ the propagation: a raw hologram and the reference phase reconstructed from it.
 
 Two estimators are computed for every candidate distance and each modality.
 
+<<<<<<< Updated upstream
 1. FORWARD.  Synthesise the hologram that the reference phase would produce at
    distance z and correlate it with the measured hologram. This is the criterion
    that matters, because it is exactly the residual the training loss minimises.
@@ -20,6 +21,35 @@ Two estimators are computed for every candidate distance and each modality.
 Both are scanned over a coarse grid and then refined. A sharp, single-peaked
 agreement curve means z is identifiable; a flat curve means it is not, and the
 report says so instead of returning a number that looks confident.
+=======
+1. FORWARD.  Synthesise the hologram the reference phase would produce at
+   distance z and score it with the *same* ForwardModelConsistency term the
+   training loss uses -- including its per-image radiometric fit, so unknown
+   camera gain and black level cannot masquerade as a distance. This is the
+   criterion that matters, because it is literally the residual training
+   minimises.
+
+2. INVERSE.  Back-propagate the measured hologram by z and correlate the
+   resulting phase with the reference phase. A cruder criterion: it assumes the
+   hologram amplitude is sqrt(I) with zero phase, which is only reasonable
+   in-line and ignores the twin image entirely. Reported as a weak cross-check,
+   never as a veto.
+
+IDENTIFIABILITY is decided by whether *individual images agree*, not by whether
+the two estimators agree. Each image is scanned separately and the spread of its
+own best z is reported: if eighty independent fields all place the minimum within
+a few micrometres of each other, z is determined, whatever the weaker estimator
+says. This replaces an earlier rule that required both estimators to agree, which
+let the crude one veto the good one.
+
+A NOTE ON THE TWO GEOMETRIES, which the results here will show plainly. An
+off-axis hologram encodes phase in its carrier fringes at *any* distance, so its
+residual is nearly flat in z and z is only weakly identifiable from it -- that is
+a physical property of the geometry, not a failure of the search. An in-line
+hologram encodes phase only through defocus, so its residual has a real minimum.
+The same specimen was recorded at the same distance in both, so **use the Gabor
+arm to determine z and apply it to both**.
+>>>>>>> Stashed changes
 
     python scripts/calibrate_z.py --config config/base.yaml
     python scripts/calibrate_z.py --config config/base.yaml --z-range -400 400 --steps 81
@@ -118,6 +148,28 @@ def phase_sensitivity(cfg, modality: str, distance_um: float, phase, carrier) ->
     return float((change / scale).mean() / epsilon)
 
 
+<<<<<<< Updated upstream
+=======
+def _forward_term(cfg, distance_um: float):
+    """The training residual, instantiated at one distance."""
+    from holoqpi.losses.terms import ForwardModelConsistency
+
+    forward = cfg.loss.forward_model
+    settings = type("Cfg", (), {
+        "distance_um": float(distance_um),
+        "learn_distance": False,
+        "criterion": forward.criterion,
+        "fit_radiometry": True,
+        "feature_um": forward.feature_um,
+        "pad_px": forward.pad_px,
+        "border_px": forward.border_px,
+        "dc_exclusion_frac": forward.dc_exclusion_frac,
+        "dc_exclusion_px": forward.dc_exclusion_px,
+    })()
+    return ForwardModelConsistency(settings, cfg.optics)
+
+
+>>>>>>> Stashed changes
 def scan(cfg, modality: str, device, distances: np.ndarray, batches: int,
          split: str = "val") -> dict:
     optics = cfg.optics
@@ -133,6 +185,10 @@ def scan(cfg, modality: str, device, distances: np.ndarray, batches: int,
     forward_scores = np.zeros((len(distances),), dtype=np.float64)
     inverse_scores = np.zeros((len(distances),), dtype=np.float64)
     sensitivity_probe: list = []
+<<<<<<< Updated upstream
+=======
+    per_image_best: list[float] = []
+>>>>>>> Stashed changes
     seen = 0
 
     with torch.no_grad():
@@ -147,6 +203,7 @@ def scan(cfg, modality: str, device, distances: np.ndarray, batches: int,
             if index == 0:
                 sensitivity_probe.append((phase, carrier))
 
+<<<<<<< Updated upstream
             for position, distance in enumerate(distances):
                 synthetic = form_hologram(
                     phase, amplitude, modality, wavelength, dx, dy,
@@ -155,6 +212,16 @@ def scan(cfg, modality: str, device, distances: np.ndarray, batches: int,
                 forward_scores[position] += float(
                     _correlation(synthetic, hologram).abs().sum()
                 )
+=======
+            per_image = np.zeros((hologram.shape[0], len(distances)), dtype=np.float64)
+            for position, distance in enumerate(distances):
+                # The training residual itself, so calibration and optimisation
+                # cannot disagree about what "consistent" means.
+                term = _forward_term(cfg, float(distance)).to(device)
+                value = term(phase, amplitude, hologram, modality)
+                per_image[:, position] = value.detach().cpu().numpy()
+                forward_scores[position] += float(value.sum())
+>>>>>>> Stashed changes
 
                 field = torch.complex(hologram.clamp(min=0).sqrt(),
                                       torch.zeros_like(hologram))
@@ -163,6 +230,10 @@ def scan(cfg, modality: str, device, distances: np.ndarray, batches: int,
                 inverse_scores[position] += float(
                     _correlation(recovered, phase).abs().sum()
                 )
+<<<<<<< Updated upstream
+=======
+            per_image_best.extend(distances[per_image.argmin(axis=1)].tolist())
+>>>>>>> Stashed changes
 
     if seen == 0:
         raise SystemExit("no images were read; check the split file and data root")
@@ -171,7 +242,11 @@ def scan(cfg, modality: str, device, distances: np.ndarray, batches: int,
     inverse_scores /= seen
 
     # Sensitivity at the best distance, and at zero for contrast.
+<<<<<<< Updated upstream
     best = float(distances[int(np.argmax(forward_scores))])
+=======
+    best = float(distances[int(np.argmin(forward_scores))])
+>>>>>>> Stashed changes
     phase, carrier = sensitivity_probe[0]
     sensitivity = {
         "at_best_z": phase_sensitivity(cfg, modality, best, phase, carrier),
@@ -182,14 +257,21 @@ def scan(cfg, modality: str, device, distances: np.ndarray, batches: int,
         "modality": modality,
         "images": seen,
         "distances_um": distances.tolist(),
+<<<<<<< Updated upstream
         "forward_correlation": forward_scores.tolist(),
         "inverse_correlation": inverse_scores.tolist(),
+=======
+        "forward_residual": forward_scores.tolist(),
+        "inverse_correlation": inverse_scores.tolist(),
+        "per_image_best_z_um": per_image_best,
+>>>>>>> Stashed changes
         "phase_sensitivity": sensitivity,
     }
 
 
 def summarise(result: dict) -> dict:
     distances = np.asarray(result["distances_um"])
+<<<<<<< Updated upstream
     forward = np.asarray(result["forward_correlation"])
     inverse = np.asarray(result["inverse_correlation"])
 
@@ -214,11 +296,55 @@ def summarise(result: dict) -> dict:
         "grid_step_um": step,
         "identifiable": bool(p_forward > 2.0 and p_inverse > 2.0 and agree),
         "recommended_z_um": z_forward if agree else None,
+=======
+    forward = np.asarray(result["forward_residual"])
+    inverse = np.asarray(result["inverse_correlation"])
+    step = float(abs(distances[1] - distances[0])) if distances.size > 1 else 0.0
+
+    # The forward criterion is a residual, so the best z is its MINIMUM.
+    best = int(np.argmin(forward))
+    spread = float(forward.std()) or 1e-12
+    depth = float((np.median(forward) - forward[best]) / spread)
+
+    z_inverse = float(distances[int(np.argmax(inverse))])
+    inverse_spread = float(inverse.std()) or 1e-12
+    inverse_prominence = float((inverse.max() - np.median(inverse)) / inverse_spread)
+
+    # The real identifiability test: do individual images independently agree?
+    votes = np.asarray(result.get("per_image_best_z_um") or [], dtype=float)
+    if votes.size >= 3:
+        vote_median = float(np.median(votes))
+        vote_spread = float(np.percentile(votes, 75) - np.percentile(votes, 25))
+        # Consistent if the middle half of the images fall within a few grid
+        # steps of one another, and away from the edge of the scanned range.
+        consistent = bool(vote_spread <= max(3.0 * step, 1e-9))
+        at_edge = bool(
+            abs(vote_median - distances[0]) < step or abs(vote_median - distances[-1]) < step
+        )
+    else:
+        vote_median, vote_spread, consistent, at_edge = float("nan"), float("nan"), False, False
+
+    identifiable = bool(depth > 2.0 and consistent and not at_edge)
+    return {
+        "z_forward_um": float(distances[best]),
+        "forward_residual_min": float(forward[best]),
+        "forward_well_depth": depth,
+        "z_inverse_um": z_inverse,
+        "inverse_prominence": inverse_prominence,
+        "per_image_median_z_um": vote_median,
+        "per_image_iqr_um": vote_spread,
+        "images_agree": consistent,
+        "peak_at_scan_edge": at_edge,
+        "grid_step_um": step,
+        "identifiable": identifiable,
+        "recommended_z_um": vote_median if identifiable else None,
+>>>>>>> Stashed changes
     }
 
 
 def report(result: dict, summary: dict) -> None:
     print(f"\n=== {result['modality']}  ({result['images']} images) ===")
+<<<<<<< Updated upstream
     print(f"  forward  (synthesise hologram from reference phase)  "
           f"z = {summary['z_forward_um']:+9.3f} um   r = {summary['forward_peak']:.4f}   "
           f"prominence {summary['forward_prominence']:.1f}")
@@ -227,6 +353,18 @@ def report(result: dict, summary: dict) -> None:
           f"prominence {summary['inverse_prominence']:.1f}")
     print(f"  grid step {summary['grid_step_um']:.3f} um   "
           f"estimators agree: {summary['estimators_agree']}")
+=======
+    print(f"  forward  (training residual, minimised)   z = {summary['z_forward_um']:+9.3f} um"
+          f"   residual = {summary['forward_residual_min']:.5f}"
+          f"   well depth {summary['forward_well_depth']:.1f}")
+    print(f"  per-image agreement                       median "
+          f"{summary['per_image_median_z_um']:+9.3f} um   IQR "
+          f"{summary['per_image_iqr_um']:.3f} um   consistent: {summary['images_agree']}")
+    print(f"  inverse  (weak cross-check)               z = {summary['z_inverse_um']:+9.3f} um"
+          f"   prominence {summary['inverse_prominence']:.1f}")
+    print(f"  grid step {summary['grid_step_um']:.3f} um"
+          + ("   PEAK AT THE EDGE OF THE SCANNED RANGE" if summary["peak_at_scan_edge"] else ""))
+>>>>>>> Stashed changes
     sensitivity = result.get("phase_sensitivity", {})
     if sensitivity:
         print(f"  forward-model sensitivity to phase   "
@@ -240,6 +378,7 @@ def report(result: dict, summary: dict) -> None:
 
     print("\n  -> ", end="")
     if summary["identifiable"]:
+<<<<<<< Updated upstream
         print(f"z is identifiable at {summary['recommended_z_um']:+.3f} um.\n"
               f"     Set optics.propagation_distance_um to this value in config/base.yaml,\n"
               f"     or per modality in config/off_axis.yaml and config/gabor.yaml.")
@@ -253,6 +392,24 @@ def report(result: dict, summary: dict) -> None:
         print("the two estimators DISAGREE, so neither should be trusted yet.\n"
               "     Widen or refine the grid, and check that the alignment between\n"
               "     hologram and phase (data.align) is correct before reading further.")
+=======
+        print(f"z IS identifiable at {summary['recommended_z_um']:+.3f} um "
+              f"(images agree to {summary['per_image_iqr_um']:.2f} um).\n"
+              f"     Set loss.forward_model.distance_um to this value in config/base.yaml.")
+    elif summary["peak_at_scan_edge"]:
+        print("the minimum sits at the EDGE of the scanned range, so the true z is\n"
+              "     probably outside it. Re-run with a wider --z-range before concluding.")
+    elif summary["forward_well_depth"] <= 2.0:
+        print("the residual is FLAT in z, so z is not identifiable from this arm.\n"
+              "     For off-axis this is expected and physical: the carrier encodes phase\n"
+              "     at any distance, so the hologram barely changes with z. Take z from the\n"
+              "     Gabor arm instead -- it is the same specimen at the same distance.")
+    else:
+        print("the residual has a minimum but individual images DISAGREE about where.\n"
+              "     Something varies between fields that should not: check data.align, and\n"
+              "     check that the reference phase was reconstructed with one fixed z\n"
+              "     rather than refocused per image. Do not guess a value.")
+>>>>>>> Stashed changes
 
 
 def main() -> int:
@@ -310,15 +467,47 @@ def main() -> int:
         report(result, summary)
         payload[modality] = {**summary, "curve": result}
 
+<<<<<<< Updated upstream
+=======
+    # The same specimen was recorded at the same distance in both geometries, but
+    # only the in-line arm constrains z (see the module docstring). If Gabor
+    # identified it and off-axis did not, say so explicitly rather than leaving
+    # the reader to conclude the calibration failed.
+    gabor = payload.get("gabor") or {}
+    off_axis = payload.get("off_axis") or {}
+    if gabor.get("identifiable") and not off_axis.get("identifiable"):
+        print(f"\n  ** Use z = {gabor['recommended_z_um']:+.3f} um for BOTH arms. **")
+        print("     The in-line arm determines it; the off-axis residual is flat in z")
+        print("     because its carrier encodes phase without needing defocus. Same")
+        print("     specimen, same acquisition, same distance.")
+
+>>>>>>> Stashed changes
     destination = Path(args.out)
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(payload, indent=2))
     print(f"\ncurves and estimates -> {destination}")
 
     if not any(payload[m]["identifiable"] for m in payload):
+<<<<<<< Updated upstream
         print("\nNo modality produced an identifiable z. The forward-model loss cannot\n"
               "be trained meaningfully until this is resolved; leave\n"
               "loss.weights.forward_model at 0.0 and ask for the acquisition distance.")
+=======
+        print("\nNo modality produced an identifiable z.")
+        print("Next steps, in order:")
+        print("  1. Ask the acquiring group for the reconstruction distance. This is one")
+        print("     email and it settles the question outright.")
+        print("  2. Re-run with a wider range: --z-range -600 600 --steps 121 --feature-um 2")
+        print("     A minimum at the edge of the scan means the range was too narrow.")
+        print("  3. If z is genuinely unknown, train with")
+        print("        loss.forward_model.learn_distance: true")
+        print("     and an initial distance_um from the Gabor forward minimum above. The")
+        print("     propagation kernel is differentiable in z, so it is refined alongside")
+        print("     the weights; report the converged value in the paper.")
+        print("  4. Until one of those, leave loss.weights.forward_model at 0.0. Training")
+        print("     the term with a wrong z is worse than not training it: the residual")
+        print("     then measures the error in z rather than in the reconstruction.")
+>>>>>>> Stashed changes
         return 2
     return 0
 

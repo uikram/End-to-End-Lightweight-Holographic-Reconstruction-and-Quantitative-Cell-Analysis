@@ -174,7 +174,19 @@ if [ -z "${Z_SET}" ]; then
   say ""
   say "  !! loss.forward_model.distance_um is null, so the two forward-model arms"
   say "     would train a term with no distance and fail. Running only the arms"
+<<<<<<< Updated upstream
   say "     that do not need z. Set the distance and re-run: bash run_study.sh --stage 5"
+=======
+  say "     that do not need z."
+  say "     To unblock, in order of preference:"
+  say "       1. ask the acquiring group for the reconstruction distance;"
+  say "       2. widen the calibration scan:"
+  say "          python scripts/calibrate_z.py --config config/base.yaml \\"
+  say "              --z-range -600 600 --steps 121 --feature-um 2 --refine"
+  say "       3. or set an approximate distance_um and learn_distance: true, which"
+  say "          refines z by gradient descent alongside the weights."
+  say "     Then: bash run_study.sh --stage 5"
+>>>>>>> Stashed changes
   run_step "ablation: no physics at all" "05a_no_physics.log" \
     python main.py compare --config config/ablation/no_physics.yaml ${TRAIN_FLAG} ${EXTRA}
   run_step "ablation: mask-phase coupling only" "05c_physics_coupling_only.log" \

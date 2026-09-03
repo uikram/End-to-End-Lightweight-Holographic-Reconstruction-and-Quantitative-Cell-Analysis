@@ -92,6 +92,9 @@ class Evaluator:
 
         for batch in loader:
             hologram = batch["hologram"].to(self.device, non_blocking=True)
+            raw_hologram = batch.get("hologram_raw")
+            if raw_hologram is not None:
+                raw_hologram = raw_hologram.to(self.device, non_blocking=True)
             phase_target = batch["phase"].to(self.device, non_blocking=True)
             mask_target = batch["mask"].to(self.device, non_blocking=True)
             condition_target = batch["condition"].to(self.device, non_blocking=True)
@@ -104,6 +107,10 @@ class Evaluator:
                     "mask": mask_target,
                     "condition": condition_target,
                     "hologram": hologram,
+<<<<<<< Updated upstream
+=======
+                    "hologram_raw": raw_hologram,
+>>>>>>> Stashed changes
                 }
                 _, components = loss_fn(outputs, moved)
                 for key, value in components.items():
@@ -137,7 +144,12 @@ class Evaluator:
             if self.forward_metrics is not None:
                 self.forward_metrics.update(
                     outputs["phase"].float(), outputs.get("amplitude"),
+<<<<<<< Updated upstream
                     hologram, reference_phase=phase_target.float(),
+=======
+                    raw_hologram if raw_hologram is not None else hologram,
+                    reference_phase=phase_target.float(),
+>>>>>>> Stashed changes
                 )
             self.segmentation_metrics.update(
                 mask_prediction, mask_reference,

@@ -34,10 +34,20 @@ class ForwardModelMetrics:
         self.pitch_x_um = float(optics.pixel_pitch_x_um)
         self.pitch_y_um = float(optics.pixel_pitch_y_um)
         self.feature_um = float(loss_cfg.feature_um)
+<<<<<<< Updated upstream
         self.reference_ratio = float(loss_cfg.reference_ratio)
         self.dc_exclusion_px = int(loss_cfg.dc_exclusion_px)
         self.border_px = loss_cfg.border_px
         self.pad_px = loss_cfg.pad_px
+=======
+        self.dc_exclusion_px = loss_cfg.dc_exclusion_px
+        self.fit_radiometry = bool(loss_cfg.fit_radiometry)
+        self.border_px = loss_cfg.border_px
+        self.pad_px = loss_cfg.pad_px
+
+        from ..losses.terms import ForwardModelConsistency
+        self._term = ForwardModelConsistency(loss_cfg, optics) if self.enabled else None
+>>>>>>> Stashed changes
         self.reset()
 
     def reset(self) -> None:
@@ -54,6 +64,7 @@ class ForwardModelMetrics:
         required = int(np.ceil(spread_um / min(self.pitch_x_um, self.pitch_y_um)))
         return min(required, affordable)
 
+<<<<<<< Updated upstream
     @staticmethod
     def _standardise(x: torch.Tensor) -> torch.Tensor:
         flat = x.flatten(1)
@@ -61,6 +72,8 @@ class ForwardModelMetrics:
         std = flat.std(dim=1).view(-1, 1, 1, 1).clamp(min=1e-6)
         return (x - mean) / std
 
+=======
+>>>>>>> Stashed changes
     @torch.no_grad()
     def update(
         self,
@@ -72,6 +85,7 @@ class ForwardModelMetrics:
         """``phase`` and ``hologram`` are (B, 1, H, W) tensors on any device."""
         if not self.enabled:
             return
+<<<<<<< Updated upstream
         from ..physics import estimate_carrier, form_hologram
 
         pad = self._pad(min(phase.shape[-2], phase.shape[-1]))
@@ -96,6 +110,16 @@ class ForwardModelMetrics:
             a = self._standardise(synthetic)
             b = self._standardise(measured)
             return (1.0 - (a * b).flatten(1).mean(dim=1)).cpu().numpy()
+=======
+
+        def residual(field_phase):
+            # Scored by the *same* term the loss uses, so the metric and the
+            # objective cannot drift apart, and an arm that never optimised the
+            # term is still scored on exactly the quantity the others minimised.
+            amp = amplitude if amplitude is not None else torch.ones_like(field_phase)
+            value = self._term(field_phase, amp, hologram, self.modality)
+            return value.detach().cpu().numpy()
+>>>>>>> Stashed changes
 
         self._predicted.extend(residual(phase).tolist())
         if reference_phase is not None:

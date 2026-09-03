@@ -224,12 +224,23 @@ loss:
   # ---------------------------------------------------------------------------
   forward_model:
     distance_um: null                   # sample-to-sensor distance, micrometres
+<<<<<<< Updated upstream
     criterion: correlation              # correlation | l1 | l2
     feature_um: 1.0                     # smallest object feature, sets the pad width
     pad_px: null                        # null = derived from distance and feature_um
     border_px: null                     # null = same as pad_px; margin dropped from the residual
     reference_ratio: 1.0                # off-axis reference amplitude relative to the object beam
     dc_exclusion_px: 60                 # carrier search excludes this radius around DC
+=======
+    learn_distance: false               # true -> refine z by gradient descent from distance_um
+    criterion: l2                       # l2 | l1 | correlation
+    fit_radiometry: true                # fit gain, offset and reference ratio per image
+    feature_um: 1.0                     # smallest object feature, sets the pad width
+    pad_px: null                        # null = derived from distance and feature_um
+    border_px: null                     # null = same as pad_px; margin dropped from the residual
+    dc_exclusion_frac: 0.13             # carrier search ignores this fraction of the field around DC
+    dc_exclusion_px: null               # absolute override; null uses the fraction above
+>>>>>>> Stashed changes
 
   physics:
     pmc_margin: 0.1
@@ -262,6 +273,10 @@ training:
   amp_dtype: float16                    # float16 | bfloat16
   accumulation_steps: 1
   log_every_n_steps: 20
+  # z lives in micrometres, so it needs a far larger step than a network weight
+  # to move at all. Only used when loss.forward_model.learn_distance is true.
+  physics_parameter_lr_scale: 10000.0
+
   checkpoint_metric: composite          # composite | phase_mae | seg_dice | dry_mass_mape
   checkpoint_mode: auto                 # auto resolves min/max from the metric name
   save_last: true

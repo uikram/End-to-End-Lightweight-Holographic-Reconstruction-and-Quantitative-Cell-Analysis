@@ -39,6 +39,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from ..config import Config
+from ..utils import get_logger
+
+LOGGER = get_logger(__name__)
 from .terms import (
     BoundaryGradientAlignment,
     DryMassConsistency,
@@ -100,6 +103,10 @@ class JointPhysicsAwareLoss(nn.Module):
         # misconfiguration surfaces at construction rather than at epoch 1.
         self.forward_model = ForwardModelConsistency(loss_cfg.forward_model, cfg.optics)
         self.modality = cfg.data.modality
+<<<<<<< Updated upstream
+=======
+        self._warned_normalised = False
+>>>>>>> Stashed changes
 
     @property
     def active_physics_terms(self) -> list[str]:
@@ -162,6 +169,7 @@ class JointPhysicsAwareLoss(nn.Module):
         # background, and a crop without cells still has to be consistent with
         # the hologram it came from.
         if self.weights.get("forward_model", 0.0):
+<<<<<<< Updated upstream
             hologram = batch.get("hologram")
             if hologram is None:
                 raise KeyError(
@@ -176,6 +184,49 @@ class JointPhysicsAwareLoss(nn.Module):
             )
             total = total + self.weights["forward_model"] * forward_term
             components["forward_model"] = float(forward_term.mean().detach())
+=======
+            # The RAW measurement, not the normalised network input. Falling
+            # back to the normalised one would silently change the observation
+            # model this term exists to test, so the fallback is announced.
+            hologram = batch.get("hologram_raw")
+            if hologram is None:
+                hologram = batch.get("hologram")
+                if hologram is None:
+                    raise KeyError(
+                        "loss.weights.forward_model is non-zero but the batch carries "
+                        "neither 'hologram_raw' nor 'hologram'."
+                    )
+                if not self._warned_normalised:
+                    self._warned_normalised = True
+                    LOGGER.warning(
+                        "forward-model term is comparing against the NORMALISED hologram "
+                        "because the batch carries no 'hologram_raw'. The fitted "
+                        "radiometric coefficients then describe the normalisation rather "
+                        "than the camera. Rebuild the dataloaders so the raw intensity "
+                        "reaches the loss."
+                    )
+            amplitude = outputs.get("amplitude")
+            if amplitude is None:
+                amplitude = torch.ones_like(phase_pred)
+            forward_term, coefficients = self.forward_model(
+                phase_pred, amplitude, hologram, self.modality,
+                return_coefficients=True,
+            )
+            total = total + self.weights["forward_model"] * forward_term
+            components["forward_model"] = float(forward_term.mean().detach())
+            # Logged so the calibration is inspectable. A gain that changes sign
+            # or drifts across epochs means the forward model is wrong, and that
+            # would otherwise be invisible inside the residual.
+            fitted = coefficients.mean(dim=0).detach()
+            names = ("offset", "object_gain", "fringe_gain", "fringe_gain_conj")
+            for index, name in enumerate(names):
+                if index < fitted.numel():
+                    components[f"forward_{name}"] = float(fitted[index])
+            if self.forward_model.learn_distance:
+                components["forward_distance_um"] = float(
+                    self.forward_model.distance.detach()
+                )
+>>>>>>> Stashed changes
 
         if self.weights.get("phase_mask_contrast", 0.0):
             raw_terms["phase_mask_contrast"] = self.pmc(foreground, phase_pred)

@@ -110,21 +110,47 @@ class Trainer:
                 "no trainable parameters. If LoRA is enabled, check that "
                 "model.lora.always_trainable_patterns matches the decoder and head names."
             )
+
+        # The objective can itself hold parameters. With
+        # loss.forward_model.learn_distance the propagation distance z is an
+        # nn.Parameter of the loss, and optimising only model.parameters() would
+        # leave it frozen at its initial value while the configuration and the
+        # logs both claimed it was being learned. It gets its own parameter
+        # group: z is a physical distance in micrometres, not a weight, so
+        # weight decay must not pull it toward zero and it needs a much larger
+        # step to move on the scale it lives on.
+        groups = [{"params": parameters}]
+        criterion_parameters = [
+            p for p in self.criterion.parameters() if p.requires_grad
+        ]
+        if criterion_parameters:
+            groups.append({
+                "params": criterion_parameters,
+                "lr": training.learning_rate * training.physics_parameter_lr_scale,
+                "weight_decay": 0.0,
+            })
+            LOGGER.info(
+                "optimising %d parameter(s) of the objective itself (z and similar) "
+                "at %.3g x the base learning rate",
+                sum(p.numel() for p in criterion_parameters),
+                training.physics_parameter_lr_scale,
+            )
+
         name = training.optimizer.lower()
         if name == "adamw":
             return torch.optim.AdamW(
-                parameters,
+                groups,
                 lr=training.learning_rate,
                 weight_decay=training.weight_decay,
                 betas=tuple(training.betas),
             )
         if name == "adam":
             return torch.optim.Adam(
-                parameters, lr=training.learning_rate, betas=tuple(training.betas)
+                groups, lr=training.learning_rate, betas=tuple(training.betas)
             )
         if name == "sgd":
             return torch.optim.SGD(
-                parameters, lr=training.learning_rate,
+                groups, lr=training.learning_rate,
                 momentum=training.betas[0], weight_decay=training.weight_decay,
             )
         raise ValueError(f"unknown optimizer {training.optimizer!r}")
@@ -157,12 +183,17 @@ class Trainer:
     # -- loop -------------------------------------------------------------
     def train(self) -> dict:
         warmup_epochs = self.cfg.training.warmup_epochs
-        base_lr = self.cfg.training.learning_rate
+        # Each group keeps its OWN base rate. Overwriting every group with the
+        # global learning rate would erase the deliberately larger step given to
+        # physical parameters such as the propagation distance, which lives in
+        # micrometres and cannot move at a weight's learning rate.
+        base_lrs = [group["lr"] for group in self.optimizer.param_groups]
 
         for epoch in range(1, self.epochs + 1):
             if epoch <= warmup_epochs and warmup_epochs > 0:
-                for group in self.optimizer.param_groups:
-                    group["lr"] = base_lr * epoch / warmup_epochs
+                scale = epoch / warmup_epochs
+                for group, base in zip(self.optimizer.param_groups, base_lrs):
+                    group["lr"] = base * scale
 
             started = time.time()
             train_summary = self._train_one_epoch(epoch)
@@ -252,9 +283,17 @@ class Trainer:
                 "phase": batch["phase"].to(self.device, non_blocking=True),
                 "mask": batch["mask"].to(self.device, non_blocking=True),
                 "condition": batch["condition"].to(self.device, non_blocking=True),
+<<<<<<< Updated upstream
                 # The forward-model term compares against the measurement itself,
                 # so the input has to reach the loss as well as the network.
                 "hologram": hologram,
+=======
+                # The forward-model term compares against the measurement
+                # itself, so the RAW intensity has to reach the loss. The
+                # network gets the normalised version; the physics does not.
+                "hologram": hologram,
+                "hologram_raw": batch["hologram_raw"].to(self.device, non_blocking=True),
+>>>>>>> Stashed changes
             }
 
             with torch.autocast(

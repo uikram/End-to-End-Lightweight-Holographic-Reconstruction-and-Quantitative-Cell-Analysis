@@ -26,13 +26,18 @@ class GeometricAugmentation:
         self.p_rot90 = cfg.rot90
         self._rng = random.Random(seed)
 
-    def __call__(
-        self, hologram: np.ndarray, phase: np.ndarray, mask: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-        if not self.enabled:
-            return hologram, phase, mask
+    def __call__(self, *arrays: np.ndarray) -> tuple[np.ndarray, ...]:
+        """Apply one isometry to every array passed, in lockstep.
 
-        arrays = [hologram, phase, mask]
+        Takes a variable number of arrays so the raw measurement travels with
+        the normalised input, the phase and the mask. If it did not, the
+        forward-model loss would compare a flipped prediction against an
+        unflipped hologram.
+        """
+        if not self.enabled:
+            return arrays
+
+        arrays = list(arrays)
 
         if self._rng.random() < self.p_horizontal:
             arrays = [np.flip(a, axis=-1) for a in arrays]

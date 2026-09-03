@@ -406,10 +406,57 @@ It is what all four reference papers mean by physics consistency:
 
 Three implementation details carry weight.
 
+<<<<<<< Updated upstream
 **Standardisation.** Illumination brightness, camera gain and exposure differ
 between a synthesised and a recorded hologram for reasons unrelated to the field.
 Both sides are reduced to zero mean and unit variance, so the residual measures
 structure rather than scale.
+=======
+**The radiometric model is fitted, not assumed.** A sensor does not record
+`|U|^2`; it records `gain * (physical intensity) + offset + noise`, with gain set
+by illumination power, exposure and camera response, and offset by the black
+level. None of these are known and none carry phase information. They are removed
+by *fitting* them, per image, in closed form, as part of the observation model.
+Writing the off-axis intensity in its physical components,
+
+```
+I = |R|^2 + |U|^2 + 2 Re(R* U)
+  = c0 . 1 + c1 . |U|^2 + c2 . Re(R* U) + c3 . Re(R U)
+```
+
+the unknown reference power, object gain and reference-to-object amplitude ratio
+are exactly the coefficients c0..c3, recovered by a 4 x 1 least-squares solve.
+In-line has no separate reference, so the model is two-parameter,
+`I = c0 + c1 |U|^2`.
+
+Three things this buys, none of which a z-score of both sides provides:
+
+* It absorbs the off-axis **reference ratio**, which a normalisation cannot.
+* It absorbs the **conjugate-sideband ambiguity**. The two first-order sidebands
+  have equal magnitude, so any rule for picking one is a coin flip that flips the
+  sign of the fringe term. Both cross-terms enter as separate fitted components
+  and the fit weights them, so the ambiguity disappears rather than being
+  resolved by guess.
+* The coefficients are **logged** (`forward_offset`, `forward_object_gain`,
+  `forward_fringe_gain`). A gain that drifts or changes sign is a modelling error
+  announcing itself, which a hidden normalisation would conceal.
+
+**The residual is computed against the RAW measurement.** The dataset carries two
+representations of every hologram: `hologram`, z-scored for the network, and
+`hologram_raw`, the intensity the sensor recorded. The network needs a
+well-conditioned input; the physics term needs the observation. Using one array
+for both would silently redefine the observation model this term exists to test,
+so the loss reads `hologram_raw` and warns loudly if only the normalised version
+reaches it.
+
+**The carrier is estimated to sub-bin precision.** A half-bin error is a phase
+ramp of pi across the field, which no per-image gain can absorb. The spectral
+peak is refined by parabolic interpolation and then polished by maximising the
+demodulated DC magnitude. The DC exclusion radius is a *fraction* of the field,
+not a pixel count: an absolute radius means something different on a 900 px
+evaluation field and a 512 px training crop, and on a small enough crop it masks
+out the carrier itself.
+>>>>>>> Stashed changes
 
 **Border exclusion.** See "crop size is a physical constraint" in section 5a.
 
@@ -421,12 +468,49 @@ truth and is trained *only* by this residual, exactly as in the self-supervised
 hologram-reconstruction literature.
 
 **z is required and is not in the data.** The phase `.bin` header carries width,
+<<<<<<< Updated upstream
 height and the two pixel pitches and nothing else. Obtain the distance from the
 acquisition, or recover it with `scripts/calibrate_z.py`, which matches the
 hologram against the reference phase in both directions and refuses to return a
 number when the agreement curves are flat. Training this term with a wrong z is
 worse than not training it: the residual then measures the error in z rather than
 the error in the reconstruction.
+=======
+height and the two pixel pitches and nothing else. Three routes, in order of
+preference:
+
+1. **Ask the acquiring group.** One email settles it outright.
+2. **Recover it** with `scripts/calibrate_z.py`, which scans the *same* residual
+   the loss minimises and decides identifiability by whether individual images
+   independently agree on the minimum — not by whether two estimators of unequal
+   quality agree with each other.
+3. **Learn it.** `loss.forward_model.learn_distance: true` makes z an
+   `nn.Parameter` initialised at `distance_um`. The angular-spectrum kernel is
+   differentiable in z, so this is a real refinement: the self-test recovers
+   z = 200 um from an initialisation of 140 um in eighty steps. Report the
+   converged value in the paper.
+
+Training with a wrong fixed z is worse than not training the term: the residual
+then measures the error in z rather than the error in the reconstruction.
+
+**Only the in-line arm constrains z, and that is physics rather than a defect.**
+An off-axis hologram encodes phase in its carrier fringes at any distance, so its
+residual is nearly flat in z; an in-line hologram encodes phase only through
+defocus, so its residual has a real minimum. The same specimen was recorded at
+the same distance in both, so **the Gabor arm determines z and the value applies
+to both**. `calibrate_z.py` says this explicitly when it happens.
+
+**Verification.** Four checks run in `scripts/selftest.py` section [6] and must
+pass before any result from this term is quoted:
+
+| Check | Result |
+|---|---|
+| residual vanishes on the true field | 7.7e-11 (in-line), 8.2e-3 (off-axis, limited by carrier estimation) |
+| residual is invariant to camera gain and black level | identical at gain 1 and gain 37 with offset 120 |
+| residual grows monotonically as the phase degrades | 0.000 → 0.028 → 1.000 (in-line) |
+| gradient is finite and non-zero | yes, both geometries |
+| z recoverable by gradient descent | 140 um → 200.9 um (true 200) |
+>>>>>>> Stashed changes
 
 ### 6.3 Physics coupling terms
 

@@ -83,7 +83,7 @@ class HologramQPIDataset(Dataset):
     def __len__(self) -> int:
         return len(self.samples)
 
-    def _load_arrays(self, index: int) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def _load_arrays(self, index: int) -> tuple[np.ndarray, ...]:
         if self._cache is not None and index in self._cache:
             return self._cache[index]
 
@@ -98,6 +98,12 @@ class HologramQPIDataset(Dataset):
             data_io.hologram_path(self.data_root, self.cfg, stem, self.modality)
         )
         hologram = data_io.align_to_phase_grid(hologram, self.phase_size, self.align)
+        # Two representations of the same measurement, kept separately on
+        # purpose. The network needs a normalised input; the forward-model loss
+        # needs the intensity the sensor actually recorded. Normalising once and
+        # using the result for both would silently redefine the observation
+        # model the physics term is supposed to test.
+        hologram_raw = hologram.copy()
         hologram = data_io.normalise_hologram(hologram, self.normalisation)
 
         mask = data_io.read_mask(data_io.mask_path(self.data_root, self.cfg, stem))
@@ -108,26 +114,36 @@ class HologramQPIDataset(Dataset):
                 f"(hologram {hologram.shape}, phase {phase.shape}, mask {mask.shape})"
             )
 
-        arrays = (hologram.astype(np.float32), phase.astype(np.float32), mask.astype(np.int64))
+        arrays = (hologram.astype(np.float32), phase.astype(np.float32),
+                  mask.astype(np.int64), hologram_raw.astype(np.float32))
         if self._cache is not None:
             self._cache[index] = arrays
         return arrays
 
     def __getitem__(self, index: int) -> dict:
         meta = self.samples[index]
-        hologram, phase, mask = self._load_arrays(index)
+        hologram, phase, mask, hologram_raw = self._load_arrays(index)
 
         if self.crop_size:
             if self.split == "train":
-                hologram, phase, mask = random_crop([hologram, phase, mask], self.crop_size, self._rng)
+                hologram, phase, mask, hologram_raw = random_crop(
+                    [hologram, phase, mask, hologram_raw], self.crop_size, self._rng
+                )
             else:
-                hologram, phase, mask = center_crop([hologram, phase, mask], self.crop_size)
+                hologram, phase, mask, hologram_raw = center_crop(
+                    [hologram, phase, mask, hologram_raw], self.crop_size
+                )
 
         if self.augment is not None:
-            hologram, phase, mask = self.augment(hologram, phase, mask)
+            hologram, phase, mask, hologram_raw = self.augment(
+                hologram, phase, mask, hologram_raw
+            )
 
         return {
             "hologram": torch.from_numpy(np.ascontiguousarray(hologram)).unsqueeze(0).float(),
+            "hologram_raw": torch.from_numpy(
+                np.ascontiguousarray(hologram_raw)
+            ).unsqueeze(0).float(),
             "phase": torch.from_numpy(np.ascontiguousarray(phase)).unsqueeze(0).float(),
             "mask": torch.from_numpy(np.ascontiguousarray(mask)).long(),
             "condition": torch.tensor(meta.condition_id, dtype=torch.long),

@@ -170,13 +170,45 @@ def unpad(x: torch.Tensor, pad: int) -> torch.Tensor:
 # carrier estimation for off-axis
 # ---------------------------------------------------------------------------
 def estimate_carrier(
+<<<<<<< Updated upstream
     hologram: torch.Tensor, dc_exclusion_px: int = 60
+=======
+    hologram: torch.Tensor,
+    dc_exclusion_px: int | None = None,
+    dc_exclusion_frac: float = 0.13,
+>>>>>>> Stashed changes
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Locate the off-axis carrier as the brightest non-DC spectral peak.
 
     Returns normalised frequencies (fy, fx) in cycles per pixel, one pair per
     sample. The reference tilt is a property of the optical setup rather than of
     the specimen, so it is read from the measurement itself and never learned.
+<<<<<<< Updated upstream
+=======
+
+    Two details are not optional.
+
+    SUB-BIN REFINEMENT. The carrier almost never lands on an integer FFT bin. A
+    half-bin error is a phase ramp of pi across the field, which no per-image
+    gain or offset can absorb, so the peak is refined by fitting a parabola
+    through its immediate neighbours in each axis. On a 128 px grid this is the
+    difference between a carrier of 0.1094 and one of 0.1100 -- and between a
+    forward-model residual near zero and one near one.
+
+    HALF-PLANE CONVENTION. The two first-order sidebands are conjugates of equal
+    magnitude, so which one ``argmax`` returns is arbitrary and can flip between
+    images of the same acquisition. The peak in the fy > 0 half-plane is
+    returned consistently. Callers that must not depend on the choice at all
+    should carry both cross-terms and let a fit decide, as the forward-model
+    loss does.
+
+    SCALE-INVARIANT DC EXCLUSION. The radius around DC to ignore is a *fraction*
+    of the field, not a pixel count. An absolute radius means something
+    different on a 900 px evaluation field and a 512 px training crop -- and on
+    a small enough crop it masks out the carrier itself, leaving the search to
+    return noise. ``dc_exclusion_px`` still overrides it where an absolute value
+    is genuinely wanted.
+>>>>>>> Stashed changes
     """
     batch, _, height, width = hologram.shape
     spectrum = fft.fftshift(fft.fft2(hologram.float()), dim=(-2, -1))
@@ -186,12 +218,112 @@ def estimate_carrier(
     grid_y = torch.arange(height, device=hologram.device).view(-1, 1)
     grid_x = torch.arange(width, device=hologram.device).view(1, -1)
     radius = torch.hypot((grid_y - centre_y).float(), (grid_x - centre_x).float())
+<<<<<<< Updated upstream
     magnitude = magnitude.masked_fill(radius.unsqueeze(0) < dc_exclusion_px, 0.0)
 
     flat = magnitude.reshape(batch, -1).argmax(dim=1)
     peak_y = (flat // width).float() - centre_y
     peak_x = (flat % width).float() - centre_x
     return peak_y / height, peak_x / width
+=======
+    exclusion = (
+        float(dc_exclusion_px) if dc_exclusion_px is not None
+        else dc_exclusion_frac * 0.5 * min(height, width)
+    )
+    magnitude = magnitude.masked_fill(radius.unsqueeze(0) < exclusion, 0.0)
+
+    # Keep only the upper half-plane so the conjugate pair cannot be chosen at
+    # random. The row through the centre is split at the centre column, so the
+    # boundary case (fy == 0) is resolved by the sign of fx. The mask selects
+    # the peak but must NOT be used for the sub-bin fit below: zeroing a
+    # neighbour would corrupt the parabola for any peak sitting near the
+    # boundary, which is precisely the case the mask creates.
+    upper = (grid_y - centre_y) > 0
+    same_row = (grid_y - centre_y) == 0
+    keep = upper | (same_row & ((grid_x - centre_x) > 0))
+    selectable = magnitude.masked_fill(~keep.unsqueeze(0), 0.0)
+
+    flat = selectable.reshape(batch, -1).argmax(dim=1)
+    peak_y = (flat // width).long()
+    peak_x = (flat % width).long()
+
+    def refine(index, axis_size, along_rows: bool):
+        """Parabolic sub-bin interpolation around the peak."""
+        offsets = []
+        for item in range(batch):
+            y, x = int(peak_y[item]), int(peak_x[item])
+            position = y if along_rows else x
+            if position <= 0 or position >= axis_size - 1:
+                offsets.append(0.0)
+                continue
+            if along_rows:
+                left, centre, right = (magnitude[item, y - 1, x],
+                                       magnitude[item, y, x],
+                                       magnitude[item, y + 1, x])
+            else:
+                left, centre, right = (magnitude[item, y, x - 1],
+                                       magnitude[item, y, x],
+                                       magnitude[item, y, x + 1])
+            denominator = float(left - 2 * centre + right)
+            offsets.append(
+                0.0 if abs(denominator) < 1e-12
+                else float(0.5 * (left - right) / denominator)
+            )
+        return torch.tensor(offsets, device=hologram.device, dtype=torch.float32).clamp(-1, 1)
+
+    fine_y = peak_y.float() + refine(peak_y, height, True) - centre_y
+    fine_x = peak_x.float() + refine(peak_x, width, False) - centre_x
+
+    # Final polish: choose the carrier that concentrates the demodulated field
+    # into its DC term. The parabolic estimate is accurate to a few hundredths
+    # of a bin, and a hundredth of a bin is still several degrees of phase ramp
+    # across a 900 px field, which the radiometric fit cannot absorb.
+    fine_y, fine_x = _polish_carrier(hologram, fine_y / height, fine_x / width)
+    return fine_y, fine_x
+
+
+def _polish_carrier(
+    hologram: torch.Tensor, carrier_y: torch.Tensor, carrier_x: torch.Tensor,
+    span: float = 1.5, steps: int = 7, rounds: int = 3,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Refine the carrier by maximising the demodulated DC magnitude.
+
+    Multiplying the hologram by exp(-i 2 pi (fy y + fx x)) and summing gives a
+    magnitude that peaks exactly when the trial carrier matches the real fringe
+    frequency. A short coordinate descent over a shrinking window is enough, and
+    it optimises the quantity the forward model actually depends on rather than
+    a proxy read off the spectrum.
+    """
+    batch, _, height, width = hologram.shape
+    signal = hologram.float().squeeze(1)
+    y = torch.arange(height, device=hologram.device, dtype=torch.float32).view(1, -1, 1)
+    x = torch.arange(width, device=hologram.device, dtype=torch.float32).view(1, 1, -1)
+
+    def score(fy, fx):
+        ramp = -2.0 * math.pi * (fy.view(-1, 1, 1) * y + fx.view(-1, 1, 1) * x)
+        real = (signal * torch.cos(ramp)).flatten(1).mean(dim=1)
+        imaginary = (signal * torch.sin(ramp)).flatten(1).mean(dim=1)
+        return torch.hypot(real, imaginary)
+
+    best_y, best_x = carrier_y.clone(), carrier_x.clone()
+    best = score(best_y, best_x)
+    window_y, window_x = span / height, span / width
+
+    for _ in range(rounds):
+        for axis in ("y", "x"):
+            window = window_y if axis == "y" else window_x
+            for offset in torch.linspace(-window, window, steps, device=hologram.device):
+                trial_y = best_y + offset if axis == "y" else best_y
+                trial_x = best_x if axis == "y" else best_x + offset
+                value = score(trial_y, trial_x)
+                better = value > best
+                best = torch.where(better, value, best)
+                best_y = torch.where(better, trial_y, best_y)
+                best_x = torch.where(better, trial_x, best_x)
+        window_y /= steps / 2.0
+        window_x /= steps / 2.0
+    return best_y, best_x
+>>>>>>> Stashed changes
 
 
 def reference_wave(
