@@ -70,7 +70,9 @@ def diagnose(cfg, modality: str, device: torch.device, split: str) -> dict:
     run_dir = run_directory(cfg.paths.output_root, cfg.experiment_name, modality)
     checkpoint = run_dir / "best_model.pt"
     if not checkpoint.is_file():
-        raise SystemExit(f"no checkpoint at {checkpoint}")
+        # One missing arm should not abort the other: report and skip.
+        LOGGER.warning("no checkpoint at %s; skipping %s", checkpoint, modality)
+        return None
 
     model = build_model(cfg)
     load_checkpoint(model, checkpoint, device)
@@ -199,12 +201,20 @@ def main() -> int:
     cfg = load_config(args.config, parse_overrides(args.set))
     device = resolve_device(args.device)
 
+    missing = 0
     for modality in args.modality:
         result = diagnose(cfg, modality, device, args.split)
+        if result is None:
+            missing += 1
+            continue
         report(result)
         destination = result["_run_dir"] / f"bias_diagnosis_{args.split}.csv"
         write_csv(result["_rows"], destination)
         print(f"  per-image detail -> {destination}")
+
+    if missing == len(args.modality):
+        print("\nNo checkpoints found for any requested modality.")
+        return 1
     return 0
 
 

@@ -138,24 +138,36 @@ def test_measurement_agreement(cfg) -> None:
     pairs = match_cells(reference, reference, labels, labels,
                         cfg.evaluation.measurement.match_iou_threshold)
     metrics.update_pairs(pairs)
-    metrics.update_image(reference, reference)
+    metrics.update_image(pairs, reference, reference)
     identical = metrics.compute()
 
     check("all cells pair with themselves", len(pairs) == len(reference),
           f"{len(pairs)}/{len(reference)}")
     check("dry-mass MAPE is zero", identical["dry_mass_mape"] < 1e-9)
     check("area MAPE is zero", identical["area_mape"] < 1e-9)
+    check("detection recall is one on an identical prediction",
+          abs(identical["detection_recall"] - 1.0) < 1e-9,
+          f"{identical['detection_recall']:.4f}")
+    check("detection precision is one on an identical prediction",
+          abs(identical["detection_precision"] - 1.0) < 1e-9)
+    check("nothing is recorded as missed or invented",
+          identical["cells_missed"] == 0 and identical["cells_false_positive"] == 0)
+    check("Bland-Altman bias lies inside its own limits of agreement",
+          identical["dry_mass_loa_lower"] - 1e-9
+          <= identical["dry_mass_relative_bias"]
+          <= identical["dry_mass_loa_upper"] + 1e-9,
+          f"bias {identical['dry_mass_relative_bias']:+.4f} in "
+          f"[{identical['dry_mass_loa_lower']:+.4f}, {identical['dry_mass_loa_upper']:+.4f}]")
 
     eroded = binary_erosion(mask > 0, iterations=3).astype(np.int64)
     eroded_cells = measure(eroded)
     eroded_labels = split_instances((eroded > 0).astype(np.uint8), method, distance)
 
     degraded = MeasurementMetrics()
-    degraded.update_pairs(
-        match_cells(eroded_cells, reference, eroded_labels, labels,
-                    cfg.evaluation.measurement.match_iou_threshold)
-    )
-    degraded.update_image(eroded_cells, reference)
+    eroded_pairs = match_cells(eroded_cells, reference, eroded_labels, labels,
+                               cfg.evaluation.measurement.match_iou_threshold)
+    degraded.update_pairs(eroded_pairs)
+    degraded.update_image(eroded_pairs, eroded_cells, reference)
     eroded_results = degraded.compute()
 
     check("eroded prediction loses area", eroded_results["area_mape"] > 0.01,
@@ -167,6 +179,54 @@ def test_measurement_agreement(cfg) -> None:
         abs(eroded_results["area_mape"] - eroded_results["dry_mass_mape"]) < 1e-6,
         "relative errors coincide as the physics predicts",
     )
+
+    # A detector that finds nothing must score zero recall, not a flattering
+    # measurement error over an empty matched set.
+    empty = MeasurementMetrics()
+    blank = np.zeros_like(mask)
+    blank_cells = measure(blank)
+    blank_pairs = match_cells(blank_cells, reference,
+                              split_instances((blank > 0).astype(np.uint8), method, distance),
+                              labels, cfg.evaluation.measurement.match_iou_threshold)
+    empty.update_pairs(blank_pairs)
+    empty.update_image(blank_pairs, blank_cells, reference)
+    nothing = empty.compute()
+    check("an empty prediction scores zero detection recall",
+          nothing["detection_recall"] == 0.0, f"{nothing['detection_recall']:.3f}")
+    check("every reference cell is counted as missed",
+          nothing["cells_missed"] == len(reference),
+          f"{nothing['cells_missed']}/{len(reference)}")
+
+
+def test_phase_masked_errors(cfg) -> None:
+    print("\n[5] phase error inside cells versus background")
+    phase, mask = synthetic_field()
+
+    # A prediction wrong only inside the cells must show that in the in-cell
+    # figures and nowhere else, or the field-wide numbers hide the failure that
+    # matters to dry mass.
+    prediction = phase.copy()
+    prediction[mask > 0] += 0.5
+
+    metrics = PhaseMetrics(cfg.evaluation.phase.psnr_data_range)
+    metrics.update(prediction[None], phase[None], mask=mask[None])
+    results = metrics.compute()
+
+    check("in-cell bias recovers the injected offset",
+          abs(results["phase_bias_rad_in_cell"] - 0.5) < 1e-5,
+          f"{results['phase_bias_rad_in_cell']:.5f} rad")
+    check("background is reported as clean",
+          results["phase_mae_rad_background"] < 1e-9,
+          f"{results['phase_mae_rad_background']:.2e} rad")
+    check("the field-wide MAE understates the in-cell error",
+          results["phase_mae_rad"] < results["phase_mae_rad_in_cell"],
+          f"{results['phase_mae_rad']:.4f} vs {results['phase_mae_rad_in_cell']:.4f} rad")
+
+    # And a 2-D array must be treated as one image, not as a stack of rows.
+    single = PhaseMetrics(cfg.evaluation.phase.psnr_data_range)
+    single.update(prediction, phase)
+    check("a 2-D array counts as one image", single.compute()["phase_n_images"] == 1,
+          f"{single.compute()['phase_n_images']}")
 
 
 def test_loss_terms(cfg) -> None:
@@ -232,6 +292,7 @@ def main() -> int:
     test_calibration(cfg)
     test_metrics_identity(cfg)
     test_measurement_agreement(cfg)
+    test_phase_masked_errors(cfg)
     test_loss_terms(cfg)
 
     print("\n" + "=" * 60)

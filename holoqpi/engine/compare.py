@@ -23,24 +23,42 @@ LOGGER = get_logger(__name__)
 
 # Metrics carried into the head-to-head table, in the order the brief lists them.
 COMPARISON_METRICS = [
+    # 1. quantitative phase reconstruction accuracy
     "phase_mae_rad",
     "phase_rmse_rad",
     "phase_psnr_db",
     "phase_ssim",
     "phase_pearson_r",
+    "phase_mae_rad_in_cell",        # where the measurement is actually taken
+    "phase_bias_rad_in_cell",
+    "phase_mae_rad_background",
+    # 2. segmentation performance
     "seg_dice",
     "seg_iou",
     "seg_aji",
     "seg_boundary_f1",
+    # 3. morphology classification accuracy
     "cls_accuracy",
     "cls_macro_f1",
+    # 4-6. projected area, optical volume, dry mass
     "area_mape",
+    "area_cell_pearson_r",
     "area_image_pearson_r",
+    "area_relative_bias",
     "optical_volume_mape",
     "dry_mass_mape",
+    "dry_mass_cell_pearson_r",
     "dry_mass_image_pearson_r",
-    "dry_mass_median_relative_bias",
+    "dry_mass_relative_bias",
+    "dry_mass_loa_lower",
+    "dry_mass_loa_upper",
+    # detection: how many cells reached the measurement at all
+    "cells_reference",
     "cells_detected",
+    "cells_matched",
+    "detection_recall",
+    "detection_precision",
+    "detection_f1",
 ]
 
 
@@ -81,6 +99,7 @@ def run_single_modality(cfg: Config, modality: str, train: bool = True) -> dict:
     write_json(evaluation["confusion_matrix"], run_dir / f"confusion_{split}.json")
     if cfg.evaluation.save_per_cell_csv:
         save_per_cell(evaluation["per_cell"], run_dir / f"per_cell_{split}.csv")
+        save_per_cell(evaluation["unmatched"], run_dir / f"unmatched_{split}.csv")
 
     LOGGER.info("modality=%s %s metrics written to %s", modality, split, run_dir)
     return evaluation["metrics"]

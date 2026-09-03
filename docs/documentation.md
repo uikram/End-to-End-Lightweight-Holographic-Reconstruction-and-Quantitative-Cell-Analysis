@@ -177,6 +177,32 @@ annotations; no other change is needed anywhere.
 Instance labels are produced by the *same* function for prediction and reference,
 so instance metrics compare like with like.
 
+### 4.1 Two consequences that must be reported, not assumed
+
+Deriving the mask from the phase has two effects that no training curve reveals.
+`scripts/audit_labels.py` measures both; run it once and quote the numbers.
+
+**The threshold is chosen per image.** Otsu reads each image's own histogram, so
+the operational definition of "cell" moves between fields of view. On the
+delivered data the level has a coefficient of variation of roughly 35–40%. That
+is tolerable as long as it does not move *with drug condition* — if it did, cells
+would appear morphologically different between conditions partly because the
+label definition differed, and the classification result would be confounded. The
+audit reports a one-way ANOVA and a Kruskal–Wallis test across conditions; a
+p-value above 0.05 rules this route out. Should it ever fail, switch to
+`mask_generation.threshold_method: fixed` with `fixed_threshold_rad` near the
+global mean and re-run as a sensitivity check.
+
+**The two supervised heads are not independent.** The mask is a deterministic
+function of the phase, so a perfect reconstruction determines the mask exactly.
+The audit tests this directly by applying the mask-generation function to the
+*predicted* phase and comparing the result with what the segmentation head
+produced. Dice above ~0.85 there means the head is largely redundant. This is the
+mechanism behind the null result for the physics-consistency terms (§6.3): those
+terms constrain Σ(M ⊙ φ), a quantity already determined by the two primary
+losses, so they can add no gradient information. State this in the paper — it
+converts an unexplained negative result into a predicted one.
+
 ---
 
 ## 5. Network architecture
@@ -360,14 +386,37 @@ is how they get tuned.
 
 | Family | Metrics |
 |---|---|
-| **Phase** | MAE and RMSE in radians, bias, PSNR, SSIM, Pearson r |
-| **Segmentation** | Dice, IoU, Aggregated Jaccard Index, Boundary F1 (2 px tolerance), instance-count MAPE |
+| **Phase** | MAE and RMSE in radians, bias, PSNR, SSIM, Pearson r, **plus MAE and bias restricted to the inside of reference cells and to background separately** |
+| **Segmentation** | Dice, IoU, Aggregated Jaccard Index, Boundary F1 (2 px tolerance) |
+| **Detection** | recall, precision and F1 of cell instances at `match_iou_threshold`; counts of reference, detected, matched, missed and false-positive cells |
 | **Classification** | accuracy, macro F1, balanced accuracy, per-class F1, confusion matrix |
-| **Measurement** | per-cell MAPE for area, optical volume and dry mass; per-cell and per-image Pearson r; Bland-Altman median relative bias and limits of agreement |
+| **Measurement** | per-cell MAPE for area, optical volume and dry mass; per-cell and per-image Pearson r; Bland-Altman relative bias and limits of agreement |
 | **Efficiency** | parameters, GMACs, latency p50/p99, FPS, peak VRAM, under PyTorch and ONNX Runtime |
 
 Phase errors are reported in **radians**, not as normalised image-quality scores,
 because the downstream measurement inherits them in physical units.
+
+**Whole-field phase error understates what matters.** Roughly four fifths of every
+image is background, which is easy to reconstruct, so a field-wide MAE is
+dominated by the part of the image dry mass never integrates. On the delivered
+data the in-cell MAE runs several times the field-wide figure. Both are reported;
+`phase_mae_rad_in_cell` and `phase_bias_rad_in_cell` are the ones a
+measurement-readiness claim rests on.
+
+**Detection is reported separately from measurement.** Per-cell errors are
+computed over IoU-matched pairs only, so they are silent about cells that were
+never detected — and missed cells, not mismeasured ones, dominate whole-field
+mass error on this data. `detection_recall`, `detection_precision` and
+`detection_f1` state that directly. A cell-count ratio cannot: a model that misses
+half the cells and invents an equal number of false positives scores a ratio of
+1.0. Unmatched cells are written to `unmatched_<split>.csv` with their areas and
+masses, so the size distribution of what was missed can be inspected.
+
+**Bland–Altman bias and limits share one centre.** The bias reported alongside the
+limits is the mean relative difference and the limits are mean ± 1.96 SD, which is
+the standard construction; a median bias is reported separately as a robust
+cross-check rather than substituted for the mean. Mixing a median centre with
+mean-based limits would produce an interval not centred on its own bias.
 
 **Instance separation is not a secondary metric here.** Every reported quantity
 is per cell, so a prediction that covers the right pixels but merges two touching
@@ -384,10 +433,17 @@ be selected for excelling at one head while failing the quantity the study
 reports:
 
 ```
-composite = 0.4 · Dice + 0.3 · max(Pearson_phase, 0) + 0.3 · clip(1 − MAPE_drymass, 0, 1)
+composite = 0.35 · Dice
+          + 0.25 · max(Pearson_phase, 0)
+          + 0.25 · clip(1 − MAPE_drymass, 0, 1)
+          + 0.15 · detection_F1
 ```
 
-The weights are configurable. Any single metric can be used instead.
+The detection term is not cosmetic. Because the measurement terms are computed
+over matched cells only, a model that detects a handful of large, easy cells and
+misses the rest scores an excellent dry-mass MAPE; without a detection term the
+selection rule actively prefers it. The weights are configurable under
+`training.composite_metric`, and any single metric can be used instead.
 
 ---
 
@@ -494,11 +550,64 @@ differentiable and correctly signed.
 
 ---
 
+## 10a. Figures
+
+`scripts/make_figures.py` builds the figure set. Every figure answers a question
+the paper has to answer; none restates a table. Nine of the twelve are built from
+files earlier steps already wrote, so they regenerate in seconds; figures 1 and 9
+need a forward pass and are skipped automatically when no checkpoint exists.
+
+```
+python scripts/make_figures.py --config config/base.yaml          # all
+python scripts/make_figures.py --config config/base.yaml --only 2 4 5
+python scripts/make_figures.py --config config/base.yaml --list   # what each one is
+```
+
+Output is `figures/fig<NN>_<name>.png` (for reading) and `.pdf` (for the paper).
+A figure whose inputs are missing prints its reason and is skipped; the rest still
+build.
+
+| # | Figure | Tier | What it shows and why it earns its place | Reads |
+|---|---|---|---|---|
+| 1 | Qualitative panel | **Essential** | The two hologram types side by side on the same field, with recovered phase, signed error and both segmentation boundaries. No table conveys what distinguishes an off-axis carrier from a Gabor in-line record with its superposed twin image; this is the physical premise of the whole study. | checkpoint |
+| 2 | Bland–Altman | **Essential** | Agreement, not correlation, for dry mass and projected area per cell. Two methods can correlate at r = 0.99 and still disagree by 30% on every cell. The limits of agreement are the number a biologist needs to decide whether the method resolves the mass differences their experiment is about — which is exactly the "measurement-ready" claim. | `per_cell_<split>.csv` |
+| 3 | Error decomposition | **Essential** | Mass ratio factorised into a domain (boundary) term and a phase (reconstruction) term, plotted against each other with the iso-mass diagonal. Turns a mass error into a cause and settles the only actionable question it raises: which head to work on. | `bias_diagnosis_<split>.csv` |
+| 4 | Detection gap | **Essential** | The cascade from reference cells to detections to matches, the size distribution of missed versus matched cells, and the IoU distribution of the matches made. Every measurement statistic is conditioned on matching, so this is the figure that says what the measurements are silent about. | `per_cell_`, `unmatched_`, `metrics_` |
+| 5 | Modality comparison | **Essential** | All the axes the brief names, on one page, every bar oriented so longer is better, with a signed-advantage panel. This is the central contribution; it should be legible without reconciling a table in which some metrics improve upward and others downward. | `*_modality_comparison.json` |
+| 6 | Loss composition | **Essential** | The share each term holds in the weighted objective over training, and the physics terms alone on a symlog axis. This is the *evidence* for the negative result: the physics group collapses to a few percent and the phase-mask hinge reaches exactly zero early. It makes the null ablation a prediction rather than a surprise. | `history.json` |
+| 7 | Ablation deltas | **Essential** | Signed percentage change of each ablation against the full objective, with a zero line and a ±2% noise band. An ablation table invites the reader to hunt for the largest number; this shows at a glance that most deltas straddle zero. | all `*_modality_comparison.json` |
+| 8 | Efficiency trade-off | **Essential** | Accuracy against measured latency, median and tail latency per configuration, and compute cost against latency. Edge suitability is a trade-off, not a score. Rows flagged as not comparable across devices are drawn hollow so a CPU ONNX timing cannot be misread against a GPU PyTorch timing. | `*_hardware_benchmark_*.csv` |
+| 9 | Phase error structure | Optional | Reconstruction error binned by reference phase amplitude, and the radially averaged error spectrum. Dry mass is an integral: insensitive to zero-mean high-frequency error, very sensitive to a slow offset inside cells. A single MAE cannot tell those apart; this can. | checkpoint |
+| 10 | Label audit | Important | Per-image Otsu threshold by condition, and the head-redundancy bars from §4.1. The two properties of the silver-standard labels a reviewer will probe, answered pre-emptively. | `label_audit_*` |
+| 11 | Confusion matrices | Important | Row-normalised condition confusion for both arms. An accuracy number cannot explain why the arm that reconstructs phase better classifies worse; whether the gap is one collapsed class or diffuse confusion decides whether the effect is biological or an acquisition artefact. | `confusion_<split>.json` |
+| 12 | Convergence | Important | Validation trajectories with each metric's own best epoch marked. The heads converge at different times — segmentation and phase plateau while condition accuracy is still climbing — so this is the evidence that the reported numbers were read at a defensible point. | `history.json` |
+
+Colour is consistent across the set: off-axis blue, Gabor red. Modalities appear
+in the order given by `--modalities`, so panels line up between figures.
+
+---
+
 ## 11. Known limitations
 
 **Segmentation labels are phase-derived**, not manual (§4). Segmentation and
 measurement scores are agreement with an automatic procedure. This is the single
-largest caveat on any number the framework produces.
+largest caveat on any number the framework produces. It has a second edge (§4.1):
+because the mask is a deterministic function of the phase, the two supervised
+tasks are not independent, so Dice partly measures phase accuracy and the physics
+coupling terms constrain a quantity the primary losses already determine.
+
+**Detection recall is well below one.** Roughly two fifths of reference cells are
+never matched, so per-cell measurement accuracy is conditioned on the subset the
+model finds. Whole-field dry mass is biased low mainly through this route rather
+than through mismeasurement of the cells it does find. Any per-cell number should
+be quoted with its detection recall beside it.
+
+**Augmentation diversity was reduced in runs produced before the worker-seeding
+fix.** With `num_workers > 0`, each dataloader worker held an identical random
+stream, so crop offsets and flips repeated across workers within an epoch and the
+effective augmentation diversity was 1/`num_workers` of the intended. This is
+fixed by `_seed_worker` in `holoqpi/data/dataset.py`; results produced before it
+remain valid but were trained under weaker augmentation than configured.
 
 **Absolute dry mass depends on λ and α**, which are inherited and literature
 values respectively. Confirm both with the acquisition group. Relative

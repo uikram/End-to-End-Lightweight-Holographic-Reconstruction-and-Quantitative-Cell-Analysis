@@ -52,6 +52,10 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common(evaluate)
     evaluate.add_argument("--checkpoint", default=None, help="defaults to the run's best_model.pt")
     evaluate.add_argument("--split", default="test", choices=["train", "val", "test"])
+    evaluate.add_argument(
+        "--allow-untrained", action="store_true",
+        help="evaluate even when no checkpoint is found (scores random weights)",
+    )
 
     compare = subparsers.add_parser("compare", help="run the off-axis / Gabor comparison")
     _add_common(compare)
@@ -133,8 +137,21 @@ def command_evaluate(args) -> int:
     model = build_model(cfg)
     if checkpoint.is_file():
         load_checkpoint(model, checkpoint, device)
+    elif args.allow_untrained:
+        LOGGER.warning("checkpoint %s not found; scoring UNTRAINED weights as requested",
+                       checkpoint)
     else:
-        LOGGER.warning("checkpoint %s not found; evaluating untrained weights", checkpoint)
+        # Metrics from random weights look like metrics. Refuse rather than
+        # write a plausible-looking metrics_test.json nobody would question.
+        available = sorted(
+            str(q.parent) for q in Path(cfg.paths.output_root).glob("*/best_model.pt")
+        )
+        raise SystemExit(
+            f"No checkpoint at {checkpoint}.\n"
+            f"Checkpoints found under {cfg.paths.output_root}: "
+            f"{available if available else 'none'}\n"
+            f"Pass --allow-untrained only if scoring random weights is genuinely intended."
+        )
     model.to(device)
 
     loaders = build_dataloaders(cfg, splits_to_build=(args.split,))
@@ -146,6 +163,7 @@ def command_evaluate(args) -> int:
     write_json(evaluation["confusion_matrix"], run_dir / f"confusion_{args.split}.json")
     if cfg.evaluation.save_per_cell_csv:
         save_per_cell(evaluation["per_cell"], run_dir / f"per_cell_{args.split}.csv")
+        save_per_cell(evaluation["unmatched"], run_dir / f"unmatched_{args.split}.csv")
 
     for key, value in sorted(evaluation["metrics"].items()):
         LOGGER.info("  %-34s %s", key, f"{value:.4f}" if isinstance(value, float) else value)

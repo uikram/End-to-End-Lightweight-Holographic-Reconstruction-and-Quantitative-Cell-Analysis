@@ -24,12 +24,41 @@ class PhaseMetrics:
         self._ssim: list[float] = []
         self._pearson: list[float] = []
         self._bias: list[float] = []
+        self._in_cell_mae: list[float] = []
+        self._in_cell_bias: list[float] = []
+        self._background_mae: list[float] = []
+        self._background_bias: list[float] = []
         self._n = 0
 
-    def update(self, prediction: np.ndarray, target: np.ndarray) -> None:
-        """``prediction`` and ``target`` are (B, H, W) arrays in radians."""
-        for predicted, actual in zip(np.atleast_3d(prediction), np.atleast_3d(target)):
+    def update(
+        self, prediction: np.ndarray, target: np.ndarray, mask: np.ndarray | None = None
+    ) -> None:
+        """``prediction``, ``target`` and optional ``mask`` are (B, H, W) arrays.
+
+        The whole-field statistics are dominated by background, which is roughly
+        four fifths of every image and is easy to reconstruct. Dry mass integrates
+        only the inside of cells, so a model can look accurate field-wide while
+        being biased exactly where the measurement is taken. When ``mask`` is
+        given, the error is reported separately inside and outside the reference
+        cells, which is what a measurement-readiness claim rests on.
+        """
+        prediction = _as_batch(prediction)
+        target = _as_batch(target)
+        masks = _as_batch(mask) if mask is not None else [None] * len(prediction)
+
+        for predicted, actual, cell_mask in zip(prediction, target, masks):
             difference = predicted - actual
+
+            if cell_mask is not None:
+                inside = cell_mask > 0
+                if inside.any():
+                    self._in_cell_mae.append(float(np.abs(difference[inside]).mean()))
+                    self._in_cell_bias.append(float(difference[inside].mean()))
+                outside = ~inside
+                if outside.any():
+                    self._background_mae.append(float(np.abs(difference[outside]).mean()))
+                    self._background_bias.append(float(difference[outside].mean()))
+
             mae = float(np.abs(difference).mean())
             mse = float((difference ** 2).mean())
 
@@ -47,7 +76,7 @@ class PhaseMetrics:
         if self._n == 0:
             return {}
         finite_psnr = [v for v in self._psnr if np.isfinite(v)]
-        return {
+        results = {
             "phase_mae_rad": float(np.mean(self._absolute_error)),
             "phase_rmse_rad": float(np.sqrt(np.mean(self._squared_error))),
             "phase_bias_rad": float(np.mean(self._bias)),
@@ -56,6 +85,24 @@ class PhaseMetrics:
             "phase_pearson_r": float(np.mean(self._pearson)),
             "phase_n_images": self._n,
         }
+        if self._in_cell_mae:
+            results["phase_mae_rad_in_cell"] = float(np.mean(self._in_cell_mae))
+            results["phase_bias_rad_in_cell"] = float(np.mean(self._in_cell_bias))
+        if self._background_mae:
+            results["phase_mae_rad_background"] = float(np.mean(self._background_mae))
+            results["phase_bias_rad_background"] = float(np.mean(self._background_bias))
+        return results
+
+
+def _as_batch(array: np.ndarray) -> np.ndarray:
+    """Force a (B, H, W) view.
+
+    ``np.atleast_3d`` appends the new axis at the end, so a single (H, W) image
+    becomes (H, W, 1) and iterating it yields rows rather than images. The batch
+    axis has to be prepended instead.
+    """
+    array = np.asarray(array)
+    return array[None] if array.ndim == 2 else array
 
 
 def _pearson(a: np.ndarray, b: np.ndarray) -> float:

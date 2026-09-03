@@ -169,7 +169,20 @@ def match_cells(
     reference_labels: np.ndarray,
     iou_threshold: float,
 ) -> list[tuple[dict, dict]]:
-    """Pair predicted cells with reference cells by greedy best IoU."""
+    """Pair predicted cells with reference cells by greedy best IoU.
+
+    Every record is stamped with ``match_iou`` (NaN when the cell found no
+    partner), so the caller can separate matched from unmatched cells without
+    repeating the overlap computation. Unmatched reference cells are misses and
+    unmatched predicted cells are false positives; both are needed to report
+    detection recall and precision rather than only the accuracy of the cells
+    that happened to pair.
+    """
+    for record in predicted:
+        record["match_iou"] = float("nan")
+    for record in reference:
+        record["match_iou"] = float("nan")
+
     if not predicted or not reference:
         return []
 
@@ -207,11 +220,13 @@ def match_cells(
     used_predicted: set[int] = set()
     pairs: list[tuple[dict, dict]] = []
 
-    for _, reference_label, predicted_label in candidates:
+    for iou, reference_label, predicted_label in candidates:
         if reference_label in used_reference or predicted_label in used_predicted:
             continue
         used_reference.add(reference_label)
         used_predicted.add(predicted_label)
+        predicted_by_label[predicted_label]["match_iou"] = float(iou)
+        reference_by_label[reference_label]["match_iou"] = float(iou)
         pairs.append((predicted_by_label[predicted_label], reference_by_label[reference_label]))
 
     return pairs

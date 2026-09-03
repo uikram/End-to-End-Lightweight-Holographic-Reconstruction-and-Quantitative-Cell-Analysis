@@ -114,7 +114,7 @@ class Evaluator:
                 for m in mask_reference
             ]
 
-            self.phase_metrics.update(phase_prediction, phase_reference)
+            self.phase_metrics.update(phase_prediction, phase_reference, mask=mask_reference)
             self.segmentation_metrics.update(
                 mask_prediction, mask_reference,
                 prediction_instances=predicted_instances,
@@ -151,6 +151,7 @@ class Evaluator:
             "metrics": results,
             "confusion_matrix": self.classification_metrics.confusion_matrix,
             "per_cell": per_cell_rows,
+            "unmatched": self.measurement_metrics.unmatched_rows() if collect_per_cell else [],
         }
 
     def _measure_pair(
@@ -177,13 +178,19 @@ class Evaluator:
             labels=reference_labels,
         )
 
-        self.measurement_metrics.update_image(predicted_cells, reference_cells)
-
         pairs = match_cells(
             predicted_cells, reference_cells, predicted_labels, reference_labels,
             self.measurement_cfg.match_iou_threshold,
         )
+        # Stamp the field of view onto every record before the metric object
+        # accumulates it, so an unmatched cell can be traced back to its image.
+        for record in predicted_cells:
+            record["stem"] = stem
+        for record in reference_cells:
+            record["stem"] = stem
+
         self.measurement_metrics.update_pairs(pairs)
+        self.measurement_metrics.update_image(pairs, predicted_cells, reference_cells)
 
         if not collect:
             return []
@@ -206,6 +213,7 @@ class Evaluator:
                     "dry_mass_pg_ref": reference["dry_mass_pg"],
                     "mean_phase_pred": predicted["mean_phase_rad"],
                     "mean_phase_ref": reference["mean_phase_rad"],
+                    "match_iou": predicted.get("match_iou", float("nan")),
                 }
             )
         return rows
@@ -214,19 +222,29 @@ class Evaluator:
 def composite_score(metrics: dict, weights: Config) -> float:
     """Single scalar for checkpoint selection.
 
-    Combines region overlap, phase agreement and measurement accuracy so that a
-    model cannot be selected for excelling at one head while failing the
-    quantity the study reports.
+    Combines region overlap, phase agreement, measurement accuracy and detection
+    completeness so that a model cannot be selected for excelling at one head
+    while failing the quantity the study reports.
+
+    Detection F1 carries weight because the measurement terms are computed over
+    IoU-matched cells only: a model that detects a handful of large, easy cells
+    and misses the rest scores an excellent dry-mass MAPE. Without a detection
+    term the selection rule actively prefers that model.
     """
     dice = float(metrics.get("seg_dice", 0.0))
     pearson = float(metrics.get("phase_pearson_r", 0.0))
     mape = metrics.get("dry_mass_mape", None)
-    mass_accuracy = float(np.clip(1.0 - mape, 0.0, 1.0)) if mape is not None and np.isfinite(mape) else 0.0
+    mass_accuracy = (
+        float(np.clip(1.0 - mape, 0.0, 1.0)) if mape is not None and np.isfinite(mape) else 0.0
+    )
+    detection = metrics.get("detection_f1", None)
+    detection = float(detection) if detection is not None and np.isfinite(detection) else 0.0
 
     return (
         weights.seg_dice * dice
         + weights.phase_pearson * max(pearson, 0.0)
         + weights.dry_mass_accuracy * mass_accuracy
+        + float(weights.get("detection_f1", 0.0)) * detection
     )
 
 

@@ -1,3 +1,10 @@
+# Requires Python >= 3.10.
+#
+# The codebase uses PEP 604 annotations (`str | Path`) and PyTorch 2.x. On
+# Python 2.7 or 3.7 these files do not even parse, which surfaces as a
+# SyntaxError on the first function definition rather than as a helpful message.
+# Check with `python -V` before installing.
+
 # Core
 torch>=2.0
 torchvision>=0.15
@@ -7,10 +14,26 @@ PyYAML>=6.0
 
 # Image and file formats
 tifffile>=2023.1.23
-Pillow>=9.4
+Pillow>=9.4                 # also the LZW-TIFF fallback, see below
 scikit-image>=0.20          # Otsu, watershed, Crofton perimeter
+
+# Figures (scripts/make_figures.py); everything else runs without it
+matplotlib>=3.6
 
 # Deployment (optional but exercised by `main.py benchmark` / `export`)
 onnx>=1.14
 onnxruntime>=1.15           # replace with onnxruntime-gpu for CUDA timing
 thop>=0.1.1                 # multiply-accumulate counting; skipped if absent
+
+# ---------------------------------------------------------------------------
+# Deliberately NOT required: imagecodecs
+#
+# tifffile delegates LZW decompression to imagecodecs, which publishes no wheel
+# for every interpreter; pip then compiles it from source and fails on an older
+# gcc. holoqpi.data.io falls back to Pillow, which decodes these holograms
+# natively and byte-identically, so imagecodecs is unnecessary.
+#
+# To install it anyway (slightly faster bulk TIFF reads), prefer conda-forge,
+# which ships prebuilt binaries:
+#     conda install -c conda-forge imagecodecs
+# ---------------------------------------------------------------------------

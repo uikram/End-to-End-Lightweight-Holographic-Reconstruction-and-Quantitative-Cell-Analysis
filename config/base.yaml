@@ -237,9 +237,10 @@ training:
   early_stopping_patience: null
 
   composite_metric:                     # used when checkpoint_metric == composite
-    seg_dice: 0.4
-    phase_pearson: 0.3
-    dry_mass_accuracy: 0.3              # 1 - MAPE, clipped to [0, 1]
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25             # 1 - MAPE, clipped to [0, 1]
+    detection_f1: 0.15                  # guards against selecting an under-detector
 
 # -----------------------------------------------------------------------------
 # Evaluation and per-cell measurement

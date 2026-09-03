@@ -1,0 +1,37 @@
+05:32:39 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+05:32:39 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+05:32:40 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+05:32:43 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | pytorch | fp32
+05:32:50 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | onnx | fp32
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:87: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_h or pad_w:
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:46: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != skip.shape[-2:]:
+/sda/usama/QPI_Extended/holoqpi/models/holonet.py:102: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != target:
+/sda/usama/QPI_Extended/holoqpi/models/holonet.py:104: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if abs(scale_h - 1.0) > 1e-6:
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:94: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_h:
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:96: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_w:
+/sda/usama/QPI_Extended/holoqpi/models/holonet.py:110: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != target:
+05:32:51 | INFO    | holoqpi.deploy.export | exported ONNX (fp32, opset 17, 900x900) -> runs/onnx/base_off_axis_fp32.onnx
+05:32:51 | WARNING | holoqpi.deploy.benchmark | onnxruntime is not installed; skipping the ONNX benchmark
+05:32:51 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | pytorch | fp16
+05:32:56 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | onnx | fp16
+05:32:58 | INFO    | holoqpi.deploy.export | exported ONNX (fp16, opset 17, 900x900) -> runs/onnx/base_off_axis_fp16.onnx
+05:32:58 | WARNING | holoqpi.deploy.benchmark | onnxruntime is not installed; skipping the ONNX benchmark
+05:32:58 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+05:32:58 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+05:32:58 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+05:32:58 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | pytorch | fp32
+05:33:05 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | onnx | fp32
+05:33:06 | INFO    | holoqpi.deploy.export | exported ONNX (fp32, opset 17, 900x900) -> runs/onnx/base_gabor_fp32.onnx
+05:33:06 | WARNING | holoqpi.deploy.benchmark | onnxruntime is not installed; skipping the ONNX benchmark
+05:33:06 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | pytorch | fp16
+05:33:11 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | onnx | fp16
+05:33:12 | INFO    | holoqpi.deploy.export | exported ONNX (fp16, opset 17, 900x900) -> runs/onnx/base_gabor_fp16.onnx
+05:33:12 | WARNING | holoqpi.deploy.benchmark | onnxruntime is not installed; skipping the ONNX benchmark
+05:33:12 | INFO    | holoqpi | benchmark written to runs/base_hardware_benchmark_cuda.csv

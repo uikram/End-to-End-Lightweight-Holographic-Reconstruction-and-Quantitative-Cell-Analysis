@@ -1,0 +1,45 @@
+03:55:08 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+03:55:08 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+03:55:10 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+03:55:12 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | pytorch | fp32
+03:55:19 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | onnx | fp32
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:87: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_h or pad_w:
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:46: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != skip.shape[-2:]:
+/sda/usama/QPI_Extended/holoqpi/models/holonet.py:102: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != target:
+/sda/usama/QPI_Extended/holoqpi/models/holonet.py:104: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if abs(scale_h - 1.0) > 1e-6:
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:94: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_h:
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:96: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_w:
+/sda/usama/QPI_Extended/holoqpi/models/holonet.py:110: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != target:
+03:55:20 | INFO    | holoqpi.deploy.export | exported ONNX (fp32, opset 17, 900x900) -> runs/onnx/base_off_axis_fp32.onnx
+[1;31m2026-09-03 03:55:21.006362370 [E:onnxruntime:Default, provider_bridge_ort.cc:2395 TryGetProviderInfo_CUDA] /onnxruntime_src/onnxruntime/core/session/provider_bridge_ort.cc:1988 onnxruntime::Provider& onnxruntime::ProviderLibrary::Get() [ONNXRuntimeError] : 1 : FAIL : Failed to load library /home/usama/anaconda3/envs/qpi_extended/lib/python3.11/site-packages/onnxruntime/capi/libonnxruntime_providers_cuda.so with error: libcublasLt.so.13: cannot open shared object file: No such file or directory
+[m
+[0;93m2026-09-03 03:55:21.006406270 [W:onnxruntime:Default, onnxruntime_pybind_state.cc:1150 CreateExecutionProviderFactoryInstance] Failed to create CUDAExecutionProvider. Require cuDNN 9.* and CUDA 13.*. Please install all dependencies as mentioned in the GPU requirements page (https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements), make sure they're in the PATH, and that your GPU is supported.[m
+03:57:37 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | pytorch | fp16
+03:57:42 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | onnx | fp16
+03:57:43 | INFO    | holoqpi.deploy.export | exported ONNX (fp16, opset 17, 900x900) -> runs/onnx/base_off_axis_fp16.onnx
+[1;31m2026-09-03 03:57:43.723317096 [E:onnxruntime:Default, provider_bridge_ort.cc:2395 TryGetProviderInfo_CUDA] /onnxruntime_src/onnxruntime/core/session/provider_bridge_ort.cc:1988 onnxruntime::Provider& onnxruntime::ProviderLibrary::Get() [ONNXRuntimeError] : 1 : FAIL : Failed to load library /home/usama/anaconda3/envs/qpi_extended/lib/python3.11/site-packages/onnxruntime/capi/libonnxruntime_providers_cuda.so with error: libcublasLt.so.13: cannot open shared object file: No such file or directory
+[m
+[0;93m2026-09-03 03:57:43.723351110 [W:onnxruntime:Default, onnxruntime_pybind_state.cc:1150 CreateExecutionProviderFactoryInstance] Failed to create CUDAExecutionProvider. Require cuDNN 9.* and CUDA 13.*. Please install all dependencies as mentioned in the GPU requirements page (https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements), make sure they're in the PATH, and that your GPU is supported.[m
+04:01:19 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+04:01:19 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+04:01:19 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+04:01:19 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | pytorch | fp32
+04:01:26 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | onnx | fp32
+04:01:27 | INFO    | holoqpi.deploy.export | exported ONNX (fp32, opset 17, 900x900) -> runs/onnx/base_gabor_fp32.onnx
+[1;31m2026-09-03 04:01:27.548401003 [E:onnxruntime:Default, provider_bridge_ort.cc:2395 TryGetProviderInfo_CUDA] /onnxruntime_src/onnxruntime/core/session/provider_bridge_ort.cc:1988 onnxruntime::Provider& onnxruntime::ProviderLibrary::Get() [ONNXRuntimeError] : 1 : FAIL : Failed to load library /home/usama/anaconda3/envs/qpi_extended/lib/python3.11/site-packages/onnxruntime/capi/libonnxruntime_providers_cuda.so with error: libcublasLt.so.13: cannot open shared object file: No such file or directory
+[m
+[0;93m2026-09-03 04:01:27.548577248 [W:onnxruntime:Default, onnxruntime_pybind_state.cc:1150 CreateExecutionProviderFactoryInstance] Failed to create CUDAExecutionProvider. Require cuDNN 9.* and CUDA 13.*. Please install all dependencies as mentioned in the GPU requirements page (https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements), make sure they're in the PATH, and that your GPU is supported.[m
+04:03:29 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | pytorch | fp16
+04:03:34 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | onnx | fp16
+04:03:35 | INFO    | holoqpi.deploy.export | exported ONNX (fp16, opset 17, 900x900) -> runs/onnx/base_gabor_fp16.onnx
+[1;31m2026-09-03 04:03:35.708950688 [E:onnxruntime:Default, provider_bridge_ort.cc:2395 TryGetProviderInfo_CUDA] /onnxruntime_src/onnxruntime/core/session/provider_bridge_ort.cc:1988 onnxruntime::Provider& onnxruntime::ProviderLibrary::Get() [ONNXRuntimeError] : 1 : FAIL : Failed to load library /home/usama/anaconda3/envs/qpi_extended/lib/python3.11/site-packages/onnxruntime/capi/libonnxruntime_providers_cuda.so with error: libcublasLt.so.13: cannot open shared object file: No such file or directory
+[m
+[0;93m2026-09-03 04:03:35.708986162 [W:onnxruntime:Default, onnxruntime_pybind_state.cc:1150 CreateExecutionProviderFactoryInstance] Failed to create CUDAExecutionProvider. Require cuDNN 9.* and CUDA 13.*. Please install all dependencies as mentioned in the GPU requirements page (https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements), make sure they're in the PATH, and that your GPU is supported.[m
+04:06:53 | INFO    | holoqpi | benchmark written to runs/base_hardware_benchmark_cuda.csv

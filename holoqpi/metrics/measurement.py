@@ -35,6 +35,9 @@ class MeasurementMetrics:
         self._per_image: dict[str, list[tuple[float, float]]] = {q: [] for q in _QUANTITIES}
         self._predicted_counts: list[int] = []
         self._reference_counts: list[int] = []
+        self._matched_counts: list[int] = []
+        self._missed: list[dict] = []
+        self._false_positives: list[dict] = []
 
     def update_pairs(self, pairs: list[tuple[dict, dict]]) -> None:
         for predicted, reference in pairs:
@@ -44,14 +47,48 @@ class MeasurementMetrics:
                     continue
                 self._paired[quantity].append((float(p), float(r)))
 
-    def update_image(self, predicted_cells: list[dict], reference_cells: list[dict]) -> None:
+    def update_image(
+        self,
+        pairs: list[tuple[dict, dict]],
+        predicted_cells: list[dict],
+        reference_cells: list[dict],
+    ) -> None:
+        """Accumulate one field of view.
+
+        The per-image summaries are taken over the IoU-matched pairs, the same
+        population the per-cell errors use. Taking them over every detected and
+        every reference cell instead would compare two different populations:
+        cells the model missed are absent from one side and merged detections
+        are absent from the other, so the difference between the medians would
+        report the detection gap rather than the measurement accuracy, and it
+        would do so under a name that says bias.
+
+        How many cells were missed or invented is a real and important result,
+        but it is reported separately by the detection counts below.
+        """
         self._predicted_counts.append(len(predicted_cells))
         self._reference_counts.append(len(reference_cells))
-        if not predicted_cells or not reference_cells:
+        self._matched_counts.append(len(pairs))
+
+        # Keep the cells that failed to pair. A missed reference cell and an
+        # invented predicted cell are the two failure modes the paired metrics
+        # cannot see, and their size distribution says whether the detector is
+        # losing small cells, merged clusters, or something else.
+        for record in reference_cells:
+            if not np.isfinite(record.get("match_iou", float("nan"))):
+                self._missed.append(record)
+        for record in predicted_cells:
+            if not np.isfinite(record.get("match_iou", float("nan"))):
+                self._false_positives.append(record)
+
+        if not pairs:
             return
+
+        matched_predicted = [p for p, _ in pairs]
+        matched_reference = [r for _, r in pairs]
         for quantity in _QUANTITIES:
-            p = _median(predicted_cells, quantity)
-            r = _median(reference_cells, quantity)
+            p = _median(matched_predicted, quantity)
+            r = _median(matched_reference, quantity)
             if np.isfinite(p) and np.isfinite(r):
                 self._per_image[quantity].append((p, r))
 
@@ -76,21 +113,53 @@ class MeasurementMetrics:
                 reference = np.array([r for _, r in per_image])
                 results[f"{short}_image_pearson_r"] = _pearson(predicted, reference)
                 if self.report_bland_altman:
-                    bias, limits = _bland_altman(predicted, reference)
-                    results[f"{short}_median_relative_bias"] = bias
-                    results[f"{short}_loa_lower"] = limits[0]
-                    results[f"{short}_loa_upper"] = limits[1]
+                    agreement = _bland_altman(predicted, reference)
+                    results[f"{short}_relative_bias"] = agreement["bias"]
+                    results[f"{short}_median_relative_bias"] = agreement["median_bias"]
+                    results[f"{short}_loa_lower"] = agreement["loa_lower"]
+                    results[f"{short}_loa_upper"] = agreement["loa_upper"]
 
         if self._reference_counts:
             predicted_total = int(np.sum(self._predicted_counts))
             reference_total = int(np.sum(self._reference_counts))
+            matched_total = int(np.sum(self._matched_counts))
             results["cells_detected"] = predicted_total
             results["cells_reference"] = reference_total
+            results["cells_matched"] = matched_total
             results["cell_count_ratio"] = (
                 predicted_total / reference_total if reference_total else float("nan")
             )
+            # Detection quality at the configured IoU threshold. cell_count_ratio
+            # alone cannot express this: a model that misses half the cells and
+            # invents an equal number of false positives scores a ratio of 1.0.
+            recall = matched_total / reference_total if reference_total else float("nan")
+            precision = matched_total / predicted_total if predicted_total else float("nan")
+            results["detection_recall"] = recall
+            results["detection_precision"] = precision
+            results["detection_f1"] = (
+                2 * precision * recall / (precision + recall)
+                if np.isfinite(precision) and np.isfinite(recall) and (precision + recall) > 0
+                else float("nan")
+            )
+            results["cells_missed"] = len(self._missed)
+            results["cells_false_positive"] = len(self._false_positives)
+            if self._missed:
+                results["missed_median_area_um2"] = _median(self._missed, "area_um2")
+            if self._false_positives:
+                results["false_positive_median_area_um2"] = _median(
+                    self._false_positives, "area_um2"
+                )
 
         return results
+
+    def unmatched_rows(self) -> list[dict]:
+        """Missed reference cells and false-positive detections, tagged by kind."""
+        rows = []
+        for record in self._missed:
+            rows.append({"kind": "missed_reference", **record})
+        for record in self._false_positives:
+            rows.append({"kind": "false_positive", **record})
+        return rows
 
 
 def _median(cells: list[dict], quantity: str) -> float:
@@ -117,15 +186,29 @@ def _pearson(a: np.ndarray, b: np.ndarray) -> float:
     return float((a * b).sum() / denominator) if denominator > 0 else 0.0
 
 
-def _bland_altman(predicted: np.ndarray, reference: np.ndarray) -> tuple[float, tuple[float, float]]:
-    """Median relative bias and 95% limits of agreement, both dimensionless."""
+def _bland_altman(predicted: np.ndarray, reference: np.ndarray) -> dict:
+    """Relative Bland-Altman agreement, dimensionless.
+
+    The bias and the limits of agreement must describe the same centre, or the
+    reported interval is not centred on the reported bias and the pair cannot be
+    read as a Bland-Altman result. The standard construction is used: mean
+    relative difference, limits at mean +/- 1.96 SD. The median is reported
+    alongside as a robust cross-check rather than substituted for the mean.
+    """
+    empty = {"bias": float("nan"), "median_bias": float("nan"),
+             "loa_lower": float("nan"), "loa_upper": float("nan"), "n": 0}
     mean_value = (predicted + reference) / 2.0
     valid = np.abs(mean_value) > 0
     if not valid.any():
-        return float("nan"), (float("nan"), float("nan"))
+        return empty
 
     relative = (predicted[valid] - reference[valid]) / mean_value[valid]
-    bias = float(np.median(relative))
-    spread = float(np.std(relative, ddof=1)) if relative.size > 1 else 0.0
     mean_relative = float(np.mean(relative))
-    return bias, (mean_relative - 1.96 * spread, mean_relative + 1.96 * spread)
+    spread = float(np.std(relative, ddof=1)) if relative.size > 1 else 0.0
+    return {
+        "bias": mean_relative,
+        "median_bias": float(np.median(relative)),
+        "loa_lower": mean_relative - 1.96 * spread,
+        "loa_upper": mean_relative + 1.96 * spread,
+        "n": int(relative.size),
+    }

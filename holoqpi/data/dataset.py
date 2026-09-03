@@ -51,8 +51,11 @@ class HologramQPIDataset(Dataset):
 
         crop = data_cfg.train_crop if split == "train" else data_cfg.eval_size
         self.crop_size = crop
-        self.augment = GeometricAugmentation(data_cfg.augmentation, seed=cfg.project.seed) if augment else None
-        self._rng = random.Random(cfg.project.seed + len(stems))
+        self._base_seed = cfg.project.seed + len(stems)
+        self.augment = (
+            GeometricAugmentation(data_cfg.augmentation, seed=self._base_seed) if augment else None
+        )
+        self._rng = random.Random(self._base_seed)
 
         self._cache: dict[int, tuple] | None = {} if data_cfg.cache_in_memory else None
 
@@ -133,6 +136,27 @@ class HologramQPIDataset(Dataset):
         }
 
 
+def _seed_worker(worker_id: int) -> None:
+    """Give each dataloader worker its own random stream.
+
+    A ``DataLoader`` with ``num_workers=N`` forks N copies of the dataset, and
+    each copy carries an identical ``random.Random`` instance. Every worker then
+    replays the same sequence of crop offsets and the same flip/rotation
+    decisions, so the augmentation an epoch actually sees has only 1/N of the
+    intended diversity. Re-seeding per worker from torch's own per-worker seed
+    keeps the run reproducible while making the streams independent.
+    """
+    info = torch.utils.data.get_worker_info()
+    if info is None:
+        return
+    dataset = info.dataset
+    base = int(torch.initial_seed() % (2 ** 31))
+    if hasattr(dataset, "_rng"):
+        dataset._rng = random.Random(base)
+    if getattr(dataset, "augment", None) is not None:
+        dataset.augment._rng = random.Random(base + 1)
+
+
 def build_dataloaders(
     cfg: Config, splits_to_build: tuple[str, ...] = ("train", "val", "test")
 ) -> dict[str, DataLoader]:
@@ -164,5 +188,6 @@ def build_dataloaders(
             pin_memory=data_cfg.pin_memory and torch.cuda.is_available(),
             drop_last=data_cfg.drop_last and is_train,
             persistent_workers=data_cfg.num_workers > 0,
+            worker_init_fn=_seed_worker if data_cfg.num_workers > 0 else None,
         )
     return loaders

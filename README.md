@@ -134,9 +134,30 @@ off-axis / Gabor classification gap.
 ## Diagnostics
 
 ```bash
-python scripts/selftest.py --config config/base.yaml      # measurement chain and losses
-python scripts/diagnose_bias.py --config config/base.yaml # where the dry-mass error comes from
+python scripts/selftest.py --config config/base.yaml       # measurement chain and losses
+python scripts/diagnose_bias.py --config config/base.yaml  # boundary error or phase error?
+python scripts/audit_labels.py --config config/base.yaml   # are the silver labels sound?
 ```
+
+`audit_labels` answers the two questions the phase-derived masks raise: whether
+the per-image Otsu level drifts with drug condition (which would confound the
+classification result), and how much of the segmentation head is already implied
+by the phase head (which explains why the physics terms are inert). Add
+`--skip-redundancy` to run the threshold half alone — it needs no checkpoint and
+no GPU.
+
+## Figures
+
+```bash
+python scripts/make_figures.py --config config/base.yaml           # all twelve
+python scripts/make_figures.py --config config/base.yaml --list    # what each one shows
+python scripts/make_figures.py --config config/base.yaml --only 2 4 5
+```
+
+Writes `figures/fig<NN>_<name>.png` and `.pdf`. Most read files the earlier steps
+already produced, so they regenerate in seconds; a figure whose inputs are missing
+prints its reason and is skipped without stopping the rest. What each figure is
+for is tabulated in [`docs/documentation.md` §10a](docs/documentation.md).
 
 ## Segmentation labels
 

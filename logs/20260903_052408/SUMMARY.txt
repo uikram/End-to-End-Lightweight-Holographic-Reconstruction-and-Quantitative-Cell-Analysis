@@ -1,0 +1,110 @@
+====================================================================
+ HoloQPI full run - 20260903_052408
+====================================================================
+ working directory : /sda/usama/QPI_Extended
+ CUDA_VISIBLE_DEVICES=2
+ QUICK mode        : off
+
+environment captured -> logs/20260903_052408/00_environment.log
+
+--------------------------------------------------------------------
+STEP: self-test (verify the corrected code)
+  cmd: python scripts/selftest.py --config config/base.yaml
+  log: 01_selftest.log
+  result: OK (4s)
+
+--------------------------------------------------------------------
+STEP: re-evaluate: base
+  cmd: python main.py compare --config config/base.yaml --no-train
+  log: 02_eval_base.log
+  result: OK (93s)
+
+--------------------------------------------------------------------
+STEP: re-evaluate: no_physics
+  cmd: python main.py compare --config config/ablation/no_physics.yaml --no-train
+  log: 03_eval_no_physics.log
+  result: OK (92s)
+
+--------------------------------------------------------------------
+STEP: re-evaluate: no_measurement
+  cmd: python main.py compare --config config/ablation/no_measurement.yaml --no-train
+  log: 04_eval_no_measurement.log
+  result: OK (94s)
+
+--------------------------------------------------------------------
+STEP: re-evaluate: classification_only
+  cmd: python main.py compare --config config/ablation/classification_only.yaml --no-train
+  log: 05_eval_classification_only.log
+  result: OK (120s)
+
+--------------------------------------------------------------------
+STEP: dry-mass bias decomposition
+  cmd: python scripts/diagnose_bias.py --config config/base.yaml
+  log: 06_diagnose_bias.log
+  result: OK (17s)
+
+--------------------------------------------------------------------
+STEP: label audit: threshold stability and head redundancy
+  cmd: python scripts/audit_labels.py --config config/base.yaml
+  log: 06b_audit_labels.log
+  result: OK (83s)
+
+--------------------------------------------------------------------
+STEP: install onnxruntime-gpu==1.20.1 (CUDA 12 build)
+  cmd: bash -c pip uninstall -y onnxruntime onnxruntime-gpu; pip install 'onnxruntime-gpu==1.20.1'
+  log: 07_onnxruntime_gpu.log
+  result: FAILED with exit code 1 (1s)
+  last 15 lines:
+    WARNING: Skipping onnxruntime as it is not installed.
+    Found existing installation: onnxruntime-gpu 1.20.2
+    Uninstalling onnxruntime-gpu-1.20.2:
+      Successfully uninstalled onnxruntime-gpu-1.20.2
+    ERROR: Could not find a version that satisfies the requirement onnxruntime-gpu==1.20.1 (from versions: 1.15.0, 1.15.1, 1.16.0, 1.16.3, 1.18.1, 1.19.0, 1.19.2, 1.20.0, 1.20.2, 1.21.0, 1.21.1, 1.22.0, 1.23.0, 1.23.2, 1.24.1, 1.24.4, 1.25.0, 1.25.1, 1.26.0, 1.27.0, 1.28.0)
+    ERROR: No matching distribution found for onnxruntime-gpu==1.20.1
+
+ONNX providers after install -> logs/20260903_052408/08_providers_after.log
+
+--------------------------------------------------------------------
+STEP: hardware benchmark
+  cmd: python main.py benchmark --config config/base.yaml
+  log: 09_benchmark.log
+  result: OK (39s)
+
+all result files concatenated -> logs/20260903_052408/10_all_results.txt
+convergence traces -> logs/20260903_052408/11_convergence.txt
+
+--------------------------------------------------------------------
+STEP: publication figures
+  cmd: python scripts/make_figures.py --config config/base.yaml
+  log: 12_figures.log
+  result: OK (52s)
+figure listing -> logs/20260903_052408/13_figure_listing.txt
+
+====================================================================
+ SUMMARY
+====================================================================
+  OK      self-test (verify the corrected code)
+  OK      re-evaluate: base
+  OK      re-evaluate: no_physics
+  OK      re-evaluate: no_measurement
+  OK      re-evaluate: classification_only
+  OK      dry-mass bias decomposition
+  OK      label audit: threshold stability and head redundancy
+  FAILED  install onnxruntime-gpu==1.20.1 (CUDA 12 build)  (exit 1)
+  OK      hardware benchmark
+  OK      publication figures
+
+1 step(s) failed - see the individual logs above.
+
+Send back this whole folder:  logs/20260903_052408
+  00_environment.log      python, torch, GPU, onnxruntime providers, packages
+  01..09_*.log            one log per step
+  10_all_results.txt      every table, metric and resolved config
+  11_convergence.txt      per-epoch traces and final loss components
+  12_figures.log          figure generation
+  13_figure_listing.txt   what landed in figures/
+  SUMMARY.txt             this summary
+
+The figures themselves are in  figures/  (PNG for reading, PDF for the paper).
+
+Single archive to send: logs/holoqpi_run_20260903_052408.tar.gz  (11M)

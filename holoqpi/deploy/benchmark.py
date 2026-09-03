@@ -93,12 +93,73 @@ def benchmark_pytorch(
     return result
 
 
+def _preload_cuda_libraries() -> int:
+    """Load the CUDA and cuDNN shared objects that pip installs into site-packages.
+
+    onnxruntime resolves its CUDA provider through the system dynamic loader,
+    which searches the usual library paths but not site-packages. PyTorch ships
+    its CUDA runtime as pip wheels under ``nvidia/*/lib`` and loads them itself,
+    so torch runs on the GPU while onnxruntime reports
+    "libcudnn_adv.so.9: cannot open shared object file" and falls back to CPU on
+    the very same machine.
+
+    Loading the libraries into this process with RTLD_GLOBAL first makes them
+    resolvable by soname when the provider is created. Two passes, because the
+    cuDNN sub-libraries depend on one another and a first-pass failure often
+    succeeds once its dependency is resident.
+    """
+    import ctypes
+    import glob
+    import os
+
+    try:
+        import nvidia
+    except ImportError:
+        return 0
+
+    # `nvidia` is a namespace package: pip installs nvidia-cudnn-cu12 and friends
+    # as separate distributions sharing the name, so it has no __init__.py and
+    # its __file__ is None. The directories live on __path__ instead.
+    roots = [str(entry) for entry in getattr(nvidia, "__path__", []) or []]
+    if not roots and getattr(nvidia, "__file__", None):
+        roots = [os.path.dirname(nvidia.__file__)]
+    if not roots:
+        return 0
+
+    # cuDNN first: it is the one the CUDA provider names explicitly.
+    order = ("cudnn", "cublas", "cuda_runtime", "cuda_nvrtc", "cufft",
+             "curand", "cusolver", "cusparse", "nvjitlink")
+
+    candidates: list[str] = []
+    for root in roots:
+        for package in order:
+            candidates.extend(sorted(glob.glob(os.path.join(root, package, "lib", "*.so*"))))
+
+    loaded: set[str] = set()
+    for _ in range(2):
+        for path in candidates:
+            if path in loaded:
+                continue
+            try:
+                ctypes.CDLL(path, mode=ctypes.RTLD_GLOBAL)
+                loaded.add(path)
+            except OSError:
+                continue      # unresolved dependency; the second pass may fix it
+
+    if loaded:
+        LOGGER.info("preloaded %d CUDA/cuDNN libraries from %s", len(loaded), roots[0])
+    return len(loaded)
+
+
 def benchmark_onnx(onnx_path: str | Path, cfg: Config, device: torch.device) -> dict:
     try:
         import onnxruntime as ort
     except ImportError:
         LOGGER.warning("onnxruntime is not installed; skipping the ONNX benchmark")
         return {}
+
+    if device.type == "cuda":
+        _preload_cuda_libraries()
 
     benchmark_cfg = cfg.deploy.benchmark
     size = benchmark_cfg.input_size
@@ -107,13 +168,40 @@ def benchmark_onnx(onnx_path: str | Path, cfg: Config, device: torch.device) -> 
     options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
 
     available = ort.get_available_providers()
+    on_gpu = device.type == "cuda" and "CUDAExecutionProvider" in available
     providers = (
-        ["CUDAExecutionProvider", "CPUExecutionProvider"]
-        if device.type == "cuda" and "CUDAExecutionProvider" in available
+        ["CUDAExecutionProvider", "CPUExecutionProvider"] if on_gpu
         else ["CPUExecutionProvider"]
     )
 
+    if device.type == "cuda" and not on_gpu:
+        # Silently falling back would put a CPU latency next to a GPU latency in
+        # the same table, under the same column, differing by an order of
+        # magnitude for a reason that has nothing to do with either model.
+        LOGGER.warning(
+            "onnxruntime has no CUDA provider (available: %s), so this ONNX timing "
+            "runs on CPU while the PyTorch timing ran on %s. The two rows are NOT "
+            "comparable. Install onnxruntime-gpu to time ONNX on the GPU, or drop "
+            "'onnx' from deploy.benchmark.runtimes and report PyTorch only.",
+            available, torch.cuda.get_device_name(0),
+        )
+
     session = ort.InferenceSession(str(onnx_path), sess_options=options, providers=providers)
+
+    # Being listed in get_available_providers() only means the wheel was built
+    # with CUDA; the provider can still fail to instantiate when its shared
+    # libraries do not load, and onnxruntime then falls back to CPU without
+    # raising. Only the session's own provider list says what actually ran.
+    if on_gpu and "CUDAExecutionProvider" not in session.get_providers():
+        LOGGER.warning(
+            "CUDAExecutionProvider was requested and advertised, but the session "
+            "fell back to %s. The ONNX timing is therefore on CPU and is NOT "
+            "comparable to the PyTorch row. The usual cause is a CUDA/cuDNN "
+            "version mismatch: check the onnxruntime error above for the exact "
+            "missing library.",
+            session.get_providers(),
+        )
+
     input_meta = session.get_inputs()[0]
     dtype = np.float16 if "float16" in input_meta.type else np.float32
     dummy = np.random.randn(benchmark_cfg.batch_size, cfg.model.in_channels, size, size).astype(dtype)
@@ -129,7 +217,12 @@ def benchmark_onnx(onnx_path: str | Path, cfg: Config, device: torch.device) -> 
         timings.append((time.perf_counter() - started) * 1000.0)
 
     result = _summarise(timings, benchmark_cfg.batch_size)
-    result["providers"] = ",".join(session.get_providers())
+    actual = session.get_providers()
+    result["providers"] = ",".join(actual)
+    # Explicit flag so a reader of the CSV cannot miss a cross-device comparison.
+    result["comparable_to_pytorch_row"] = bool(
+        device.type != "cuda" or "CUDAExecutionProvider" in actual
+    )
     return result
 
 
