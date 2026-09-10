@@ -1,0 +1,42 @@
+# Sensitivity check: labels from a FIXED phase threshold instead of per-image Otsu.
+#
+# WHY THIS EXISTS
+# ---------------
+# scripts/audit_labels.py measured that the per-image Otsu level separates by
+# drug condition: 0.406 +/- 0.151 rad over 800 fields, one-way ANOVA
+# F = 15.27, p = 4.9e-12, Kruskal-Wallis H = 56.1, p = 1.9e-11. Between-condition
+# SD is 0.046 rad against 0.146 rad within condition, so the effect is modest but
+# unambiguous: the threshold that DEFINES a cell moves with the label the network
+# is asked to predict.
+#
+# That is a confound, and a reviewer will ask whether the classification result
+# and the segmentation result are partly reading the label definition rather than
+# the specimen. This arm answers it directly by fixing the threshold at the
+# population level (0.406 rad, the mean Otsu level) so the label definition
+# carries no condition information at all.
+#
+# HOW TO READ THE RESULT
+# ----------------------
+# If the metrics move little, the confound is cosmetic and the main result
+# stands. If classification accuracy drops substantially while segmentation and
+# phase hold, that quantifies how much of the classification number came from
+# the label definition -- which is a finding, not a failure, and belongs in the
+# paper either way.
+#
+# Masks live in their own directory so the main study's labels are untouched and
+# both label sets remain on disk for comparison.
+#
+#   python main.py prepare  --config config/ablation/fixed_threshold.yaml
+#   python main.py compare  --config config/ablation/fixed_threshold.yaml
+extends: ../base.yaml
+
+experiment_name: fixed_threshold
+
+paths:
+  mask_dir: mask_fixed                  # NOT the main mask/ directory
+  splits_file: splits.json              # the same split, so the arms are comparable
+
+mask_generation:
+  threshold_method: fixed
+  fixed_threshold_rad: 0.406            # population mean Otsu level over 800 fields
+  overwrite_existing: false

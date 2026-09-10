@@ -30,6 +30,16 @@ class AngularSpectrumFrontEnd(nn.Module):
         self.dc_exclusion = cfg.dc_exclusion_px
         self.output = cfg.output
         self.detach = cfg.detach
+        # The sideband this module picks by argmax is one of a conjugate pair,
+        # and which one wins is arbitrary and flips between images of the same
+        # acquisition. Left unresolved, the phase channel handed to the encoder
+        # is negated on an unpredictable subset of the training set -- noise the
+        # network cannot learn around, because nothing in the input says which
+        # sign it received. Resolving it costs an unwrap and a polynomial fit
+        # per image, which is why it is a switch and not unconditional.
+        self.resolve_conjugate = bool(cfg.resolve_conjugate)
+        self.conjugate_detrend_order = int(cfg.conjugate_detrend_order)
+        self.conjugate_min_skewness = float(cfg.conjugate_min_skewness)
 
         if self.output not in ("amplitude_phase", "real_imag"):
             raise ValueError(f"unknown frontend output {self.output!r}")
@@ -43,6 +53,12 @@ class AngularSpectrumFrontEnd(nn.Module):
         context = torch.no_grad() if self.detach else _NullContext()
         with context:
             field = self._demodulate(hologram)
+            if self.resolve_conjugate:
+                from ..physics import resolve_conjugate
+
+                field, _, _ = resolve_conjugate(
+                    field, self.conjugate_detrend_order, self.conjugate_min_skewness
+                )
 
         if self.output == "amplitude_phase":
             extra = torch.cat([field.abs(), torch.angle(field)], dim=1)

@@ -63,7 +63,12 @@ from holoqpi.config import load_config, parse_overrides
 from holoqpi.data import build_dataloaders
 from holoqpi.data.masks import build_mask
 from holoqpi.engine import Evaluator, save_per_cell
-from holoqpi.physics import reconstruct_gabor, reconstruct_off_axis, unwrap_phase_2d
+from holoqpi.physics import (
+    reconstruct_gabor,
+    reconstruct_off_axis,
+    resolve_conjugate,
+    unwrap_phase_2d,
+)
 from holoqpi.utils import get_logger, resolve_device, write_csv, write_json
 
 LOGGER = get_logger(__name__)
@@ -110,30 +115,6 @@ def remove_aberration(phase: torch.Tensor, mask: torch.Tensor, order: int) -> to
     return torch.stack(corrected).unsqueeze(1)
 
 
-def select_conjugate(field: torch.Tensor) -> torch.Tensor:
-    """Choose between the two conjugate sidebands on physical grounds.
-
-    An off-axis hologram carries the object in two conjugate first-order
-    sidebands. Picking the wrong one returns the conjugate field and therefore
-    the negated phase, which looks like a plausible reconstruction and scores as
-    an anti-correlation. Which peak is numerically larger is arbitrary, so the
-    choice cannot be left to the spectrum.
-
-    The disambiguating fact is physical: cells are optically denser than their
-    medium, so they add optical path. A field of cells on a flat background is
-    therefore right-skewed in phase. Skewness needs no mask and no threshold, so
-    it can be applied before segmentation exists.
-    """
-    selected = []
-    for item in range(field.shape[0]):
-        angle = torch.angle(field[item])
-        centred = angle - angle.mean()
-        deviation = centred.std().clamp(min=1e-8)
-        skew = float((centred ** 3).mean() / deviation ** 3)
-        selected.append(field[item] if skew >= 0 else field[item].conj())
-    return torch.stack(selected)
-
-
 def build_predictor(cfg, modality: str, device, distance_um: float,
                     gs_iterations: int, aberration_order: int):
     """A predict_fn for the Evaluator that reconstructs classically.
@@ -144,11 +125,22 @@ def build_predictor(cfg, modality: str, device, distance_um: float,
     optics = cfg.optics
     pixel_area = calibration_from_config(cfg).pixel_area_um2
     frontend = cfg.model.frontend
+    conjugate = optics.conjugate
     num_classes = cfg.model.segmentation_classes
     num_conditions = cfg.model.condition_classes
 
     def predict(batch: dict) -> dict:
-        hologram = batch["hologram"].to(device).float()
+        # THE RAW SENSOR INTENSITY, not the normalised network input. This is not
+        # a preference, it is a correctness requirement, and the in-line arm is
+        # where it shows. Back-propagation starts from sqrt(I) with zero phase;
+        # on a z-scored hologram half the pixels are negative, clamp(min=0) sets
+        # them to zero and the DC term that conditions the propagation is gone.
+        # The recovered phase is then uniform noise over (-pi, pi], and unwrapping
+        # noise produces a random walk: measured here, 173 rad of span against a
+        # 4-10 rad reference, and an in-cell contrast of -6.8 rad. With the raw
+        # hologram the same reconstruction spans 1.6 rad. Off-axis escapes this
+        # because the sideband is isolated and the DC discarded regardless.
+        hologram = batch.get("hologram_raw", batch["hologram"]).to(device).float()
 
         if modality == "off_axis":
             field = reconstruct_off_axis(
@@ -163,7 +155,15 @@ def build_predictor(cfg, modality: str, device, distance_um: float,
                 distance_um, iterations=gs_iterations,
             )
 
-        field = select_conjugate(field)
+        # Resolve the conjugate sideband BEFORE unwrapping, but decide on the
+        # detrended phase. The earlier version of this test read the wrapped
+        # angle, whose asymmetry is destroyed by wrapping into (-pi, pi], and
+        # chose correctly on 6 of 13 fields -- chance. See holoqpi/physics/
+        # surface.py for the measurement.
+        if conjugate.enabled:
+            field, _, _ = resolve_conjugate(
+                field, conjugate.detrend_order, conjugate.min_skewness
+            )
         phase = unwrap_phase_2d(torch.angle(field))
 
         # First pass gives a rough mask, used only to mark which pixels count as
@@ -218,9 +218,9 @@ def main() -> int:
     parser.add_argument("--split", default="test", choices=["train", "val", "test"])
     parser.add_argument("--distance-um", type=float, default=None,
                         help="default: loss.forward_model.distance_um, else 0")
-    parser.add_argument("--gs-iterations", type=int, default=0,
+    parser.add_argument("--gs-iterations", type=int, default=None,
                         help="Gerchberg-Saxton iterations for the in-line arm")
-    parser.add_argument("--aberration-order", type=int, default=3,
+    parser.add_argument("--aberration-order", type=int, default=None,
                         help="polynomial order for numerical aberration removal")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--set", nargs="*", default=[], metavar="KEY=VALUE")
@@ -228,6 +228,11 @@ def main() -> int:
 
     cfg = load_config(args.config, parse_overrides(args.set))
     device = resolve_device(args.device)
+    baseline_cfg = cfg.evaluation.conventional_baseline
+    gs_iterations = (args.gs_iterations if args.gs_iterations is not None
+                     else baseline_cfg.gs_iterations)
+    aberration_order = (args.aberration_order if args.aberration_order is not None
+                        else baseline_cfg.aberration_order)
     output_root = Path(cfg.paths.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
@@ -251,11 +256,11 @@ def main() -> int:
         evaluator = Evaluator(modality_cfg, device)
         predictor, diagnostics = build_predictor(
             modality_cfg, modality, device, float(distance),
-            args.gs_iterations, args.aberration_order,
+            gs_iterations, aberration_order,
         )
 
         LOGGER.info("conventional %s reconstruction at z = %.2f um (GS iterations %d)",
-                    modality, distance, args.gs_iterations)
+                    modality, distance, gs_iterations)
         evaluation = evaluator.run(
             None, loader, collect_per_cell=cfg.evaluation.save_per_cell_csv,
             predict_fn=predictor,
@@ -267,8 +272,8 @@ def main() -> int:
             metrics.pop(key)
         metrics["reconstruction"] = "conventional"
         metrics["distance_um"] = float(distance)
-        metrics["gs_iterations"] = int(args.gs_iterations)
-        metrics["aberration_order"] = int(args.aberration_order)
+        metrics["gs_iterations"] = int(gs_iterations)
+        metrics["aberration_order"] = int(aberration_order)
 
         contrast = float(np.median(diagnostics["contrast"])) if diagnostics["contrast"] else float("nan")
         metrics["recovered_phase_contrast_rad"] = contrast
@@ -284,14 +289,34 @@ def main() -> int:
 
         print(f"\n=== conventional {modality} ===")
         print(f"  {'recovered in-cell phase contrast':<28} {contrast:+.4f} rad")
-        if not metrics["reconstruction_valid"]:
+        if not metrics["reconstruction_valid"] and modality == "gabor":
+            # For the in-line arm at a small defocus this is the expected
+            # physical outcome, not a misconfiguration, and it must not be
+            # reported as one. |A exp(i phi)|^2 = A^2 carries no phi, so at
+            # z = 34 um -- essentially in focus at this pitch and wavelength --
+            # single-step back-propagation of the recorded intensity has almost
+            # no phase contrast to recover, and the twin image is superposed on
+            # whatever little there is. That the LEARNED model reaches useful
+            # phase and segmentation from these same holograms is the result;
+            # this line is its control.
+            print("  !! The classical in-line pipeline recovered no cell contrast. At this\n"
+                  "     distance that is the expected physical outcome rather than a\n"
+                  "     misconfiguration: an in-line intensity of a pure phase object is\n"
+                  "     |A exp(i phi)|^2 = A^2, which does not contain phi, and the twin\n"
+                  "     image is superposed on what little contrast defocus provides.\n"
+                  "     Report this as the classical in-line baseline FAILING on this data,\n"
+                  "     and contrast it with the learned Gabor arm, which recovers usable\n"
+                  "     phase and segmentation from the same holograms. Do not quote the\n"
+                  "     measurement metrics below; quote the failure.")
+        elif not metrics["reconstruction_valid"]:
             print("  !! The reconstruction did NOT recover positive cell contrast, so the\n"
                   "     metrics below describe a failed reconstruction, not the classical\n"
                   "     method's real performance. Do not report them as a baseline.\n"
                   "     Most likely causes, in order: the propagation distance is wrong\n"
                   "     (run scripts/calibrate_z.py, or ask for z); the aberration order is\n"
-                  "     too low for this objective (try --aberration-order 4 or 5); for the\n"
-                  "     in-line arm, z = 0 is degenerate and no phase can be recovered.")
+                  "     too low for this objective (try --aberration-order 4 or 5); and\n"
+                  "     check that the RAW hologram is being reconstructed -- a normalised\n"
+                  "     one breaks sqrt(I) and the recovered phase becomes noise.")
         for key in ("phase_mae_rad", "phase_mae_rad_in_cell", "phase_pearson_r",
                     "seg_dice", "seg_aji", "seg_boundary_f1",
                     "detection_recall", "detection_f1",

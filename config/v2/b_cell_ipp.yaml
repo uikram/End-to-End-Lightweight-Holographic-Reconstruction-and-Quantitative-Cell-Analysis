@@ -1,0 +1,33 @@
+# HoloQPI v2, experiment B: Per-cell integrated-phase preservation
+#
+# THE MAIN HYPOTHESIS. Does preserving the integrated phase within individual
+# cellular regions improve quantitative measurement beyond conventional losses?
+#
+# The image-level version of this constraint scores exactly zero on a field
+# where one cell is over-measured by 20% and another under-measured by 20%
+# (asserted in scripts/selftest.py). The per-cell version scores 0.2000. Dry
+# mass is reported per cell, so that cancellation is precisely the error this
+# study cares about.
+#
+# Shared across all four v2 experiments:
+#   * off-axis only (the in-line arm is deferred to study 2)
+#   * no drug-condition head (unstable at +/-9.5 points, outside the question)
+#   * phase_mask_contrast and dry_mass_consistency permanently off; see
+#     config/base.yaml for the measurements behind each
+extends: ../base.yaml
+
+experiment_name: v2_cell_ipp
+
+data:
+  modality: off_axis
+
+model:
+  classifier_enabled: false
+
+loss:
+  weights:
+    classification: 0.0
+    cell_integrated_phase: 0.1
+    boundary_gradient_alignment: 0.0
+    projected_area_consistency: 0.0
+    forward_model: 0.0

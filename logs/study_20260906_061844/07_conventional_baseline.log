@@ -1,0 +1,45 @@
+16:56:53 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+16:56:53 | INFO    | __main__ | conventional off_axis reconstruction at z = 33.77 um (GS iterations 20)
+16:59:30 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=gabor | crop=None | augment=False
+16:59:30 | INFO    | __main__ | conventional gabor reconstruction at z = 33.77 um (GS iterations 20)
+
+=== conventional off_axis ===
+  recovered in-cell phase contrast +0.9004 rad
+  phase_mae_rad                0.2134
+  phase_mae_rad_in_cell        0.3648
+  phase_pearson_r              0.7520
+  seg_dice                     0.7863
+  seg_aji                      0.5871
+  seg_boundary_f1              0.2509
+  detection_recall             0.5944
+  detection_f1                 0.6766
+  area_mape                    0.1602
+  dry_mass_mape                0.2277
+  dry_mass_relative_bias       -0.0008
+
+=== conventional gabor ===
+  recovered in-cell phase contrast -0.0726 rad
+  !! The classical in-line pipeline recovered no cell contrast. At this
+     distance that is the expected physical outcome rather than a
+     misconfiguration: an in-line intensity of a pure phase object is
+     |A exp(i phi)|^2 = A^2, which does not contain phi, and the twin
+     image is superposed on what little contrast defocus provides.
+     Report this as the classical in-line baseline FAILING on this data,
+     and contrast it with the learned Gabor arm, which recovers usable
+     phase and segmentation from the same holograms. Do not quote the
+     measurement metrics below; quote the failure.
+  phase_mae_rad                0.3934
+  phase_mae_rad_in_cell        1.0236
+  phase_pearson_r              -0.1551
+  seg_dice                     0.1596
+  seg_aji                      0.0581
+  seg_boundary_f1              0.0864
+  detection_recall             0.0368
+  detection_f1                 0.0151
+  area_mape                    0.5039
+  dry_mass_mape                0.6923
+  dry_mass_relative_bias       -1.0011
+
+baseline table -> runs/conventional_baseline_test.csv
+Compare against runs/*_modality_comparison.csv; the two are scored by the
+same evaluator, so the difference is attributable to reconstruction alone.

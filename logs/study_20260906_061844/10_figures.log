@@ -1,0 +1,66 @@
+11:15:32 | INFO    | __main__ | --- figure 01 (qualitative_panel, ESSENTIAL) ---
+11:15:34 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+11:15:34 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+11:15:36 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+11:15:36 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+11:15:39 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+11:15:39 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+11:15:39 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+11:15:39 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=gabor | crop=None | augment=False
+11:15:45 | INFO    | __main__ | wrote figures/fig01_qualitative_panel.png / .pdf
+11:15:46 | INFO    | __main__ | --- figure 02 (bland_altman, ESSENTIAL) ---
+11:15:47 | INFO    | __main__ | wrote figures/fig02_bland_altman.png / .pdf
+11:15:47 | INFO    | __main__ | --- figure 03 (error_decomposition, ESSENTIAL) ---
+11:15:48 | INFO    | __main__ | wrote figures/fig03_error_decomposition.png / .pdf
+11:15:48 | INFO    | __main__ | --- figure 04 (detection_gap, ESSENTIAL) ---
+11:15:49 | INFO    | __main__ | wrote figures/fig04_detection_gap.png / .pdf
+11:15:49 | INFO    | __main__ | --- figure 05 (modality_comparison, ESSENTIAL) ---
+11:15:50 | INFO    | __main__ | wrote figures/fig05_modality_comparison.png / .pdf
+11:15:50 | INFO    | __main__ | --- figure 06 (loss_composition, ESSENTIAL) ---
+11:15:52 | INFO    | __main__ | wrote figures/fig06_loss_composition.png / .pdf
+11:15:52 | INFO    | __main__ | --- figure 07 (ablation_deltas, ESSENTIAL) ---
+11:15:56 | INFO    | __main__ | wrote figures/fig07_ablation_deltas.png / .pdf
+11:15:56 | INFO    | __main__ | --- figure 08 (efficiency_tradeoff, ESSENTIAL) ---
+11:15:57 | INFO    | __main__ | wrote figures/fig08_efficiency_tradeoff.png / .pdf
+11:15:57 | INFO    | __main__ | --- figure 09 (phase_error_structure, OPTIONAL) ---
+11:15:57 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+11:15:57 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+11:15:57 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+11:15:57 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+11:15:58 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+11:15:58 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+11:15:59 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+11:15:59 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=gabor | crop=None | augment=False
+11:16:01 | INFO    | __main__ | wrote figures/fig09_phase_error_structure.png / .pdf
+11:16:01 | INFO    | __main__ | --- figure 10 (label_audit, IMPORTANT) ---
+11:16:02 | INFO    | __main__ | wrote figures/fig10_label_audit.png / .pdf
+11:16:02 | INFO    | __main__ | --- figure 11 (confusion_matrices, IMPORTANT) ---
+11:16:03 | INFO    | __main__ | wrote figures/fig11_confusion_matrices.png / .pdf
+11:16:03 | INFO    | __main__ | --- figure 12 (convergence, IMPORTANT) ---
+11:16:04 | INFO    | __main__ | wrote figures/fig12_convergence.png / .pdf
+11:16:04 | INFO    | __main__ | --- figure 13 (forward_model_consistency, ESSENTIAL) ---
+11:16:05 | INFO    | __main__ | wrote figures/fig13_forward_model_consistency.png / .pdf
+11:16:05 | INFO    | __main__ | --- figure 14 (learned_vs_classical, ESSENTIAL) ---
+11:16:06 | INFO    | __main__ | wrote figures/fig14_learned_vs_classical.png / .pdf
+11:16:06 | INFO    | __main__ | --- figure 15 (recall_by_cell_size, IMPORTANT) ---
+11:16:07 | INFO    | __main__ | wrote figures/fig15_recall_by_cell_size.png / .pdf
+11:16:07 | INFO    | __main__ | --- figure 16 (forward_model_diagnostics, ESSENTIAL) ---
+11:16:08 | INFO    | __main__ | wrote figures/fig16_forward_model_diagnostics.png / .pdf
+
+figures written to /sda/usama/QPI_Extended/figures
+  fig01_qualitative_panel.png
+  fig02_bland_altman.png
+  fig03_error_decomposition.png
+  fig04_detection_gap.png
+  fig05_modality_comparison.png
+  fig06_loss_composition.png
+  fig07_ablation_deltas.png
+  fig08_efficiency_tradeoff.png
+  fig09_phase_error_structure.png
+  fig10_label_audit.png
+  fig11_confusion_matrices.png
+  fig12_convergence.png
+  fig13_forward_model_consistency.png
+  fig14_learned_vs_classical.png
+  fig15_recall_by_cell_size.png
+  fig16_forward_model_diagnostics.png

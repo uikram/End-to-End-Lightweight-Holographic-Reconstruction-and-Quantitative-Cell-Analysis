@@ -5,39 +5,39 @@ from .propagation import (
     diffraction_radius_px,
     estimate_carrier,
     form_hologram,
-<<<<<<< Updated upstream
-=======
     max_reflect_pad,
     pad_reflect,
->>>>>>> Stashed changes
     propagate,
     reconstruct_gabor,
     reconstruct_off_axis,
     reference_wave,
-<<<<<<< Updated upstream
-=======
     unpad,
->>>>>>> Stashed changes
     unwrap_phase_2d,
+)
+from .surface import (
+    detrend_polynomial,
+    fit_polynomial_surface,
+    phase_skewness,
+    polynomial_basis,
+    resolve_conjugate,
 )
 
 __all__ = [
     "angular_spectrum_kernel",
+    "detrend_polynomial",
     "diffraction_radius_px",
     "estimate_carrier",
+    "fit_polynomial_surface",
     "form_hologram",
-<<<<<<< Updated upstream
-=======
     "max_reflect_pad",
     "pad_reflect",
->>>>>>> Stashed changes
+    "phase_skewness",
+    "polynomial_basis",
     "propagate",
     "reconstruct_gabor",
     "reconstruct_off_axis",
     "reference_wave",
-<<<<<<< Updated upstream
-=======
+    "resolve_conjugate",
     "unpad",
->>>>>>> Stashed changes
     "unwrap_phase_2d",
 ]

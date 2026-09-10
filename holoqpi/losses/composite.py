@@ -44,6 +44,7 @@ from ..utils import get_logger
 LOGGER = get_logger(__name__)
 from .terms import (
     BoundaryGradientAlignment,
+    CellIntegratedPhase,
     DryMassConsistency,
     ForwardModelConsistency,
     PhaseMaskContrast,
@@ -55,6 +56,7 @@ from .terms import (
 
 _PHYSICS_KEYS = (
     "forward_model",
+    "cell_integrated_phase",
     "phase_mask_contrast",
     "boundary_gradient_alignment",
     "phase_volume",
@@ -96,6 +98,11 @@ class JointPhysicsAwareLoss(nn.Module):
         self.pmc = PhaseMaskContrast(physics_cfg.pmc_margin, physics_cfg.pmc_collapse_warn_ratio)
         self.bga = BoundaryGradientAlignment(physics_cfg.bga_epsilon)
         self.phase_volume = PhaseVolumePreservation(physics_cfg.volume_epsilon)
+        self.cell_integrated_phase = CellIntegratedPhase(
+            physics_cfg.volume_epsilon,
+            physics_cfg.cell_min_reference_rad,
+            physics_cfg.max_relative_error,
+        )
         self.dry_mass = DryMassConsistency(physics_cfg.volume_epsilon)
         self.projected_area = ProjectedAreaConsistency(physics_cfg.volume_epsilon)
 
@@ -103,10 +110,7 @@ class JointPhysicsAwareLoss(nn.Module):
         # misconfiguration surfaces at construction rather than at epoch 1.
         self.forward_model = ForwardModelConsistency(loss_cfg.forward_model, cfg.optics)
         self.modality = cfg.data.modality
-<<<<<<< Updated upstream
-=======
         self._warned_normalised = False
->>>>>>> Stashed changes
 
     @property
     def active_physics_terms(self) -> list[str]:
@@ -115,7 +119,7 @@ class JointPhysicsAwareLoss(nn.Module):
     def forward(self, outputs: dict, batch: dict) -> tuple[torch.Tensor, dict]:
         phase_pred = outputs["phase"]
         seg_logits = outputs["segmentation"]
-        condition_logits = outputs["condition"]
+        condition_logits = outputs.get("condition")
 
         phase_target = batch["phase"]
         mask_target = batch["mask"]
@@ -134,16 +138,20 @@ class JointPhysicsAwareLoss(nn.Module):
         total = total + self.weights["segmentation"] * segmentation_term
         components["segmentation"] = float(segmentation_term.mean().detach())
 
-        classification_term = F.cross_entropy(
-            condition_logits,
-            condition_target,
-            weight=self.condition_weights.to(condition_logits.dtype)
-            if self.condition_weights is not None else None,
-            label_smoothing=self.label_smoothing,
-            reduction="none",
-        )
-        total = total + self.weights["classification"] * classification_term
-        components["classification"] = float(classification_term.mean().detach())
+        # Absent when model.classifier_enabled is false, in which case the term
+        # is skipped rather than contributing a zero that would still appear in
+        # the logged breakdown as if the head existed.
+        if condition_logits is not None and self.weights.get("classification", 0.0):
+            classification_term = F.cross_entropy(
+                condition_logits,
+                condition_target,
+                weight=self.condition_weights.to(condition_logits.dtype)
+                if self.condition_weights is not None else None,
+                label_smoothing=self.label_smoothing,
+                reduction="none",
+            )
+            total = total + self.weights["classification"] * classification_term
+            components["classification"] = float(classification_term.mean().detach())
 
         # -- physics coupling ---------------------------------------------
         foreground = 1.0 - torch.softmax(seg_logits, dim=1)[:, 0:1]
@@ -169,22 +177,6 @@ class JointPhysicsAwareLoss(nn.Module):
         # background, and a crop without cells still has to be consistent with
         # the hologram it came from.
         if self.weights.get("forward_model", 0.0):
-<<<<<<< Updated upstream
-            hologram = batch.get("hologram")
-            if hologram is None:
-                raise KeyError(
-                    "loss.weights.forward_model is non-zero but the batch carries no "
-                    "'hologram'. The trainer and evaluator must pass it through."
-                )
-            amplitude = outputs.get("amplitude")
-            if amplitude is None:
-                amplitude = torch.ones_like(phase_pred)
-            forward_term = self.forward_model(
-                phase_pred, amplitude, hologram, self.modality
-            )
-            total = total + self.weights["forward_model"] * forward_term
-            components["forward_model"] = float(forward_term.mean().detach())
-=======
             # The RAW measurement, not the normalised network input. Falling
             # back to the normalised one would silently change the observation
             # model this term exists to test, so the fallback is announced.
@@ -210,23 +202,49 @@ class JointPhysicsAwareLoss(nn.Module):
                 amplitude = torch.ones_like(phase_pred)
             forward_term, coefficients = self.forward_model(
                 phase_pred, amplitude, hologram, self.modality,
+                aberration=batch.get("aberration"),
                 return_coefficients=True,
             )
+            # Fields whose aberration surface could not be recovered are
+            # excluded rather than down-weighted: without the surface the
+            # forward model is not approximately wrong, it is wrong by more
+            # than the signal, and averaging that in would corrupt the batch.
+            usable = batch.get("aberration_valid")
+            if usable is not None:
+                weight = usable.to(forward_term.dtype).reshape(-1)
+                forward_term = forward_term * weight
+                divisor = weight.sum().clamp(min=1.0)
+                components["forward_model_fields_used"] = float(weight.sum())
+            else:
+                divisor = torch.tensor(
+                    float(forward_term.numel()), device=forward_term.device
+                ).clamp(min=1.0)
+
             total = total + self.weights["forward_model"] * forward_term
-            components["forward_model"] = float(forward_term.mean().detach())
+            components["forward_model"] = float(forward_term.sum().detach() / divisor)
             # Logged so the calibration is inspectable. A gain that changes sign
             # or drifts across epochs means the forward model is wrong, and that
             # would otherwise be invisible inside the residual.
             fitted = coefficients.mean(dim=0).detach()
-            names = ("offset", "object_gain", "fringe_gain", "fringe_gain_conj")
+            # Six for off-axis: the constant, the object intensity, and both
+            # quadratures of each conjugate cross-term. The two quadratures of
+            # one sideband are the in-phase and out-of-phase parts of the same
+            # fringe; what is physically meaningful is their magnitude, since
+            # their ratio is the unmeasurable global piston phase.
+            names = ("offset", "object_gain",
+                     "fringe_gain", "fringe_gain_conj",
+                     "fringe_quadrature", "fringe_quadrature_conj")
             for index, name in enumerate(names):
                 if index < fitted.numel():
                     components[f"forward_{name}"] = float(fitted[index])
+            if fitted.numel() >= 6:
+                components["forward_fringe_magnitude"] = float(
+                    (fitted[2] ** 2 + fitted[4] ** 2).sqrt()
+                )
             if self.forward_model.learn_distance:
                 components["forward_distance_um"] = float(
                     self.forward_model.distance.detach()
                 )
->>>>>>> Stashed changes
 
         if self.weights.get("phase_mask_contrast", 0.0):
             raw_terms["phase_mask_contrast"] = self.pmc(foreground, phase_pred)
@@ -238,6 +256,22 @@ class JointPhysicsAwareLoss(nn.Module):
         if self.weights.get("phase_volume", 0.0):
             raw_terms["phase_volume"] = self.phase_volume(
                 foreground, phase_pred, target_foreground, phase_target
+            )
+
+        # Per-cell Integrated-Phase Preservation. Needs the reference instance
+        # labelling, which the dataloader carries alongside the mask; without it
+        # the term cannot be evaluated and is skipped rather than silently
+        # degrading to the image-level version.
+        if self.weights.get("cell_integrated_phase", 0.0):
+            instances = batch.get("instances")
+            if instances is None:
+                raise KeyError(
+                    "loss.weights.cell_integrated_phase is non-zero but the batch "
+                    "carries no 'instances' tensor. Set data.provide_instances: true."
+                )
+            raw_terms["cell_integrated_phase"] = self.cell_integrated_phase(
+                foreground, phase_pred, target_foreground, phase_target,
+                instances.to(phase_pred.device),
             )
 
         if self.weights.get("dry_mass_consistency", 0.0):

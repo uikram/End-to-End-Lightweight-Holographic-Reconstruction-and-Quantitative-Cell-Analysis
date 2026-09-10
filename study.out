@@ -1,0 +1,146 @@
+nohup: ignoring input
+CLEAN: moved 4 old output folder(s) into archive/before_20260905_024054/
+       Nothing is deleted. Remove that folder yourself once the new run
+       has finished and you are satisfied with it.
+====================================================================
+ HoloQPI full study - 20260905_024054
+====================================================================
+ working directory : /sda/usama/QPI_Extended
+ CUDA_VISIBLE_DEVICES=2
+ QUICK=off   NO_TRAIN=off   stage=all
+
+environment captured -> logs/study_20260905_024054/00_environment.log
+
+--------------------------------------------------------------------
+STEP: self-test (measurement chain, losses, forward model)
+  cmd: python scripts/selftest.py --config config/base.yaml
+  log: 00_selftest.log
+  result: OK (5s)
+
+--------------------------------------------------------------------
+STEP: prepare data (masks, splits, manifest)
+  cmd: python main.py prepare --config config/base.yaml
+  log: 01_prepare.log
+  result: OK (2s)
+
+--------------------------------------------------------------------
+STEP: estimate aberration surfaces
+  cmd: python scripts/estimate_aberration.py --config config/base.yaml
+  log: 01b_aberration.log
+  result: OK (914s)
+
+--------------------------------------------------------------------
+STEP: calibrate propagation distance z
+  cmd: python scripts/calibrate_z.py --config config/base.yaml --steps 101
+  log: 02_calibrate_z.log
+  result: OK (34s)
+
+  >> logs/study_20260905_024054/02_calibrate_z.log is the first log to read.
+
+  z = 33.770000 um, held FIXED for the forward-model arms.
+
+--------------------------------------------------------------------
+STEP: label audit (threshold drift, head redundancy)
+  cmd: python scripts/audit_labels.py --config config/base.yaml
+  log: 03_audit_labels.log
+  result: OK (49s)
+
+--------------------------------------------------------------------
+STEP: modality comparison: off-axis vs Gabor
+  cmd: python main.py compare --config config/base.yaml --set loss.forward_model.distance_um=33.770000
+  log: 04_compare_base.log
+  result: OK (7247s)
+
+--------------------------------------------------------------------
+STEP: ablation: no physics at all
+  cmd: python main.py compare --config config/ablation/no_physics.yaml --set loss.forward_model.distance_um=33.770000
+  log: 05a_no_physics.log
+  result: OK (7313s)
+
+--------------------------------------------------------------------
+STEP: ablation: mask-phase coupling only
+  cmd: python main.py compare --config config/ablation/physics_coupling_only.yaml --set loss.forward_model.distance_um=33.770000
+  log: 05c_physics_coupling_only.log
+  result: OK (7382s)
+
+  (forward-model arms skipped: the term does not discriminate on any arm,
+   see the discrimination test in stage 2)
+
+--------------------------------------------------------------------
+STEP: ablation: no measurement terms
+  cmd: python main.py compare --config config/ablation/no_measurement.yaml
+  log: 06a_no_measurement.log
+  result: OK (7246s)
+
+--------------------------------------------------------------------
+STEP: control: classification head alone
+  cmd: python main.py compare --config config/ablation/classification_only.yaml
+  log: 06b_classification_only.log
+  result: OK (8970s)
+
+--------------------------------------------------------------------
+STEP: conventional reconstruction baseline
+  cmd: python scripts/conventional_baseline.py --config config/base.yaml --distance-um 33.770000
+  log: 07_conventional_baseline.log
+  result: OK (326s)
+
+--------------------------------------------------------------------
+STEP: dry-mass bias decomposition
+  cmd: python scripts/diagnose_bias.py --config config/base.yaml
+  log: 08_diagnose_bias.log
+  result: OK (17s)
+
+--------------------------------------------------------------------
+STEP: install onnxruntime-gpu (CUDA 12 build)
+  cmd: bash -c pip uninstall -y onnxruntime onnxruntime-gpu >/dev/null 2>&1;            pip install 'onnxruntime-gpu==1.20.2' ||            pip install 'onnxruntime-gpu==1.20.0' ||            pip install 'onnxruntime-gpu<1.21'
+  log: 09a_onnxruntime.log
+  result: OK (8s)
+
+--------------------------------------------------------------------
+STEP: hardware benchmark
+  cmd: python main.py benchmark --config config/base.yaml
+  log: 09b_benchmark.log
+  result: OK (65s)
+
+--------------------------------------------------------------------
+STEP: figures
+  cmd: python scripts/make_figures.py --config config/base.yaml
+  log: 10_figures.log
+  result: OK (56s)
+
+all results concatenated -> logs/study_20260905_024054/90_all_results.txt
+convergence traces -> logs/study_20260905_024054/91_convergence.txt
+
+====================================================================
+ SUMMARY
+====================================================================
+  OK      self-test (measurement chain, losses, forward model)
+  OK      prepare data (masks, splits, manifest)
+  OK      estimate aberration surfaces
+  OK      calibrate propagation distance z
+  OK      label audit (threshold drift, head redundancy)
+  OK      modality comparison: off-axis vs Gabor
+  OK      ablation: no physics at all
+  OK      ablation: mask-phase coupling only
+  OK      ablation: no measurement terms
+  OK      control: classification head alone
+  OK      conventional reconstruction baseline
+  OK      dry-mass bias decomposition
+  OK      install onnxruntime-gpu (CUDA 12 build)
+  OK      hardware benchmark
+  OK      figures
+
+All stages completed.
+
+Read these four first:
+  logs/study_20260905_024054/01b_aberration.log        how many fields needed the conjugate flip,
+                                      and how many surfaces were rejected
+  logs/study_20260905_024054/02_calibrate_z.log        does the in-line minimum land on the supplied z,
+                                      and what verdict does the forward-model term get
+  logs/study_20260905_024054/07_conventional_baseline.log   did the classical reconstruction recover
+                                      positive cell contrast in each geometry
+  logs/study_20260905_024054/03_audit_labels.log       does the label threshold drift with condition?
+
+Figures are in figures/ (PNG to read, PDF for the paper).
+
+Single archive to send: logs/holoqpi_study_20260905_024054.tar.gz  (13M)

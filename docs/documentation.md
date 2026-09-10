@@ -333,6 +333,201 @@ forward-model term is therefore informative for the off-axis arm at any distance
 and for the Gabor arm only away from focus, and `scripts/calibrate_z.py` reports
 this sensitivity so the asymmetry is known before training rather than after.
 
+### 5a.1 The conjugate sideband, and why it must be resolved on a detrended phase
+
+`holoqpi/physics/surface.py`. An off-axis hologram carries the object in two
+first-order sidebands that are complex conjugates of equal magnitude. Which one
+a spectral `argmax` returns is arbitrary, and it flips between fields of a single
+acquisition. Taking the wrong one returns the conjugate field, whose phase is
+**negated** — a reconstruction that looks entirely plausible, unwraps cleanly,
+and is anti-correlated with the truth.
+
+The sideband is chosen on a physical rather than a numerical ground: cells are
+optically denser than their medium, so they add optical path, and a field of
+sparse cells on a flat background is right-skewed in phase. The rule needs no
+mask, no threshold and no reference, so it applies at inference time as well as
+during calibration.
+
+It does, however, require the smooth surface to be removed first, and this is
+not a detail. The objective's curvature is a quadratic bowl spanning tens of
+radians whose own skewness far exceeds the few radians the cells contribute.
+Measured on this dataset, over all 13 fields available locally:
+
+| test applied to | picks the correct sideband |
+|---|---:|
+| wrapped phase (the previous implementation) | 6 / 13 — chance |
+| unwrapped phase, no detrending | 0 / 13 — systematically wrong |
+| detrended, order 1 (plane only) | 0 / 13 |
+| **detrended, order 2** | **13 / 13**, margin ≥ 1.2 in skewness units |
+| detrended, order 5 | 13 / 13 |
+
+`optics.conjugate.detrend_order` is therefore required to be at least 2, and
+`phase_skewness` raises if it is not. Ground truth for the table is the
+correlation between the detrended reconstruction and the detrended delivered
+phase, which is ±0.87–0.95 — bimodal, with no field near zero.
+
+**What the bug cost, before it was found.** `scripts/estimate_aberration.py`
+folded the unresolved sign into the stored aberration surface on 11 of 13
+fields. The difference it fitted was then not a surface at all but roughly
+`-(2 phi_ref + Psi)`, which a fifth-order polynomial still fits to R² ≈ 0.99
+because the cells are a small part of the variance — so the fit's own quality
+metric could not see it. The forward-model term then added a surface of the
+opposite handedness to the predicted phase, and its residual *fell* as the phase
+was removed. That is precisely the anti-discriminative behaviour the off-axis arm
+was showing, and it was an artefact of this sign, not a property of the geometry.
+
+| off-axis forward residual at z = 33.77 µm | before | after |
+|---|---:|---:|
+| reference (true) phase — the floor | 0.871 | **0.498** |
+| phase × 0.9 | 0.868 | 0.499 |
+| phase × 0.5 | 0.848 | 0.526 |
+| phase + 0.3 noise | 0.877 | 0.518 |
+| mirrored phase | 0.847 | 0.627 |
+| zero phase | 0.817 | 0.600 |
+| verdict | anti-discriminative | correctly ordered |
+
+Aberration-fit quality moved with it: R² minimum 0.81 → 0.991, median 0.982 →
+0.996, and the median surface span tightened from 23.4 to 20.0 rad. The ordering
+is unchanged across every padding setting tested (`feature_um` 0.5/1.0/2.0,
+`pad_px` 0/64/derived), so it is not an artefact of the crop geometry.
+
+**At full scale (800 fields).** 577 of 800 fields — 72% — needed the flip, median
+|skewness| 2.41. Detrended agreement with the delivered phase: median +0.920.
+Aberration R²: median 0.9975, p10 0.9951, min 0.9809. 780 of 800 fields pass both
+gates; the 20 rejected are unwrapping failures with surfaces of 388–493 rad, and
+every one of them scores R² = 1.000, which is the second independent
+demonstration that R² cannot serve as the quality gate here.
+
+**A consequence: z becomes identifiable from the in-line arm.** With the surfaces
+corrected, the Gabor scan places its minimum at **+34.377 µm** with a per-image
+IQR of **0.72 µm** across independent fields — an interior minimum, well depth
+2.8. The acquiring group independently supplied **33.77 µm**. Two unrelated
+routes agreeing to within one grid step (1.43 µm) is the strongest evidence in
+the study that the forward operator is now physically correct, and it is worth
+stating as such. Before the sign fix no distance was identifiable at all.
+
+### 5a.2 Two traps in the z scan itself
+
+**The scoring window must not depend on z.** `border_px` defaults to `pad`, and
+`pad` is derived from z, so left alone every distance in a scan is scored on a
+different set of pixels: at |z| = 66 µm the residual covers 29% of a 900 px field
+and at 34 µm it covers 58%. Fewer, more central pixels are easier for four free
+radiometric coefficients to fit, so the residual falls with |z| for a reason that
+has nothing to do with focus, and the off-axis minimum duly ran to the edge of
+the scanned range. `calibrate_z.py` now computes one border from the largest |z|
+scanned and applies it at every distance. The Gabor minimum survives this — it is
+an *interior* minimum found against the bias, which makes it stronger, not weaker.
+
+**A small margin is not a wrong sign.** The verdict function previously fell
+through to `anti_discriminative` whenever a margin failed to clear the tolerance,
+and so printed "a degraded phase scores BETTER than the truth" for an off-axis
+run in which every degraded phase in fact scored worse (+0.0001 to +0.0333). The
+taxonomy is now four-way — `usable`, `marginal`, `uninformative`,
+`anti_discriminative` — and the last requires a margin below *minus* the
+tolerance. A correctly signed term with tiny margins is `uninformative`, which is
+a different finding with a different remedy.
+
+**And the verdict is a sign test, not a mean.** The residual varies more between
+fields than between a true phase and a mildly degraded one, so an average over
+four fields is decided by which four were read — which is exactly what made two
+earlier measurements at the same distance disagree. The test now records a
+per-field margin and reports in what fraction of fields each degraded variant
+scores worse than the truth; chance is 50%, and
+`loss.forward_model.discrimination_win_rate` sets the bar.
+
+### 5a.3 The unmeasurable piston phase, and why off-axis needs four cross-terms
+
+Propagation multiplies the field by `exp(i 2 pi z / lambda)`. That is a global
+phase across the whole field. It is not measurable — a camera records intensity —
+and pinning it down would require knowing z to a small fraction of a wavelength,
+which no experiment provides.
+
+An in-line residual never sees it: `|U|^2` cancels any global phase exactly. An
+off-axis residual sees it directly, because the object interferes with a
+reference and the fringe positions depend on it. With only the real parts of the
+two conjugate cross-terms in the radiometric fit, the residual is therefore a
+function of where z happens to fall modulo half a wavelength. Measured on this
+dataset, sampling z in steps of lambda/8:
+
+| z (µm) | offset (z/λ) | residual, real parts only | with quadratures |
+|---:|---:|---:|---:|
+| 33.7700 | 0.000 | 0.5327 | 0.1310 |
+| 33.8533 | 0.125 | **0.9910** | 0.1309 |
+| 34.0198 | 0.375 | **0.1335** | 0.1309 |
+| 34.1030 | 0.500 | 0.5322 | 0.1309 |
+| 34.4360 | 1.000 | 0.5318 | 0.1308 |
+
+The residual swung across nearly its whole range over a 0.33 µm change in z, so
+any single reported value was a lottery on the piston. Carrying the imaginary
+parts of both cross-terms fixes it, because
+
+```
+Re(R* U e^{i phi}) = cos(phi) Re(R* U) - sin(phi) Im(R* U)
+```
+
+so the four components span every global phase and the least-squares fit removes
+the piston instead of being defeated by it. The residual then varies by 2e-4 over
+a full cycle, and `scripts/selftest.py` asserts that invariance. The in-line arm
+is unchanged, which is the control: its curve was already smooth.
+
+**What it changed.** The off-axis floor at z = 33.77 µm fell from 0.7477 to
+0.1815 — the operator explains 82% of the recorded hologram rather than 25%. The
+off-axis scan's own minimum moved to **+33.42 µm**, within one grid step of the
+supplied 33.77 µm, so the off-axis arm now corroborates the distance too, having
+previously placed it at +37.2 µm or at the edge of the range. The calibration
+probe still minimises at ×0.97, but its per-field IQR tightened from 0.50 to
+0.03. Every degraded phase except a 10% rescaling now scores worse than the truth
+in **100%** of fields.
+
+Figure 16's left panel before the fix shows the aliasing directly: a sawtooth of
+period ~λ/2 undersampled at a 1.4 µm grid step, against a smooth in-line curve.
+
+### 5a.4 The verdict, and the calibration probe that sharpens it
+
+Measured on 32 val fields at z = 33.77 µm, with a fixed 448 px scoring window.
+The margin is the mean rise in residual over the true phase; the last column is
+the fraction of *individual* fields in which the degraded phase scores worse
+(chance is 50%).
+
+| phase variant | off-axis margin | fields worse | Gabor margin | fields worse |
+|---|---:|---:|---:|---:|
+| × 0.9 | +0.0003 | 53% | −0.0020 | 19% |
+| × 0.5 | +0.0157 | 72% | +0.0067 | 75% |
+| + 0.3 noise | +0.0109 | **100%** | +0.0711 | **100%** |
+| zero | +0.0468 | 62% | +0.1334 | **100%** |
+| mirrored | +0.0942 | 84% | +0.1328 | **100%** |
+| **verdict** | **uninformative** | | **marginal** | |
+
+Both arms are correctly signed against gross corruption — nothing scores better
+than the truth by more than the tolerance — and both are blind near it. Neither
+is trained. `loss.weights.forward_model` stays at 0.0, and this table is the
+result, not a gap in it.
+
+**The calibration probe is the sharper statement.** Multiplying the reference
+phase by *s* and minimising the residual over *s* asks whether the operator
+agrees with the delivered phase about its **magnitude**, which is the operational
+content of "measurement-ready":
+
+| phase × s | 0.5 | 0.7 | 0.9 | 1.0 | 1.1 | 1.4 |
+|---|---:|---:|---:|---:|---:|---:|
+| off-axis residual | 0.4264 | 0.4018 | 0.3880 | 0.3851 | **0.3846** | 0.3937 |
+| in-line residual | 0.9459 | **0.9450** | 0.9462 | 0.9475 | 0.9491 | 0.9552 |
+
+**The off-axis forward model recovers the correct phase magnitude to within
+5–10%** — a genuine parabolic well centred near s = 1. **The in-line model
+minimises near s ≈ 0.7**, roughly 30% low, which is what a single-term forward
+model does when the twin image is superposed on the object and it accounts for
+only part of the measured modulation. That asymmetry is physical, not incidental,
+and it is a direct quantitative answer on the phase-reconstruction-accuracy axis
+of the modality comparison. Figure 16 draws all three diagnostics.
+
+The same resolution is applied in `scripts/conventional_baseline.py`, which
+previously tested the *wrapped* phase, and in the optional angular-spectrum front
+end (`model.frontend.resolve_conjugate`), which used a bare `argmax` and would
+otherwise hand the encoder a negated phase channel on an unpredictable subset of
+the training set — noise a network cannot learn around, because nothing in its
+input says which sign it received.
+
 **Crop size is a physical constraint.** Light scattered inside a training crop
 travels `lambda z / feature` micrometres sideways before reaching the sensor, and
 light from outside travels the same distance inward. Neither is available on a
@@ -406,12 +601,6 @@ It is what all four reference papers mean by physics consistency:
 
 Three implementation details carry weight.
 
-<<<<<<< Updated upstream
-**Standardisation.** Illumination brightness, camera gain and exposure differ
-between a synthesised and a recorded hologram for reasons unrelated to the field.
-Both sides are reduced to zero mean and unit variance, so the residual measures
-structure rather than scale.
-=======
 **The radiometric model is fitted, not assumed.** A sensor does not record
 `|U|^2`; it records `gain * (physical intensity) + offset + noise`, with gain set
 by illumination power, exposure and camera response, and offset by the black
@@ -456,7 +645,6 @@ demodulated DC magnitude. The DC exclusion radius is a *fraction* of the field,
 not a pixel count: an absolute radius means something different on a 900 px
 evaluation field and a 512 px training crop, and on a small enough crop it masks
 out the carrier itself.
->>>>>>> Stashed changes
 
 **Border exclusion.** See "crop size is a physical constraint" in section 5a.
 
@@ -468,14 +656,6 @@ truth and is trained *only* by this residual, exactly as in the self-supervised
 hologram-reconstruction literature.
 
 **z is required and is not in the data.** The phase `.bin` header carries width,
-<<<<<<< Updated upstream
-height and the two pixel pitches and nothing else. Obtain the distance from the
-acquisition, or recover it with `scripts/calibrate_z.py`, which matches the
-hologram against the reference phase in both directions and refuses to return a
-number when the agreement curves are flat. Training this term with a wrong z is
-worse than not training it: the residual then measures the error in z rather than
-the error in the reconstruction.
-=======
 height and the two pixel pitches and nothing else. Three routes, in order of
 preference:
 
@@ -510,7 +690,6 @@ pass before any result from this term is quoted:
 | residual grows monotonically as the phase degrades | 0.000 → 0.028 → 1.000 (in-line) |
 | gradient is finite and non-zero | yes, both geometries |
 | z recoverable by gradient descent | 140 um → 200.9 um (true 200) |
->>>>>>> Stashed changes
 
 ### 6.3 Physics coupling terms
 

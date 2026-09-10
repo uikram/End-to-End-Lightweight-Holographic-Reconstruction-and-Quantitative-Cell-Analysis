@@ -1,0 +1,39 @@
+# HoloQPI v2, experiment D: Forward-model consistency for amplitude
+#
+# Does raw-hologram consistency improve the reconstruction without hurting
+# segmentation?
+#
+# NOTE ON SCOPE. The forward-model residual was measured as correctly signed
+# against gross corruption (worse in 91-100% of fields) but blind near the
+# truth (+0.0002 margin for a 10% phase rescaling). It therefore cannot refine
+# a phase estimate that is already close, and this experiment does NOT ask it
+# to. Its role is to supervise AMPLITUDE, which has no other supervision in
+# this dataset at all. Read the result as 'can the hologram constrain the
+# amplitude head', not as 'does physics consistency improve phase'.
+#
+# Requires model.amplitude.enabled and a calibrated distance.
+#
+# Shared across all four v2 experiments:
+#   * off-axis only (the in-line arm is deferred to study 2)
+#   * no drug-condition head (unstable at +/-9.5 points, outside the question)
+#   * phase_mask_contrast and dry_mass_consistency permanently off; see
+#     config/base.yaml for the measurements behind each
+extends: ../base.yaml
+
+experiment_name: v2_forward_amplitude
+
+data:
+  modality: off_axis
+
+model:
+  classifier_enabled: false
+  amplitude:
+    enabled: true
+
+loss:
+  weights:
+    classification: 0.0
+    cell_integrated_phase: 0.1
+    boundary_gradient_alignment: 0.05
+    projected_area_consistency: 0.0
+    forward_model: 0.02

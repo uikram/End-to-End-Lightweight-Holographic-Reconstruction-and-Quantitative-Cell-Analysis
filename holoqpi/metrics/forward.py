@@ -34,12 +34,6 @@ class ForwardModelMetrics:
         self.pitch_x_um = float(optics.pixel_pitch_x_um)
         self.pitch_y_um = float(optics.pixel_pitch_y_um)
         self.feature_um = float(loss_cfg.feature_um)
-<<<<<<< Updated upstream
-        self.reference_ratio = float(loss_cfg.reference_ratio)
-        self.dc_exclusion_px = int(loss_cfg.dc_exclusion_px)
-        self.border_px = loss_cfg.border_px
-        self.pad_px = loss_cfg.pad_px
-=======
         self.dc_exclusion_px = loss_cfg.dc_exclusion_px
         self.fit_radiometry = bool(loss_cfg.fit_radiometry)
         self.border_px = loss_cfg.border_px
@@ -47,7 +41,6 @@ class ForwardModelMetrics:
 
         from ..losses.terms import ForwardModelConsistency
         self._term = ForwardModelConsistency(loss_cfg, optics) if self.enabled else None
->>>>>>> Stashed changes
         self.reset()
 
     def reset(self) -> None:
@@ -64,16 +57,6 @@ class ForwardModelMetrics:
         required = int(np.ceil(spread_um / min(self.pitch_x_um, self.pitch_y_um)))
         return min(required, affordable)
 
-<<<<<<< Updated upstream
-    @staticmethod
-    def _standardise(x: torch.Tensor) -> torch.Tensor:
-        flat = x.flatten(1)
-        mean = flat.mean(dim=1).view(-1, 1, 1, 1)
-        std = flat.std(dim=1).view(-1, 1, 1, 1).clamp(min=1e-6)
-        return (x - mean) / std
-
-=======
->>>>>>> Stashed changes
     @torch.no_grad()
     def update(
         self,
@@ -81,45 +64,20 @@ class ForwardModelMetrics:
         amplitude: torch.Tensor | None,
         hologram: torch.Tensor,
         reference_phase: torch.Tensor | None = None,
+        aberration: torch.Tensor | None = None,
     ) -> None:
         """``phase`` and ``hologram`` are (B, 1, H, W) tensors on any device."""
         if not self.enabled:
             return
-<<<<<<< Updated upstream
-        from ..physics import estimate_carrier, form_hologram
-
-        pad = self._pad(min(phase.shape[-2], phase.shape[-1]))
-        border = int(self.border_px) if self.border_px is not None else pad
-        carrier = (
-            estimate_carrier(hologram, self.dc_exclusion_px)
-            if self.modality == "off_axis" else None
-        )
-
-        def residual(field_phase):
-            amp = amplitude if amplitude is not None else torch.ones_like(field_phase)
-            synthetic = form_hologram(
-                field_phase, amp, self.modality,
-                self.wavelength_um, self.pitch_x_um, self.pitch_y_um,
-                float(self.distance_um), carrier=carrier,
-                reference_ratio=self.reference_ratio, pad=pad,
-            )
-            measured = hologram
-            if border > 0 and min(synthetic.shape[-2:]) > 2 * border + 8:
-                synthetic = synthetic[..., border:-border, border:-border]
-                measured = measured[..., border:-border, border:-border]
-            a = self._standardise(synthetic)
-            b = self._standardise(measured)
-            return (1.0 - (a * b).flatten(1).mean(dim=1)).cpu().numpy()
-=======
 
         def residual(field_phase):
             # Scored by the *same* term the loss uses, so the metric and the
             # objective cannot drift apart, and an arm that never optimised the
             # term is still scored on exactly the quantity the others minimised.
             amp = amplitude if amplitude is not None else torch.ones_like(field_phase)
-            value = self._term(field_phase, amp, hologram, self.modality)
+            value = self._term(field_phase, amp, hologram, self.modality,
+                               aberration=aberration)
             return value.detach().cpu().numpy()
->>>>>>> Stashed changes
 
         self._predicted.extend(residual(phase).tolist())
         if reference_phase is not None:

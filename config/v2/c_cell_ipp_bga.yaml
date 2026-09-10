@@ -1,0 +1,31 @@
+# HoloQPI v2, experiment C: Per-cell IPP plus boundary-gradient alignment
+#
+# Does aligning the mask edge to the phase-gradient ridge help on THIS cell
+# morphology? Not assumed: the prior study established it on red blood cells,
+# whose membranes give a clean phase step. These are adherent cancer lines with
+# lamellipodia and thin spreading edges, where the steepest phase gradient need
+# not coincide with the boundary a human would draw. This is an ablation, and a
+# null answer is a real answer.
+#
+# Shared across all four v2 experiments:
+#   * off-axis only (the in-line arm is deferred to study 2)
+#   * no drug-condition head (unstable at +/-9.5 points, outside the question)
+#   * phase_mask_contrast and dry_mass_consistency permanently off; see
+#     config/base.yaml for the measurements behind each
+extends: ../base.yaml
+
+experiment_name: v2_cell_ipp_bga
+
+data:
+  modality: off_axis
+
+model:
+  classifier_enabled: false
+
+loss:
+  weights:
+    classification: 0.0
+    cell_integrated_phase: 0.1
+    boundary_gradient_alignment: 0.05
+    projected_area_consistency: 0.0
+    forward_model: 0.0

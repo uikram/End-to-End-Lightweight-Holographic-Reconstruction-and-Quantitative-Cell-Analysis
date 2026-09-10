@@ -85,6 +85,7 @@ class Evaluator:
         if model is not None:
             model.eval()
         self.reset()
+        self._classification_seen = False
 
         per_cell_rows: list[dict] = []
         loss_totals: dict[str, float] = {}
@@ -95,6 +96,9 @@ class Evaluator:
             raw_hologram = batch.get("hologram_raw")
             if raw_hologram is not None:
                 raw_hologram = raw_hologram.to(self.device, non_blocking=True)
+            aberration = batch.get("aberration")
+            if aberration is not None:
+                aberration = aberration.to(self.device, non_blocking=True)
             phase_target = batch["phase"].to(self.device, non_blocking=True)
             mask_target = batch["mask"].to(self.device, non_blocking=True)
             condition_target = batch["condition"].to(self.device, non_blocking=True)
@@ -107,10 +111,10 @@ class Evaluator:
                     "mask": mask_target,
                     "condition": condition_target,
                     "hologram": hologram,
-<<<<<<< Updated upstream
-=======
                     "hologram_raw": raw_hologram,
->>>>>>> Stashed changes
+                    "aberration": aberration,
+                    "aberration_valid": batch.get("aberration_valid"),
+                    "instances": batch.get("instances"),
                 }
                 _, components = loss_fn(outputs, moved)
                 for key, value in components.items():
@@ -121,7 +125,14 @@ class Evaluator:
             phase_reference = phase_target.squeeze(1).float().cpu().numpy()
             mask_prediction = outputs["segmentation"].argmax(dim=1).cpu().numpy()
             mask_reference = mask_target.cpu().numpy()
-            condition_prediction = outputs["condition"].argmax(dim=1).cpu().numpy()
+            # When the condition head is disabled the classification metrics are
+            # simply not produced. Predicting a constant class instead would put
+            # a meaningless accuracy in the results table.
+            has_condition = "condition" in outputs
+            condition_prediction = (
+                outputs["condition"].argmax(dim=1).cpu().numpy() if has_condition
+                else np.zeros(phase_prediction.shape[0], dtype=np.int64)
+            )
             condition_reference = condition_target.cpu().numpy()
 
             # Label instances once per image and thread the result through every
@@ -144,19 +155,18 @@ class Evaluator:
             if self.forward_metrics is not None:
                 self.forward_metrics.update(
                     outputs["phase"].float(), outputs.get("amplitude"),
-<<<<<<< Updated upstream
-                    hologram, reference_phase=phase_target.float(),
-=======
                     raw_hologram if raw_hologram is not None else hologram,
                     reference_phase=phase_target.float(),
->>>>>>> Stashed changes
+                    aberration=aberration,
                 )
             self.segmentation_metrics.update(
                 mask_prediction, mask_reference,
                 prediction_instances=predicted_instances,
                 target_instances=reference_instances,
             )
-            self.classification_metrics.update(condition_prediction, condition_reference)
+            if has_condition:
+                self.classification_metrics.update(condition_prediction, condition_reference)
+                self._classification_seen = True
 
             for index in range(phase_prediction.shape[0]):
                 rows = self._measure_pair(
@@ -176,7 +186,11 @@ class Evaluator:
         results = {}
         results.update(self.phase_metrics.compute())
         results.update(self.segmentation_metrics.compute())
-        results.update(self.classification_metrics.compute())
+        # Only when a condition head actually produced predictions. Without
+        # this the table would carry a classification accuracy computed from
+        # placeholder zeros, which reads as a real (and terrible) result.
+        if self._classification_seen:
+            results.update(self.classification_metrics.compute())
         results.update(self.measurement_metrics.compute())
         if self.forward_metrics is not None:
             results.update(self.forward_metrics.compute())
@@ -187,7 +201,8 @@ class Evaluator:
 
         return {
             "metrics": results,
-            "confusion_matrix": self.classification_metrics.confusion_matrix,
+            "confusion_matrix": (self.classification_metrics.confusion_matrix
+                                 if self._classification_seen else None),
             "per_cell": per_cell_rows,
             "unmatched": self.measurement_metrics.unmatched_rows() if collect_per_cell else [],
         }

@@ -1,0 +1,1024 @@
+07:09:59 | INFO    | holoqpi.engine.compare | ======================================================================
+07:09:59 | INFO    | holoqpi.engine.compare | modality=off_axis  device=cuda  run_dir=runs/physics_coupling_only_s2024_off_axis
+07:09:59 | INFO    | holoqpi.engine.compare | ======================================================================
+07:09:59 | INFO    | holoqpi.data.dataset | train split: 560 samples | modality=off_axis | crop=512 | augment=True
+07:09:59 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+07:09:59 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+07:10:00 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+07:10:00 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+07:10:01 | INFO    | holoqpi.engine.trainer | trainable 9.76M / 9.76M parameters (100.0%)
+07:10:01 | INFO    | holoqpi.engine.trainer | active physics terms: ['phase_mask_contrast', 'boundary_gradient_alignment', 'phase_volume', 'dry_mass_consistency', 'projected_area_consistency']
+07:10:07 | INFO    | holoqpi.engine.trainer |   epoch 1 step 0/140 loss=2.3908
+07:10:08 | INFO    | holoqpi.engine.trainer |   epoch 1 step 20/140 loss=2.1780
+07:10:10 | INFO    | holoqpi.engine.trainer |   epoch 1 step 40/140 loss=1.8990
+07:10:13 | INFO    | holoqpi.engine.trainer |   epoch 1 step 60/140 loss=1.6717
+07:10:14 | INFO    | holoqpi.engine.trainer |   epoch 1 step 80/140 loss=1.5871
+07:10:16 | INFO    | holoqpi.engine.trainer |   epoch 1 step 100/140 loss=1.4992
+07:10:18 | INFO    | holoqpi.engine.trainer |   epoch 1 step 120/140 loss=1.5737
+07:11:15 | INFO    | holoqpi.engine.trainer |   new best composite=0.5562
+07:11:15 | INFO    | holoqpi.engine.trainer | epoch 1/60 (74s = 19s train + 55s val) | train_loss=1.8099  val_phase_mae=0.2917  val_dice=0.5511  val_cls_acc=0.2126  val_mass_mape=0.3450
+07:11:15 | INFO    | holoqpi.engine.trainer |   at this rate the full 60-epoch schedule takes about 74 min
+07:11:16 | INFO    | holoqpi.engine.trainer |   epoch 2 step 0/140 loss=1.5140
+07:11:18 | INFO    | holoqpi.engine.trainer |   epoch 2 step 20/140 loss=1.3541
+07:11:20 | INFO    | holoqpi.engine.trainer |   epoch 2 step 40/140 loss=1.1618
+07:11:23 | INFO    | holoqpi.engine.trainer |   epoch 2 step 60/140 loss=1.0639
+07:11:25 | INFO    | holoqpi.engine.trainer |   epoch 2 step 80/140 loss=1.2037
+07:11:27 | INFO    | holoqpi.engine.trainer |   epoch 2 step 100/140 loss=1.1381
+07:11:29 | INFO    | holoqpi.engine.trainer |   epoch 2 step 120/140 loss=0.9733
+07:12:22 | INFO    | holoqpi.engine.trainer |   new best composite=0.6854
+07:12:22 | INFO    | holoqpi.engine.trainer | epoch 2/60 (66s = 16s train + 50s val) | train_loss=1.2094  val_phase_mae=0.2220  val_dice=0.7067  val_cls_acc=0.3228  val_mass_mape=0.3160
+07:12:22 | INFO    | holoqpi.engine.trainer |   epoch 3 step 0/140 loss=1.0171
+07:12:24 | INFO    | holoqpi.engine.trainer |   epoch 3 step 20/140 loss=0.9497
+07:12:26 | INFO    | holoqpi.engine.trainer |   epoch 3 step 40/140 loss=1.1068
+07:12:28 | INFO    | holoqpi.engine.trainer |   epoch 3 step 60/140 loss=1.1448
+07:12:30 | INFO    | holoqpi.engine.trainer |   epoch 3 step 80/140 loss=0.7690
+07:12:32 | INFO    | holoqpi.engine.trainer |   epoch 3 step 100/140 loss=1.0261
+07:12:34 | INFO    | holoqpi.engine.trainer |   epoch 3 step 120/140 loss=0.9167
+07:13:28 | INFO    | holoqpi.engine.trainer |   new best composite=0.7250
+07:13:28 | INFO    | holoqpi.engine.trainer | epoch 3/60 (66s = 15s train + 52s val) | train_loss=0.9664  val_phase_mae=0.2057  val_dice=0.7497  val_cls_acc=0.2913  val_mass_mape=0.2925
+07:13:29 | INFO    | holoqpi.engine.trainer |   epoch 4 step 0/140 loss=0.8580
+07:13:31 | INFO    | holoqpi.engine.trainer |   epoch 4 step 20/140 loss=0.9568
+07:13:32 | INFO    | holoqpi.engine.trainer |   epoch 4 step 40/140 loss=0.8950
+07:13:34 | INFO    | holoqpi.engine.trainer |   epoch 4 step 60/140 loss=0.7846
+07:13:36 | INFO    | holoqpi.engine.trainer |   epoch 4 step 80/140 loss=0.8998
+07:13:38 | INFO    | holoqpi.engine.trainer |   epoch 4 step 100/140 loss=0.7918
+07:13:40 | INFO    | holoqpi.engine.trainer |   epoch 4 step 120/140 loss=0.7420
+07:14:32 | INFO    | holoqpi.engine.trainer |   new best composite=0.7425
+07:14:32 | INFO    | holoqpi.engine.trainer | epoch 4/60 (64s = 14s train + 50s val) | train_loss=0.8793  val_phase_mae=0.1937  val_dice=0.7643  val_cls_acc=0.3465  val_mass_mape=0.2816
+07:14:33 | INFO    | holoqpi.engine.trainer |   epoch 5 step 0/140 loss=0.7880
+07:14:35 | INFO    | holoqpi.engine.trainer |   epoch 5 step 20/140 loss=0.9220
+07:14:37 | INFO    | holoqpi.engine.trainer |   epoch 5 step 40/140 loss=1.0511
+07:14:39 | INFO    | holoqpi.engine.trainer |   epoch 5 step 60/140 loss=0.9836
+07:14:41 | INFO    | holoqpi.engine.trainer |   epoch 5 step 80/140 loss=0.8755
+07:14:43 | INFO    | holoqpi.engine.trainer |   epoch 5 step 100/140 loss=0.8669
+07:14:44 | INFO    | holoqpi.engine.trainer |   epoch 5 step 120/140 loss=0.7938
+07:15:36 | INFO    | holoqpi.engine.trainer |   new best composite=0.7516
+07:15:36 | INFO    | holoqpi.engine.trainer | epoch 5/60 (64s = 14s train + 49s val) | train_loss=0.8392  val_phase_mae=0.1895  val_dice=0.7890  val_cls_acc=0.3622  val_mass_mape=0.3211
+07:15:37 | INFO    | holoqpi.engine.trainer |   epoch 6 step 0/140 loss=0.9011
+07:15:38 | INFO    | holoqpi.engine.trainer |   epoch 6 step 20/140 loss=0.8672
+07:15:40 | INFO    | holoqpi.engine.trainer |   epoch 6 step 40/140 loss=0.7278
+07:15:42 | INFO    | holoqpi.engine.trainer |   epoch 6 step 60/140 loss=0.8494
+07:15:44 | INFO    | holoqpi.engine.trainer |   epoch 6 step 80/140 loss=0.7965
+07:15:46 | INFO    | holoqpi.engine.trainer |   epoch 6 step 100/140 loss=0.7137
+07:15:48 | INFO    | holoqpi.engine.trainer |   epoch 6 step 120/140 loss=0.6889
+07:16:40 | INFO    | holoqpi.engine.trainer |   new best composite=0.7668
+07:16:40 | INFO    | holoqpi.engine.trainer | epoch 6/60 (64s = 14s train + 49s val) | train_loss=0.8012  val_phase_mae=0.1847  val_dice=0.7949  val_cls_acc=0.4331  val_mass_mape=0.2825
+07:16:40 | INFO    | holoqpi.engine.trainer |   epoch 7 step 0/140 loss=0.8638
+07:16:42 | INFO    | holoqpi.engine.trainer |   epoch 7 step 20/140 loss=0.8985
+07:16:44 | INFO    | holoqpi.engine.trainer |   epoch 7 step 40/140 loss=0.8124
+07:16:46 | INFO    | holoqpi.engine.trainer |   epoch 7 step 60/140 loss=0.6638
+07:16:48 | INFO    | holoqpi.engine.trainer |   epoch 7 step 80/140 loss=0.8223
+07:16:50 | INFO    | holoqpi.engine.trainer |   epoch 7 step 100/140 loss=1.0838
+07:16:52 | INFO    | holoqpi.engine.trainer |   epoch 7 step 120/140 loss=1.0545
+07:17:43 | INFO    | holoqpi.engine.trainer |   new best composite=0.7744
+07:17:43 | INFO    | holoqpi.engine.trainer | epoch 7/60 (63s = 14s train + 49s val) | train_loss=0.7886  val_phase_mae=0.1809  val_dice=0.7923  val_cls_acc=0.3307  val_mass_mape=0.2469
+07:17:44 | INFO    | holoqpi.engine.trainer |   epoch 8 step 0/140 loss=0.6418
+07:17:46 | INFO    | holoqpi.engine.trainer |   epoch 8 step 20/140 loss=0.8667
+07:17:48 | INFO    | holoqpi.engine.trainer |   epoch 8 step 40/140 loss=0.8091
+07:17:50 | INFO    | holoqpi.engine.trainer |   epoch 8 step 60/140 loss=0.8225
+07:17:52 | INFO    | holoqpi.engine.trainer |   epoch 8 step 80/140 loss=0.6546
+07:17:54 | INFO    | holoqpi.engine.trainer |   epoch 8 step 100/140 loss=0.6759
+07:17:56 | INFO    | holoqpi.engine.trainer |   epoch 8 step 120/140 loss=0.8444
+07:18:46 | INFO    | holoqpi.engine.trainer |   new best composite=0.7823
+07:18:46 | INFO    | holoqpi.engine.trainer | epoch 8/60 (63s = 14s train + 49s val) | train_loss=0.7641  val_phase_mae=0.1816  val_dice=0.7957  val_cls_acc=0.4488  val_mass_mape=0.2242
+07:18:47 | INFO    | holoqpi.engine.trainer |   epoch 9 step 0/140 loss=0.7436
+07:18:49 | INFO    | holoqpi.engine.trainer |   epoch 9 step 20/140 loss=0.7168
+07:18:51 | INFO    | holoqpi.engine.trainer |   epoch 9 step 40/140 loss=0.9313
+07:18:53 | INFO    | holoqpi.engine.trainer |   epoch 9 step 60/140 loss=0.9584
+07:18:55 | INFO    | holoqpi.engine.trainer |   epoch 9 step 80/140 loss=0.8128
+07:18:57 | INFO    | holoqpi.engine.trainer |   epoch 9 step 100/140 loss=0.9199
+07:18:59 | INFO    | holoqpi.engine.trainer |   epoch 9 step 120/140 loss=0.7544
+07:19:49 | INFO    | holoqpi.engine.trainer |   new best composite=0.7851
+07:19:49 | INFO    | holoqpi.engine.trainer | epoch 9/60 (63s = 14s train + 49s val) | train_loss=0.7498  val_phase_mae=0.1774  val_dice=0.7984  val_cls_acc=0.3780  val_mass_mape=0.2125
+07:19:50 | INFO    | holoqpi.engine.trainer |   epoch 10 step 0/140 loss=0.7027
+07:19:52 | INFO    | holoqpi.engine.trainer |   epoch 10 step 20/140 loss=0.9244
+07:19:54 | INFO    | holoqpi.engine.trainer |   epoch 10 step 40/140 loss=0.6801
+07:19:56 | INFO    | holoqpi.engine.trainer |   epoch 10 step 60/140 loss=0.7633
+07:19:58 | INFO    | holoqpi.engine.trainer |   epoch 10 step 80/140 loss=0.7677
+07:20:00 | INFO    | holoqpi.engine.trainer |   epoch 10 step 100/140 loss=0.8608
+07:20:02 | INFO    | holoqpi.engine.trainer |   epoch 10 step 120/140 loss=0.7792
+07:20:52 | INFO    | holoqpi.engine.trainer | epoch 10/60 (63s = 14s train + 49s val) | train_loss=0.7359  val_phase_mae=0.1912  val_dice=0.7975  val_cls_acc=0.3622  val_mass_mape=0.3870
+07:20:53 | INFO    | holoqpi.engine.trainer |   epoch 11 step 0/140 loss=0.8047
+07:20:55 | INFO    | holoqpi.engine.trainer |   epoch 11 step 20/140 loss=0.7790
+07:20:57 | INFO    | holoqpi.engine.trainer |   epoch 11 step 40/140 loss=0.6645
+07:20:58 | INFO    | holoqpi.engine.trainer |   epoch 11 step 60/140 loss=0.7107
+07:21:00 | INFO    | holoqpi.engine.trainer |   epoch 11 step 80/140 loss=0.7169
+07:21:03 | INFO    | holoqpi.engine.trainer |   epoch 11 step 100/140 loss=0.7587
+07:21:04 | INFO    | holoqpi.engine.trainer |   epoch 11 step 120/140 loss=0.5435
+07:21:54 | INFO    | holoqpi.engine.trainer | epoch 11/60 (62s = 14s train + 48s val) | train_loss=0.7152  val_phase_mae=0.1897  val_dice=0.8049  val_cls_acc=0.4331  val_mass_mape=0.2819
+07:21:55 | INFO    | holoqpi.engine.trainer |   epoch 12 step 0/140 loss=0.6648
+07:21:57 | INFO    | holoqpi.engine.trainer |   epoch 12 step 20/140 loss=0.8233
+07:21:59 | INFO    | holoqpi.engine.trainer |   epoch 12 step 40/140 loss=0.6798
+07:22:01 | INFO    | holoqpi.engine.trainer |   epoch 12 step 60/140 loss=0.9006
+07:22:03 | INFO    | holoqpi.engine.trainer |   epoch 12 step 80/140 loss=0.6847
+07:22:05 | INFO    | holoqpi.engine.trainer |   epoch 12 step 100/140 loss=0.6922
+07:22:07 | INFO    | holoqpi.engine.trainer |   epoch 12 step 120/140 loss=0.6515
+07:22:57 | INFO    | holoqpi.engine.trainer |   new best composite=0.7923
+07:22:57 | INFO    | holoqpi.engine.trainer | epoch 12/60 (62s = 14s train + 48s val) | train_loss=0.7184  val_phase_mae=0.1747  val_dice=0.8095  val_cls_acc=0.3543  val_mass_mape=0.2153
+07:22:57 | INFO    | holoqpi.engine.trainer |   epoch 13 step 0/140 loss=0.6666
+07:22:59 | INFO    | holoqpi.engine.trainer |   epoch 13 step 20/140 loss=0.5881
+07:23:01 | INFO    | holoqpi.engine.trainer |   epoch 13 step 40/140 loss=0.8649
+07:23:03 | INFO    | holoqpi.engine.trainer |   epoch 13 step 60/140 loss=0.6791
+07:23:05 | INFO    | holoqpi.engine.trainer |   epoch 13 step 80/140 loss=0.7398
+07:23:07 | INFO    | holoqpi.engine.trainer |   epoch 13 step 100/140 loss=0.6445
+07:23:09 | INFO    | holoqpi.engine.trainer |   epoch 13 step 120/140 loss=0.7963
+07:24:00 | INFO    | holoqpi.engine.trainer | epoch 13/60 (63s = 14s train + 49s val) | train_loss=0.6988  val_phase_mae=0.1772  val_dice=0.8038  val_cls_acc=0.3386  val_mass_mape=0.2269
+07:24:00 | INFO    | holoqpi.engine.trainer |   epoch 14 step 0/140 loss=0.6786
+07:24:02 | INFO    | holoqpi.engine.trainer |   epoch 14 step 20/140 loss=0.5664
+07:24:04 | INFO    | holoqpi.engine.trainer |   epoch 14 step 40/140 loss=0.7888
+07:24:06 | INFO    | holoqpi.engine.trainer |   epoch 14 step 60/140 loss=0.9017
+07:24:08 | INFO    | holoqpi.engine.trainer |   epoch 14 step 80/140 loss=0.4769
+07:24:10 | INFO    | holoqpi.engine.trainer |   epoch 14 step 100/140 loss=0.8521
+07:24:12 | INFO    | holoqpi.engine.trainer |   epoch 14 step 120/140 loss=0.6564
+07:25:02 | INFO    | holoqpi.engine.trainer | epoch 14/60 (62s = 14s train + 48s val) | train_loss=0.7059  val_phase_mae=0.1770  val_dice=0.8059  val_cls_acc=0.5276  val_mass_mape=0.2631
+07:25:03 | INFO    | holoqpi.engine.trainer |   epoch 15 step 0/140 loss=0.6525
+07:25:05 | INFO    | holoqpi.engine.trainer |   epoch 15 step 20/140 loss=0.5385
+07:25:07 | INFO    | holoqpi.engine.trainer |   epoch 15 step 40/140 loss=0.6514
+07:25:08 | INFO    | holoqpi.engine.trainer |   epoch 15 step 60/140 loss=0.5795
+07:25:10 | INFO    | holoqpi.engine.trainer |   epoch 15 step 80/140 loss=0.7511
+07:25:12 | INFO    | holoqpi.engine.trainer |   epoch 15 step 100/140 loss=0.6756
+07:25:14 | INFO    | holoqpi.engine.trainer |   epoch 15 step 120/140 loss=0.6488
+07:26:04 | INFO    | holoqpi.engine.trainer | epoch 15/60 (61s = 14s train + 48s val) | train_loss=0.6930  val_phase_mae=0.1786  val_dice=0.8115  val_cls_acc=0.4409  val_mass_mape=0.2473
+07:26:04 | INFO    | holoqpi.engine.trainer |   epoch 16 step 0/140 loss=0.5964
+07:26:06 | INFO    | holoqpi.engine.trainer |   epoch 16 step 20/140 loss=0.6448
+07:26:08 | INFO    | holoqpi.engine.trainer |   epoch 16 step 40/140 loss=0.6625
+07:26:10 | INFO    | holoqpi.engine.trainer |   epoch 16 step 60/140 loss=0.6565
+07:26:12 | INFO    | holoqpi.engine.trainer |   epoch 16 step 80/140 loss=0.6708
+07:26:14 | INFO    | holoqpi.engine.trainer |   epoch 16 step 100/140 loss=0.7266
+07:26:16 | INFO    | holoqpi.engine.trainer |   epoch 16 step 120/140 loss=0.7894
+07:27:05 | INFO    | holoqpi.engine.trainer | epoch 16/60 (61s = 14s train + 48s val) | train_loss=0.6791  val_phase_mae=0.1841  val_dice=0.8095  val_cls_acc=0.5039  val_mass_mape=0.2883
+07:27:06 | INFO    | holoqpi.engine.trainer |   epoch 17 step 0/140 loss=0.6979
+07:27:08 | INFO    | holoqpi.engine.trainer |   epoch 17 step 20/140 loss=0.5662
+07:27:10 | INFO    | holoqpi.engine.trainer |   epoch 17 step 40/140 loss=0.6545
+07:27:12 | INFO    | holoqpi.engine.trainer |   epoch 17 step 60/140 loss=0.7003
+07:27:14 | INFO    | holoqpi.engine.trainer |   epoch 17 step 80/140 loss=0.6666
+07:27:16 | INFO    | holoqpi.engine.trainer |   epoch 17 step 100/140 loss=0.6226
+07:27:18 | INFO    | holoqpi.engine.trainer |   epoch 17 step 120/140 loss=0.6144
+07:28:08 | INFO    | holoqpi.engine.trainer |   new best composite=0.7974
+07:28:08 | INFO    | holoqpi.engine.trainer | epoch 17/60 (62s = 14s train + 48s val) | train_loss=0.6753  val_phase_mae=0.1697  val_dice=0.8105  val_cls_acc=0.5354  val_mass_mape=0.2099
+07:28:08 | INFO    | holoqpi.engine.trainer |   epoch 18 step 0/140 loss=0.6154
+07:28:10 | INFO    | holoqpi.engine.trainer |   epoch 18 step 20/140 loss=0.5316
+07:28:12 | INFO    | holoqpi.engine.trainer |   epoch 18 step 40/140 loss=0.6451
+07:28:14 | INFO    | holoqpi.engine.trainer |   epoch 18 step 60/140 loss=0.5696
+07:28:16 | INFO    | holoqpi.engine.trainer |   epoch 18 step 80/140 loss=0.5629
+07:28:18 | INFO    | holoqpi.engine.trainer |   epoch 18 step 100/140 loss=0.6641
+07:28:20 | INFO    | holoqpi.engine.trainer |   epoch 18 step 120/140 loss=0.5376
+07:29:09 | INFO    | holoqpi.engine.trainer | epoch 18/60 (62s = 14s train + 48s val) | train_loss=0.6645  val_phase_mae=0.1778  val_dice=0.8002  val_cls_acc=0.3780  val_mass_mape=0.2197
+07:29:10 | INFO    | holoqpi.engine.trainer |   epoch 19 step 0/140 loss=0.6208
+07:29:12 | INFO    | holoqpi.engine.trainer |   epoch 19 step 20/140 loss=0.6392
+07:29:14 | INFO    | holoqpi.engine.trainer |   epoch 19 step 40/140 loss=0.6152
+07:29:15 | INFO    | holoqpi.engine.trainer |   epoch 19 step 60/140 loss=0.5458
+07:29:17 | INFO    | holoqpi.engine.trainer |   epoch 19 step 80/140 loss=0.9040
+07:29:19 | INFO    | holoqpi.engine.trainer |   epoch 19 step 100/140 loss=0.7090
+07:29:21 | INFO    | holoqpi.engine.trainer |   epoch 19 step 120/140 loss=0.7231
+07:30:11 | INFO    | holoqpi.engine.trainer | epoch 19/60 (62s = 14s train + 48s val) | train_loss=0.6583  val_phase_mae=0.1790  val_dice=0.8140  val_cls_acc=0.5591  val_mass_mape=0.2212
+07:30:12 | INFO    | holoqpi.engine.trainer |   epoch 20 step 0/140 loss=0.7370
+07:30:14 | INFO    | holoqpi.engine.trainer |   epoch 20 step 20/140 loss=0.5078
+07:30:16 | INFO    | holoqpi.engine.trainer |   epoch 20 step 40/140 loss=0.7126
+07:30:18 | INFO    | holoqpi.engine.trainer |   epoch 20 step 60/140 loss=0.6118
+07:30:20 | INFO    | holoqpi.engine.trainer |   epoch 20 step 80/140 loss=0.5523
+07:30:22 | INFO    | holoqpi.engine.trainer |   epoch 20 step 100/140 loss=0.5242
+07:30:24 | INFO    | holoqpi.engine.trainer |   epoch 20 step 120/140 loss=0.4817
+07:31:14 | INFO    | holoqpi.engine.trainer | epoch 20/60 (62s = 14s train + 48s val) | train_loss=0.6478  val_phase_mae=0.1763  val_dice=0.8074  val_cls_acc=0.5276  val_mass_mape=0.2200
+07:31:14 | INFO    | holoqpi.engine.trainer |   epoch 21 step 0/140 loss=0.6400
+07:31:16 | INFO    | holoqpi.engine.trainer |   epoch 21 step 20/140 loss=0.6146
+07:31:18 | INFO    | holoqpi.engine.trainer |   epoch 21 step 40/140 loss=0.6423
+07:31:20 | INFO    | holoqpi.engine.trainer |   epoch 21 step 60/140 loss=0.6587
+07:31:22 | INFO    | holoqpi.engine.trainer |   epoch 21 step 80/140 loss=0.6637
+07:31:24 | INFO    | holoqpi.engine.trainer |   epoch 21 step 100/140 loss=0.6025
+07:31:26 | INFO    | holoqpi.engine.trainer |   epoch 21 step 120/140 loss=0.6976
+07:32:15 | INFO    | holoqpi.engine.trainer | epoch 21/60 (62s = 14s train + 48s val) | train_loss=0.6608  val_phase_mae=0.1825  val_dice=0.8141  val_cls_acc=0.6378  val_mass_mape=0.3060
+07:32:16 | INFO    | holoqpi.engine.trainer |   epoch 22 step 0/140 loss=0.5776
+07:32:18 | INFO    | holoqpi.engine.trainer |   epoch 22 step 20/140 loss=0.4982
+07:32:20 | INFO    | holoqpi.engine.trainer |   epoch 22 step 40/140 loss=0.6565
+07:32:22 | INFO    | holoqpi.engine.trainer |   epoch 22 step 60/140 loss=0.6378
+07:32:24 | INFO    | holoqpi.engine.trainer |   epoch 22 step 80/140 loss=0.5356
+07:32:26 | INFO    | holoqpi.engine.trainer |   epoch 22 step 100/140 loss=0.5521
+07:32:27 | INFO    | holoqpi.engine.trainer |   epoch 22 step 120/140 loss=0.8818
+07:33:17 | INFO    | holoqpi.engine.trainer |   new best composite=0.7979
+07:33:17 | INFO    | holoqpi.engine.trainer | epoch 22/60 (62s = 14s train + 48s val) | train_loss=0.6477  val_phase_mae=0.1701  val_dice=0.8155  val_cls_acc=0.5591  val_mass_mape=0.2152
+07:33:18 | INFO    | holoqpi.engine.trainer |   epoch 23 step 0/140 loss=0.6724
+07:33:20 | INFO    | holoqpi.engine.trainer |   epoch 23 step 20/140 loss=0.6299
+07:33:22 | INFO    | holoqpi.engine.trainer |   epoch 23 step 40/140 loss=0.7407
+07:33:24 | INFO    | holoqpi.engine.trainer |   epoch 23 step 60/140 loss=0.6528
+07:33:26 | INFO    | holoqpi.engine.trainer |   epoch 23 step 80/140 loss=0.5496
+07:33:28 | INFO    | holoqpi.engine.trainer |   epoch 23 step 100/140 loss=0.8019
+07:33:30 | INFO    | holoqpi.engine.trainer |   epoch 23 step 120/140 loss=0.4949
+07:34:20 | INFO    | holoqpi.engine.trainer |   new best composite=0.8017
+07:34:20 | INFO    | holoqpi.engine.trainer | epoch 23/60 (62s = 14s train + 48s val) | train_loss=0.6424  val_phase_mae=0.1702  val_dice=0.8141  val_cls_acc=0.5354  val_mass_mape=0.1995
+07:34:21 | INFO    | holoqpi.engine.trainer |   epoch 24 step 0/140 loss=0.4711
+07:34:22 | INFO    | holoqpi.engine.trainer |   epoch 24 step 20/140 loss=0.7432
+07:34:24 | INFO    | holoqpi.engine.trainer |   epoch 24 step 40/140 loss=0.5778
+07:34:26 | INFO    | holoqpi.engine.trainer |   epoch 24 step 60/140 loss=0.7175
+07:34:28 | INFO    | holoqpi.engine.trainer |   epoch 24 step 80/140 loss=0.7585
+07:34:30 | INFO    | holoqpi.engine.trainer |   epoch 24 step 100/140 loss=0.5997
+07:34:32 | INFO    | holoqpi.engine.trainer |   epoch 24 step 120/140 loss=0.7681
+07:35:22 | INFO    | holoqpi.engine.trainer | epoch 24/60 (62s = 14s train + 48s val) | train_loss=0.6442  val_phase_mae=0.1727  val_dice=0.8166  val_cls_acc=0.4094  val_mass_mape=0.2097
+07:35:22 | INFO    | holoqpi.engine.trainer |   epoch 25 step 0/140 loss=0.7364
+07:35:24 | INFO    | holoqpi.engine.trainer |   epoch 25 step 20/140 loss=0.6760
+07:35:26 | INFO    | holoqpi.engine.trainer |   epoch 25 step 40/140 loss=0.5636
+07:35:28 | INFO    | holoqpi.engine.trainer |   epoch 25 step 60/140 loss=0.5292
+07:35:30 | INFO    | holoqpi.engine.trainer |   epoch 25 step 80/140 loss=0.6573
+07:35:32 | INFO    | holoqpi.engine.trainer |   epoch 25 step 100/140 loss=0.7325
+07:35:34 | INFO    | holoqpi.engine.trainer |   epoch 25 step 120/140 loss=0.7218
+07:36:24 | INFO    | holoqpi.engine.trainer |   new best composite=0.8049
+07:36:24 | INFO    | holoqpi.engine.trainer | epoch 25/60 (62s = 14s train + 48s val) | train_loss=0.6212  val_phase_mae=0.1694  val_dice=0.8178  val_cls_acc=0.4331  val_mass_mape=0.1928
+07:36:24 | INFO    | holoqpi.engine.trainer |   epoch 26 step 0/140 loss=0.6046
+07:36:26 | INFO    | holoqpi.engine.trainer |   epoch 26 step 20/140 loss=0.6281
+07:36:28 | INFO    | holoqpi.engine.trainer |   epoch 26 step 40/140 loss=0.5886
+07:36:30 | INFO    | holoqpi.engine.trainer |   epoch 26 step 60/140 loss=0.5738
+07:36:32 | INFO    | holoqpi.engine.trainer |   epoch 26 step 80/140 loss=0.5345
+07:36:34 | INFO    | holoqpi.engine.trainer |   epoch 26 step 100/140 loss=0.5917
+07:36:36 | INFO    | holoqpi.engine.trainer |   epoch 26 step 120/140 loss=0.7037
+07:37:25 | INFO    | holoqpi.engine.trainer | epoch 26/60 (62s = 14s train + 48s val) | train_loss=0.6211  val_phase_mae=0.1687  val_dice=0.8170  val_cls_acc=0.4094  val_mass_mape=0.1911
+07:37:26 | INFO    | holoqpi.engine.trainer |   epoch 27 step 0/140 loss=0.6070
+07:37:28 | INFO    | holoqpi.engine.trainer |   epoch 27 step 20/140 loss=0.6630
+07:37:30 | INFO    | holoqpi.engine.trainer |   epoch 27 step 40/140 loss=0.6248
+07:37:32 | INFO    | holoqpi.engine.trainer |   epoch 27 step 60/140 loss=0.6514
+07:37:34 | INFO    | holoqpi.engine.trainer |   epoch 27 step 80/140 loss=0.6437
+07:37:36 | INFO    | holoqpi.engine.trainer |   epoch 27 step 100/140 loss=0.5686
+07:37:38 | INFO    | holoqpi.engine.trainer |   epoch 27 step 120/140 loss=0.7607
+07:38:28 | INFO    | holoqpi.engine.trainer |   new best composite=0.8056
+07:38:28 | INFO    | holoqpi.engine.trainer | epoch 27/60 (62s = 14s train + 48s val) | train_loss=0.6070  val_phase_mae=0.1738  val_dice=0.8165  val_cls_acc=0.5276  val_mass_mape=0.1933
+07:38:28 | INFO    | holoqpi.engine.trainer |   epoch 28 step 0/140 loss=0.8395
+07:38:30 | INFO    | holoqpi.engine.trainer |   epoch 28 step 20/140 loss=0.6210
+07:38:32 | INFO    | holoqpi.engine.trainer |   epoch 28 step 40/140 loss=0.6682
+07:38:34 | INFO    | holoqpi.engine.trainer |   epoch 28 step 60/140 loss=0.7364
+07:38:36 | INFO    | holoqpi.engine.trainer |   epoch 28 step 80/140 loss=0.5704
+07:38:38 | INFO    | holoqpi.engine.trainer |   epoch 28 step 100/140 loss=0.8037
+07:38:40 | INFO    | holoqpi.engine.trainer |   epoch 28 step 120/140 loss=0.7590
+07:39:30 | INFO    | holoqpi.engine.trainer | epoch 28/60 (62s = 14s train + 48s val) | train_loss=0.6135  val_phase_mae=0.1718  val_dice=0.8148  val_cls_acc=0.5118  val_mass_mape=0.2516
+07:39:30 | INFO    | holoqpi.engine.trainer |   epoch 29 step 0/140 loss=0.6476
+07:39:32 | INFO    | holoqpi.engine.trainer |   epoch 29 step 20/140 loss=0.7494
+07:39:34 | INFO    | holoqpi.engine.trainer |   epoch 29 step 40/140 loss=0.7419
+07:39:36 | INFO    | holoqpi.engine.trainer |   epoch 29 step 60/140 loss=0.5492
+07:39:38 | INFO    | holoqpi.engine.trainer |   epoch 29 step 80/140 loss=0.7050
+07:39:40 | INFO    | holoqpi.engine.trainer |   epoch 29 step 100/140 loss=0.6734
+07:39:42 | INFO    | holoqpi.engine.trainer |   epoch 29 step 120/140 loss=0.4474
+07:40:32 | INFO    | holoqpi.engine.trainer | epoch 29/60 (63s = 14s train + 49s val) | train_loss=0.6117  val_phase_mae=0.1722  val_dice=0.8173  val_cls_acc=0.6457  val_mass_mape=0.2024
+07:40:33 | INFO    | holoqpi.engine.trainer |   epoch 30 step 0/140 loss=0.5714
+07:40:35 | INFO    | holoqpi.engine.trainer |   epoch 30 step 20/140 loss=0.5593
+07:40:37 | INFO    | holoqpi.engine.trainer |   epoch 30 step 40/140 loss=0.5665
+07:40:39 | INFO    | holoqpi.engine.trainer |   epoch 30 step 60/140 loss=0.5156
+07:40:41 | INFO    | holoqpi.engine.trainer |   epoch 30 step 80/140 loss=0.6107
+07:40:43 | INFO    | holoqpi.engine.trainer |   epoch 30 step 100/140 loss=0.6488
+07:40:45 | INFO    | holoqpi.engine.trainer |   epoch 30 step 120/140 loss=0.5766
+07:41:35 | INFO    | holoqpi.engine.trainer | epoch 30/60 (62s = 14s train + 48s val) | train_loss=0.5943  val_phase_mae=0.1766  val_dice=0.8156  val_cls_acc=0.5748  val_mass_mape=0.2228
+07:41:35 | INFO    | holoqpi.engine.trainer |   epoch 31 step 0/140 loss=0.7213
+07:41:37 | INFO    | holoqpi.engine.trainer |   epoch 31 step 20/140 loss=0.5349
+07:41:39 | INFO    | holoqpi.engine.trainer |   epoch 31 step 40/140 loss=0.6111
+07:41:41 | INFO    | holoqpi.engine.trainer |   epoch 31 step 60/140 loss=0.5827
+07:41:43 | INFO    | holoqpi.engine.trainer |   epoch 31 step 80/140 loss=0.4977
+07:41:45 | INFO    | holoqpi.engine.trainer |   epoch 31 step 100/140 loss=0.5991
+07:41:47 | INFO    | holoqpi.engine.trainer |   epoch 31 step 120/140 loss=0.6060
+07:42:38 | INFO    | holoqpi.engine.trainer |   new best composite=0.8058
+07:42:38 | INFO    | holoqpi.engine.trainer | epoch 31/60 (63s = 14s train + 48s val) | train_loss=0.5850  val_phase_mae=0.1699  val_dice=0.8164  val_cls_acc=0.6535  val_mass_mape=0.1935
+07:42:38 | INFO    | holoqpi.engine.trainer |   epoch 32 step 0/140 loss=0.6867
+07:42:40 | INFO    | holoqpi.engine.trainer |   epoch 32 step 20/140 loss=0.6315
+07:42:42 | INFO    | holoqpi.engine.trainer |   epoch 32 step 40/140 loss=0.5075
+07:42:44 | INFO    | holoqpi.engine.trainer |   epoch 32 step 60/140 loss=0.8221
+07:42:46 | INFO    | holoqpi.engine.trainer |   epoch 32 step 80/140 loss=0.7009
+07:42:48 | INFO    | holoqpi.engine.trainer |   epoch 32 step 100/140 loss=0.6755
+07:42:50 | INFO    | holoqpi.engine.trainer |   epoch 32 step 120/140 loss=0.7257
+07:43:40 | INFO    | holoqpi.engine.trainer | epoch 32/60 (62s = 14s train + 48s val) | train_loss=0.6007  val_phase_mae=0.1725  val_dice=0.8166  val_cls_acc=0.6299  val_mass_mape=0.2362
+07:43:40 | INFO    | holoqpi.engine.trainer |   epoch 33 step 0/140 loss=0.5174
+07:43:42 | INFO    | holoqpi.engine.trainer |   epoch 33 step 20/140 loss=0.5741
+07:43:44 | INFO    | holoqpi.engine.trainer |   epoch 33 step 40/140 loss=0.5757
+07:43:46 | INFO    | holoqpi.engine.trainer |   epoch 33 step 60/140 loss=0.6153
+07:43:48 | INFO    | holoqpi.engine.trainer |   epoch 33 step 80/140 loss=0.6959
+07:43:50 | INFO    | holoqpi.engine.trainer |   epoch 33 step 100/140 loss=0.6829
+07:43:52 | INFO    | holoqpi.engine.trainer |   epoch 33 step 120/140 loss=0.4718
+07:44:44 | INFO    | holoqpi.engine.trainer | epoch 33/60 (64s = 14s train + 50s val) | train_loss=0.5830  val_phase_mae=0.1701  val_dice=0.8156  val_cls_acc=0.5276  val_mass_mape=0.2035
+07:44:44 | INFO    | holoqpi.engine.trainer |   epoch 34 step 0/140 loss=0.4185
+07:44:46 | INFO    | holoqpi.engine.trainer |   epoch 34 step 20/140 loss=0.7228
+07:44:48 | INFO    | holoqpi.engine.trainer |   epoch 34 step 40/140 loss=0.5250
+07:44:50 | INFO    | holoqpi.engine.trainer |   epoch 34 step 60/140 loss=0.6091
+07:44:52 | INFO    | holoqpi.engine.trainer |   epoch 34 step 80/140 loss=0.5328
+07:44:54 | INFO    | holoqpi.engine.trainer |   epoch 34 step 100/140 loss=0.5909
+07:44:56 | INFO    | holoqpi.engine.trainer |   epoch 34 step 120/140 loss=0.6420
+07:45:46 | INFO    | holoqpi.engine.trainer | epoch 34/60 (63s = 14s train + 49s val) | train_loss=0.5773  val_phase_mae=0.1703  val_dice=0.8187  val_cls_acc=0.5039  val_mass_mape=0.1985
+07:45:47 | INFO    | holoqpi.engine.trainer |   epoch 35 step 0/140 loss=0.5248
+07:45:49 | INFO    | holoqpi.engine.trainer |   epoch 35 step 20/140 loss=0.5809
+07:45:51 | INFO    | holoqpi.engine.trainer |   epoch 35 step 40/140 loss=0.5803
+07:45:53 | INFO    | holoqpi.engine.trainer |   epoch 35 step 60/140 loss=0.5975
+07:45:55 | INFO    | holoqpi.engine.trainer |   epoch 35 step 80/140 loss=0.5356
+07:45:57 | INFO    | holoqpi.engine.trainer |   epoch 35 step 100/140 loss=0.7836
+07:45:59 | INFO    | holoqpi.engine.trainer |   epoch 35 step 120/140 loss=0.5519
+07:46:49 | INFO    | holoqpi.engine.trainer | epoch 35/60 (62s = 14s train + 48s val) | train_loss=0.5731  val_phase_mae=0.1658  val_dice=0.8181  val_cls_acc=0.5039  val_mass_mape=0.2028
+07:46:49 | INFO    | holoqpi.engine.trainer |   epoch 36 step 0/140 loss=0.6118
+07:46:51 | INFO    | holoqpi.engine.trainer |   epoch 36 step 20/140 loss=0.6422
+07:46:53 | INFO    | holoqpi.engine.trainer |   epoch 36 step 40/140 loss=0.5562
+07:46:55 | INFO    | holoqpi.engine.trainer |   epoch 36 step 60/140 loss=0.4567
+07:46:57 | INFO    | holoqpi.engine.trainer |   epoch 36 step 80/140 loss=0.5741
+07:46:59 | INFO    | holoqpi.engine.trainer |   epoch 36 step 100/140 loss=0.5094
+07:47:01 | INFO    | holoqpi.engine.trainer |   epoch 36 step 120/140 loss=0.5843
+07:47:52 | INFO    | holoqpi.engine.trainer |   new best composite=0.8070
+07:47:52 | INFO    | holoqpi.engine.trainer | epoch 36/60 (63s = 14s train + 49s val) | train_loss=0.5714  val_phase_mae=0.1698  val_dice=0.8202  val_cls_acc=0.5118  val_mass_mape=0.1932
+07:47:52 | INFO    | holoqpi.engine.trainer |   epoch 37 step 0/140 loss=0.3976
+07:47:54 | INFO    | holoqpi.engine.trainer |   epoch 37 step 20/140 loss=0.6594
+07:47:56 | INFO    | holoqpi.engine.trainer |   epoch 37 step 40/140 loss=0.5561
+07:47:58 | INFO    | holoqpi.engine.trainer |   epoch 37 step 60/140 loss=0.6008
+07:48:00 | INFO    | holoqpi.engine.trainer |   epoch 37 step 80/140 loss=0.4966
+07:48:02 | INFO    | holoqpi.engine.trainer |   epoch 37 step 100/140 loss=0.5552
+07:48:04 | INFO    | holoqpi.engine.trainer |   epoch 37 step 120/140 loss=0.5226
+07:48:55 | INFO    | holoqpi.engine.trainer |   new best composite=0.8100
+07:48:55 | INFO    | holoqpi.engine.trainer | epoch 37/60 (63s = 14s train + 49s val) | train_loss=0.5665  val_phase_mae=0.1670  val_dice=0.8206  val_cls_acc=0.5512  val_mass_mape=0.1874
+07:48:56 | INFO    | holoqpi.engine.trainer |   epoch 38 step 0/140 loss=0.4404
+07:48:57 | INFO    | holoqpi.engine.trainer |   epoch 38 step 20/140 loss=0.6331
+07:48:59 | INFO    | holoqpi.engine.trainer |   epoch 38 step 40/140 loss=0.8108
+07:49:01 | INFO    | holoqpi.engine.trainer |   epoch 38 step 60/140 loss=0.4709
+07:49:03 | INFO    | holoqpi.engine.trainer |   epoch 38 step 80/140 loss=0.7013
+07:49:05 | INFO    | holoqpi.engine.trainer |   epoch 38 step 100/140 loss=0.4812
+07:49:07 | INFO    | holoqpi.engine.trainer |   epoch 38 step 120/140 loss=0.8378
+07:49:57 | INFO    | holoqpi.engine.trainer | epoch 38/60 (62s = 14s train + 48s val) | train_loss=0.5682  val_phase_mae=0.1732  val_dice=0.8193  val_cls_acc=0.6378  val_mass_mape=0.1910
+07:49:58 | INFO    | holoqpi.engine.trainer |   epoch 39 step 0/140 loss=0.4048
+07:50:00 | INFO    | holoqpi.engine.trainer |   epoch 39 step 20/140 loss=0.5879
+07:50:02 | INFO    | holoqpi.engine.trainer |   epoch 39 step 40/140 loss=0.5405
+07:50:04 | INFO    | holoqpi.engine.trainer |   epoch 39 step 60/140 loss=0.5023
+07:50:06 | INFO    | holoqpi.engine.trainer |   epoch 39 step 80/140 loss=0.8272
+07:50:08 | INFO    | holoqpi.engine.trainer |   epoch 39 step 100/140 loss=0.5848
+07:50:10 | INFO    | holoqpi.engine.trainer |   epoch 39 step 120/140 loss=0.6100
+07:51:00 | INFO    | holoqpi.engine.trainer | epoch 39/60 (62s = 14s train + 48s val) | train_loss=0.5526  val_phase_mae=0.1792  val_dice=0.8188  val_cls_acc=0.6063  val_mass_mape=0.2213
+07:51:00 | INFO    | holoqpi.engine.trainer |   epoch 40 step 0/140 loss=0.5986
+07:51:02 | INFO    | holoqpi.engine.trainer |   epoch 40 step 20/140 loss=0.5121
+07:51:04 | INFO    | holoqpi.engine.trainer |   epoch 40 step 40/140 loss=0.4731
+07:51:06 | INFO    | holoqpi.engine.trainer |   epoch 40 step 60/140 loss=0.6401
+07:51:08 | INFO    | holoqpi.engine.trainer |   epoch 40 step 80/140 loss=0.4472
+07:51:10 | INFO    | holoqpi.engine.trainer |   epoch 40 step 100/140 loss=0.5402
+07:51:12 | INFO    | holoqpi.engine.trainer |   epoch 40 step 120/140 loss=0.4677
+07:52:02 | INFO    | holoqpi.engine.trainer | epoch 40/60 (62s = 14s train + 48s val) | train_loss=0.5462  val_phase_mae=0.1723  val_dice=0.8196  val_cls_acc=0.5827  val_mass_mape=0.1835
+07:52:02 | INFO    | holoqpi.engine.trainer |   epoch 41 step 0/140 loss=0.5898
+07:52:04 | INFO    | holoqpi.engine.trainer |   epoch 41 step 20/140 loss=0.6791
+07:52:06 | INFO    | holoqpi.engine.trainer |   epoch 41 step 40/140 loss=0.5333
+07:52:08 | INFO    | holoqpi.engine.trainer |   epoch 41 step 60/140 loss=0.4536
+07:52:10 | INFO    | holoqpi.engine.trainer |   epoch 41 step 80/140 loss=0.4791
+07:52:12 | INFO    | holoqpi.engine.trainer |   epoch 41 step 100/140 loss=0.3710
+07:52:14 | INFO    | holoqpi.engine.trainer |   epoch 41 step 120/140 loss=0.6445
+07:53:04 | INFO    | holoqpi.engine.trainer |   new best composite=0.8101
+07:53:04 | INFO    | holoqpi.engine.trainer | epoch 41/60 (62s = 14s train + 48s val) | train_loss=0.5490  val_phase_mae=0.1734  val_dice=0.8216  val_cls_acc=0.6535  val_mass_mape=0.1839
+07:53:04 | INFO    | holoqpi.engine.trainer |   epoch 42 step 0/140 loss=0.4543
+07:53:06 | INFO    | holoqpi.engine.trainer |   epoch 42 step 20/140 loss=0.5821
+07:53:08 | INFO    | holoqpi.engine.trainer |   epoch 42 step 40/140 loss=0.6087
+07:53:10 | INFO    | holoqpi.engine.trainer |   epoch 42 step 60/140 loss=0.6085
+07:53:12 | INFO    | holoqpi.engine.trainer |   epoch 42 step 80/140 loss=0.6419
+07:53:14 | INFO    | holoqpi.engine.trainer |   epoch 42 step 100/140 loss=0.4280
+07:53:16 | INFO    | holoqpi.engine.trainer |   epoch 42 step 120/140 loss=0.4598
+07:54:07 | INFO    | holoqpi.engine.trainer |   new best composite=0.8113
+07:54:07 | INFO    | holoqpi.engine.trainer | epoch 42/60 (63s = 14s train + 49s val) | train_loss=0.5365  val_phase_mae=0.1712  val_dice=0.8217  val_cls_acc=0.7638  val_mass_mape=0.1823
+07:54:08 | INFO    | holoqpi.engine.trainer |   epoch 43 step 0/140 loss=0.4576
+07:54:10 | INFO    | holoqpi.engine.trainer |   epoch 43 step 20/140 loss=0.4109
+07:54:12 | INFO    | holoqpi.engine.trainer |   epoch 43 step 40/140 loss=0.4607
+07:54:14 | INFO    | holoqpi.engine.trainer |   epoch 43 step 60/140 loss=0.4489
+07:54:16 | INFO    | holoqpi.engine.trainer |   epoch 43 step 80/140 loss=0.4369
+07:54:18 | INFO    | holoqpi.engine.trainer |   epoch 43 step 100/140 loss=0.5008
+07:54:20 | INFO    | holoqpi.engine.trainer |   epoch 43 step 120/140 loss=0.6319
+07:55:09 | INFO    | holoqpi.engine.trainer | epoch 43/60 (62s = 14s train + 48s val) | train_loss=0.5249  val_phase_mae=0.1711  val_dice=0.8211  val_cls_acc=0.6457  val_mass_mape=0.1943
+07:55:10 | INFO    | holoqpi.engine.trainer |   epoch 44 step 0/140 loss=0.4885
+07:55:12 | INFO    | holoqpi.engine.trainer |   epoch 44 step 20/140 loss=0.6308
+07:55:14 | INFO    | holoqpi.engine.trainer |   epoch 44 step 40/140 loss=0.6920
+07:55:16 | INFO    | holoqpi.engine.trainer |   epoch 44 step 60/140 loss=0.4755
+07:55:18 | INFO    | holoqpi.engine.trainer |   epoch 44 step 80/140 loss=0.5361
+07:55:20 | INFO    | holoqpi.engine.trainer |   epoch 44 step 100/140 loss=0.4764
+07:55:22 | INFO    | holoqpi.engine.trainer |   epoch 44 step 120/140 loss=0.5314
+07:56:12 | INFO    | holoqpi.engine.trainer | epoch 44/60 (62s = 14s train + 48s val) | train_loss=0.5244  val_phase_mae=0.1726  val_dice=0.8219  val_cls_acc=0.6299  val_mass_mape=0.1986
+07:56:12 | INFO    | holoqpi.engine.trainer |   epoch 45 step 0/140 loss=0.5346
+07:56:14 | INFO    | holoqpi.engine.trainer |   epoch 45 step 20/140 loss=0.5888
+07:56:16 | INFO    | holoqpi.engine.trainer |   epoch 45 step 40/140 loss=0.5233
+07:56:18 | INFO    | holoqpi.engine.trainer |   epoch 45 step 60/140 loss=0.4325
+07:56:20 | INFO    | holoqpi.engine.trainer |   epoch 45 step 80/140 loss=0.4700
+07:56:22 | INFO    | holoqpi.engine.trainer |   epoch 45 step 100/140 loss=0.5026
+07:56:24 | INFO    | holoqpi.engine.trainer |   epoch 45 step 120/140 loss=0.5153
+07:57:14 | INFO    | holoqpi.engine.trainer | epoch 45/60 (62s = 14s train + 48s val) | train_loss=0.5186  val_phase_mae=0.1719  val_dice=0.8222  val_cls_acc=0.6929  val_mass_mape=0.1872
+07:57:14 | INFO    | holoqpi.engine.trainer |   epoch 46 step 0/140 loss=0.4777
+07:57:16 | INFO    | holoqpi.engine.trainer |   epoch 46 step 20/140 loss=0.3548
+07:57:18 | INFO    | holoqpi.engine.trainer |   epoch 46 step 40/140 loss=0.5842
+07:57:20 | INFO    | holoqpi.engine.trainer |   epoch 46 step 60/140 loss=0.5138
+07:57:22 | INFO    | holoqpi.engine.trainer |   epoch 46 step 80/140 loss=0.3961
+07:57:24 | INFO    | holoqpi.engine.trainer |   epoch 46 step 100/140 loss=0.5885
+07:57:26 | INFO    | holoqpi.engine.trainer |   epoch 46 step 120/140 loss=0.4004
+07:58:17 | INFO    | holoqpi.engine.trainer | epoch 46/60 (63s = 14s train + 49s val) | train_loss=0.5111  val_phase_mae=0.1727  val_dice=0.8225  val_cls_acc=0.6772  val_mass_mape=0.1899
+07:58:17 | INFO    | holoqpi.engine.trainer |   epoch 47 step 0/140 loss=0.6383
+07:58:19 | INFO    | holoqpi.engine.trainer |   epoch 47 step 20/140 loss=0.5350
+07:58:21 | INFO    | holoqpi.engine.trainer |   epoch 47 step 40/140 loss=0.3976
+07:58:23 | INFO    | holoqpi.engine.trainer |   epoch 47 step 60/140 loss=0.5472
+07:58:25 | INFO    | holoqpi.engine.trainer |   epoch 47 step 80/140 loss=0.5715
+07:58:27 | INFO    | holoqpi.engine.trainer |   epoch 47 step 100/140 loss=0.4814
+07:58:29 | INFO    | holoqpi.engine.trainer |   epoch 47 step 120/140 loss=0.4525
+07:59:19 | INFO    | holoqpi.engine.trainer | epoch 47/60 (62s = 14s train + 48s val) | train_loss=0.5148  val_phase_mae=0.1700  val_dice=0.8226  val_cls_acc=0.6535  val_mass_mape=0.1883
+07:59:19 | INFO    | holoqpi.engine.trainer |   epoch 48 step 0/140 loss=0.4240
+07:59:21 | INFO    | holoqpi.engine.trainer |   epoch 48 step 20/140 loss=0.5890
+07:59:23 | INFO    | holoqpi.engine.trainer |   epoch 48 step 40/140 loss=0.4352
+07:59:25 | INFO    | holoqpi.engine.trainer |   epoch 48 step 60/140 loss=0.6016
+07:59:27 | INFO    | holoqpi.engine.trainer |   epoch 48 step 80/140 loss=0.5927
+07:59:29 | INFO    | holoqpi.engine.trainer |   epoch 48 step 100/140 loss=0.5305
+07:59:31 | INFO    | holoqpi.engine.trainer |   epoch 48 step 120/140 loss=0.4450
+08:00:21 | INFO    | holoqpi.engine.trainer | epoch 48/60 (62s = 14s train + 48s val) | train_loss=0.5177  val_phase_mae=0.1686  val_dice=0.8226  val_cls_acc=0.5827  val_mass_mape=0.1930
+08:00:21 | INFO    | holoqpi.engine.trainer |   epoch 49 step 0/140 loss=0.5377
+08:00:23 | INFO    | holoqpi.engine.trainer |   epoch 49 step 20/140 loss=0.5413
+08:00:25 | INFO    | holoqpi.engine.trainer |   epoch 49 step 40/140 loss=0.4329
+08:00:27 | INFO    | holoqpi.engine.trainer |   epoch 49 step 60/140 loss=0.4534
+08:00:29 | INFO    | holoqpi.engine.trainer |   epoch 49 step 80/140 loss=0.6732
+08:00:31 | INFO    | holoqpi.engine.trainer |   epoch 49 step 100/140 loss=0.4474
+08:00:33 | INFO    | holoqpi.engine.trainer |   epoch 49 step 120/140 loss=0.4394
+08:01:23 | INFO    | holoqpi.engine.trainer | epoch 49/60 (62s = 14s train + 48s val) | train_loss=0.5094  val_phase_mae=0.1736  val_dice=0.8222  val_cls_acc=0.6772  val_mass_mape=0.1989
+08:01:23 | INFO    | holoqpi.engine.trainer |   epoch 50 step 0/140 loss=0.4371
+08:01:25 | INFO    | holoqpi.engine.trainer |   epoch 50 step 20/140 loss=0.4566
+08:01:27 | INFO    | holoqpi.engine.trainer |   epoch 50 step 40/140 loss=0.3793
+08:01:29 | INFO    | holoqpi.engine.trainer |   epoch 50 step 60/140 loss=0.4712
+08:01:31 | INFO    | holoqpi.engine.trainer |   epoch 50 step 80/140 loss=0.5533
+08:01:33 | INFO    | holoqpi.engine.trainer |   epoch 50 step 100/140 loss=0.5423
+08:01:35 | INFO    | holoqpi.engine.trainer |   epoch 50 step 120/140 loss=0.5564
+08:02:25 | INFO    | holoqpi.engine.trainer | epoch 50/60 (62s = 14s train + 48s val) | train_loss=0.5213  val_phase_mae=0.1732  val_dice=0.8213  val_cls_acc=0.5906  val_mass_mape=0.2207
+08:02:25 | INFO    | holoqpi.engine.trainer |   epoch 51 step 0/140 loss=0.7117
+08:02:27 | INFO    | holoqpi.engine.trainer |   epoch 51 step 20/140 loss=0.5440
+08:02:29 | INFO    | holoqpi.engine.trainer |   epoch 51 step 40/140 loss=0.4866
+08:02:31 | INFO    | holoqpi.engine.trainer |   epoch 51 step 60/140 loss=0.4415
+08:02:33 | INFO    | holoqpi.engine.trainer |   epoch 51 step 80/140 loss=0.4030
+08:02:35 | INFO    | holoqpi.engine.trainer |   epoch 51 step 100/140 loss=0.4454
+08:02:37 | INFO    | holoqpi.engine.trainer |   epoch 51 step 120/140 loss=0.4448
+08:03:27 | INFO    | holoqpi.engine.trainer |   new best composite=0.8113
+08:03:27 | INFO    | holoqpi.engine.trainer | epoch 51/60 (62s = 14s train + 48s val) | train_loss=0.5073  val_phase_mae=0.1722  val_dice=0.8230  val_cls_acc=0.7008  val_mass_mape=0.1874
+08:03:28 | INFO    | holoqpi.engine.trainer |   epoch 52 step 0/140 loss=0.6084
+08:03:30 | INFO    | holoqpi.engine.trainer |   epoch 52 step 20/140 loss=0.4758
+08:03:32 | INFO    | holoqpi.engine.trainer |   epoch 52 step 40/140 loss=0.6415
+08:03:34 | INFO    | holoqpi.engine.trainer |   epoch 52 step 60/140 loss=0.3782
+08:03:36 | INFO    | holoqpi.engine.trainer |   epoch 52 step 80/140 loss=0.5453
+08:03:38 | INFO    | holoqpi.engine.trainer |   epoch 52 step 100/140 loss=0.4643
+08:03:40 | INFO    | holoqpi.engine.trainer |   epoch 52 step 120/140 loss=0.4063
+08:04:29 | INFO    | holoqpi.engine.trainer | epoch 52/60 (62s = 14s train + 48s val) | train_loss=0.5031  val_phase_mae=0.1705  val_dice=0.8226  val_cls_acc=0.6063  val_mass_mape=0.1887
+08:04:30 | INFO    | holoqpi.engine.trainer |   epoch 53 step 0/140 loss=0.7639
+08:04:32 | INFO    | holoqpi.engine.trainer |   epoch 53 step 20/140 loss=0.5855
+08:04:34 | INFO    | holoqpi.engine.trainer |   epoch 53 step 40/140 loss=0.4365
+08:04:36 | INFO    | holoqpi.engine.trainer |   epoch 53 step 60/140 loss=0.6325
+08:04:38 | INFO    | holoqpi.engine.trainer |   epoch 53 step 80/140 loss=0.4823
+08:04:40 | INFO    | holoqpi.engine.trainer |   epoch 53 step 100/140 loss=0.7148
+08:04:42 | INFO    | holoqpi.engine.trainer |   epoch 53 step 120/140 loss=0.3687
+08:05:31 | INFO    | holoqpi.engine.trainer | epoch 53/60 (62s = 14s train + 48s val) | train_loss=0.5066  val_phase_mae=0.1691  val_dice=0.8226  val_cls_acc=0.6220  val_mass_mape=0.1887
+08:05:32 | INFO    | holoqpi.engine.trainer |   epoch 54 step 0/140 loss=0.6172
+08:05:34 | INFO    | holoqpi.engine.trainer |   epoch 54 step 20/140 loss=0.4861
+08:05:36 | INFO    | holoqpi.engine.trainer |   epoch 54 step 40/140 loss=0.6659
+08:05:38 | INFO    | holoqpi.engine.trainer |   epoch 54 step 60/140 loss=0.5068
+08:05:40 | INFO    | holoqpi.engine.trainer |   epoch 54 step 80/140 loss=0.5486
+08:05:42 | INFO    | holoqpi.engine.trainer |   epoch 54 step 100/140 loss=0.5437
+08:05:44 | INFO    | holoqpi.engine.trainer |   epoch 54 step 120/140 loss=0.5328
+08:06:34 | INFO    | holoqpi.engine.trainer |   new best composite=0.8120
+08:06:34 | INFO    | holoqpi.engine.trainer | epoch 54/60 (62s = 14s train + 48s val) | train_loss=0.5000  val_phase_mae=0.1726  val_dice=0.8231  val_cls_acc=0.6614  val_mass_mape=0.1849
+08:06:34 | INFO    | holoqpi.engine.trainer |   epoch 55 step 0/140 loss=0.4178
+08:06:36 | INFO    | holoqpi.engine.trainer |   epoch 55 step 20/140 loss=0.4718
+08:06:38 | INFO    | holoqpi.engine.trainer |   epoch 55 step 40/140 loss=0.6233
+08:06:40 | INFO    | holoqpi.engine.trainer |   epoch 55 step 60/140 loss=0.4291
+08:06:42 | INFO    | holoqpi.engine.trainer |   epoch 55 step 80/140 loss=0.5266
+08:06:44 | INFO    | holoqpi.engine.trainer |   epoch 55 step 100/140 loss=0.4385
+08:06:46 | INFO    | holoqpi.engine.trainer |   epoch 55 step 120/140 loss=0.4947
+08:07:36 | INFO    | holoqpi.engine.trainer | epoch 55/60 (62s = 14s train + 48s val) | train_loss=0.5078  val_phase_mae=0.1710  val_dice=0.8234  val_cls_acc=0.6850  val_mass_mape=0.1871
+08:07:37 | INFO    | holoqpi.engine.trainer |   epoch 56 step 0/140 loss=0.3895
+08:07:39 | INFO    | holoqpi.engine.trainer |   epoch 56 step 20/140 loss=0.4819
+08:07:41 | INFO    | holoqpi.engine.trainer |   epoch 56 step 40/140 loss=0.4336
+08:07:43 | INFO    | holoqpi.engine.trainer |   epoch 56 step 60/140 loss=0.4241
+08:07:45 | INFO    | holoqpi.engine.trainer |   epoch 56 step 80/140 loss=0.3772
+08:07:47 | INFO    | holoqpi.engine.trainer |   epoch 56 step 100/140 loss=0.4442
+08:07:49 | INFO    | holoqpi.engine.trainer |   epoch 56 step 120/140 loss=0.5891
+08:08:38 | INFO    | holoqpi.engine.trainer | epoch 56/60 (62s = 14s train + 48s val) | train_loss=0.4949  val_phase_mae=0.1693  val_dice=0.8227  val_cls_acc=0.6299  val_mass_mape=0.1889
+08:08:39 | INFO    | holoqpi.engine.trainer |   epoch 57 step 0/140 loss=0.4157
+08:08:41 | INFO    | holoqpi.engine.trainer |   epoch 57 step 20/140 loss=0.4883
+08:08:43 | INFO    | holoqpi.engine.trainer |   epoch 57 step 40/140 loss=0.3974
+08:08:45 | INFO    | holoqpi.engine.trainer |   epoch 57 step 60/140 loss=0.5054
+08:08:47 | INFO    | holoqpi.engine.trainer |   epoch 57 step 80/140 loss=0.5350
+08:08:49 | INFO    | holoqpi.engine.trainer |   epoch 57 step 100/140 loss=0.4536
+08:08:51 | INFO    | holoqpi.engine.trainer |   epoch 57 step 120/140 loss=0.4525
+08:09:41 | INFO    | holoqpi.engine.trainer | epoch 57/60 (62s = 14s train + 48s val) | train_loss=0.4947  val_phase_mae=0.1687  val_dice=0.8227  val_cls_acc=0.6378  val_mass_mape=0.1867
+08:09:41 | INFO    | holoqpi.engine.trainer |   epoch 58 step 0/140 loss=0.3853
+08:09:43 | INFO    | holoqpi.engine.trainer |   epoch 58 step 20/140 loss=0.4251
+08:09:45 | INFO    | holoqpi.engine.trainer |   epoch 58 step 40/140 loss=0.3738
+08:09:47 | INFO    | holoqpi.engine.trainer |   epoch 58 step 60/140 loss=0.4696
+08:09:49 | INFO    | holoqpi.engine.trainer |   epoch 58 step 80/140 loss=0.3722
+08:09:51 | INFO    | holoqpi.engine.trainer |   epoch 58 step 100/140 loss=0.4317
+08:09:53 | INFO    | holoqpi.engine.trainer |   epoch 58 step 120/140 loss=0.3811
+08:10:44 | INFO    | holoqpi.engine.trainer |   new best composite=0.8130
+08:10:44 | INFO    | holoqpi.engine.trainer | epoch 58/60 (63s = 14s train + 48s val) | train_loss=0.5002  val_phase_mae=0.1728  val_dice=0.8237  val_cls_acc=0.7323  val_mass_mape=0.1819
+08:10:44 | INFO    | holoqpi.engine.trainer |   epoch 59 step 0/140 loss=0.3839
+08:10:46 | INFO    | holoqpi.engine.trainer |   epoch 59 step 20/140 loss=0.4794
+08:10:48 | INFO    | holoqpi.engine.trainer |   epoch 59 step 40/140 loss=0.5496
+08:10:50 | INFO    | holoqpi.engine.trainer |   epoch 59 step 60/140 loss=0.5794
+08:10:52 | INFO    | holoqpi.engine.trainer |   epoch 59 step 80/140 loss=0.6784
+08:10:54 | INFO    | holoqpi.engine.trainer |   epoch 59 step 100/140 loss=0.4599
+08:10:56 | INFO    | holoqpi.engine.trainer |   epoch 59 step 120/140 loss=0.3714
+08:11:46 | INFO    | holoqpi.engine.trainer | epoch 59/60 (62s = 14s train + 48s val) | train_loss=0.4948  val_phase_mae=0.1720  val_dice=0.8235  val_cls_acc=0.6772  val_mass_mape=0.1852
+08:11:46 | INFO    | holoqpi.engine.trainer |   epoch 60 step 0/140 loss=0.5547
+08:11:48 | INFO    | holoqpi.engine.trainer |   epoch 60 step 20/140 loss=0.4714
+08:11:50 | INFO    | holoqpi.engine.trainer |   epoch 60 step 40/140 loss=0.4351
+08:11:52 | INFO    | holoqpi.engine.trainer |   epoch 60 step 60/140 loss=0.3777
+08:11:54 | INFO    | holoqpi.engine.trainer |   epoch 60 step 80/140 loss=0.4435
+08:11:56 | INFO    | holoqpi.engine.trainer |   epoch 60 step 100/140 loss=0.4867
+08:11:58 | INFO    | holoqpi.engine.trainer |   epoch 60 step 120/140 loss=0.4992
+08:12:47 | INFO    | holoqpi.engine.trainer | epoch 60/60 (62s = 14s train + 48s val) | train_loss=0.5062  val_phase_mae=0.1662  val_dice=0.8223  val_cls_acc=0.5984  val_mass_mape=0.1987
+08:12:48 | INFO    | holoqpi.engine.trainer | training finished; best epoch 58 (composite=0.8130)
+08:12:48 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+08:13:31 | INFO    | holoqpi.engine.compare | modality=off_axis test metrics written to runs/physics_coupling_only_s2024_off_axis
+08:13:32 | INFO    | holoqpi.engine.compare | ======================================================================
+08:13:32 | INFO    | holoqpi.engine.compare | modality=gabor  device=cuda  run_dir=runs/physics_coupling_only_s2024_gabor
+08:13:32 | INFO    | holoqpi.engine.compare | ======================================================================
+08:13:32 | INFO    | holoqpi.data.dataset | train split: 560 samples | modality=gabor | crop=512 | augment=True
+08:13:32 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=gabor | crop=None | augment=False
+08:13:32 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=gabor | crop=None | augment=False
+08:13:32 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+08:13:32 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+08:13:32 | INFO    | holoqpi.engine.trainer | trainable 9.76M / 9.76M parameters (100.0%)
+08:13:32 | INFO    | holoqpi.engine.trainer | active physics terms: ['phase_mask_contrast', 'boundary_gradient_alignment', 'phase_volume', 'dry_mass_consistency', 'projected_area_consistency']
+08:13:33 | INFO    | holoqpi.engine.trainer |   epoch 1 step 0/140 loss=2.4090
+08:13:35 | INFO    | holoqpi.engine.trainer |   epoch 1 step 20/140 loss=2.0102
+08:13:36 | INFO    | holoqpi.engine.trainer |   epoch 1 step 40/140 loss=1.8559
+08:13:38 | INFO    | holoqpi.engine.trainer |   epoch 1 step 60/140 loss=1.6753
+08:13:40 | INFO    | holoqpi.engine.trainer |   epoch 1 step 80/140 loss=1.6604
+08:13:42 | INFO    | holoqpi.engine.trainer |   epoch 1 step 100/140 loss=1.3346
+08:13:44 | INFO    | holoqpi.engine.trainer |   epoch 1 step 120/140 loss=1.2904
+08:14:33 | INFO    | holoqpi.engine.trainer |   new best composite=0.6037
+08:14:33 | INFO    | holoqpi.engine.trainer | epoch 1/60 (61s = 13s train + 47s val) | train_loss=1.6694  val_phase_mae=0.2514  val_dice=0.6814  val_cls_acc=0.5118  val_mass_mape=0.5742
+08:14:33 | INFO    | holoqpi.engine.trainer |   at this rate the full 60-epoch schedule takes about 61 min
+08:14:33 | INFO    | holoqpi.engine.trainer |   epoch 2 step 0/140 loss=1.2826
+08:14:35 | INFO    | holoqpi.engine.trainer |   epoch 2 step 20/140 loss=1.4764
+08:14:37 | INFO    | holoqpi.engine.trainer |   epoch 2 step 40/140 loss=1.0314
+08:14:39 | INFO    | holoqpi.engine.trainer |   epoch 2 step 60/140 loss=1.2578
+08:14:40 | INFO    | holoqpi.engine.trainer |   epoch 2 step 80/140 loss=1.2825
+08:14:42 | INFO    | holoqpi.engine.trainer |   epoch 2 step 100/140 loss=1.5431
+08:14:44 | INFO    | holoqpi.engine.trainer |   epoch 2 step 120/140 loss=0.9773
+08:15:33 | INFO    | holoqpi.engine.trainer | epoch 2/60 (60s = 13s train + 47s val) | train_loss=1.1959  val_phase_mae=0.2547  val_dice=0.7081  val_cls_acc=0.4488  val_mass_mape=0.7038
+08:15:33 | INFO    | holoqpi.engine.trainer |   epoch 3 step 0/140 loss=0.9774
+08:15:35 | INFO    | holoqpi.engine.trainer |   epoch 3 step 20/140 loss=0.8459
+08:15:36 | INFO    | holoqpi.engine.trainer |   epoch 3 step 40/140 loss=1.2038
+08:15:38 | INFO    | holoqpi.engine.trainer |   epoch 3 step 60/140 loss=0.9245
+08:15:40 | INFO    | holoqpi.engine.trainer |   epoch 3 step 80/140 loss=1.1898
+08:15:42 | INFO    | holoqpi.engine.trainer |   epoch 3 step 100/140 loss=1.1960
+08:15:43 | INFO    | holoqpi.engine.trainer |   epoch 3 step 120/140 loss=0.9837
+08:16:32 | INFO    | holoqpi.engine.trainer |   new best composite=0.6757
+08:16:32 | INFO    | holoqpi.engine.trainer | epoch 3/60 (59s = 13s train + 46s val) | train_loss=1.0368  val_phase_mae=0.2165  val_dice=0.7355  val_cls_acc=0.4331  val_mass_mape=0.4636
+08:16:32 | INFO    | holoqpi.engine.trainer |   epoch 4 step 0/140 loss=0.7633
+08:16:34 | INFO    | holoqpi.engine.trainer |   epoch 4 step 20/140 loss=0.9502
+08:16:35 | INFO    | holoqpi.engine.trainer |   epoch 4 step 40/140 loss=0.8949
+08:16:37 | INFO    | holoqpi.engine.trainer |   epoch 4 step 60/140 loss=1.0280
+08:16:39 | INFO    | holoqpi.engine.trainer |   epoch 4 step 80/140 loss=0.8996
+08:16:41 | INFO    | holoqpi.engine.trainer |   epoch 4 step 100/140 loss=1.0816
+08:16:42 | INFO    | holoqpi.engine.trainer |   epoch 4 step 120/140 loss=0.7222
+08:17:31 | INFO    | holoqpi.engine.trainer |   new best composite=0.7036
+08:17:31 | INFO    | holoqpi.engine.trainer | epoch 4/60 (59s = 13s train + 46s val) | train_loss=0.9677  val_phase_mae=0.2084  val_dice=0.7220  val_cls_acc=0.5433  val_mass_mape=0.3213
+08:17:31 | INFO    | holoqpi.engine.trainer |   epoch 5 step 0/140 loss=0.7838
+08:17:33 | INFO    | holoqpi.engine.trainer |   epoch 5 step 20/140 loss=0.9805
+08:17:35 | INFO    | holoqpi.engine.trainer |   epoch 5 step 40/140 loss=1.1922
+08:17:36 | INFO    | holoqpi.engine.trainer |   epoch 5 step 60/140 loss=1.0544
+08:17:38 | INFO    | holoqpi.engine.trainer |   epoch 5 step 80/140 loss=1.0357
+08:17:40 | INFO    | holoqpi.engine.trainer |   epoch 5 step 100/140 loss=0.7617
+08:17:42 | INFO    | holoqpi.engine.trainer |   epoch 5 step 120/140 loss=0.7884
+08:18:29 | INFO    | holoqpi.engine.trainer | epoch 5/60 (59s = 13s train + 46s val) | train_loss=0.9498  val_phase_mae=0.2164  val_dice=0.7450  val_cls_acc=0.3780  val_mass_mape=0.4991
+08:18:30 | INFO    | holoqpi.engine.trainer |   epoch 6 step 0/140 loss=0.9169
+08:18:31 | INFO    | holoqpi.engine.trainer |   epoch 6 step 20/140 loss=0.8573
+08:18:33 | INFO    | holoqpi.engine.trainer |   epoch 6 step 40/140 loss=0.8278
+08:18:35 | INFO    | holoqpi.engine.trainer |   epoch 6 step 60/140 loss=1.3159
+08:18:37 | INFO    | holoqpi.engine.trainer |   epoch 6 step 80/140 loss=0.8922
+08:18:38 | INFO    | holoqpi.engine.trainer |   epoch 6 step 100/140 loss=1.1363
+08:18:40 | INFO    | holoqpi.engine.trainer |   epoch 6 step 120/140 loss=0.8430
+08:19:27 | INFO    | holoqpi.engine.trainer |   new best composite=0.7425
+08:19:27 | INFO    | holoqpi.engine.trainer | epoch 6/60 (58s = 13s train + 45s val) | train_loss=0.9265  val_phase_mae=0.1942  val_dice=0.7484  val_cls_acc=0.5591  val_mass_mape=0.2484
+08:19:28 | INFO    | holoqpi.engine.trainer |   epoch 7 step 0/140 loss=1.1887
+08:19:30 | INFO    | holoqpi.engine.trainer |   epoch 7 step 20/140 loss=0.8530
+08:19:31 | INFO    | holoqpi.engine.trainer |   epoch 7 step 40/140 loss=0.7866
+08:19:33 | INFO    | holoqpi.engine.trainer |   epoch 7 step 60/140 loss=0.7004
+08:19:35 | INFO    | holoqpi.engine.trainer |   epoch 7 step 80/140 loss=0.8487
+08:19:37 | INFO    | holoqpi.engine.trainer |   epoch 7 step 100/140 loss=1.5709
+08:19:39 | INFO    | holoqpi.engine.trainer |   epoch 7 step 120/140 loss=1.0537
+08:20:25 | INFO    | holoqpi.engine.trainer | epoch 7/60 (58s = 13s train + 45s val) | train_loss=0.9220  val_phase_mae=0.1961  val_dice=0.7430  val_cls_acc=0.5039  val_mass_mape=0.2919
+08:20:26 | INFO    | holoqpi.engine.trainer |   epoch 8 step 0/140 loss=0.6988
+08:20:28 | INFO    | holoqpi.engine.trainer |   epoch 8 step 20/140 loss=0.9429
+08:20:29 | INFO    | holoqpi.engine.trainer |   epoch 8 step 40/140 loss=0.8706
+08:20:31 | INFO    | holoqpi.engine.trainer |   epoch 8 step 60/140 loss=0.7362
+08:20:33 | INFO    | holoqpi.engine.trainer |   epoch 8 step 80/140 loss=1.0192
+08:20:35 | INFO    | holoqpi.engine.trainer |   epoch 8 step 100/140 loss=0.8555
+08:20:36 | INFO    | holoqpi.engine.trainer |   epoch 8 step 120/140 loss=0.9922
+08:21:24 | INFO    | holoqpi.engine.trainer |   new best composite=0.7451
+08:21:24 | INFO    | holoqpi.engine.trainer | epoch 8/60 (58s = 12s train + 45s val) | train_loss=0.8948  val_phase_mae=0.1940  val_dice=0.7562  val_cls_acc=0.6063  val_mass_mape=0.2487
+08:21:24 | INFO    | holoqpi.engine.trainer |   epoch 9 step 0/140 loss=0.8628
+08:21:26 | INFO    | holoqpi.engine.trainer |   epoch 9 step 20/140 loss=0.8217
+08:21:28 | INFO    | holoqpi.engine.trainer |   epoch 9 step 40/140 loss=1.2621
+08:21:29 | INFO    | holoqpi.engine.trainer |   epoch 9 step 60/140 loss=0.8428
+08:21:31 | INFO    | holoqpi.engine.trainer |   epoch 9 step 80/140 loss=0.8597
+08:21:33 | INFO    | holoqpi.engine.trainer |   epoch 9 step 100/140 loss=0.6816
+08:21:35 | INFO    | holoqpi.engine.trainer |   epoch 9 step 120/140 loss=1.1059
+08:22:22 | INFO    | holoqpi.engine.trainer | epoch 9/60 (59s = 13s train + 46s val) | train_loss=0.8907  val_phase_mae=0.1980  val_dice=0.7432  val_cls_acc=0.5906  val_mass_mape=0.2818
+08:22:23 | INFO    | holoqpi.engine.trainer |   epoch 10 step 0/140 loss=0.7686
+08:22:25 | INFO    | holoqpi.engine.trainer |   epoch 10 step 20/140 loss=1.3445
+08:22:26 | INFO    | holoqpi.engine.trainer |   epoch 10 step 40/140 loss=1.0603
+08:22:28 | INFO    | holoqpi.engine.trainer |   epoch 10 step 60/140 loss=1.0039
+08:22:30 | INFO    | holoqpi.engine.trainer |   epoch 10 step 80/140 loss=0.6618
+08:22:32 | INFO    | holoqpi.engine.trainer |   epoch 10 step 100/140 loss=0.8232
+08:22:33 | INFO    | holoqpi.engine.trainer |   epoch 10 step 120/140 loss=0.7483
+08:23:21 | INFO    | holoqpi.engine.trainer |   new best composite=0.7473
+08:23:21 | INFO    | holoqpi.engine.trainer | epoch 10/60 (58s = 13s train + 46s val) | train_loss=0.8935  val_phase_mae=0.1918  val_dice=0.7528  val_cls_acc=0.5669  val_mass_mape=0.2412
+08:23:22 | INFO    | holoqpi.engine.trainer |   epoch 11 step 0/140 loss=0.9579
+08:23:23 | INFO    | holoqpi.engine.trainer |   epoch 11 step 20/140 loss=0.9202
+08:23:25 | INFO    | holoqpi.engine.trainer |   epoch 11 step 40/140 loss=0.7816
+08:23:27 | INFO    | holoqpi.engine.trainer |   epoch 11 step 60/140 loss=1.2718
+08:23:29 | INFO    | holoqpi.engine.trainer |   epoch 11 step 80/140 loss=0.7899
+08:23:30 | INFO    | holoqpi.engine.trainer |   epoch 11 step 100/140 loss=0.8682
+08:23:32 | INFO    | holoqpi.engine.trainer |   epoch 11 step 120/140 loss=0.9505
+08:24:19 | INFO    | holoqpi.engine.trainer | epoch 11/60 (58s = 13s train + 45s val) | train_loss=0.8643  val_phase_mae=0.1977  val_dice=0.7372  val_cls_acc=0.6220  val_mass_mape=0.2500
+08:24:19 | INFO    | holoqpi.engine.trainer |   epoch 12 step 0/140 loss=0.8282
+08:24:21 | INFO    | holoqpi.engine.trainer |   epoch 12 step 20/140 loss=0.8282
+08:24:23 | INFO    | holoqpi.engine.trainer |   epoch 12 step 40/140 loss=0.7152
+08:24:25 | INFO    | holoqpi.engine.trainer |   epoch 12 step 60/140 loss=0.6941
+08:24:26 | INFO    | holoqpi.engine.trainer |   epoch 12 step 80/140 loss=1.1082
+08:24:28 | INFO    | holoqpi.engine.trainer |   epoch 12 step 100/140 loss=0.6627
+08:24:30 | INFO    | holoqpi.engine.trainer |   epoch 12 step 120/140 loss=0.6972
+08:25:17 | INFO    | holoqpi.engine.trainer | epoch 12/60 (58s = 13s train + 45s val) | train_loss=0.8769  val_phase_mae=0.1897  val_dice=0.7548  val_cls_acc=0.6614  val_mass_mape=0.2554
+08:25:17 | INFO    | holoqpi.engine.trainer |   epoch 13 step 0/140 loss=0.7779
+08:25:19 | INFO    | holoqpi.engine.trainer |   epoch 13 step 20/140 loss=0.6503
+08:25:21 | INFO    | holoqpi.engine.trainer |   epoch 13 step 40/140 loss=0.8967
+08:25:22 | INFO    | holoqpi.engine.trainer |   epoch 13 step 60/140 loss=0.7526
+08:25:24 | INFO    | holoqpi.engine.trainer |   epoch 13 step 80/140 loss=0.9873
+08:25:26 | INFO    | holoqpi.engine.trainer |   epoch 13 step 100/140 loss=0.6528
+08:25:28 | INFO    | holoqpi.engine.trainer |   epoch 13 step 120/140 loss=0.8159
+08:26:15 | INFO    | holoqpi.engine.trainer | epoch 13/60 (59s = 13s train + 46s val) | train_loss=0.8503  val_phase_mae=0.1936  val_dice=0.7534  val_cls_acc=0.6850  val_mass_mape=0.2659
+08:26:16 | INFO    | holoqpi.engine.trainer |   epoch 14 step 0/140 loss=0.7624
+08:26:18 | INFO    | holoqpi.engine.trainer |   epoch 14 step 20/140 loss=0.9988
+08:26:19 | INFO    | holoqpi.engine.trainer |   epoch 14 step 40/140 loss=0.8407
+08:26:21 | INFO    | holoqpi.engine.trainer |   epoch 14 step 60/140 loss=0.8497
+08:26:23 | INFO    | holoqpi.engine.trainer |   epoch 14 step 80/140 loss=0.5392
+08:26:25 | INFO    | holoqpi.engine.trainer |   epoch 14 step 100/140 loss=0.8889
+08:26:26 | INFO    | holoqpi.engine.trainer |   epoch 14 step 120/140 loss=0.9855
+08:27:13 | INFO    | holoqpi.engine.trainer | epoch 14/60 (58s = 13s train + 46s val) | train_loss=0.8591  val_phase_mae=0.1928  val_dice=0.7531  val_cls_acc=0.5984  val_mass_mape=0.2756
+08:27:14 | INFO    | holoqpi.engine.trainer |   epoch 15 step 0/140 loss=0.6828
+08:27:16 | INFO    | holoqpi.engine.trainer |   epoch 15 step 20/140 loss=0.9971
+08:27:17 | INFO    | holoqpi.engine.trainer |   epoch 15 step 40/140 loss=1.0390
+08:27:19 | INFO    | holoqpi.engine.trainer |   epoch 15 step 60/140 loss=0.7130
+08:27:21 | INFO    | holoqpi.engine.trainer |   epoch 15 step 80/140 loss=0.7180
+08:27:23 | INFO    | holoqpi.engine.trainer |   epoch 15 step 100/140 loss=0.9352
+08:27:24 | INFO    | holoqpi.engine.trainer |   epoch 15 step 120/140 loss=0.6220
+08:28:12 | INFO    | holoqpi.engine.trainer | epoch 15/60 (59s = 13s train + 46s val) | train_loss=0.8504  val_phase_mae=0.1983  val_dice=0.7403  val_cls_acc=0.6378  val_mass_mape=0.2415
+08:28:13 | INFO    | holoqpi.engine.trainer |   epoch 16 step 0/140 loss=0.6989
+08:28:14 | INFO    | holoqpi.engine.trainer |   epoch 16 step 20/140 loss=0.6551
+08:28:16 | INFO    | holoqpi.engine.trainer |   epoch 16 step 40/140 loss=0.7295
+08:28:18 | INFO    | holoqpi.engine.trainer |   epoch 16 step 60/140 loss=0.7643
+08:28:20 | INFO    | holoqpi.engine.trainer |   epoch 16 step 80/140 loss=0.7999
+08:28:21 | INFO    | holoqpi.engine.trainer |   epoch 16 step 100/140 loss=0.7946
+08:28:23 | INFO    | holoqpi.engine.trainer |   epoch 16 step 120/140 loss=0.8131
+08:29:11 | INFO    | holoqpi.engine.trainer |   new best composite=0.7512
+08:29:11 | INFO    | holoqpi.engine.trainer | epoch 16/60 (59s = 13s train + 46s val) | train_loss=0.8466  val_phase_mae=0.1883  val_dice=0.7573  val_cls_acc=0.5512  val_mass_mape=0.2395
+08:29:12 | INFO    | holoqpi.engine.trainer |   epoch 17 step 0/140 loss=1.0583
+08:29:13 | INFO    | holoqpi.engine.trainer |   epoch 17 step 20/140 loss=0.5965
+08:29:15 | INFO    | holoqpi.engine.trainer |   epoch 17 step 40/140 loss=0.9002
+08:29:17 | INFO    | holoqpi.engine.trainer |   epoch 17 step 60/140 loss=0.7644
+08:29:19 | INFO    | holoqpi.engine.trainer |   epoch 17 step 80/140 loss=0.9499
+08:29:20 | INFO    | holoqpi.engine.trainer |   epoch 17 step 100/140 loss=0.6362
+08:29:22 | INFO    | holoqpi.engine.trainer |   epoch 17 step 120/140 loss=0.6983
+08:30:09 | INFO    | holoqpi.engine.trainer | epoch 17/60 (58s = 13s train + 46s val) | train_loss=0.8345  val_phase_mae=0.1914  val_dice=0.7557  val_cls_acc=0.6850  val_mass_mape=0.2732
+08:30:10 | INFO    | holoqpi.engine.trainer |   epoch 18 step 0/140 loss=0.5905
+08:30:12 | INFO    | holoqpi.engine.trainer |   epoch 18 step 20/140 loss=0.9120
+08:30:13 | INFO    | holoqpi.engine.trainer |   epoch 18 step 40/140 loss=0.6751
+08:30:15 | INFO    | holoqpi.engine.trainer |   epoch 18 step 60/140 loss=0.6704
+08:30:17 | INFO    | holoqpi.engine.trainer |   epoch 18 step 80/140 loss=0.6815
+08:30:19 | INFO    | holoqpi.engine.trainer |   epoch 18 step 100/140 loss=0.6566
+08:30:20 | INFO    | holoqpi.engine.trainer |   epoch 18 step 120/140 loss=1.0907
+08:31:07 | INFO    | holoqpi.engine.trainer | epoch 18/60 (58s = 13s train + 45s val) | train_loss=0.8359  val_phase_mae=0.1896  val_dice=0.7592  val_cls_acc=0.6220  val_mass_mape=0.2815
+08:31:08 | INFO    | holoqpi.engine.trainer |   epoch 19 step 0/140 loss=0.7081
+08:31:10 | INFO    | holoqpi.engine.trainer |   epoch 19 step 20/140 loss=0.6585
+08:31:11 | INFO    | holoqpi.engine.trainer |   epoch 19 step 40/140 loss=0.9777
+08:31:13 | INFO    | holoqpi.engine.trainer |   epoch 19 step 60/140 loss=0.6219
+08:31:15 | INFO    | holoqpi.engine.trainer |   epoch 19 step 80/140 loss=1.1667
+08:31:17 | INFO    | holoqpi.engine.trainer |   epoch 19 step 100/140 loss=0.9781
+08:31:18 | INFO    | holoqpi.engine.trainer |   epoch 19 step 120/140 loss=0.7021
+08:32:05 | INFO    | holoqpi.engine.trainer | epoch 19/60 (58s = 13s train + 45s val) | train_loss=0.8324  val_phase_mae=0.1945  val_dice=0.7482  val_cls_acc=0.6299  val_mass_mape=0.2349
+08:32:06 | INFO    | holoqpi.engine.trainer |   epoch 20 step 0/140 loss=0.8545
+08:32:07 | INFO    | holoqpi.engine.trainer |   epoch 20 step 20/140 loss=0.8071
+08:32:09 | INFO    | holoqpi.engine.trainer |   epoch 20 step 40/140 loss=0.7455
+08:32:11 | INFO    | holoqpi.engine.trainer |   epoch 20 step 60/140 loss=0.7458
+08:32:13 | INFO    | holoqpi.engine.trainer |   epoch 20 step 80/140 loss=0.7639
+08:32:14 | INFO    | holoqpi.engine.trainer |   epoch 20 step 100/140 loss=1.0606
+08:32:16 | INFO    | holoqpi.engine.trainer |   epoch 20 step 120/140 loss=0.5914
+08:33:03 | INFO    | holoqpi.engine.trainer | epoch 20/60 (57s = 13s train + 45s val) | train_loss=0.8211  val_phase_mae=0.1882  val_dice=0.7521  val_cls_acc=0.7402  val_mass_mape=0.2354
+08:33:03 | INFO    | holoqpi.engine.trainer |   epoch 21 step 0/140 loss=0.8146
+08:33:05 | INFO    | holoqpi.engine.trainer |   epoch 21 step 20/140 loss=0.7663
+08:33:07 | INFO    | holoqpi.engine.trainer |   epoch 21 step 40/140 loss=0.6502
+08:33:08 | INFO    | holoqpi.engine.trainer |   epoch 21 step 60/140 loss=0.8490
+08:33:10 | INFO    | holoqpi.engine.trainer |   epoch 21 step 80/140 loss=0.6884
+08:33:12 | INFO    | holoqpi.engine.trainer |   epoch 21 step 100/140 loss=1.0196
+08:33:14 | INFO    | holoqpi.engine.trainer |   epoch 21 step 120/140 loss=0.8670
+08:34:01 | INFO    | holoqpi.engine.trainer | epoch 21/60 (58s = 13s train + 45s val) | train_loss=0.8354  val_phase_mae=0.1879  val_dice=0.7563  val_cls_acc=0.6850  val_mass_mape=0.2486
+08:34:01 | INFO    | holoqpi.engine.trainer |   epoch 22 step 0/140 loss=0.5767
+08:34:03 | INFO    | holoqpi.engine.trainer |   epoch 22 step 20/140 loss=0.5703
+08:34:05 | INFO    | holoqpi.engine.trainer |   epoch 22 step 40/140 loss=0.6944
+08:34:06 | INFO    | holoqpi.engine.trainer |   epoch 22 step 60/140 loss=0.7460
+08:34:08 | INFO    | holoqpi.engine.trainer |   epoch 22 step 80/140 loss=0.6123
+08:34:10 | INFO    | holoqpi.engine.trainer |   epoch 22 step 100/140 loss=0.6382
+08:34:12 | INFO    | holoqpi.engine.trainer |   epoch 22 step 120/140 loss=1.1684
+08:34:59 | INFO    | holoqpi.engine.trainer | epoch 22/60 (59s = 13s train + 46s val) | train_loss=0.8173  val_phase_mae=0.1945  val_dice=0.7545  val_cls_acc=0.6850  val_mass_mape=0.3353
+08:35:00 | INFO    | holoqpi.engine.trainer |   epoch 23 step 0/140 loss=0.7950
+08:35:02 | INFO    | holoqpi.engine.trainer |   epoch 23 step 20/140 loss=1.0001
+08:35:03 | INFO    | holoqpi.engine.trainer |   epoch 23 step 40/140 loss=0.7353
+08:35:05 | INFO    | holoqpi.engine.trainer |   epoch 23 step 60/140 loss=1.2481
+08:35:07 | INFO    | holoqpi.engine.trainer |   epoch 23 step 80/140 loss=0.6260
+08:35:09 | INFO    | holoqpi.engine.trainer |   epoch 23 step 100/140 loss=0.8339
+08:35:11 | INFO    | holoqpi.engine.trainer |   epoch 23 step 120/140 loss=0.9314
+08:35:58 | INFO    | holoqpi.engine.trainer | epoch 23/60 (58s = 13s train + 45s val) | train_loss=0.8122  val_phase_mae=0.1889  val_dice=0.7595  val_cls_acc=0.6614  val_mass_mape=0.2738
+08:35:58 | INFO    | holoqpi.engine.trainer |   epoch 24 step 0/140 loss=0.5881
+08:36:00 | INFO    | holoqpi.engine.trainer |   epoch 24 step 20/140 loss=0.9294
+08:36:02 | INFO    | holoqpi.engine.trainer |   epoch 24 step 40/140 loss=0.6913
+08:36:03 | INFO    | holoqpi.engine.trainer |   epoch 24 step 60/140 loss=0.8673
+08:36:05 | INFO    | holoqpi.engine.trainer |   epoch 24 step 80/140 loss=0.5793
+08:36:07 | INFO    | holoqpi.engine.trainer |   epoch 24 step 100/140 loss=0.6884
+08:36:09 | INFO    | holoqpi.engine.trainer |   epoch 24 step 120/140 loss=1.7959
+08:36:57 | INFO    | holoqpi.engine.trainer | epoch 24/60 (59s = 13s train + 46s val) | train_loss=0.8082  val_phase_mae=0.1896  val_dice=0.7521  val_cls_acc=0.6850  val_mass_mape=0.2621
+08:36:57 | INFO    | holoqpi.engine.trainer |   epoch 25 step 0/140 loss=0.8336
+08:36:59 | INFO    | holoqpi.engine.trainer |   epoch 25 step 20/140 loss=0.7341
+08:37:00 | INFO    | holoqpi.engine.trainer |   epoch 25 step 40/140 loss=0.7366
+08:37:02 | INFO    | holoqpi.engine.trainer |   epoch 25 step 60/140 loss=0.6681
+08:37:04 | INFO    | holoqpi.engine.trainer |   epoch 25 step 80/140 loss=0.5764
+08:37:06 | INFO    | holoqpi.engine.trainer |   epoch 25 step 100/140 loss=0.7443
+08:37:07 | INFO    | holoqpi.engine.trainer |   epoch 25 step 120/140 loss=0.6103
+08:37:55 | INFO    | holoqpi.engine.trainer |   new best composite=0.7517
+08:37:55 | INFO    | holoqpi.engine.trainer | epoch 25/60 (58s = 13s train + 45s val) | train_loss=0.7987  val_phase_mae=0.1849  val_dice=0.7601  val_cls_acc=0.7717  val_mass_mape=0.2380
+08:37:55 | INFO    | holoqpi.engine.trainer |   epoch 26 step 0/140 loss=0.5787
+08:37:57 | INFO    | holoqpi.engine.trainer |   epoch 26 step 20/140 loss=0.5957
+08:37:59 | INFO    | holoqpi.engine.trainer |   epoch 26 step 40/140 loss=1.0552
+08:38:01 | INFO    | holoqpi.engine.trainer |   epoch 26 step 60/140 loss=1.0358
+08:38:02 | INFO    | holoqpi.engine.trainer |   epoch 26 step 80/140 loss=0.6208
+08:38:04 | INFO    | holoqpi.engine.trainer |   epoch 26 step 100/140 loss=0.9583
+08:38:06 | INFO    | holoqpi.engine.trainer |   epoch 26 step 120/140 loss=0.6641
+08:38:53 | INFO    | holoqpi.engine.trainer | epoch 26/60 (58s = 13s train + 45s val) | train_loss=0.7831  val_phase_mae=0.1857  val_dice=0.7578  val_cls_acc=0.6850  val_mass_mape=0.2427
+08:38:53 | INFO    | holoqpi.engine.trainer |   epoch 27 step 0/140 loss=0.8004
+08:38:55 | INFO    | holoqpi.engine.trainer |   epoch 27 step 20/140 loss=0.7293
+08:38:57 | INFO    | holoqpi.engine.trainer |   epoch 27 step 40/140 loss=0.6522
+08:38:59 | INFO    | holoqpi.engine.trainer |   epoch 27 step 60/140 loss=0.8350
+08:39:01 | INFO    | holoqpi.engine.trainer |   epoch 27 step 80/140 loss=0.6159
+08:39:02 | INFO    | holoqpi.engine.trainer |   epoch 27 step 100/140 loss=0.6669
+08:39:04 | INFO    | holoqpi.engine.trainer |   epoch 27 step 120/140 loss=0.6973
+08:39:51 | INFO    | holoqpi.engine.trainer | epoch 27/60 (58s = 13s train + 45s val) | train_loss=0.7791  val_phase_mae=0.1873  val_dice=0.7547  val_cls_acc=0.6929  val_mass_mape=0.2304
+08:39:52 | INFO    | holoqpi.engine.trainer |   epoch 28 step 0/140 loss=1.0473
+08:39:53 | INFO    | holoqpi.engine.trainer |   epoch 28 step 20/140 loss=0.6112
+08:39:55 | INFO    | holoqpi.engine.trainer |   epoch 28 step 40/140 loss=1.2132
+08:39:57 | INFO    | holoqpi.engine.trainer |   epoch 28 step 60/140 loss=0.7382
+08:39:59 | INFO    | holoqpi.engine.trainer |   epoch 28 step 80/140 loss=0.6559
+08:40:00 | INFO    | holoqpi.engine.trainer |   epoch 28 step 100/140 loss=0.8058
+08:40:02 | INFO    | holoqpi.engine.trainer |   epoch 28 step 120/140 loss=1.0027
+08:40:49 | INFO    | holoqpi.engine.trainer | epoch 28/60 (58s = 13s train + 45s val) | train_loss=0.7731  val_phase_mae=0.1916  val_dice=0.7443  val_cls_acc=0.6929  val_mass_mape=0.2458
+08:40:49 | INFO    | holoqpi.engine.trainer |   epoch 29 step 0/140 loss=0.6356
+08:40:51 | INFO    | holoqpi.engine.trainer |   epoch 29 step 20/140 loss=0.6710
+08:40:53 | INFO    | holoqpi.engine.trainer |   epoch 29 step 40/140 loss=0.9484
+08:40:55 | INFO    | holoqpi.engine.trainer |   epoch 29 step 60/140 loss=0.6626
+08:40:56 | INFO    | holoqpi.engine.trainer |   epoch 29 step 80/140 loss=1.1394
+08:40:58 | INFO    | holoqpi.engine.trainer |   epoch 29 step 100/140 loss=0.8176
+08:41:00 | INFO    | holoqpi.engine.trainer |   epoch 29 step 120/140 loss=0.5705
+08:41:47 | INFO    | holoqpi.engine.trainer |   new best composite=0.7585
+08:41:47 | INFO    | holoqpi.engine.trainer | epoch 29/60 (58s = 13s train + 45s val) | train_loss=0.7810  val_phase_mae=0.1834  val_dice=0.7657  val_cls_acc=0.7008  val_mass_mape=0.2307
+08:41:48 | INFO    | holoqpi.engine.trainer |   epoch 30 step 0/140 loss=1.0879
+08:41:49 | INFO    | holoqpi.engine.trainer |   epoch 30 step 20/140 loss=0.8326
+08:41:51 | INFO    | holoqpi.engine.trainer |   epoch 30 step 40/140 loss=0.5769
+08:41:53 | INFO    | holoqpi.engine.trainer |   epoch 30 step 60/140 loss=0.5110
+08:41:55 | INFO    | holoqpi.engine.trainer |   epoch 30 step 80/140 loss=0.7531
+08:41:57 | INFO    | holoqpi.engine.trainer |   epoch 30 step 100/140 loss=0.7570
+08:41:58 | INFO    | holoqpi.engine.trainer |   epoch 30 step 120/140 loss=0.6994
+08:42:45 | INFO    | holoqpi.engine.trainer | epoch 30/60 (58s = 13s train + 45s val) | train_loss=0.7688  val_phase_mae=0.1869  val_dice=0.7619  val_cls_acc=0.7087  val_mass_mape=0.2358
+08:42:45 | INFO    | holoqpi.engine.trainer |   epoch 31 step 0/140 loss=0.8342
+08:42:47 | INFO    | holoqpi.engine.trainer |   epoch 31 step 20/140 loss=0.9164
+08:42:49 | INFO    | holoqpi.engine.trainer |   epoch 31 step 40/140 loss=0.7024
+08:42:51 | INFO    | holoqpi.engine.trainer |   epoch 31 step 60/140 loss=0.5641
+08:42:52 | INFO    | holoqpi.engine.trainer |   epoch 31 step 80/140 loss=0.8111
+08:42:54 | INFO    | holoqpi.engine.trainer |   epoch 31 step 100/140 loss=0.8205
+08:42:56 | INFO    | holoqpi.engine.trainer |   epoch 31 step 120/140 loss=1.1280
+08:43:43 | INFO    | holoqpi.engine.trainer | epoch 31/60 (58s = 13s train + 45s val) | train_loss=0.7501  val_phase_mae=0.1852  val_dice=0.7632  val_cls_acc=0.6693  val_mass_mape=0.2602
+08:43:44 | INFO    | holoqpi.engine.trainer |   epoch 32 step 0/140 loss=0.7144
+08:43:45 | INFO    | holoqpi.engine.trainer |   epoch 32 step 20/140 loss=0.7311
+08:43:47 | INFO    | holoqpi.engine.trainer |   epoch 32 step 40/140 loss=0.9339
+08:43:49 | INFO    | holoqpi.engine.trainer |   epoch 32 step 60/140 loss=1.2462
+08:43:51 | INFO    | holoqpi.engine.trainer |   epoch 32 step 80/140 loss=0.6008
+08:43:52 | INFO    | holoqpi.engine.trainer |   epoch 32 step 100/140 loss=0.6791
+08:43:54 | INFO    | holoqpi.engine.trainer |   epoch 32 step 120/140 loss=0.9985
+08:44:41 | INFO    | holoqpi.engine.trainer | epoch 32/60 (58s = 13s train + 45s val) | train_loss=0.7702  val_phase_mae=0.1847  val_dice=0.7600  val_cls_acc=0.6299  val_mass_mape=0.2256
+08:44:41 | INFO    | holoqpi.engine.trainer |   epoch 33 step 0/140 loss=0.5986
+08:44:43 | INFO    | holoqpi.engine.trainer |   epoch 33 step 20/140 loss=0.6709
+08:44:45 | INFO    | holoqpi.engine.trainer |   epoch 33 step 40/140 loss=0.5677
+08:44:47 | INFO    | holoqpi.engine.trainer |   epoch 33 step 60/140 loss=0.6506
+08:44:49 | INFO    | holoqpi.engine.trainer |   epoch 33 step 80/140 loss=0.8057
+08:44:50 | INFO    | holoqpi.engine.trainer |   epoch 33 step 100/140 loss=0.8243
+08:44:52 | INFO    | holoqpi.engine.trainer |   epoch 33 step 120/140 loss=0.7946
+08:45:39 | INFO    | holoqpi.engine.trainer | epoch 33/60 (58s = 13s train + 46s val) | train_loss=0.7517  val_phase_mae=0.1858  val_dice=0.7570  val_cls_acc=0.7165  val_mass_mape=0.2318
+08:45:40 | INFO    | holoqpi.engine.trainer |   epoch 34 step 0/140 loss=0.9109
+08:45:41 | INFO    | holoqpi.engine.trainer |   epoch 34 step 20/140 loss=1.2489
+08:45:43 | INFO    | holoqpi.engine.trainer |   epoch 34 step 40/140 loss=1.0453
+08:45:45 | INFO    | holoqpi.engine.trainer |   epoch 34 step 60/140 loss=0.6535
+08:45:47 | INFO    | holoqpi.engine.trainer |   epoch 34 step 80/140 loss=0.5725
+08:45:49 | INFO    | holoqpi.engine.trainer |   epoch 34 step 100/140 loss=0.6731
+08:45:50 | INFO    | holoqpi.engine.trainer |   epoch 34 step 120/140 loss=0.8695
+08:46:38 | INFO    | holoqpi.engine.trainer | epoch 34/60 (58s = 13s train + 46s val) | train_loss=0.7439  val_phase_mae=0.1843  val_dice=0.7633  val_cls_acc=0.7717  val_mass_mape=0.2306
+08:46:38 | INFO    | holoqpi.engine.trainer |   epoch 35 step 0/140 loss=0.5471
+08:46:40 | INFO    | holoqpi.engine.trainer |   epoch 35 step 20/140 loss=0.6184
+08:46:42 | INFO    | holoqpi.engine.trainer |   epoch 35 step 40/140 loss=0.6756
+08:46:43 | INFO    | holoqpi.engine.trainer |   epoch 35 step 60/140 loss=0.6520
+08:46:45 | INFO    | holoqpi.engine.trainer |   epoch 35 step 80/140 loss=0.5767
+08:46:47 | INFO    | holoqpi.engine.trainer |   epoch 35 step 100/140 loss=0.7707
+08:46:49 | INFO    | holoqpi.engine.trainer |   epoch 35 step 120/140 loss=0.6819
+08:47:36 | INFO    | holoqpi.engine.trainer | epoch 35/60 (58s = 13s train + 46s val) | train_loss=0.7380  val_phase_mae=0.1854  val_dice=0.7643  val_cls_acc=0.7717  val_mass_mape=0.2514
+08:47:37 | INFO    | holoqpi.engine.trainer |   epoch 36 step 0/140 loss=0.7043
+08:47:38 | INFO    | holoqpi.engine.trainer |   epoch 36 step 20/140 loss=0.7418
+08:47:40 | INFO    | holoqpi.engine.trainer |   epoch 36 step 40/140 loss=0.5912
+08:47:42 | INFO    | holoqpi.engine.trainer |   epoch 36 step 60/140 loss=0.7833
+08:47:44 | INFO    | holoqpi.engine.trainer |   epoch 36 step 80/140 loss=0.5287
+08:47:45 | INFO    | holoqpi.engine.trainer |   epoch 36 step 100/140 loss=0.6129
+08:47:47 | INFO    | holoqpi.engine.trainer |   epoch 36 step 120/140 loss=1.0583
+08:48:35 | INFO    | holoqpi.engine.trainer | epoch 36/60 (59s = 13s train + 46s val) | train_loss=0.7343  val_phase_mae=0.1841  val_dice=0.7633  val_cls_acc=0.8031  val_mass_mape=0.2311
+08:48:35 | INFO    | holoqpi.engine.trainer |   epoch 37 step 0/140 loss=0.8989
+08:48:37 | INFO    | holoqpi.engine.trainer |   epoch 37 step 20/140 loss=0.5309
+08:48:39 | INFO    | holoqpi.engine.trainer |   epoch 37 step 40/140 loss=0.5417
+08:48:40 | INFO    | holoqpi.engine.trainer |   epoch 37 step 60/140 loss=0.5639
+08:48:42 | INFO    | holoqpi.engine.trainer |   epoch 37 step 80/140 loss=0.5797
+08:48:44 | INFO    | holoqpi.engine.trainer |   epoch 37 step 100/140 loss=0.6905
+08:48:46 | INFO    | holoqpi.engine.trainer |   epoch 37 step 120/140 loss=0.6496
+08:49:33 | INFO    | holoqpi.engine.trainer | epoch 37/60 (59s = 13s train + 46s val) | train_loss=0.7388  val_phase_mae=0.1865  val_dice=0.7634  val_cls_acc=0.7874  val_mass_mape=0.2799
+08:49:34 | INFO    | holoqpi.engine.trainer |   epoch 38 step 0/140 loss=0.5113
+08:49:36 | INFO    | holoqpi.engine.trainer |   epoch 38 step 20/140 loss=0.8572
+08:49:37 | INFO    | holoqpi.engine.trainer |   epoch 38 step 40/140 loss=0.9033
+08:49:39 | INFO    | holoqpi.engine.trainer |   epoch 38 step 60/140 loss=0.6463
+08:49:41 | INFO    | holoqpi.engine.trainer |   epoch 38 step 80/140 loss=0.6766
+08:49:43 | INFO    | holoqpi.engine.trainer |   epoch 38 step 100/140 loss=0.6972
+08:49:45 | INFO    | holoqpi.engine.trainer |   epoch 38 step 120/140 loss=0.8490
+08:50:32 | INFO    | holoqpi.engine.trainer | epoch 38/60 (58s = 13s train + 45s val) | train_loss=0.7286  val_phase_mae=0.1853  val_dice=0.7585  val_cls_acc=0.7008  val_mass_mape=0.2388
+08:50:32 | INFO    | holoqpi.engine.trainer |   epoch 39 step 0/140 loss=0.5373
+08:50:34 | INFO    | holoqpi.engine.trainer |   epoch 39 step 20/140 loss=0.5723
+08:50:36 | INFO    | holoqpi.engine.trainer |   epoch 39 step 40/140 loss=0.5420
+08:50:37 | INFO    | holoqpi.engine.trainer |   epoch 39 step 60/140 loss=0.5632
+08:50:39 | INFO    | holoqpi.engine.trainer |   epoch 39 step 80/140 loss=0.9166
+08:50:41 | INFO    | holoqpi.engine.trainer |   epoch 39 step 100/140 loss=0.6019
+08:50:43 | INFO    | holoqpi.engine.trainer |   epoch 39 step 120/140 loss=0.6096
+08:51:30 | INFO    | holoqpi.engine.trainer | epoch 39/60 (58s = 13s train + 46s val) | train_loss=0.7189  val_phase_mae=0.1846  val_dice=0.7647  val_cls_acc=0.8189  val_mass_mape=0.2495
+08:51:30 | INFO    | holoqpi.engine.trainer |   epoch 40 step 0/140 loss=0.6849
+08:51:32 | INFO    | holoqpi.engine.trainer |   epoch 40 step 20/140 loss=0.9702
+08:51:34 | INFO    | holoqpi.engine.trainer |   epoch 40 step 40/140 loss=0.5455
+08:51:36 | INFO    | holoqpi.engine.trainer |   epoch 40 step 60/140 loss=0.7427
+08:51:37 | INFO    | holoqpi.engine.trainer |   epoch 40 step 80/140 loss=0.5538
+08:51:39 | INFO    | holoqpi.engine.trainer |   epoch 40 step 100/140 loss=1.0081
+08:51:41 | INFO    | holoqpi.engine.trainer |   epoch 40 step 120/140 loss=0.6309
+08:52:28 | INFO    | holoqpi.engine.trainer | epoch 40/60 (58s = 13s train + 46s val) | train_loss=0.7210  val_phase_mae=0.1865  val_dice=0.7606  val_cls_acc=0.7402  val_mass_mape=0.2421
+08:52:29 | INFO    | holoqpi.engine.trainer |   epoch 41 step 0/140 loss=0.9054
+08:52:31 | INFO    | holoqpi.engine.trainer |   epoch 41 step 20/140 loss=0.8612
+08:52:32 | INFO    | holoqpi.engine.trainer |   epoch 41 step 40/140 loss=0.5083
+08:52:34 | INFO    | holoqpi.engine.trainer |   epoch 41 step 60/140 loss=0.8438
+08:52:36 | INFO    | holoqpi.engine.trainer |   epoch 41 step 80/140 loss=0.9084
+08:52:38 | INFO    | holoqpi.engine.trainer |   epoch 41 step 100/140 loss=1.2516
+08:52:39 | INFO    | holoqpi.engine.trainer |   epoch 41 step 120/140 loss=0.6647
+08:53:27 | INFO    | holoqpi.engine.trainer |   new best composite=0.7610
+08:53:27 | INFO    | holoqpi.engine.trainer | epoch 41/60 (59s = 13s train + 46s val) | train_loss=0.7157  val_phase_mae=0.1811  val_dice=0.7679  val_cls_acc=0.7402  val_mass_mape=0.2255
+08:53:28 | INFO    | holoqpi.engine.trainer |   epoch 42 step 0/140 loss=1.3398
+08:53:29 | INFO    | holoqpi.engine.trainer |   epoch 42 step 20/140 loss=0.6177
+08:53:31 | INFO    | holoqpi.engine.trainer |   epoch 42 step 40/140 loss=0.5751
+08:53:33 | INFO    | holoqpi.engine.trainer |   epoch 42 step 60/140 loss=0.7726
+08:53:35 | INFO    | holoqpi.engine.trainer |   epoch 42 step 80/140 loss=0.7396
+08:53:37 | INFO    | holoqpi.engine.trainer |   epoch 42 step 100/140 loss=0.8884
+08:53:38 | INFO    | holoqpi.engine.trainer |   epoch 42 step 120/140 loss=0.5230
+08:54:26 | INFO    | holoqpi.engine.trainer |   new best composite=0.7629
+08:54:26 | INFO    | holoqpi.engine.trainer | epoch 42/60 (58s = 13s train + 46s val) | train_loss=0.7067  val_phase_mae=0.1809  val_dice=0.7693  val_cls_acc=0.7638  val_mass_mape=0.2240
+08:54:26 | INFO    | holoqpi.engine.trainer |   epoch 43 step 0/140 loss=0.6177
+08:54:28 | INFO    | holoqpi.engine.trainer |   epoch 43 step 20/140 loss=0.5153
+08:54:30 | INFO    | holoqpi.engine.trainer |   epoch 43 step 40/140 loss=0.8413
+08:54:31 | INFO    | holoqpi.engine.trainer |   epoch 43 step 60/140 loss=0.5885
+08:54:33 | INFO    | holoqpi.engine.trainer |   epoch 43 step 80/140 loss=0.4889
+08:54:35 | INFO    | holoqpi.engine.trainer |   epoch 43 step 100/140 loss=0.6343
+08:54:37 | INFO    | holoqpi.engine.trainer |   epoch 43 step 120/140 loss=0.9104
+08:55:24 | INFO    | holoqpi.engine.trainer | epoch 43/60 (58s = 13s train + 46s val) | train_loss=0.7031  val_phase_mae=0.1834  val_dice=0.7660  val_cls_acc=0.7795  val_mass_mape=0.2369
+08:55:24 | INFO    | holoqpi.engine.trainer |   epoch 44 step 0/140 loss=0.5453
+08:55:26 | INFO    | holoqpi.engine.trainer |   epoch 44 step 20/140 loss=0.5127
+08:55:28 | INFO    | holoqpi.engine.trainer |   epoch 44 step 40/140 loss=0.7910
+08:55:30 | INFO    | holoqpi.engine.trainer |   epoch 44 step 60/140 loss=0.5085
+08:55:32 | INFO    | holoqpi.engine.trainer |   epoch 44 step 80/140 loss=0.6593
+08:55:33 | INFO    | holoqpi.engine.trainer |   epoch 44 step 100/140 loss=0.5802
+08:55:35 | INFO    | holoqpi.engine.trainer |   epoch 44 step 120/140 loss=0.6068
+08:56:22 | INFO    | holoqpi.engine.trainer | epoch 44/60 (58s = 13s train + 46s val) | train_loss=0.6980  val_phase_mae=0.1829  val_dice=0.7644  val_cls_acc=0.7559  val_mass_mape=0.2184
+08:56:23 | INFO    | holoqpi.engine.trainer |   epoch 45 step 0/140 loss=0.6221
+08:56:25 | INFO    | holoqpi.engine.trainer |   epoch 45 step 20/140 loss=0.7555
+08:56:26 | INFO    | holoqpi.engine.trainer |   epoch 45 step 40/140 loss=0.6800
+08:56:28 | INFO    | holoqpi.engine.trainer |   epoch 45 step 60/140 loss=0.5041
+08:56:30 | INFO    | holoqpi.engine.trainer |   epoch 45 step 80/140 loss=0.5236
+08:56:32 | INFO    | holoqpi.engine.trainer |   epoch 45 step 100/140 loss=0.5662
+08:56:33 | INFO    | holoqpi.engine.trainer |   epoch 45 step 120/140 loss=0.6460
+08:57:21 | INFO    | holoqpi.engine.trainer | epoch 45/60 (58s = 13s train + 46s val) | train_loss=0.6953  val_phase_mae=0.1828  val_dice=0.7682  val_cls_acc=0.7953  val_mass_mape=0.2418
+08:57:21 | INFO    | holoqpi.engine.trainer |   epoch 46 step 0/140 loss=0.4630
+08:57:23 | INFO    | holoqpi.engine.trainer |   epoch 46 step 20/140 loss=0.5497
+08:57:25 | INFO    | holoqpi.engine.trainer |   epoch 46 step 40/140 loss=0.6727
+08:57:26 | INFO    | holoqpi.engine.trainer |   epoch 46 step 60/140 loss=0.8865
+08:57:28 | INFO    | holoqpi.engine.trainer |   epoch 46 step 80/140 loss=0.4729
+08:57:30 | INFO    | holoqpi.engine.trainer |   epoch 46 step 100/140 loss=0.7478
+08:57:32 | INFO    | holoqpi.engine.trainer |   epoch 46 step 120/140 loss=1.3606
+08:58:19 | INFO    | holoqpi.engine.trainer | epoch 46/60 (59s = 13s train + 46s val) | train_loss=0.6919  val_phase_mae=0.1827  val_dice=0.7655  val_cls_acc=0.8268  val_mass_mape=0.2242
+08:58:20 | INFO    | holoqpi.engine.trainer |   epoch 47 step 0/140 loss=0.5839
+08:58:22 | INFO    | holoqpi.engine.trainer |   epoch 47 step 20/140 loss=0.8358
+08:58:23 | INFO    | holoqpi.engine.trainer |   epoch 47 step 40/140 loss=0.5244
+08:58:25 | INFO    | holoqpi.engine.trainer |   epoch 47 step 60/140 loss=0.6131
+08:58:27 | INFO    | holoqpi.engine.trainer |   epoch 47 step 80/140 loss=0.8668
+08:58:29 | INFO    | holoqpi.engine.trainer |   epoch 47 step 100/140 loss=0.5687
+08:58:30 | INFO    | holoqpi.engine.trainer |   epoch 47 step 120/140 loss=0.5140
+08:59:17 | INFO    | holoqpi.engine.trainer | epoch 47/60 (58s = 13s train + 45s val) | train_loss=0.6854  val_phase_mae=0.1829  val_dice=0.7638  val_cls_acc=0.8268  val_mass_mape=0.2295
+08:59:18 | INFO    | holoqpi.engine.trainer |   epoch 48 step 0/140 loss=0.7119
+08:59:20 | INFO    | holoqpi.engine.trainer |   epoch 48 step 20/140 loss=1.1705
+08:59:21 | INFO    | holoqpi.engine.trainer |   epoch 48 step 40/140 loss=0.4914
+08:59:23 | INFO    | holoqpi.engine.trainer |   epoch 48 step 60/140 loss=0.8127
+08:59:25 | INFO    | holoqpi.engine.trainer |   epoch 48 step 80/140 loss=0.7541
+08:59:27 | INFO    | holoqpi.engine.trainer |   epoch 48 step 100/140 loss=0.6686
+08:59:28 | INFO    | holoqpi.engine.trainer |   epoch 48 step 120/140 loss=0.5247
+09:00:15 | INFO    | holoqpi.engine.trainer | epoch 48/60 (58s = 13s train + 45s val) | train_loss=0.6905  val_phase_mae=0.1839  val_dice=0.7651  val_cls_acc=0.8583  val_mass_mape=0.2433
+09:00:16 | INFO    | holoqpi.engine.trainer |   epoch 49 step 0/140 loss=1.0826
+09:00:18 | INFO    | holoqpi.engine.trainer |   epoch 49 step 20/140 loss=0.6376
+09:00:19 | INFO    | holoqpi.engine.trainer |   epoch 49 step 40/140 loss=0.5579
+09:00:21 | INFO    | holoqpi.engine.trainer |   epoch 49 step 60/140 loss=0.5071
+09:00:23 | INFO    | holoqpi.engine.trainer |   epoch 49 step 80/140 loss=0.6866
+09:00:25 | INFO    | holoqpi.engine.trainer |   epoch 49 step 100/140 loss=0.5801
+09:00:26 | INFO    | holoqpi.engine.trainer |   epoch 49 step 120/140 loss=0.5932
+09:01:13 | INFO    | holoqpi.engine.trainer | epoch 49/60 (58s = 13s train + 45s val) | train_loss=0.6899  val_phase_mae=0.1817  val_dice=0.7669  val_cls_acc=0.8740  val_mass_mape=0.2333
+09:01:14 | INFO    | holoqpi.engine.trainer |   epoch 50 step 0/140 loss=0.5650
+09:01:16 | INFO    | holoqpi.engine.trainer |   epoch 50 step 20/140 loss=0.8601
+09:01:17 | INFO    | holoqpi.engine.trainer |   epoch 50 step 40/140 loss=0.4841
+09:01:19 | INFO    | holoqpi.engine.trainer |   epoch 50 step 60/140 loss=0.9164
+09:01:21 | INFO    | holoqpi.engine.trainer |   epoch 50 step 80/140 loss=0.5852
+09:01:23 | INFO    | holoqpi.engine.trainer |   epoch 50 step 100/140 loss=0.5420
+09:01:24 | INFO    | holoqpi.engine.trainer |   epoch 50 step 120/140 loss=0.9243
+09:02:12 | INFO    | holoqpi.engine.trainer | epoch 50/60 (59s = 13s train + 46s val) | train_loss=0.6847  val_phase_mae=0.1822  val_dice=0.7630  val_cls_acc=0.8504  val_mass_mape=0.2188
+09:02:12 | INFO    | holoqpi.engine.trainer |   epoch 51 step 0/140 loss=0.8431
+09:02:14 | INFO    | holoqpi.engine.trainer |   epoch 51 step 20/140 loss=0.5019
+09:02:16 | INFO    | holoqpi.engine.trainer |   epoch 51 step 40/140 loss=0.5036
+09:02:18 | INFO    | holoqpi.engine.trainer |   epoch 51 step 60/140 loss=0.4840
+09:02:19 | INFO    | holoqpi.engine.trainer |   epoch 51 step 80/140 loss=0.5141
+09:02:21 | INFO    | holoqpi.engine.trainer |   epoch 51 step 100/140 loss=0.5185
+09:02:23 | INFO    | holoqpi.engine.trainer |   epoch 51 step 120/140 loss=0.5916
+09:03:10 | INFO    | holoqpi.engine.trainer | epoch 51/60 (59s = 13s train + 46s val) | train_loss=0.6695  val_phase_mae=0.1820  val_dice=0.7668  val_cls_acc=0.8268  val_mass_mape=0.2219
+09:03:11 | INFO    | holoqpi.engine.trainer |   epoch 52 step 0/140 loss=0.6825
+09:03:13 | INFO    | holoqpi.engine.trainer |   epoch 52 step 20/140 loss=0.8216
+09:03:14 | INFO    | holoqpi.engine.trainer |   epoch 52 step 40/140 loss=1.0623
+09:03:16 | INFO    | holoqpi.engine.trainer |   epoch 52 step 60/140 loss=0.8902
+09:03:18 | INFO    | holoqpi.engine.trainer |   epoch 52 step 80/140 loss=0.5618
+09:03:20 | INFO    | holoqpi.engine.trainer |   epoch 52 step 100/140 loss=0.4933
+09:03:22 | INFO    | holoqpi.engine.trainer |   epoch 52 step 120/140 loss=0.4702
+09:04:09 | INFO    | holoqpi.engine.trainer | epoch 52/60 (59s = 13s train + 46s val) | train_loss=0.6777  val_phase_mae=0.1824  val_dice=0.7661  val_cls_acc=0.8268  val_mass_mape=0.2255
+09:04:10 | INFO    | holoqpi.engine.trainer |   epoch 53 step 0/140 loss=0.9088
+09:04:11 | INFO    | holoqpi.engine.trainer |   epoch 53 step 20/140 loss=0.5424
+09:04:13 | INFO    | holoqpi.engine.trainer |   epoch 53 step 40/140 loss=0.5237
+09:04:15 | INFO    | holoqpi.engine.trainer |   epoch 53 step 60/140 loss=0.5342
+09:04:17 | INFO    | holoqpi.engine.trainer |   epoch 53 step 80/140 loss=0.9733
+09:04:18 | INFO    | holoqpi.engine.trainer |   epoch 53 step 100/140 loss=0.5780
+09:04:20 | INFO    | holoqpi.engine.trainer |   epoch 53 step 120/140 loss=0.9016
+09:05:08 | INFO    | holoqpi.engine.trainer | epoch 53/60 (59s = 13s train + 46s val) | train_loss=0.6765  val_phase_mae=0.1817  val_dice=0.7668  val_cls_acc=0.8740  val_mass_mape=0.2257
+09:05:08 | INFO    | holoqpi.engine.trainer |   epoch 54 step 0/140 loss=0.5698
+09:05:10 | INFO    | holoqpi.engine.trainer |   epoch 54 step 20/140 loss=0.5197
+09:05:12 | INFO    | holoqpi.engine.trainer |   epoch 54 step 40/140 loss=0.6475
+09:05:14 | INFO    | holoqpi.engine.trainer |   epoch 54 step 60/140 loss=0.5589
+09:05:15 | INFO    | holoqpi.engine.trainer |   epoch 54 step 80/140 loss=0.5986
+09:05:17 | INFO    | holoqpi.engine.trainer |   epoch 54 step 100/140 loss=0.9959
+09:05:19 | INFO    | holoqpi.engine.trainer |   epoch 54 step 120/140 loss=0.5632
+09:06:06 | INFO    | holoqpi.engine.trainer | epoch 54/60 (58s = 13s train + 46s val) | train_loss=0.6666  val_phase_mae=0.1824  val_dice=0.7670  val_cls_acc=0.8504  val_mass_mape=0.2318
+09:06:07 | INFO    | holoqpi.engine.trainer |   epoch 55 step 0/140 loss=0.8377
+09:06:08 | INFO    | holoqpi.engine.trainer |   epoch 55 step 20/140 loss=0.6257
+09:06:10 | INFO    | holoqpi.engine.trainer |   epoch 55 step 40/140 loss=0.7321
+09:06:12 | INFO    | holoqpi.engine.trainer |   epoch 55 step 60/140 loss=0.5421
+09:06:14 | INFO    | holoqpi.engine.trainer |   epoch 55 step 80/140 loss=0.8192
+09:06:15 | INFO    | holoqpi.engine.trainer |   epoch 55 step 100/140 loss=0.9488
+09:06:17 | INFO    | holoqpi.engine.trainer |   epoch 55 step 120/140 loss=0.6025
+09:07:05 | INFO    | holoqpi.engine.trainer | epoch 55/60 (59s = 13s train + 46s val) | train_loss=0.6786  val_phase_mae=0.1816  val_dice=0.7665  val_cls_acc=0.8740  val_mass_mape=0.2215
+09:07:05 | INFO    | holoqpi.engine.trainer |   epoch 56 step 0/140 loss=1.2140
+09:07:07 | INFO    | holoqpi.engine.trainer |   epoch 56 step 20/140 loss=0.5896
+09:07:09 | INFO    | holoqpi.engine.trainer |   epoch 56 step 40/140 loss=0.5396
+09:07:10 | INFO    | holoqpi.engine.trainer |   epoch 56 step 60/140 loss=0.7268
+09:07:12 | INFO    | holoqpi.engine.trainer |   epoch 56 step 80/140 loss=0.7602
+09:07:14 | INFO    | holoqpi.engine.trainer |   epoch 56 step 100/140 loss=0.5472
+09:07:16 | INFO    | holoqpi.engine.trainer |   epoch 56 step 120/140 loss=0.5467
+09:08:03 | INFO    | holoqpi.engine.trainer |   new best composite=0.7633
+09:08:03 | INFO    | holoqpi.engine.trainer | epoch 56/60 (58s = 13s train + 45s val) | train_loss=0.6740  val_phase_mae=0.1807  val_dice=0.7677  val_cls_acc=0.8189  val_mass_mape=0.2164
+09:08:03 | INFO    | holoqpi.engine.trainer |   epoch 57 step 0/140 loss=0.5772
+09:08:05 | INFO    | holoqpi.engine.trainer |   epoch 57 step 20/140 loss=0.5995
+09:08:07 | INFO    | holoqpi.engine.trainer |   epoch 57 step 40/140 loss=0.4456
+09:08:09 | INFO    | holoqpi.engine.trainer |   epoch 57 step 60/140 loss=1.1049
+09:08:11 | INFO    | holoqpi.engine.trainer |   epoch 57 step 80/140 loss=0.6112
+09:08:12 | INFO    | holoqpi.engine.trainer |   epoch 57 step 100/140 loss=0.7695
+09:08:14 | INFO    | holoqpi.engine.trainer |   epoch 57 step 120/140 loss=0.6051
+09:09:01 | INFO    | holoqpi.engine.trainer | epoch 57/60 (58s = 13s train + 45s val) | train_loss=0.6618  val_phase_mae=0.1817  val_dice=0.7672  val_cls_acc=0.8346  val_mass_mape=0.2269
+09:09:01 | INFO    | holoqpi.engine.trainer |   epoch 58 step 0/140 loss=0.4790
+09:09:03 | INFO    | holoqpi.engine.trainer |   epoch 58 step 20/140 loss=0.4918
+09:09:05 | INFO    | holoqpi.engine.trainer |   epoch 58 step 40/140 loss=0.4634
+09:09:07 | INFO    | holoqpi.engine.trainer |   epoch 58 step 60/140 loss=0.5170
+09:09:08 | INFO    | holoqpi.engine.trainer |   epoch 58 step 80/140 loss=0.5260
+09:09:10 | INFO    | holoqpi.engine.trainer |   epoch 58 step 100/140 loss=0.5550
+09:09:12 | INFO    | holoqpi.engine.trainer |   epoch 58 step 120/140 loss=0.4497
+09:09:59 | INFO    | holoqpi.engine.trainer | epoch 58/60 (58s = 13s train + 46s val) | train_loss=0.6677  val_phase_mae=0.1815  val_dice=0.7684  val_cls_acc=0.8504  val_mass_mape=0.2311
+09:10:00 | INFO    | holoqpi.engine.trainer |   epoch 59 step 0/140 loss=0.4854
+09:10:01 | INFO    | holoqpi.engine.trainer |   epoch 59 step 20/140 loss=0.5029
+09:10:03 | INFO    | holoqpi.engine.trainer |   epoch 59 step 40/140 loss=0.5687
+09:10:05 | INFO    | holoqpi.engine.trainer |   epoch 59 step 60/140 loss=0.5806
+09:10:07 | INFO    | holoqpi.engine.trainer |   epoch 59 step 80/140 loss=1.0634
+09:10:08 | INFO    | holoqpi.engine.trainer |   epoch 59 step 100/140 loss=0.9842
+09:10:10 | INFO    | holoqpi.engine.trainer |   epoch 59 step 120/140 loss=0.4592
+09:10:57 | INFO    | holoqpi.engine.trainer | epoch 59/60 (58s = 13s train + 46s val) | train_loss=0.6687  val_phase_mae=0.1817  val_dice=0.7678  val_cls_acc=0.8346  val_mass_mape=0.2293
+09:10:58 | INFO    | holoqpi.engine.trainer |   epoch 60 step 0/140 loss=0.6062
+09:11:00 | INFO    | holoqpi.engine.trainer |   epoch 60 step 20/140 loss=0.4967
+09:11:02 | INFO    | holoqpi.engine.trainer |   epoch 60 step 40/140 loss=0.5344
+09:11:03 | INFO    | holoqpi.engine.trainer |   epoch 60 step 60/140 loss=0.5288
+09:11:05 | INFO    | holoqpi.engine.trainer |   epoch 60 step 80/140 loss=0.4968
+09:11:07 | INFO    | holoqpi.engine.trainer |   epoch 60 step 100/140 loss=0.5031
+09:11:09 | INFO    | holoqpi.engine.trainer |   epoch 60 step 120/140 loss=0.5504
+09:11:57 | INFO    | holoqpi.engine.trainer | epoch 60/60 (60s = 13s train + 47s val) | train_loss=0.6762  val_phase_mae=0.1814  val_dice=0.7680  val_cls_acc=0.8583  val_mass_mape=0.2266
+09:11:57 | INFO    | holoqpi.engine.trainer | training finished; best epoch 56 (composite=0.7633)
+09:11:58 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+09:12:40 | INFO    | holoqpi.engine.compare | modality=gabor test metrics written to runs/physics_coupling_only_s2024_gabor
+09:12:41 | INFO    | holoqpi.engine.compare | comparison table written to runs/physics_coupling_only_s2024_modality_comparison.csv

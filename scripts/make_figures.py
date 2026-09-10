@@ -1245,6 +1245,119 @@ def figure_forward_model(cfg, args, out_dir: Path) -> None:
 
 
 # ===========================================================================
+# FIGURE 16 -- what the forward model can and cannot tell        [ESSENTIAL]
+# ===========================================================================
+def figure_forward_model_diagnostics(cfg, args, out_dir: Path) -> None:
+    """The quantitative statement of what physics consistency is worth here.
+
+    Three panels, and together they are the honest answer to the question the
+    reference literature raises and this dataset frustrates.
+
+    LEFT, the z scan. The in-line residual has a real minimum because an in-line
+    hologram encodes phase only through defocus; the off-axis residual is flat
+    because its carrier encodes phase at any distance. The minimum's agreement
+    with the distance the acquiring group supplied is the study's independent
+    check that the forward operator is physically correct.
+
+    CENTRE, the discrimination test. Six phase variants scored against the
+    residual, as a margin over the true phase. A term whose bars are all positive
+    is correctly signed; how far above the tolerance they sit is whether it can
+    teach anything.
+
+    RIGHT, the calibration probe, which is the sharpest of the three. The
+    reference phase is multiplied by s and the residual minimised over s. A
+    minimum at s = 1 means the operator reproduces the recorded hologram at the
+    phase that was delivered -- the operational definition of measurement-ready.
+    A minimum away from 1 is a quantified disagreement about magnitude, and the
+    two geometries differ here in a way that is physical rather than incidental.
+    """
+    payload_path = Path(cfg.paths.output_root) / "z_calibration.json"
+    if not payload_path.is_file():
+        skip(16, "forward_model_diagnostics",
+             "no runs/z_calibration.json; run scripts/calibrate_z.py")
+        return
+    payload = read_json(payload_path)
+    arms = [m for m in args.modalities if m in payload]
+    if not arms:
+        skip(16, "forward_model_diagnostics", "no modality present in z_calibration.json")
+        return
+
+    fig, (scan_ax, margin_ax, scale_ax) = plt.subplots(1, 3, figsize=(15.0, 4.3))
+
+    for modality in arms:
+        curve = (payload[modality] or {}).get("curve") or {}
+        if not curve.get("distances_um"):
+            continue
+        distances = np.asarray(curve["distances_um"], dtype=float)
+        residual = np.asarray(curve["forward_residual"], dtype=float)
+        colour = COLOUR.get(modality, GREY)
+        scan_ax.plot(distances, residual, color=colour, lw=1.6,
+                     label=LABEL.get(modality, modality))
+        scan_ax.axvline(distances[int(np.argmin(residual))], color=colour, lw=0.9, ls=":")
+    supplied = cfg.loss.forward_model.distance_um
+    if supplied is not None:
+        scan_ax.axvline(float(supplied), color="k", lw=1.1, ls="--")
+        scan_ax.annotate(f"z = {float(supplied):.2f} um\nfrom the acquiring group",
+                         xy=(float(supplied), scan_ax.get_ylim()[1]),
+                         xytext=(6, -12), textcoords="offset points", fontsize=7,
+                         va="top")
+    scan_ax.set_xlabel("Propagation distance z  (um)")
+    scan_ax.set_ylabel("Forward-model residual")
+    scan_ax.set_title("Is z identifiable from the data?\nin-line yes, off-axis flat by construction")
+    scan_ax.legend(fontsize=7)
+
+    variants = ["scaled_0.9", "noisy_0.3", "scaled_0.5", "zero", "mirrored"]
+    positions = np.arange(len(variants))
+    width = 0.8 / max(len(arms), 1)
+    tolerance = None
+    for index, modality in enumerate(arms):
+        entry = (payload[modality] or {}).get("discrimination") or {}
+        margins = entry.get("margins") or {}
+        if not margins:
+            continue
+        tolerance = entry.get("tolerance", tolerance)
+        offset = (index - (len(arms) - 1) / 2) * width
+        margin_ax.bar(positions + offset,
+                      [margins.get(v, np.nan) for v in variants], width,
+                      color=COLOUR.get(modality, GREY),
+                      label=LABEL.get(modality, modality))
+    if tolerance is not None:
+        margin_ax.axhline(tolerance, color="k", lw=0.9, ls="--")
+        margin_ax.axhline(0.0, color="k", lw=0.8)
+        margin_ax.text(len(variants) - 0.5, tolerance, "  tolerance", fontsize=7,
+                       va="bottom", ha="right")
+    margin_ax.set_xticks(positions)
+    margin_ax.set_xticklabels([v.replace("_", " ") for v in variants], fontsize=7.5,
+                              rotation=20, ha="right")
+    margin_ax.set_ylabel("Residual margin over the true phase")
+    margin_ax.set_title("Does a degraded phase score worse?\nabove zero is correctly signed")
+    margin_ax.legend(fontsize=7)
+
+    for modality in arms:
+        entry = (payload[modality] or {}).get("scale_response") or {}
+        if not entry.get("scales"):
+            continue
+        scales = np.asarray(entry["scales"], dtype=float)
+        residual = np.asarray(entry["residual"], dtype=float)
+        colour = COLOUR.get(modality, GREY)
+        # Each arm's residual has its own offset; what is being compared is where
+        # the minimum sits, so each curve is shown relative to its own minimum.
+        scale_ax.plot(scales, residual - residual.min(), color=colour, lw=1.6,
+                      label=f"{LABEL.get(modality, modality)}  "
+                            f"(min at x{entry['best_scale_median']:.2f})")
+        scale_ax.axvline(entry["best_scale_median"], color=colour, lw=0.9, ls=":")
+    scale_ax.axvline(1.0, color="k", lw=1.1, ls="--")
+    scale_ax.text(1.0, scale_ax.get_ylim()[1], " delivered phase", fontsize=7, va="top")
+    scale_ax.set_xlabel("Reference phase multiplied by")
+    scale_ax.set_ylabel("Residual above each arm's own minimum")
+    scale_ax.set_title("Does the operator agree about MAGNITUDE?\na minimum at 1.0 is measurement-ready")
+    scale_ax.legend(fontsize=7)
+
+    fig.tight_layout()
+    save(fig, out_dir, 16, "forward_model_diagnostics")
+
+
+# ===========================================================================
 # FIGURE 14 -- learned against classical                          [ESSENTIAL]
 # ===========================================================================
 def figure_conventional_baseline(cfg, args, out_dir: Path) -> None:
@@ -1457,6 +1570,7 @@ FIGURES = {
     13: ("forward_model_consistency", "ESSENTIAL", figure_forward_model),
     14: ("learned_vs_classical", "ESSENTIAL", figure_conventional_baseline),
     15: ("recall_by_cell_size", "IMPORTANT", figure_recall_by_size),
+    16: ("forward_model_diagnostics", "ESSENTIAL", figure_forward_model_diagnostics),
 }
 
 

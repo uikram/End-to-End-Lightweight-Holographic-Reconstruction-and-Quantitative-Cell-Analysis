@@ -23,6 +23,12 @@ from ..utils import get_logger
 
 LOGGER = get_logger(__name__)
 
+# Warnings about insufficient diffraction context are deduplicated across every
+# instance of the loss. A distance sweep builds one term per candidate distance,
+# and without this the calibration log fills with a hundred copies of the same
+# sentence, burying everything else in it.
+_WARNED_PAD: set = set()
+
 
 # ---------------------------------------------------------------------------
 # Phase reconstruction
@@ -270,44 +276,98 @@ class ProjectedAreaConsistency(nn.Module):
         return (predicted - reference).abs() / (reference + self.epsilon)
 
 
+class CellIntegratedPhase(nn.Module):
+    """Integrated-Phase Preservation, evaluated PER CELL rather than per image.
+
+    This is the central term of the v2 study, and the reason it exists is a
+    cancellation the image-level version cannot see.
+
+    ``PhaseVolumePreservation`` compares one number per image: the phase integral
+    inside the predicted mask against the integral inside the reference mask. A
+    field in which one cell is over-measured by 20% and another under-measured by
+    20% scores a perfect zero. Dry mass is reported per cell, so that is exactly
+    the error the study cares about and exactly the error an image-level sum
+    hides. Restricting the integral to individual cellular regions removes the
+    cancellation and is the literal reading of "preserve the integrated
+    quantitative phase within individual cellular regions".
+
+    Regions come from the REFERENCE instance labelling, computed once per field
+    in the dataloader. Using reference rather than predicted regions is
+    deliberate: the domains must not move while the loss is being minimised, or
+    the term could be satisfied by redrawing the boundaries rather than by
+    correcting the measurement.
+
+    Within each region the term compares the predicted measurement -- the
+    predicted phase integrated over the predicted foreground -- against the
+    reference measurement. Both heads therefore receive gradient, which is the
+    coupling the objective is trying to establish.
+
+    Cells whose reference integral is below ``min_reference`` are skipped: the
+    relative error of a near-zero denominator is meaningless and would dominate
+    the batch. The per-cell errors are averaged over CELLS, not over pixels, so a
+    field of many small cells is not outweighed by one large one.
+    """
+
+    def __init__(self, epsilon: float, min_reference: float, max_relative_error: float | None):
+        super().__init__()
+        self.epsilon = epsilon
+        self.min_reference = min_reference
+        self.max_relative_error = max_relative_error
+
+    def forward(
+        self,
+        foreground: torch.Tensor,
+        phase: torch.Tensor,
+        target_foreground: torch.Tensor,
+        target_phase: torch.Tensor,
+        instances: torch.Tensor,
+    ) -> torch.Tensor:
+        foreground = foreground.squeeze(1)
+        phase = phase.squeeze(1)
+        target_foreground = target_foreground.squeeze(1)
+        target_phase = target_phase.squeeze(1)
+        if instances.dim() == 4:
+            instances = instances.squeeze(1)
+
+        batch = foreground.shape[0]
+        predicted_map = foreground * phase
+        reference_map = target_foreground * target_phase
+
+        losses = []
+        for item in range(batch):
+            labels = instances[item].reshape(-1).long()
+            count = int(labels.max().item())
+            if count < 1:
+                losses.append(predicted_map.new_zeros(()))
+                continue
+
+            # Scatter-add into one bin per cell. Bin 0 collects background and is
+            # discarded; it is kept in the tensor only so the label values index
+            # directly without an offset.
+            bins = predicted_map.new_zeros(count + 1)
+            predicted = bins.scatter_add(0, labels, predicted_map[item].reshape(-1))
+            reference = bins.scatter_add(0, labels, reference_map[item].reshape(-1))
+            predicted, reference = predicted[1:], reference[1:]
+
+            usable = reference.abs() >= self.min_reference
+            if not bool(usable.any()):
+                losses.append(predicted_map.new_zeros(()))
+                continue
+
+            error = (predicted[usable] - reference[usable]).abs() / (
+                reference[usable].abs() + self.epsilon
+            )
+            if self.max_relative_error is not None:
+                error = error.clamp(max=float(self.max_relative_error))
+            losses.append(error.mean())
+
+        return torch.stack(losses)
+
+
 class ForwardModelConsistency(nn.Module):
     """Data fidelity against the hologram that was actually recorded.
 
     This is the constraint the reference literature means by physics
-<<<<<<< Updated upstream
-    consistency, and the one the rest of this objective was missing. Every other
-    term relates the network's two outputs to each other or to their targets;
-    this one propagates the predicted field back to the sensor and asks whether
-    it could have produced the measurement:
-
-        L = || standardise( |P_z(A_hat exp(i phi_hat))|-formed hologram )
-              - standardise(I_measured) ||
-
-    The raw hologram enters the network as input and, without this term, never
-    appears in the loss again. Adding it introduces evidence no other term
-    exploits, which is precisely why it is not redundant with the phase
-    reconstruction loss the way the mask-phase coupling terms are.
-
-    Three details matter for it to mean anything.
-
-    STANDARDISATION.  Illumination brightness, camera gain and exposure differ
-    between a synthesised and a recorded hologram for reasons unrelated to the
-    field. Both sides are reduced to zero mean and unit variance so the residual
-    measures structure, not scale.
-
-    BORDER EXCLUSION.  The FFT treats the array as periodic, so on a training
-    crop the light that should have arrived from outside instead wraps around
-    from the opposite edge. The field is reflection-padded before propagation and
-    a margin of the same width is dropped from the residual.
-
-    GEOMETRY.  In-line and off-axis form intensity differently, and the
-    difference is physical rather than a convention: at zero defocus a pure phase
-    object produces no in-line intensity contrast at all, so this term has no
-    gradient for the Gabor arm unless z is large enough. Off-axis carries the
-    phase in the fringe modulation and stays informative at any distance. Run
-    ``scripts/calibrate_z.py`` to see the sensitivity of both arms before
-    trusting this term.
-=======
     consistency (Huang et al., Nat. Mach. Intell. 2023; Galande et al.,
     J. Biomed. Opt.; Lee et al., APL Mach. Learn. 4, 026106), and the one the
     rest of this objective was missing. Every other term relates the network's
@@ -374,7 +434,6 @@ class ForwardModelConsistency(nn.Module):
     ``distance_um``, so it can be refined by gradient descent when the grid
     search leaves it only approximately determined. The propagation kernel is
     differentiable in z, so this is a real refinement and not a placeholder.
->>>>>>> Stashed changes
     """
 
     def __init__(self, cfg, optics):
@@ -383,26 +442,16 @@ class ForwardModelConsistency(nn.Module):
         self.pitch_x_um = float(optics.pixel_pitch_x_um)
         self.pitch_y_um = float(optics.pixel_pitch_y_um)
 
-<<<<<<< Updated upstream
-        self.distance_um = cfg.distance_um
-        self.pad_px = cfg.pad_px
-        self.border_px = cfg.border_px
-        self.feature_um = float(cfg.feature_um)
-        self.reference_ratio = float(cfg.reference_ratio)
-        self.dc_exclusion_px = int(cfg.dc_exclusion_px)
-        self.criterion = cfg.criterion
-        if self.criterion not in ("l1", "l2", "correlation"):
-            raise ValueError(f"unknown forward-model criterion {self.criterion!r}")
-        self._warned = False
-
-    # -- helpers ----------------------------------------------------------
-=======
         self.pad_px = cfg.pad_px
         self.border_px = cfg.border_px
         self.feature_um = float(cfg.feature_um)
         self.dc_exclusion_px = cfg.dc_exclusion_px
         self.dc_exclusion_frac = float(cfg.dc_exclusion_frac)
         self.fit_radiometry = bool(cfg.fit_radiometry)
+        # A distance sweep already knows, and reports once, how many of its
+        # candidate distances exceed what the field can model. Repeating the
+        # warning per distance buries the result it is attached to.
+        self.warn_on_short_pad = bool(getattr(cfg, "warn_on_short_pad", True))
         self.criterion = cfg.criterion
         if self.criterion not in ("l1", "l2", "correlation"):
             raise ValueError(f"unknown forward-model criterion {self.criterion!r}")
@@ -422,21 +471,14 @@ class ForwardModelConsistency(nn.Module):
     def distance_um(self) -> float | None:
         return None if self.distance is None else float(self.distance.detach())
 
->>>>>>> Stashed changes
     def required_pad(self) -> int:
         """Diffraction spread over z, in pixels: the context the field needs."""
         if self.pad_px is not None:
             return int(self.pad_px)
-<<<<<<< Updated upstream
-        if not self.distance_um:
-            return 0
-        spread_um = abs(self.wavelength_um * float(self.distance_um)) / self.feature_um
-=======
         distance = self.distance_um
         if not distance:
             return 0
         spread_um = abs(self.wavelength_um * distance) / self.feature_um
->>>>>>> Stashed changes
         return int(math.ceil(spread_um / min(self.pitch_x_um, self.pitch_y_um)))
 
     def _pad_for(self, size: int) -> int:
@@ -454,30 +496,20 @@ class ForwardModelConsistency(nn.Module):
         required = self.required_pad()
         affordable = max(0, size // 2 - 1)
         applied = min(required, affordable)
-        if required > applied and not self._warned:
-            self._warned = True
+        signature = (round(float(self.distance_um or 0.0), 1), size)
+        if required > applied and self.warn_on_short_pad and signature not in _WARNED_PAD:
+            _WARNED_PAD.add(signature)
             LOGGER.warning(
                 "forward model at z = %.1f um needs %d px of diffraction context but a "
                 "%d px field allows only %d. The residual is approximate on this crop. "
                 "Train on larger crops (data.train_crop), lower "
                 "loss.forward_model.distance_um, or set loss.forward_model.pad_px "
                 "explicitly to accept the approximation deliberately.",
-<<<<<<< Updated upstream
-                float(self.distance_um), required, size, applied,
-=======
                 self.distance_um, required, size, applied,
->>>>>>> Stashed changes
             )
         return applied
 
     @staticmethod
-<<<<<<< Updated upstream
-    def _standardise(x: torch.Tensor) -> torch.Tensor:
-        flat = x.flatten(1)
-        mean = flat.mean(dim=1).view(-1, 1, 1, 1)
-        std = flat.std(dim=1).view(-1, 1, 1, 1).clamp(min=1e-6)
-        return (x - mean) / std
-=======
     def _fit_components(components: torch.Tensor, measured: torch.Tensor):
         """Least-squares fit of the radiometric coefficients, per image.
 
@@ -495,7 +527,6 @@ class ForwardModelConsistency(nn.Module):
         coefficients = torch.linalg.solve(gram + ridge, rhs)
         fitted = (coefficients.transpose(1, 2) @ components).squeeze(1)
         return fitted, coefficients.squeeze(2)
->>>>>>> Stashed changes
 
     def forward(
         self,
@@ -503,12 +534,7 @@ class ForwardModelConsistency(nn.Module):
         amplitude: torch.Tensor,
         hologram: torch.Tensor,
         modality: str,
-<<<<<<< Updated upstream
-    ) -> torch.Tensor:
-        from ..physics import estimate_carrier, form_hologram
-
-        if self.distance_um is None:
-=======
+        aberration: torch.Tensor | None = None,
         return_coefficients: bool = False,
     ) -> torch.Tensor:
         from ..physics import (
@@ -516,43 +542,24 @@ class ForwardModelConsistency(nn.Module):
         )
 
         if self.distance is None:
->>>>>>> Stashed changes
             raise ValueError(
                 "loss.forward_model.distance_um is null. Run scripts/calibrate_z.py "
                 "or obtain the acquisition distance before enabling this term."
             )
 
         pad = self._pad_for(min(phase.shape[-2], phase.shape[-1]))
-<<<<<<< Updated upstream
-        carrier = (
-            estimate_carrier(hologram, self.dc_exclusion_px)
-            if modality == "off_axis" else None
-        )
 
-        synthetic = form_hologram(
-            phase, amplitude, modality,
-            self.wavelength_um, self.pitch_x_um, self.pitch_y_um,
-            float(self.distance_um), carrier=carrier,
-            reference_ratio=self.reference_ratio, pad=pad,
-        )
-
-        border = int(self.border_px) if self.border_px is not None else pad
-        if border > 0 and min(synthetic.shape[-2:]) > 2 * border + 8:
-            synthetic = synthetic[..., border:-border, border:-border]
-            hologram = hologram[..., border:-border, border:-border]
-
-        predicted = self._standardise(synthetic)
-        measured = self._standardise(hologram)
-
-        if self.criterion == "l1":
-            return (predicted - measured).abs().flatten(1).mean(dim=1)
-        if self.criterion == "l2":
-            return ((predicted - measured) ** 2).flatten(1).mean(dim=1)
-        # correlation: 1 - r, bounded and insensitive to residual scale error
-        return 1.0 - (predicted * measured).flatten(1).mean(dim=1)
-=======
-
-        field = torch.polar(amplitude.clamp(min=0.0).float(), phase.float())
+        # Restore what the delivered phase had removed. The reference maps were
+        # aberration-corrected and background-subtracted before delivery, but
+        # the recorded hologram still contains that surface, so propagating the
+        # phase alone cannot reproduce the measurement at any distance. Omitting
+        # this does not merely add error: a quadratic aberration is degenerate
+        # with defocus, so the search tries to absorb a fixed optical term into
+        # z and no single distance fits.
+        total_phase = phase.float()
+        if aberration is not None:
+            total_phase = total_phase + aberration.float()
+        field = torch.polar(amplitude.clamp(min=0.0).float(), total_phase)
         field = pad_reflect(field, pad)
         propagated = propagate(
             field, self.wavelength_um, self.pitch_x_um, self.pitch_y_um, self.distance
@@ -578,8 +585,27 @@ class ForwardModelConsistency(nn.Module):
             # term and destroys the residual. Carrying both and letting the
             # least-squares fit weight them removes the ambiguity entirely
             # rather than resolving it by guess.
+            #
+            # AND BOTH QUADRATURES OF EACH, which is not optional either.
+            # Propagation multiplies the field by exp(i 2 pi z / lambda): a
+            # global piston phase that is not measurable and that cycles
+            # completely every half wavelength of z. With only the real parts
+            # the fit cannot absorb it, so the residual becomes a function of
+            # where z happens to fall modulo lambda/2. Measured on this data
+            # before the quadratures were added, the off-axis residual swung
+            # between 0.13 and 0.99 -- nearly its whole range -- over a 0.33 um
+            # change in z, and any reported value was a lottery. Carrying the
+            # imaginary parts spans Re(R* U exp(i phi)) for every phi, because
+            # Re(R* U e^{i phi}) = cos(phi) Re(R* U) - sin(phi) Im(R* U), so the
+            # fit removes the piston instead of being defeated by it.
+            #
+            # The in-line arm needs none of this: |U|^2 cancels any global
+            # phase already, which is why its residual is smooth in z while the
+            # off-axis one was not. That contrast is the control for this fix.
             parts.append(2.0 * (reference.conj() * propagated).real)
             parts.append(2.0 * (reference * propagated).real)
+            parts.append(-2.0 * (reference.conj() * propagated).imag)
+            parts.append(-2.0 * (reference * propagated).imag)
         elif modality != "gabor":
             raise ValueError(f"unknown modality {modality!r}")
 
@@ -613,4 +639,3 @@ class ForwardModelConsistency(nn.Module):
             value = (residual ** 2).mean(dim=1)
 
         return (value, coefficients) if return_coefficients else value
->>>>>>> Stashed changes

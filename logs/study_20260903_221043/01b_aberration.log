@@ -1,0 +1,28 @@
+22:10:55 | INFO    | __main__ | fitting order-5 aberration surfaces over 800 fields
+22:11:22 | INFO    | __main__ |   50/800
+22:11:49 | INFO    | __main__ |   100/800
+22:12:16 | INFO    | __main__ |   150/800
+22:12:43 | INFO    | __main__ |   200/800
+22:13:09 | INFO    | __main__ |   250/800
+22:13:36 | INFO    | __main__ |   300/800
+22:14:03 | INFO    | __main__ |   350/800
+22:14:30 | INFO    | __main__ |   400/800
+22:14:56 | INFO    | __main__ |   450/800
+22:15:23 | INFO    | __main__ |   500/800
+22:15:51 | INFO    | __main__ |   550/800
+22:16:18 | INFO    | __main__ |   600/800
+22:16:45 | INFO    | __main__ |   650/800
+22:17:13 | INFO    | __main__ |   700/800
+22:17:41 | INFO    | __main__ |   750/800
+22:18:08 | INFO    | __main__ |   800/800
+
+=== aberration surfaces, order 5 ===
+  fields fitted        800
+  R^2  median 0.9615   p10 0.8746   min 0.6621
+  surfaces -> data/aberration.json
+  per-image quality -> runs/aberration_fit.csv
+
+  -> the difference between the raw reconstruction and the delivered
+     phase IS a smooth surface, as the acquiring group described. The
+     forward model can now restore it, and z should become identifiable:
+     re-run scripts/calibrate_z.py.

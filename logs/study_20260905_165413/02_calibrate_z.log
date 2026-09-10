@@ -1,0 +1,114 @@
+17:09:57 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+field 900 px -> physically usable |z| <= 71.6 um; scanning [-71.6, +71.6] um in 101 steps
+  residual scored on a fixed 448 px window at every distance (border 226 px, sized for |z| = 71.6 um)
+17:10:05 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+
+=== off_axis  (4 images) ===
+  forward  (training residual, minimised)   z =   +32.945 um   residual = 0.27609   well depth 1.3
+  per-image agreement                       median   +33.661 um   IQR 7.878 um   consistent: False
+  inverse  (weak cross-check)               z =   +61.593 um   prominence 1.7
+  grid step 1.432 um
+  residual using the REFERENCE phase       0.2761   (the floor set by the approximate operator)
+  forward-model sensitivity to phase   at best z 0.5524 /rad   at z=0 0.5041 /rad
+
+  -> the residual is FLAT in z, so z is not identifiable from this arm.
+     For off-axis this is expected and physical: the carrier encodes phase
+     at any distance, so the hologram barely changes with z. Take z from the
+     Gabor arm instead -- it is the same specimen at the same distance.
+
+  validating the supplied distance z = 33.770 um (the scan above is diagnostic only)
+     the scan's own minimum (+32.945 um) agrees to within one grid step (1.432 um)
+17:10:09 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+
+--- off_axis: can the forward-model term be trained? ---
+  32 fields at z = 33.770 um
+    variant       residual    margin   worse than truth
+    reference       0.3063                     <- floor
+    scaled_0.9      0.3064   +0.0002               56%
+    scaled_0.5      0.3585   +0.0523               91%
+    noisy_0.3       0.3340   +0.0278              100%
+    mirrored        0.6068   +0.3005               91%
+    zero            0.4809   +0.1747               91%
+  near-truth  margin +0.0002   worse in 56% of fields
+  far-from-truth   margin +0.1747   worse in 91% of fields
+  (tolerance 0.010, sign-test threshold 75%; chance is 50%)
+  -> MARGINAL. The term separates a real reconstruction from nonsense, but
+     near the truth its slope is within noise, so it cannot refine a
+     prediction that is already close. Reportable as a diagnostic; not
+     trained by default. Raise loss.weights.forward_model deliberately if
+     you want to test it, and check the phase metrics do not degrade.
+17:10:25 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=gabor | crop=None | augment=False
+
+--- off_axis: does the operator agree about phase MAGNITUDE? ---
+    phase x       0.25     0.50     0.75     1.00     1.25     1.50
+    residual    0.4178   0.3585   0.3171   0.3063   0.3299   0.3817
+  residual minimised at phase x 0.95   (IQR 0.10 over 32 fields, pooled 0.95)
+  -> the forward model agrees with the delivered phase about its
+     magnitude to within 5%. The reconstruction this arm
+     is scored against is quantitatively consistent with the recorded
+     hologram, which is what measurement-ready has to mean.
+17:10:27 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=gabor | crop=None | augment=False
+
+=== gabor  (4 images) ===
+  forward  (training residual, minimised)   z =   +34.377 um   residual = 0.77350   well depth 2.8
+  per-image agreement                       median   +34.377 um   IQR 0.000 um   consistent: True
+  inverse  (weak cross-check)               z =   -42.972 um   prominence 2.9
+  grid step 1.432 um
+  residual using the REFERENCE phase       0.7735   (the floor set by the approximate operator)
+  forward-model sensitivity to phase   at best z 0.4649 /rad   at z=0 0.0000 /rad
+
+  -> z IS identifiable at +34.377 um (images agree to 0.00 um).
+     Set loss.forward_model.distance_um to this value in config/base.yaml.
+
+  validating the supplied distance z = 33.770 um (the scan above is diagnostic only)
+     the scan's own minimum (+34.377 um) agrees to within one grid step (1.432 um)
+17:10:29 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=gabor | crop=None | augment=False
+
+--- gabor: can the forward-model term be trained? ---
+  32 fields at z = 33.770 um
+    variant       residual    margin   worse than truth
+    reference       0.8662                     <- floor
+    scaled_0.9      0.8643   -0.0020               19%
+    scaled_0.5      0.8730   +0.0067               75%
+    noisy_0.3       0.9373   +0.0711              100%
+    mirrored        0.9991   +0.1328              100%
+    zero            0.9996   +0.1334              100%
+  near-truth  margin -0.0020   worse in 19% of fields
+  far-from-truth   margin +0.1328   worse in 100% of fields
+  (tolerance 0.010, sign-test threshold 75%; chance is 50%)
+  -> MARGINAL. The term separates a real reconstruction from nonsense, but
+     near the truth its slope is within noise, so it cannot refine a
+     prediction that is already close. Reportable as a diagnostic; not
+     trained by default. Raise loss.weights.forward_model deliberately if
+     you want to test it, and check the phase metrics do not degrade.
+
+--- gabor: does the operator agree about phase MAGNITUDE? ---
+    phase x       0.25     0.50     0.75     1.00     1.25     1.50
+    residual    0.8935   0.8730   0.8644   0.8662   0.8769   0.8926
+  residual minimised at phase x 0.85   (IQR 0.15 over 32 fields, pooled 0.85)
+  -> the forward model agrees with the delivered phase about its
+     magnitude to within 15%. The reconstruction this arm
+     is scored against is quantitatively consistent with the recorded
+     hologram, which is what measurement-ready has to mean.
+
+  ** Use z = +34.377 um for BOTH arms. **
+     The in-line arm determines it; the off-axis residual is flat in z
+     because its carrier encodes phase without needing defocus. Same
+     specimen, same acquisition, same distance.
+
+curves and estimates -> runs/z_calibration.json
+
+==================================================================
+ FORWARD-MODEL VERDICT
+==================================================================
+  off_axis     marginal
+  gabor        marginal
+
+Every arm is MARGINAL: the term tells a reconstruction from nonsense
+but cannot refine one that is already close. That is a reportable
+diagnostic and a legitimate negative result about physics-consistency
+losses under a non-invertible acquisition pipeline. It is not trained
+by default. To test it anyway:
+    python main.py compare --config config/ablation/physics_forward_only.yaml \
+        --set loss.weights.forward_model=0.05
+and check that the phase metrics do not degrade against the base run.

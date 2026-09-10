@@ -1,0 +1,162 @@
+====================================================================
+ HoloQPI full study - 20260903_221043
+====================================================================
+ working directory : /sda/usama/QPI_Extended
+ CUDA_VISIBLE_DEVICES=2
+ QUICK=off   NO_TRAIN=off   stage=all
+
+environment captured -> logs/study_20260903_221043/00_environment.log
+
+--------------------------------------------------------------------
+STEP: self-test (measurement chain, losses, forward model)
+  cmd: python scripts/selftest.py --config config/base.yaml
+  log: 00_selftest.log
+  result: OK (6s)
+
+--------------------------------------------------------------------
+STEP: prepare data (masks, splits, manifest)
+  cmd: python main.py prepare --config config/base.yaml
+  log: 01_prepare.log
+  result: OK (2s)
+
+--------------------------------------------------------------------
+STEP: estimate aberration surfaces
+  cmd: python scripts/estimate_aberration.py --config config/base.yaml
+  log: 01b_aberration.log
+  result: OK (435s)
+
+--------------------------------------------------------------------
+STEP: calibrate propagation distance z
+  cmd: python scripts/calibrate_z.py --config config/base.yaml --refine --z-range -600 600 --steps 121 --feature-um 2.0
+  log: 02_calibrate_z.log
+  result: FAILED with exit code 2 (17s)
+  last 15 lines:
+    reverse-engineering, and the accumulated approximation dominates the
+    residual.
+    
+    What unblocks it, in order:
+      1. The acquiring group's reconstruction code or its exact parameters:
+         demodulation and sideband filter, aberration model, unwrapping, and
+         the per-sample distance. With those the operator is exact.
+      2. Failing that, a handful of RAW unprocessed phase reconstructions
+         (no aberration removal, no background subtraction) with their
+         holograms, which is enough to validate the operator.
+    
+    Until then leave loss.weights.forward_model at 0.0. The term is
+    implemented and verified against synthetic data where the operator is
+    known (scripts/selftest.py section 6); what is missing is this
+    dataset's operator, not the code.
+
+  >> logs/study_20260903_221043/02_calibrate_z.log is the first log to read.
+
+  !! No usable propagation distance. The two forward-model arms will be
+     SKIPPED rather than trained against a meaningless z. Ask the
+     acquiring group for the reconstruction distance, then run:
+        bash run_study.sh --stage 5
+
+--------------------------------------------------------------------
+STEP: label audit (threshold drift, head redundancy)
+  cmd: python scripts/audit_labels.py --config config/base.yaml
+  log: 03_audit_labels.log
+  result: OK (48s)
+
+--------------------------------------------------------------------
+STEP: modality comparison: off-axis vs Gabor
+  cmd: python main.py compare --config config/base.yaml
+  log: 04_compare_base.log
+  result: OK (7018s)
+
+--------------------------------------------------------------------
+STEP: ablation: no physics at all
+  cmd: python main.py compare --config config/ablation/no_physics.yaml
+  log: 05a_no_physics.log
+  result: OK (6964s)
+
+--------------------------------------------------------------------
+STEP: ablation: mask-phase coupling only
+  cmd: python main.py compare --config config/ablation/physics_coupling_only.yaml
+  log: 05c_physics_coupling_only.log
+  result: OK (6969s)
+
+  (forward-model arms skipped: the term does not discriminate on any arm,
+   see the discrimination test in stage 2)
+
+--------------------------------------------------------------------
+STEP: ablation: no measurement terms
+  cmd: python main.py compare --config config/ablation/no_measurement.yaml
+  log: 06a_no_measurement.log
+  result: OK (6954s)
+
+--------------------------------------------------------------------
+STEP: control: classification head alone
+  cmd: python main.py compare --config config/ablation/classification_only.yaml
+  log: 06b_classification_only.log
+  result: OK (8536s)
+
+--------------------------------------------------------------------
+STEP: conventional reconstruction baseline
+  cmd: python scripts/conventional_baseline.py --config config/base.yaml
+  log: 07_conventional_baseline.log
+  result: OK (207s)
+
+--------------------------------------------------------------------
+STEP: dry-mass bias decomposition
+  cmd: python scripts/diagnose_bias.py --config config/base.yaml
+  log: 08_diagnose_bias.log
+  result: OK (17s)
+
+--------------------------------------------------------------------
+STEP: install onnxruntime-gpu==1.20.1
+  cmd: bash -c pip uninstall -y onnxruntime onnxruntime-gpu; pip install 'onnxruntime-gpu==1.20.1'
+  log: 09a_onnxruntime.log
+  result: FAILED with exit code 1 (1s)
+  last 15 lines:
+    WARNING: Skipping onnxruntime as it is not installed.
+    WARNING: Skipping onnxruntime-gpu as it is not installed.
+    ERROR: Could not find a version that satisfies the requirement onnxruntime-gpu==1.20.1 (from versions: 1.15.0, 1.15.1, 1.16.0, 1.16.3, 1.18.1, 1.19.0, 1.19.2, 1.20.0, 1.20.2, 1.21.0, 1.21.1, 1.22.0, 1.23.0, 1.23.2, 1.24.1, 1.24.4, 1.25.0, 1.25.1, 1.26.0, 1.27.0, 1.28.0)
+    ERROR: No matching distribution found for onnxruntime-gpu==1.20.1
+
+--------------------------------------------------------------------
+STEP: hardware benchmark
+  cmd: python main.py benchmark --config config/base.yaml
+  log: 09b_benchmark.log
+  result: OK (39s)
+
+--------------------------------------------------------------------
+STEP: figures
+  cmd: python scripts/make_figures.py --config config/base.yaml
+  log: 10_figures.log
+  result: OK (53s)
+
+all results concatenated -> logs/study_20260903_221043/90_all_results.txt
+convergence traces -> logs/study_20260903_221043/91_convergence.txt
+
+====================================================================
+ SUMMARY
+====================================================================
+  OK      self-test (measurement chain, losses, forward model)
+  OK      prepare data (masks, splits, manifest)
+  OK      estimate aberration surfaces
+  FAILED  calibrate propagation distance z  (exit 2)
+  OK      label audit (threshold drift, head redundancy)
+  OK      modality comparison: off-axis vs Gabor
+  OK      ablation: no physics at all
+  OK      ablation: mask-phase coupling only
+  OK      ablation: no measurement terms
+  OK      control: classification head alone
+  OK      conventional reconstruction baseline
+  OK      dry-mass bias decomposition
+  FAILED  install onnxruntime-gpu==1.20.1  (exit 1)
+  OK      hardware benchmark
+  OK      figures
+
+2 stage(s) failed - see the logs above.
+
+Read these three first:
+  logs/study_20260903_221043/02_calibrate_z.log        is z identifiable? gates the physics ablation
+  logs/study_20260903_221043/07_conventional_baseline.log   is the classical reconstruction valid?
+  logs/study_20260903_221043/03_audit_labels.log       does the label threshold drift with condition?
+
+Figures are in figures/ (PNG to read, PDF for the paper).
+
+Single archive to send: logs/holoqpi_study_20260903_221043.tar.gz  (12M)

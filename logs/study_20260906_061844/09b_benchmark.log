@@ -1,0 +1,37 @@
+17:02:41 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+17:02:42 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+17:02:43 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+17:02:46 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | pytorch | fp32
+17:02:53 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | onnx | fp32
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:87: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_h or pad_w:
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:46: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != skip.shape[-2:]:
+/sda/usama/QPI_Extended/holoqpi/models/holonet.py:119: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != target:
+/sda/usama/QPI_Extended/holoqpi/models/holonet.py:121: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if abs(scale_h - 1.0) > 1e-6:
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:94: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_h:
+/sda/usama/QPI_Extended/holoqpi/models/blocks.py:96: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_w:
+/sda/usama/QPI_Extended/holoqpi/models/holonet.py:127: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != target:
+17:02:54 | INFO    | holoqpi.deploy.export | exported ONNX (fp32, opset 17, 900x900) -> runs/onnx/base_off_axis_fp32.onnx
+17:02:54 | INFO    | holoqpi.deploy.benchmark | preloaded 21 CUDA/cuDNN libraries from /home/usama/anaconda3/envs/qpi_extended/lib/python3.11/site-packages/nvidia
+17:03:03 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | pytorch | fp16
+17:03:08 | INFO    | holoqpi.deploy.benchmark | benchmarking off_axis | onnx | fp16
+17:03:09 | INFO    | holoqpi.deploy.export | exported ONNX (fp16, opset 17, 900x900) -> runs/onnx/base_off_axis_fp16.onnx
+17:03:09 | INFO    | holoqpi.deploy.benchmark | preloaded 21 CUDA/cuDNN libraries from /home/usama/anaconda3/envs/qpi_extended/lib/python3.11/site-packages/nvidia
+17:03:15 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True stages=[16, 24, 32, 96, 1280]
+17:03:15 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.76M parameters, 9.76M trainable (100.0%)
+17:03:15 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+17:03:15 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | pytorch | fp32
+17:03:22 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | onnx | fp32
+17:03:23 | INFO    | holoqpi.deploy.export | exported ONNX (fp32, opset 17, 900x900) -> runs/onnx/base_gabor_fp32.onnx
+17:03:23 | INFO    | holoqpi.deploy.benchmark | preloaded 21 CUDA/cuDNN libraries from /home/usama/anaconda3/envs/qpi_extended/lib/python3.11/site-packages/nvidia
+17:03:32 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | pytorch | fp16
+17:03:38 | INFO    | holoqpi.deploy.benchmark | benchmarking gabor | onnx | fp16
+17:03:39 | INFO    | holoqpi.deploy.export | exported ONNX (fp16, opset 17, 900x900) -> runs/onnx/base_gabor_fp16.onnx
+17:03:39 | INFO    | holoqpi.deploy.benchmark | preloaded 21 CUDA/cuDNN libraries from /home/usama/anaconda3/envs/qpi_extended/lib/python3.11/site-packages/nvidia
+17:03:44 | INFO    | holoqpi | benchmark written to runs/base_hardware_benchmark_cuda.csv

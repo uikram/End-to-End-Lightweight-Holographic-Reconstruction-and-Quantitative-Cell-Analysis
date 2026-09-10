@@ -72,7 +72,13 @@ def read_phase_bin(path: str | Path, fmt: Config) -> PhaseRecord:
 
 
 def read_hologram(path: str | Path) -> np.ndarray:
-    """Read one hologram TIFF as float32 in its native intensity units."""
+    """Read one hologram TIFF as float32 in its native intensity units.
+
+    The holograms are LZW-compressed, which ``tifffile`` delegates to the
+    optional ``imagecodecs`` package. That package ships no wheel for every
+    interpreter and compiling it needs a recent toolchain, so Pillow is used as
+    a fallback: it decodes LZW natively and returns byte-identical arrays.
+    """
     array = None
     try:
         import tifffile
@@ -163,3 +169,65 @@ def hologram_path(data_root: Path, cfg: Config, stem: str, modality: str) -> Pat
 def mask_path(data_root: Path, cfg: Config, stem: str) -> Path:
     directory = cfg.paths.manual_mask_dir or cfg.paths.mask_dir
     return data_root / directory / f"{stem}{cfg.formats.mask.suffix}"
+
+
+# ---------------------------------------------------------------------------
+# Aberration surfaces (see scripts/estimate_aberration.py)
+# ---------------------------------------------------------------------------
+_ABERRATION_CACHE: dict = {}
+
+
+def load_aberration(path: str | Path) -> dict | None:
+    """Read the fitted aberration surfaces, or None when they do not exist.
+
+    Cached per path: this is read once per worker and then shared by every
+    sample, rather than re-parsed from JSON eight hundred times an epoch.
+    """
+    path = Path(path)
+    key = str(path.resolve()) if path.exists() else str(path)
+    if key in _ABERRATION_CACHE:
+        return _ABERRATION_CACHE[key]
+    payload = None
+    if path.is_file():
+        import json
+        try:
+            payload = json.loads(path.read_text())
+        except Exception:
+            payload = None
+    _ABERRATION_CACHE[key] = payload
+    return payload
+
+
+def render_aberration(
+    payload: dict | None, stem: str, height: int, width: int
+) -> tuple[np.ndarray, bool]:
+    """Evaluate a stored surface on the full field, in radians.
+
+    Returns (surface, valid). ``valid`` is False when no surface exists for this
+    field or when the fit was rejected as an unwrapping failure; the caller uses
+    it to exclude that field from the forward-model term rather than feeding it
+    a several-hundred-radian phase error. A missing file therefore degrades to
+    the pure-phase assumption rather than to an exception.
+
+    Coordinates are normalised to the same [-1, 1] grid the fit used, so the
+    coefficients mean the same thing here as they did there.
+    """
+    if not payload or stem not in payload.get("coefficients", {}):
+        return np.zeros((height, width), dtype=np.float32), False
+    if not payload.get("valid", {}).get(stem, True):
+        return np.zeros((height, width), dtype=np.float32), False
+
+    order = int(payload["order"])
+    coefficients = np.asarray(payload["coefficients"][stem], dtype=np.float64)
+    y = np.linspace(-1.0, 1.0, height)[:, None]
+    x = np.linspace(-1.0, 1.0, width)[None, :]
+
+    surface = np.zeros((height, width), dtype=np.float64)
+    index = 0
+    for i in range(order + 1):
+        for j in range(order + 1 - i):
+            if index >= coefficients.size:
+                break
+            surface += coefficients[index] * (x ** i) * (y ** j)
+            index += 1
+    return surface.astype(np.float32), True

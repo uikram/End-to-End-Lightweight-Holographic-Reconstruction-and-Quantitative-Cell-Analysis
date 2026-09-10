@@ -47,6 +47,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     train = subparsers.add_parser("train", help="train one modality")
     _add_common(train)
+    train.add_argument(
+        "--init-from", default=None,
+        help="checkpoint to initialise weights from before fine-tuning. Every "
+             "experiment condition must start from the SAME pretrained "
+             "checkpoint, or a difference between conditions could be "
+             "pretraining noise rather than the effect of the loss under test.",
+    )
 
     evaluate = subparsers.add_parser("evaluate", help="evaluate a trained checkpoint")
     _add_common(evaluate)
@@ -59,6 +66,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     compare = subparsers.add_parser("compare", help="run the off-axis / Gabor comparison")
     _add_common(compare)
+    compare.add_argument("--init-from", default=None,
+                         help="see `train --init-from`; applies to every arm")
     compare.add_argument("--modalities", nargs="+", default=["off_axis", "gabor"])
     compare.add_argument(
         "--no-train", action="store_true",
@@ -117,6 +126,17 @@ def command_train(args) -> int:
 
     loaders = build_dataloaders(cfg, splits_to_build=("train", "val"))
     model = build_model(cfg)
+
+    initial = getattr(args, "init_from", None)
+    if initial:
+        from holoqpi.engine.trainer import load_checkpoint
+
+        LOGGER.info("initialising weights from %s", initial)
+        load_checkpoint(model, initial, device, strict=False)
+        # Recorded in the run directory so a result can always be traced back to
+        # the checkpoint it started from.
+        (run_dir / "initialised_from.txt").write_text(str(Path(initial).resolve()) + "\n")
+
     Trainer(model, cfg, loaders, device, run_dir).train()
     return 0
 
@@ -174,7 +194,8 @@ def command_compare(args) -> int:
     from holoqpi.engine import compare_modalities
 
     cfg = _load(args)
-    compare_modalities(cfg, args.modalities, train=not args.no_train)
+    compare_modalities(cfg, args.modalities, train=not args.no_train,
+                       init_from=getattr(args, 'init_from', None))
     return 0
 
 

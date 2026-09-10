@@ -1,0 +1,51 @@
+08:26:38 | WARNING | __main__ | no propagation distance given and loss.forward_model.distance_um is null; reconstructing at z = 0. For the in-line arm that is degenerate -- a pure phase object produces no in-line contrast at zero defocus -- so the Gabor baseline will look far worse than the method deserves. Run scripts/calibrate_z.py or pass --distance-um.
+08:26:38 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+08:26:38 | INFO    | __main__ | conventional off_axis reconstruction at z = 0.00 um (GS iterations 0)
+08:28:18 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=gabor | crop=None | augment=False
+08:28:18 | INFO    | __main__ | conventional gabor reconstruction at z = 0.00 um (GS iterations 0)
+
+=== conventional off_axis ===
+  recovered in-cell phase contrast -0.2793 rad
+  !! The reconstruction did NOT recover positive cell contrast, so the
+     metrics below describe a failed reconstruction, not the classical
+     method's real performance. Do not report them as a baseline.
+     Most likely causes, in order: the propagation distance is wrong
+     (run scripts/calibrate_z.py, or ask for z); the aberration order is
+     too low for this objective (try --aberration-order 4 or 5); for the
+     in-line arm, z = 0 is degenerate and no phase can be recovered.
+  phase_mae_rad                0.4304
+  phase_mae_rad_in_cell        1.1222
+  phase_pearson_r              -0.0072
+  seg_dice                     0.4660
+  seg_aji                      0.2934
+  seg_boundary_f1              0.1445
+  detection_recall             0.2591
+  detection_f1                 0.3940
+  area_mape                    0.1416
+  dry_mass_mape                0.2031
+  dry_mass_relative_bias       0.0122
+
+=== conventional gabor ===
+  recovered in-cell phase contrast -0.1514 rad
+  !! The reconstruction did NOT recover positive cell contrast, so the
+     metrics below describe a failed reconstruction, not the classical
+     method's real performance. Do not report them as a baseline.
+     Most likely causes, in order: the propagation distance is wrong
+     (run scripts/calibrate_z.py, or ask for z); the aberration order is
+     too low for this objective (try --aberration-order 4 or 5); for the
+     in-line arm, z = 0 is degenerate and no phase can be recovered.
+  phase_mae_rad                3.7710
+  phase_mae_rad_in_cell        3.6667
+  phase_pearson_r              -0.0018
+  seg_dice                     0.1026
+  seg_aji                      0.0394
+  seg_boundary_f1              0.0528
+  detection_recall             0.0108
+  detection_f1                 0.0125
+  area_mape                    0.2994
+  dry_mass_mape                9.6591
+  dry_mass_relative_bias       1.3528
+
+baseline table -> runs/conventional_baseline_test.csv
+Compare against runs/*_modality_comparison.csv; the two are scored by the
+same evaluator, so the difference is attributable to reconstruction alone.

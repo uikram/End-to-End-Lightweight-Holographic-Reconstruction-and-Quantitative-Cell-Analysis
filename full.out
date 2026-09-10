@@ -1,0 +1,232 @@
+nohup: ignoring input
+====================================================================
+ HoloQPI full study - 20260906_061844
+====================================================================
+ working directory : /sda/usama/QPI_Extended
+ CUDA_VISIBLE_DEVICES=2
+ QUICK=off   NO_TRAIN=off   stage=all
+
+environment captured -> logs/study_20260906_061844/00_environment.log
+
+--------------------------------------------------------------------
+STEP: self-test (measurement chain, losses, forward model)
+  cmd: python scripts/selftest.py --config config/base.yaml
+  log: 00_selftest.log
+  result: OK (6s)
+
+--------------------------------------------------------------------
+STEP: prepare data (masks, splits, manifest)
+  cmd: python main.py prepare --config config/base.yaml
+  log: 01_prepare.log
+  result: OK (2s)
+
+--------------------------------------------------------------------
+STEP: estimate aberration surfaces
+  cmd: python scripts/estimate_aberration.py --config config/base.yaml
+  log: 01b_aberration.log
+  result: OK (914s)
+
+--------------------------------------------------------------------
+STEP: calibrate propagation distance z
+  cmd: python scripts/calibrate_z.py --config config/base.yaml --steps 101
+  log: 02_calibrate_z.log
+  result: OK (36s)
+
+  >> logs/study_20260906_061844/02_calibrate_z.log is the first log to read.
+
+  z = 33.770000 um, held FIXED for the forward-model arms.
+
+--------------------------------------------------------------------
+STEP: modality comparison: off-axis vs Gabor
+  cmd: python main.py compare --config config/base.yaml --set loss.forward_model.distance_um=33.770000
+  log: 04_compare_base.log
+  result: OK (7168s)
+
+--------------------------------------------------------------------
+STEP: ablation: no physics at all
+  cmd: python main.py compare --config config/ablation/no_physics.yaml --set loss.forward_model.distance_um=33.770000
+  log: 05a_no_physics.log
+  result: OK (7105s)
+
+--------------------------------------------------------------------
+STEP: ablation: mask-phase coupling only
+  cmd: python main.py compare --config config/ablation/physics_coupling_only.yaml --set loss.forward_model.distance_um=33.770000
+  log: 05c_physics_coupling_only.log
+  result: OK (7100s)
+
+  (forward-model arms skipped: the term does not discriminate on any arm,
+   see the discrimination test in stage 2)
+
+--------------------------------------------------------------------
+STEP: ablation: no measurement terms
+  cmd: python main.py compare --config config/ablation/no_measurement.yaml
+  log: 06a_no_measurement.log
+  result: OK (7089s)
+
+--------------------------------------------------------------------
+STEP: control: classification head alone
+  cmd: python main.py compare --config config/ablation/classification_only.yaml
+  log: 06b_classification_only.log
+  result: OK (8777s)
+
+--------------------------------------------------------------------
+STEP: label audit (threshold drift, head redundancy)
+  cmd: python scripts/audit_labels.py --config config/base.yaml
+  log: 03_audit_labels.log
+  result: OK (86s)
+
+--------------------------------------------------------------------
+STEP: conventional reconstruction baseline
+  cmd: python scripts/conventional_baseline.py --config config/base.yaml --distance-um 33.770000
+  log: 07_conventional_baseline.log
+  result: OK (323s)
+
+--------------------------------------------------------------------
+STEP: dry-mass bias decomposition
+  cmd: python scripts/diagnose_bias.py --config config/base.yaml
+  log: 08_diagnose_bias.log
+  result: OK (17s)
+
+--------------------------------------------------------------------
+STEP: install onnxruntime-gpu (CUDA 12 build)
+  cmd: bash -c pip uninstall -y onnxruntime onnxruntime-gpu >/dev/null 2>&1;            pip install 'onnxruntime-gpu==1.20.2' ||            pip install 'onnxruntime-gpu==1.20.0' ||            pip install 'onnxruntime-gpu<1.21'
+  log: 09a_onnxruntime.log
+  result: OK (8s)
+
+--------------------------------------------------------------------
+STEP: hardware benchmark
+  cmd: python main.py benchmark --config config/base.yaml
+  log: 09b_benchmark.log
+  result: OK (67s)
+
+--------------------------------------------------------------------
+STEP: absolute dry-mass uncertainty from alpha
+  cmd: python scripts/mass_uncertainty.py --config config/base.yaml
+  log: 11_mass_uncertainty.log
+  result: OK (2s)
+
+--------------------------------------------------------------------
+STEP: prepare fixed-threshold masks
+  cmd: python main.py prepare --config config/ablation/fixed_threshold.yaml
+  log: 12a_prepare_fixed_threshold.log
+  result: OK (82s)
+
+--------------------------------------------------------------------
+STEP: sensitivity: fixed label threshold
+  cmd: python main.py compare --config config/ablation/fixed_threshold.yaml
+  log: 12b_fixed_threshold.log
+  result: OK (7323s)
+
+  seed replication over: 1337 2024
+  (each seed retrains every arm; expect roughly 10 h per seed)
+
+--------------------------------------------------------------------
+STEP: seed 1337: base
+  cmd: python main.py compare --config config/base.yaml --set project.seed=1337 experiment_name=base_s1337 loss.forward_model.distance_um=33.770000
+  log: 13_base_s1337.log
+  result: OK (7112s)
+
+--------------------------------------------------------------------
+STEP: seed 1337: no_physics
+  cmd: python main.py compare --config config/ablation/no_physics.yaml --set project.seed=1337 experiment_name=no_physics_s1337 loss.forward_model.distance_um=33.770000
+  log: 13_no_physics_s1337.log
+  result: OK (7133s)
+
+--------------------------------------------------------------------
+STEP: seed 1337: physics_coupling_only
+  cmd: python main.py compare --config config/ablation/physics_coupling_only.yaml --set project.seed=1337 experiment_name=physics_coupling_only_s1337 loss.forward_model.distance_um=33.770000
+  log: 13_physics_coupling_only_s1337.log
+  result: OK (7146s)
+
+--------------------------------------------------------------------
+STEP: seed 1337: no_measurement
+  cmd: python main.py compare --config config/ablation/no_measurement.yaml --set project.seed=1337 experiment_name=no_measurement_s1337 loss.forward_model.distance_um=33.770000
+  log: 13_no_measurement_s1337.log
+  result: OK (7393s)
+
+--------------------------------------------------------------------
+STEP: seed 2024: base
+  cmd: python main.py compare --config config/base.yaml --set project.seed=2024 experiment_name=base_s2024 loss.forward_model.distance_um=33.770000
+  log: 13_base_s2024.log
+  result: OK (7274s)
+
+--------------------------------------------------------------------
+STEP: seed 2024: no_physics
+  cmd: python main.py compare --config config/ablation/no_physics.yaml --set project.seed=2024 experiment_name=no_physics_s2024 loss.forward_model.distance_um=33.770000
+  log: 13_no_physics_s2024.log
+  result: OK (7306s)
+
+--------------------------------------------------------------------
+STEP: seed 2024: physics_coupling_only
+  cmd: python main.py compare --config config/ablation/physics_coupling_only.yaml --set project.seed=2024 experiment_name=physics_coupling_only_s2024 loss.forward_model.distance_um=33.770000
+  log: 13_physics_coupling_only_s2024.log
+  result: OK (7366s)
+
+--------------------------------------------------------------------
+STEP: seed 2024: no_measurement
+  cmd: python main.py compare --config config/ablation/no_measurement.yaml --set project.seed=2024 experiment_name=no_measurement_s2024 loss.forward_model.distance_um=33.770000
+  log: 13_no_measurement_s2024.log
+  result: OK (7366s)
+
+--------------------------------------------------------------------
+STEP: pool seeds and test which differences survive
+  cmd: python scripts/aggregate_seeds.py --config config/base.yaml
+  log: 13_seed_aggregate.log
+  result: OK (2s)
+
+--------------------------------------------------------------------
+STEP: figures
+  cmd: python scripts/make_figures.py --config config/base.yaml
+  log: 10_figures.log
+  result: OK (60s)
+
+all results concatenated -> logs/study_20260906_061844/90_all_results.txt
+convergence traces -> logs/study_20260906_061844/91_convergence.txt
+
+====================================================================
+ SUMMARY
+====================================================================
+  OK      self-test (measurement chain, losses, forward model)
+  OK      prepare data (masks, splits, manifest)
+  OK      estimate aberration surfaces
+  OK      calibrate propagation distance z
+  OK      modality comparison: off-axis vs Gabor
+  OK      ablation: no physics at all
+  OK      ablation: mask-phase coupling only
+  OK      ablation: no measurement terms
+  OK      control: classification head alone
+  OK      label audit (threshold drift, head redundancy)
+  OK      conventional reconstruction baseline
+  OK      dry-mass bias decomposition
+  OK      install onnxruntime-gpu (CUDA 12 build)
+  OK      hardware benchmark
+  OK      absolute dry-mass uncertainty from alpha
+  OK      prepare fixed-threshold masks
+  OK      sensitivity: fixed label threshold
+  OK      seed 1337: base
+  OK      seed 1337: no_physics
+  OK      seed 1337: physics_coupling_only
+  OK      seed 1337: no_measurement
+  OK      seed 2024: base
+  OK      seed 2024: no_physics
+  OK      seed 2024: physics_coupling_only
+  OK      seed 2024: no_measurement
+  OK      pool seeds and test which differences survive
+  OK      figures
+
+All stages completed.
+
+Read these five first:
+  logs/study_20260906_061844/01b_aberration.log        how many fields needed the conjugate flip,
+                                      and how many surfaces were rejected
+  logs/study_20260906_061844/02_calibrate_z.log        does the in-line minimum land on the supplied z,
+                                      and what verdict does the forward-model term get
+  logs/study_20260906_061844/07_conventional_baseline.log   did the classical reconstruction recover
+                                      positive cell contrast in each geometry
+  logs/study_20260906_061844/03_audit_labels.log       does the label threshold drift with condition,
+                                      and is the segmentation head redundant
+  logs/study_20260906_061844/13_seed_aggregate.log     which ablation differences survive the spread
+
+Figures are in figures/ (PNG to read, PDF for the paper).
+
+Single archive to send: logs/holoqpi_study_20260906_061844.tar.gz  (13M)

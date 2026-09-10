@@ -1,0 +1,28 @@
+# HoloQPI v2, experiment A: Baseline
+#
+# What the network can do with conventional reconstruction and segmentation
+# losses alone. Every later experiment is measured against this, so it must be
+# clean: no measurement coupling of any kind.
+#
+# Shared across all four v2 experiments:
+#   * off-axis only (the in-line arm is deferred to study 2)
+#   * no drug-condition head (unstable at +/-9.5 points, outside the question)
+#   * phase_mask_contrast and dry_mass_consistency permanently off; see
+#     config/base.yaml for the measurements behind each
+extends: ../base.yaml
+
+experiment_name: v2_baseline
+
+data:
+  modality: off_axis
+
+model:
+  classifier_enabled: false
+
+loss:
+  weights:
+    classification: 0.0
+    cell_integrated_phase: 0.0
+    boundary_gradient_alignment: 0.0
+    projected_area_consistency: 0.0
+    forward_model: 0.0

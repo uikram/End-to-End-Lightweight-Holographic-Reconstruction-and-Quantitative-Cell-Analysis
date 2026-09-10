@@ -1,0 +1,202 @@
+
+=== runs found ===
+  base                       3 run(s)   seeds: 1337, 2024
+  classification_only        1 run(s)   seeds: -
+  fixed_threshold            1 run(s)   seeds: -
+  no_measurement             3 run(s)   seeds: 1337, 2024
+  no_physics                 3 run(s)   seeds: 1337, 2024
+  physics_coupling_only      3 run(s)   seeds: 1337, 2024
+
+  NOTE: 2 experiment(s) have a single run, so no spread can be
+  estimated for them. Their rows below carry no error bar and any
+  difference involving them is unresolved by construction.
+
+==========================================================================
+ off_axis
+==========================================================================
+
+  phase_mae_rad
+    base                         0.1630 +/- 0.0006  (n=3)
+    classification_only          0.4811           (n=1)   d=+0.3181   RESOLVED
+    fixed_threshold              0.1649           (n=1)   d=+0.0019   RESOLVED
+    no_measurement               0.1627 +/- 0.0006  (n=3)   d=-0.0004   within seed noise
+    no_physics                   0.1621 +/- 0.0002  (n=3)   d=-0.0009   within seed noise
+    physics_coupling_only        0.1624 +/- 0.0010  (n=3)   d=-0.0006   within seed noise
+
+  phase_pearson_r
+    base                         0.8636 +/- 0.0005  (n=3)
+    classification_only         -0.0104           (n=1)   d=-0.8741   RESOLVED
+    fixed_threshold              0.8621           (n=1)   d=-0.0016   RESOLVED
+    no_measurement               0.8637 +/- 0.0008  (n=3)   d=+0.0001   within seed noise
+    no_physics                   0.8652 +/- 0.0015  (n=3)   d=+0.0016   within seed noise
+    physics_coupling_only        0.8642 +/- 0.0006  (n=3)   d=+0.0006   within seed noise
+
+  seg_dice
+    base                         0.8280 +/- 0.0003  (n=3)
+    classification_only          0.2004           (n=1)   d=-0.6276   RESOLVED
+    fixed_threshold              0.8421           (n=1)   d=+0.0142   RESOLVED
+    no_measurement               0.8281 +/- 0.0011  (n=3)   d=+0.0001   within seed noise
+    no_physics                   0.8281 +/- 0.0007  (n=3)   d=+0.0002   within seed noise
+    physics_coupling_only        0.8281 +/- 0.0008  (n=3)   d=+0.0001   within seed noise
+
+  seg_aji
+    base                         0.6629 +/- 0.0035  (n=3)
+    classification_only          0.0269           (n=1)   d=-0.6360   RESOLVED
+    fixed_threshold              0.6901           (n=1)   d=+0.0272   RESOLVED
+    no_measurement               0.6610 +/- 0.0038  (n=3)   d=-0.0019   within seed noise
+    no_physics                   0.6634 +/- 0.0015  (n=3)   d=+0.0005   within seed noise
+    physics_coupling_only        0.6628 +/- 0.0026  (n=3)   d=-0.0001   within seed noise
+
+  seg_boundary_f1
+    base                         0.4374 +/- 0.0052  (n=3)
+    classification_only          0.0625           (n=1)   d=-0.3749   RESOLVED
+    fixed_threshold              0.4954           (n=1)   d=+0.0580   RESOLVED
+    no_measurement               0.4360 +/- 0.0051  (n=3)   d=-0.0014   within seed noise
+    no_physics                   0.4375 +/- 0.0016  (n=3)   d=+0.0001   within seed noise
+    physics_coupling_only        0.4396 +/- 0.0048  (n=3)   d=+0.0022   within seed noise
+
+  cls_accuracy
+    base                         0.6431 +/- 0.0946  (n=3)
+    classification_only          0.5929           (n=1)   d=-0.0501   within seed noise
+    fixed_threshold              0.5221           (n=1)   d=-0.1209   within seed noise
+    no_measurement               0.7080 +/- 0.0265  (n=3)   d=+0.0649   within seed noise
+    no_physics                   0.6106 +/- 0.0580  (n=3)   d=-0.0324   within seed noise
+    physics_coupling_only        0.6932 +/- 0.0640  (n=3)   d=+0.0501   within seed noise
+
+  dry_mass_mape
+    base                         0.1835 +/- 0.0045  (n=3)
+    classification_only          1.5818           (n=1)   d=+1.3983   RESOLVED
+    fixed_threshold              0.1858           (n=1)   d=+0.0023   within seed noise
+    no_measurement               0.1803 +/- 0.0029  (n=3)   d=-0.0032   within seed noise
+    no_physics                   0.1786 +/- 0.0009  (n=3)   d=-0.0049   within seed noise
+    physics_coupling_only        0.1822 +/- 0.0020  (n=3)   d=-0.0013   within seed noise
+
+  area_mape
+    base                         0.1578 +/- 0.0045  (n=3)
+    classification_only          0.2932           (n=1)   d=+0.1354   RESOLVED
+    fixed_threshold              0.1369           (n=1)   d=-0.0209   RESOLVED
+    no_measurement               0.1579 +/- 0.0032  (n=3)   d=+0.0001   within seed noise
+    no_physics                   0.1573 +/- 0.0018  (n=3)   d=-0.0006   within seed noise
+    physics_coupling_only        0.1570 +/- 0.0010  (n=3)   d=-0.0008   within seed noise
+
+  detection_f1
+    base                         0.7137 +/- 0.0038  (n=3)
+    classification_only          0.0001           (n=1)   d=-0.7136   RESOLVED
+    fixed_threshold              0.7313           (n=1)   d=+0.0176   RESOLVED
+    no_measurement               0.7100 +/- 0.0053  (n=3)   d=-0.0037   within seed noise
+    no_physics                   0.7124 +/- 0.0018  (n=3)   d=-0.0013   within seed noise
+    physics_coupling_only        0.7141 +/- 0.0046  (n=3)   d=+0.0004   within seed noise
+
+==========================================================================
+ gabor
+==========================================================================
+
+  phase_mae_rad
+    base                         0.1847 +/- 0.0003  (n=3)
+    classification_only          0.4748           (n=1)   d=+0.2901   RESOLVED
+    fixed_threshold              0.1836           (n=1)   d=-0.0011   RESOLVED
+    no_measurement               0.1847 +/- 0.0004  (n=3)   d=-0.0000   within seed noise
+    no_physics                   0.1842 +/- 0.0008  (n=3)   d=-0.0005   within seed noise
+    physics_coupling_only        0.1843 +/- 0.0006  (n=3)   d=-0.0004   within seed noise
+
+  phase_pearson_r
+    base                         0.7935 +/- 0.0004  (n=3)
+    classification_only          0.0826           (n=1)   d=-0.7109   RESOLVED
+    fixed_threshold              0.7950           (n=1)   d=+0.0015   RESOLVED
+    no_measurement               0.7939 +/- 0.0004  (n=3)   d=+0.0004   within seed noise
+    no_physics                   0.7944 +/- 0.0013  (n=3)   d=+0.0009   within seed noise
+    physics_coupling_only        0.7934 +/- 0.0008  (n=3)   d=-0.0001   within seed noise
+
+  seg_dice
+    base                         0.7594 +/- 0.0008  (n=3)
+    classification_only          0.1422           (n=1)   d=-0.6172   RESOLVED
+    fixed_threshold              0.7735           (n=1)   d=+0.0142   RESOLVED
+    no_measurement               0.7601 +/- 0.0012  (n=3)   d=+0.0007   within seed noise
+    no_physics                   0.7602 +/- 0.0019  (n=3)   d=+0.0008   within seed noise
+    physics_coupling_only        0.7599 +/- 0.0017  (n=3)   d=+0.0005   within seed noise
+
+  seg_aji
+    base                         0.5631 +/- 0.0041  (n=3)
+    classification_only          0.0158           (n=1)   d=-0.5473   RESOLVED
+    fixed_threshold              0.5845           (n=1)   d=+0.0214   RESOLVED
+    no_measurement               0.5647 +/- 0.0016  (n=3)   d=+0.0015   within seed noise
+    no_physics                   0.5674 +/- 0.0004  (n=3)   d=+0.0043   within seed noise
+    physics_coupling_only        0.5644 +/- 0.0021  (n=3)   d=+0.0013   within seed noise
+
+  seg_boundary_f1
+    base                         0.2906 +/- 0.0017  (n=3)
+    classification_only          0.0553           (n=1)   d=-0.2353   RESOLVED
+    fixed_threshold              0.3148           (n=1)   d=+0.0242   RESOLVED
+    no_measurement               0.2951 +/- 0.0020  (n=3)   d=+0.0044   within seed noise
+    no_physics                   0.2931 +/- 0.0043  (n=3)   d=+0.0025   within seed noise
+    physics_coupling_only        0.2916 +/- 0.0021  (n=3)   d=+0.0009   within seed noise
+
+  cls_accuracy
+    base                         0.8024 +/- 0.0051  (n=3)
+    classification_only          0.7611           (n=1)   d=-0.0413   RESOLVED
+    fixed_threshold              0.8496           (n=1)   d=+0.0472   RESOLVED
+    no_measurement               0.7847 +/- 0.0311  (n=3)   d=-0.0177   within seed noise
+    no_physics                   0.7935 +/- 0.0223  (n=3)   d=-0.0088   within seed noise
+    physics_coupling_only        0.8319 +/- 0.0307  (n=3)   d=+0.0295   within seed noise
+
+  dry_mass_mape
+    base                         0.2324 +/- 0.0039  (n=3)
+    classification_only          1.6102           (n=1)   d=+1.3779   RESOLVED
+    fixed_threshold              0.2316           (n=1)   d=-0.0008   within seed noise
+    no_measurement               0.2336 +/- 0.0046  (n=3)   d=+0.0012   within seed noise
+    no_physics                   0.2350 +/- 0.0016  (n=3)   d=+0.0026   within seed noise
+    physics_coupling_only        0.2315 +/- 0.0039  (n=3)   d=-0.0009   within seed noise
+
+  area_mape
+    base                         0.1730 +/- 0.0037  (n=3)
+    classification_only          0.4469           (n=1)   d=+0.2738   RESOLVED
+    fixed_threshold              0.1684           (n=1)   d=-0.0047   within seed noise
+    no_measurement               0.1751 +/- 0.0023  (n=3)   d=+0.0020   within seed noise
+    no_physics                   0.1711 +/- 0.0015  (n=3)   d=-0.0019   within seed noise
+    physics_coupling_only        0.1726 +/- 0.0027  (n=3)   d=-0.0005   within seed noise
+
+  detection_f1
+    base                         0.6556 +/- 0.0071  (n=3)
+    classification_only          0.0003           (n=1)   d=-0.6553   RESOLVED
+    fixed_threshold              0.6739           (n=1)   d=+0.0183   RESOLVED
+    no_measurement               0.6555 +/- 0.0072  (n=3)   d=-0.0001   within seed noise
+    no_physics                   0.6586 +/- 0.0009  (n=3)   d=+0.0030   within seed noise
+    physics_coupling_only        0.6552 +/- 0.0014  (n=3)   d=-0.0004   within seed noise
+
+==========================================================================
+ 31 difference(s) exceed 2x the seed spread:
+   off_axis  phase_mae_rad          classification_only      d=+0.3181
+   off_axis  phase_mae_rad          fixed_threshold          d=+0.0019
+   off_axis  phase_pearson_r        classification_only      d=-0.8741
+   off_axis  phase_pearson_r        fixed_threshold          d=-0.0016
+   off_axis  seg_dice               classification_only      d=-0.6276
+   off_axis  seg_dice               fixed_threshold          d=+0.0142
+   off_axis  seg_aji                classification_only      d=-0.6360
+   off_axis  seg_aji                fixed_threshold          d=+0.0272
+   off_axis  seg_boundary_f1        classification_only      d=-0.3749
+   off_axis  seg_boundary_f1        fixed_threshold          d=+0.0580
+   off_axis  dry_mass_mape          classification_only      d=+1.3983
+   off_axis  area_mape              classification_only      d=+0.1354
+   off_axis  area_mape              fixed_threshold          d=-0.0209
+   off_axis  detection_f1           classification_only      d=-0.7136
+   off_axis  detection_f1           fixed_threshold          d=+0.0176
+   gabor     phase_mae_rad          classification_only      d=+0.2901
+   gabor     phase_mae_rad          fixed_threshold          d=-0.0011
+   gabor     phase_pearson_r        classification_only      d=-0.7109
+   gabor     phase_pearson_r        fixed_threshold          d=+0.0015
+   gabor     seg_dice               classification_only      d=-0.6172
+   gabor     seg_dice               fixed_threshold          d=+0.0142
+   gabor     seg_aji                classification_only      d=-0.5473
+   gabor     seg_aji                fixed_threshold          d=+0.0214
+   gabor     seg_boundary_f1        classification_only      d=-0.2353
+   gabor     seg_boundary_f1        fixed_threshold          d=+0.0242
+   gabor     cls_accuracy           classification_only      d=-0.0413
+   gabor     cls_accuracy           fixed_threshold          d=+0.0472
+   gabor     dry_mass_mape          classification_only      d=+1.3779
+   gabor     area_mape              classification_only      d=+0.2738
+   gabor     detection_f1           classification_only      d=-0.6553
+   gabor     detection_f1           fixed_threshold          d=+0.0183
+ Everything else is within seed noise.
+
+  -> runs/seed_aggregate.json
+  -> runs/seed_aggregate.csv

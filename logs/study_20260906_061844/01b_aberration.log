@@ -1,0 +1,43 @@
+06:18:56 | INFO    | __main__ | fitting order-5 aberration surfaces over 800 fields
+06:19:53 | INFO    | __main__ |   50/800
+06:20:50 | INFO    | __main__ |   100/800
+06:21:46 | INFO    | __main__ |   150/800
+06:22:42 | INFO    | __main__ |   200/800
+06:23:37 | INFO    | __main__ |   250/800
+06:24:33 | INFO    | __main__ |   300/800
+06:25:29 | INFO    | __main__ |   350/800
+06:26:28 | INFO    | __main__ |   400/800
+06:27:27 | INFO    | __main__ |   450/800
+06:28:27 | INFO    | __main__ |   500/800
+06:29:23 | INFO    | __main__ |   550/800
+06:30:20 | INFO    | __main__ |   600/800
+06:31:17 | INFO    | __main__ |   650/800
+06:32:16 | INFO    | __main__ |   700/800
+06:33:13 | INFO    | __main__ |   750/800
+06:34:09 | INFO    | __main__ |   800/800
+
+=== aberration surfaces, order 5 ===
+  fields fitted        800
+  R^2  median 0.9975   p10 0.9951   min 0.9809
+  surface peak-to-valley  median 18.1 rad   p95 23.6 rad   max 492.9 rad
+  sideband conjugated  577 / 800 fields   (median |skewness| 2.41)
+  detrended agreement  median +0.920   min -0.006
+  usable fields        780 / 800   (span limit 45 rad, agreement >= 0.50)
+  rejected: 20 for surface magnitude (unwrapping failures), 0 for disagreeing with the delivered phase
+    NCI_Blebbistatin_5uM_11               388 rad   R^2 1.000   surface 388 rad exceeds 45 rad
+    NCI_Blebbistatin_5uM_36               438 rad   R^2 1.000   surface 438 rad exceeds 45 rad
+    NCI_Staurosporine_100nM_35            404 rad   R^2 1.000   surface 404 rad exceeds 45 rad
+    NCI_Staurosporine_100nM_42            399 rad   R^2 1.000   surface 399 rad exceeds 45 rad
+    NCI_rotenone_500nM_39                 417 rad   R^2 1.000   surface 417 rad exceeds 45 rad
+    SNU_01                                484 rad   R^2 1.000   surface 484 rad exceeds 45 rad
+    ... and 14 more
+    Note their R^2: a perfect fit to a broken unwrap still scores 1.000,
+    which is exactly why the gate is the surface magnitude and the
+    detrended agreement, and not R^2.
+  surfaces -> data/aberration.json
+  per-image quality -> runs/aberration_fit.csv
+
+  -> the difference between the raw reconstruction and the delivered
+     phase IS a smooth surface, as the acquiring group described. The
+     forward model can now restore it, and z should become identifiable:
+     re-run scripts/calibrate_z.py.

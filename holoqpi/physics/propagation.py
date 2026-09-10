@@ -170,21 +170,15 @@ def unpad(x: torch.Tensor, pad: int) -> torch.Tensor:
 # carrier estimation for off-axis
 # ---------------------------------------------------------------------------
 def estimate_carrier(
-<<<<<<< Updated upstream
-    hologram: torch.Tensor, dc_exclusion_px: int = 60
-=======
     hologram: torch.Tensor,
     dc_exclusion_px: int | None = None,
     dc_exclusion_frac: float = 0.13,
->>>>>>> Stashed changes
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Locate the off-axis carrier as the brightest non-DC spectral peak.
 
     Returns normalised frequencies (fy, fx) in cycles per pixel, one pair per
     sample. The reference tilt is a property of the optical setup rather than of
     the specimen, so it is read from the measurement itself and never learned.
-<<<<<<< Updated upstream
-=======
 
     Two details are not optional.
 
@@ -208,7 +202,6 @@ def estimate_carrier(
     a small enough crop it masks out the carrier itself, leaving the search to
     return noise. ``dc_exclusion_px`` still overrides it where an absolute value
     is genuinely wanted.
->>>>>>> Stashed changes
     """
     batch, _, height, width = hologram.shape
     spectrum = fft.fftshift(fft.fft2(hologram.float()), dim=(-2, -1))
@@ -218,14 +211,6 @@ def estimate_carrier(
     grid_y = torch.arange(height, device=hologram.device).view(-1, 1)
     grid_x = torch.arange(width, device=hologram.device).view(1, -1)
     radius = torch.hypot((grid_y - centre_y).float(), (grid_x - centre_x).float())
-<<<<<<< Updated upstream
-    magnitude = magnitude.masked_fill(radius.unsqueeze(0) < dc_exclusion_px, 0.0)
-
-    flat = magnitude.reshape(batch, -1).argmax(dim=1)
-    peak_y = (flat // width).float() - centre_y
-    peak_x = (flat % width).float() - centre_x
-    return peak_y / height, peak_x / width
-=======
     exclusion = (
         float(dc_exclusion_px) if dc_exclusion_px is not None
         else dc_exclusion_frac * 0.5 * min(height, width)
@@ -323,7 +308,6 @@ def _polish_carrier(
         window_y /= steps / 2.0
         window_x /= steps / 2.0
     return best_y, best_x
->>>>>>> Stashed changes
 
 
 def reference_wave(

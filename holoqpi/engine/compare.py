@@ -62,7 +62,8 @@ COMPARISON_METRICS = [
 ]
 
 
-def run_single_modality(cfg: Config, modality: str, train: bool = True) -> dict:
+def run_single_modality(cfg: Config, modality: str, train: bool = True,
+                        init_from: str | None = None) -> dict:
     """Train (optionally) and evaluate one arm; returns its test metrics."""
     cfg = cfg.merged({"data": {"modality": modality}})
     device = resolve_device(cfg.get("device", "auto"))
@@ -77,6 +78,14 @@ def run_single_modality(cfg: Config, modality: str, train: bool = True) -> dict:
 
     loaders = build_dataloaders(cfg)
     model = build_model(cfg)
+
+    # Fine-tuning starts from a shared pretrained checkpoint so that a
+    # difference between experiment conditions is attributable to the objective
+    # under test rather than to independent pretraining runs.
+    if init_from:
+        LOGGER.info("initialising weights from %s", init_from)
+        load_checkpoint(model, init_from, device, strict=False)
+        (run_dir / "initialised_from.txt").write_text(str(Path(init_from).resolve()) + "\n")
 
     if train:
         trainer = Trainer(model, cfg, loaders, device, run_dir)
@@ -105,11 +114,13 @@ def run_single_modality(cfg: Config, modality: str, train: bool = True) -> dict:
     return evaluation["metrics"]
 
 
-def compare_modalities(cfg: Config, modalities: list[str], train: bool = True) -> dict:
+def compare_modalities(cfg: Config, modalities: list[str], train: bool = True,
+                       init_from: str | None = None) -> dict:
     """Run every arm and write the head-to-head comparison table."""
     results: dict[str, dict] = {}
     for modality in modalities:
-        results[modality] = run_single_modality(cfg, modality, train=train)
+        results[modality] = run_single_modality(cfg, modality, train=train,
+                                                init_from=init_from)
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 

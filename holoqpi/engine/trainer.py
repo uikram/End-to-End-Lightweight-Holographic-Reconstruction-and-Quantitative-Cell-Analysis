@@ -283,17 +283,14 @@ class Trainer:
                 "phase": batch["phase"].to(self.device, non_blocking=True),
                 "mask": batch["mask"].to(self.device, non_blocking=True),
                 "condition": batch["condition"].to(self.device, non_blocking=True),
-<<<<<<< Updated upstream
-                # The forward-model term compares against the measurement itself,
-                # so the input has to reach the loss as well as the network.
-                "hologram": hologram,
-=======
                 # The forward-model term compares against the measurement
                 # itself, so the RAW intensity has to reach the loss. The
                 # network gets the normalised version; the physics does not.
                 "hologram": hologram,
                 "hologram_raw": batch["hologram_raw"].to(self.device, non_blocking=True),
->>>>>>> Stashed changes
+                "aberration": batch["aberration"].to(self.device, non_blocking=True),
+                "aberration_valid": batch["aberration_valid"].to(self.device),
+                "instances": batch["instances"].to(self.device),
             }
 
             with torch.autocast(

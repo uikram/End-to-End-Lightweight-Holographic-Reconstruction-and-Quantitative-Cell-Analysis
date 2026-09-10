@@ -26,6 +26,7 @@ paths:
   manual_mask_dir: null                 # set to a folder of manual annotations to override mask_dir
   splits_file: splits.json              # relative to data_root
   manifest_file: manifest.csv           # relative to data_root
+  aberration_file: aberration.json      # relative to data_root; see optics.aberration
   output_root: runs
 
 # -----------------------------------------------------------------------------
@@ -58,9 +59,50 @@ formats:
 optics:
   wavelength_um: 0.666                  # illumination wavelength
   refraction_increment_ml_per_g: 0.185  # alpha, specific refraction increment
+  # Literature range for alpha, propagated onto ABSOLUTE dry mass by
+  # scripts/mass_uncertainty.py. Zhao, Brown & Schuck (Biophys. J. 2011) give a
+  # protein mean of 0.190 mL/g (SD 0.003) spanning 0.173-0.215; Chaumet et al.
+  # (Light Sci. Appl. 2024) give 0.18-0.21 for biological media.
+  #
+  # This band does NOT apply to dry_mass_mape or to the mass ratio. The same
+  # alpha multiplies the predicted and the reference mass, so it cancels from
+  # every relative quantity exactly; selftest.py asserts that invariance.
+  refraction_increment_range_ml_per_g: [0.173, 0.215]
   pixel_pitch_x_um: 0.284871            # dx in the reconstructed phase plane
   pixel_pitch_y_um: 0.211994            # dy in the reconstructed phase plane
   trust_header_pitch: false             # true -> take dx, dy from each .bin header
+
+  aberration:
+    # The delivered phase maps have already had aberration correction,
+    # background subtraction and unwrapping applied, so they are NOT raw
+    # reconstructions. The forward model must reproduce the hologram that was
+    # actually recorded, and that hologram still carries the removed surface.
+    # scripts/estimate_aberration.py recovers it; see docs/documentation.md 5b.
+    enabled: true
+    order: 5                            # order 2 explains 98.6%, order 5 explains 99.6%
+    span_tolerance_factor: 2.5          # reject surfaces this many times the median span
+    min_agreement: 0.5                  # |corr| between detrended reconstruction and delivered phase
+
+  # ---------------------------------------------------------------------------
+  # Off-axis conjugate sideband.
+  #
+  # The two first-order sidebands are conjugates of equal magnitude, so a
+  # spectral argmax picks between them arbitrarily and the choice flips between
+  # fields of one acquisition. The wrong one returns the negated phase. The
+  # sideband is chosen instead by a physical prior -- cells add optical path, so
+  # a detrended field of cells is right-skewed -- which needs no reference and
+  # so applies at inference time too.
+  #
+  # detrend_order MUST be at least 2. The objective's curvature is a quadratic
+  # bowl of tens of radians whose own skewness exceeds the cells' few radians:
+  # measured on this dataset, order 0 (raw unwrapped) picks the wrong sideband
+  # on 13/13 fields and order 1 on 13/13, while order 2 is correct on 13/13.
+  # ---------------------------------------------------------------------------
+  conjugate:
+    enabled: true
+    detrend_order: 2                    # surface removed before measuring skewness; >= 2
+    min_skewness: 0.2                   # below this the field is left as-is and flagged
+
   warn_on_header_pitch_mismatch: true
   header_pitch_tolerance_um: 0.001
 
@@ -80,6 +122,10 @@ data:
   pin_memory: true
   drop_last: true
   cache_in_memory: false
+  # Reference instance labels travel with each sample so the per-cell
+  # integrated-phase term has fixed integration domains. Costs one connected-
+  # component pass per sample load.
+  provide_instances: true
 
   split:
     train: 0.70
@@ -125,6 +171,17 @@ mask_generation:
   max_object_area_um2: 6000.0
   fill_holes: true
   binary_closing_px: 2
+  # Truncated-object exclusion. Objects reaching within this many pixels of the
+  # field edge are dropped, because a cell crossing the sensor boundary has a
+  # physically incomplete area and integrated phase. null disables the step.
+  #
+  # 0 means "touching the edge" and is the right value here: it costs 0 of 315
+  # cells on the current masks, because binary_closing already removes anything
+  # that touches. Larger buffers are expensive and unjustified -- 4 px costs
+  # 25.1% of all cells, 34 px costs 35.2% -- and the illumination fall-off they
+  # would target (measurable out to ~34 px) never reaches these masks anyway.
+  # See holoqpi/data/masks.py for the stage-by-stage measurement.
+  border_buffer_px: 0
   watershed_min_distance_px: 15
   overwrite_existing: false
 
@@ -139,6 +196,11 @@ model:
   decoder_channels: [256, 128, 64, 32]
   segmentation_classes: 2               # background + cell
   condition_classes: 5
+  # false removes the drug-condition head and its parameters entirely. The v2
+  # study does not use it: measured across three runs its accuracy varied by
+  # +/-9.5 points on the off-axis arm, wider than any difference it was used to
+  # claim, and the research question does not involve it.
+  classifier_enabled: true
   classifier_hidden: 128
   classifier_dropout: 0.2
   share_decoder: false                  # true -> one trunk with two 1x1 output heads
@@ -151,6 +213,9 @@ model:
     dc_exclusion_px: 60
     output: amplitude_phase             # amplitude_phase | real_imag
     detach: true                        # treat the front end as a fixed preprocessing stage
+    resolve_conjugate: true             # fix the arbitrary sideband choice (see optics.conjugate)
+    conjugate_detrend_order: 2          # >= 2; see optics.conjugate.detrend_order
+    conjugate_min_skewness: 0.2
 
   amplitude:
     # Transmitted amplitude at the sample plane. Only used by the forward-model
@@ -183,12 +248,32 @@ loss:
     phase: 1.0
     segmentation: 1.0
     classification: 0.2
-    phase_mask_contrast: 0.1
-    boundary_gradient_alignment: 0.05
-    phase_volume: 0.1
-    forward_model: 0.0                  # see loss.forward_model; needs a known z
-    dry_mass_consistency: 0.1
-    projected_area_consistency: 0.05
+    # --- physics-aware terms -------------------------------------------------
+    # v2 defaults. Three terms from v1 are now OFF by default, each for a
+    # measured reason rather than for simplification; see docs/documentation.md.
+    #
+    #   phase_mask_contrast   the measured cell-background phase gap is 1.37 rad
+    #                         (range 0.75-2.00 over 13 fields), 13.7x the 0.1 rad
+    #                         hinge margin, so the hinge is satisfied in 13/13
+    #                         fields from the first epoch. Its logged value was
+    #                         exactly 0.00000 throughout every v1 run. Inert at
+    #                         any defensible margin, not a tuning problem.
+    #
+    #   dry_mass_consistency  acts on the same per-image ratio as phase_volume
+    #                         (dry mass is a fixed multiple of the phase
+    #                         integral), differing only in penalty shape. Keeping
+    #                         both double-weights one constraint.
+    #
+    #   phase_volume          superseded by cell_integrated_phase, which is the
+    #                         same constraint without the image-level
+    #                         cancellation between over- and under-measured cells.
+    phase_mask_contrast: 0.0
+    boundary_gradient_alignment: 0.0    # ablated in experiment C, not assumed
+    phase_volume: 0.0                   # superseded by cell_integrated_phase
+    cell_integrated_phase: 0.0          # experiment B raises this; A is the baseline
+    forward_model: 0.0                  # diagnostic only; see loss.forward_model
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.05    # measurement consistency, not a physics constraint
 
   phase:
     l1: 1.0
@@ -223,15 +308,10 @@ loss:
   # then still reported as a metric wherever a distance is available.
   # ---------------------------------------------------------------------------
   forward_model:
-    distance_um: null                   # sample-to-sensor distance, micrometres
-<<<<<<< Updated upstream
-    criterion: correlation              # correlation | l1 | l2
-    feature_um: 1.0                     # smallest object feature, sets the pad width
-    pad_px: null                        # null = derived from distance and feature_um
-    border_px: null                     # null = same as pad_px; margin dropped from the residual
-    reference_ratio: 1.0                # off-axis reference amplitude relative to the object beam
-    dc_exclusion_px: 60                 # carrier search excludes this radius around DC
-=======
+    distance_um: 33.77                  # micrometres, supplied by the acquiring group
+    #   Confirmed by the group that recorded the data. Do not replace it with a
+    #   searched value: the search minimises an approximate operator and will
+    #   happily prefer a distance that fits the operator's error instead.
     learn_distance: false               # true -> refine z by gradient descent from distance_um
     criterion: l2                       # l2 | l1 | correlation
     fit_radiometry: true                # fit gain, offset and reference ratio per image
@@ -240,7 +320,23 @@ loss:
     border_px: null                     # null = same as pad_px; margin dropped from the residual
     dc_exclusion_frac: 0.13             # carrier search ignores this fraction of the field around DC
     dc_exclusion_px: null               # absolute override; null uses the fraction above
->>>>>>> Stashed changes
+    # Margin in residual units below which a discrimination test is called
+    # noise rather than signal. scripts/calibrate_z.py reads it to decide
+    # whether the term is usable, marginal or anti-discriminative.
+    discrimination_tolerance: 0.01
+    # Fields the discrimination test averages over. A residual varies more
+    # between fields than between a true phase and a mildly degraded one, so a
+    # handful of images cannot decide the verdict; the test also runs a
+    # per-field sign test and requires the degraded phase to score worse in at
+    # least discrimination_win_rate of them (chance is 0.5).
+    discrimination_batches: 32
+    discrimination_win_rate: 0.75
+    # Calibration probe: the reference phase is multiplied by s and the
+    # residual minimised over s. s = 1 means the operator reproduces the
+    # measured hologram at the phase that was delivered.
+    scale_probe_min: 0.2
+    scale_probe_max: 1.6
+    scale_probe_steps: 29
 
   physics:
     pmc_margin: 0.1
@@ -254,6 +350,10 @@ loss:
     # crops are excluded. 512 px is roughly one cell at the configured pitch,
     # matching mask_generation.min_object_area_um2.
     min_foreground_pixels: 512
+    # A cell whose reference phase integral falls below this is skipped by the
+    # per-cell term: the relative error of a near-zero denominator is
+    # meaningless and would dominate the batch. In radians summed over pixels.
+    cell_min_reference_rad: 50.0
     max_relative_error: 10.0            # per-term cap; null disables
 
 # -----------------------------------------------------------------------------
@@ -292,6 +392,42 @@ training:
 # Evaluation and per-cell measurement
 # -----------------------------------------------------------------------------
 evaluation:
+  # Repeated training runs of the same configuration, so that ablation
+  # differences can be compared against the spread between identical runs
+  # instead of being read off a single number. scripts/aggregate_seeds.py.
+  seed_replication:
+    seeds: [1337, 2024]                 # in addition to project.seed
+    # A difference must exceed this multiple of the pooled between-seed spread
+    # before it is called resolved. 2.0 is deliberately conservative: with 113
+    # test fields and five classes the standard error on accuracy alone is about
+    # 4.5 points, larger than every classification difference observed so far.
+    resolve_factor: 2.0
+    metrics:
+      - phase_mae_rad
+      - phase_pearson_r
+      - seg_dice
+      - seg_aji
+      - seg_boundary_f1
+      - cls_accuracy
+      - dry_mass_mape
+      - area_mape
+      - detection_f1
+
+  # Classical reconstruction baseline (scripts/conventional_baseline.py).
+  conventional_baseline:
+    # Gerchberg-Saxton iterations for the in-line arm, with a non-negative
+    # absorption constraint at the sample plane. Measured on this dataset they
+    # do not rescue the in-line reconstruction at z = 34 um -- the object is
+    # essentially in focus, so there is no phase-to-intensity conversion for the
+    # iteration to exploit -- but running them is what makes the comparison fair
+    # rather than a strawman, so the number is recorded with the result.
+    gs_iterations: 20
+    # Polynomial order for numerical aberration removal, fitted to background
+    # pixels. Order 1 removes only the reference tilt and leaves the objective's
+    # curvature; order 3 is where the recovered in-cell contrast matches the
+    # reference on this objective.
+    aberration_order: 3
+
   segmentation:
     boundary_tolerance_px: 2
     instance_from: watershed            # watershed | connected_components

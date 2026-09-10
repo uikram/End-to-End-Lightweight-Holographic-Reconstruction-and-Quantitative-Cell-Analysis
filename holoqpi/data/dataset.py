@@ -19,6 +19,7 @@ from ..config import Config
 from ..utils import get_logger
 from . import io as data_io
 from .augment import GeometricAugmentation, center_crop, random_crop
+from .masks import split_instances
 from .metadata import LabelSchema, SampleMetadata
 from .splits import load_splits
 
@@ -48,6 +49,26 @@ class HologramQPIDataset(Dataset):
         self.align = data_cfg.align
         self.normalisation = data_cfg.hologram_normalisation
         self.phase_format = cfg.formats.phase_binary
+
+        # The surface the acquiring group subtracted from the delivered phase.
+        # The forward-model term has to add it back before propagating, because
+        # the recorded hologram still contains it.
+        self.aberration = (
+            data_io.load_aberration(self.data_root / cfg.paths.aberration_file)
+            if cfg.optics.aberration.enabled else None
+        )
+        if cfg.optics.aberration.enabled and self.aberration is None:
+            LOGGER.warning(
+                "optics.aberration.enabled is true but %s is missing. The forward-model "
+                "term will treat the delivered phase as a raw reconstruction, which it "
+                "is not, and no propagation distance will fit. Run "
+                "`python scripts/estimate_aberration.py --config <cfg>` first.",
+                self.data_root / cfg.paths.aberration_file,
+            )
+
+        self.provide_instances = bool(data_cfg.provide_instances)
+        self.instance_method = cfg.evaluation.segmentation.instance_from
+        self.watershed_min_distance = cfg.mask_generation.watershed_min_distance_px
 
         crop = data_cfg.train_crop if split == "train" else data_cfg.eval_size
         self.crop_size = crop
@@ -108,6 +129,30 @@ class HologramQPIDataset(Dataset):
 
         mask = data_io.read_mask(data_io.mask_path(self.data_root, self.cfg, stem))
 
+        # Reference instance labelling, computed once per field. The per-cell
+        # integrated-phase term integrates over these regions, so they must be
+        # the SAME regions throughout training -- deriving them from the
+        # prediction would let the term be satisfied by moving boundaries rather
+        # than by correcting the measurement.
+        #
+        # Connected components rather than watershed: watershed on a 900 px
+        # field costs more than a forward pass and would be repeated every
+        # epoch. Two touching cells are then integrated as one region, which
+        # makes the constraint coarser but never wrong -- a merged region is
+        # still a legitimate domain over which the integral must be preserved.
+        # Evaluation still uses watershed, so the reported per-cell metrics are
+        # unaffected by this choice.
+        if self.provide_instances:
+            instances = split_instances(
+                (mask > 0).astype(np.uint8), self.instance_method,
+                self.watershed_min_distance,
+            ).astype(np.int32)
+        else:
+            instances = np.zeros_like(mask, dtype=np.int32)
+        surface, surface_valid = data_io.render_aberration(
+            self.aberration, stem, phase.shape[0], phase.shape[1]
+        )
+
         if phase.shape != hologram.shape or mask.shape != phase.shape:
             raise ValueError(
                 f"{stem}: shape mismatch after alignment "
@@ -115,41 +160,69 @@ class HologramQPIDataset(Dataset):
             )
 
         arrays = (hologram.astype(np.float32), phase.astype(np.float32),
-                  mask.astype(np.int64), hologram_raw.astype(np.float32))
+                  mask.astype(np.int64), hologram_raw.astype(np.float32),
+                  surface.astype(np.float32), instances, bool(surface_valid))
         if self._cache is not None:
             self._cache[index] = arrays
         return arrays
 
     def __getitem__(self, index: int) -> dict:
         meta = self.samples[index]
-        hologram, phase, mask, hologram_raw = self._load_arrays(index)
+        (hologram, phase, mask, hologram_raw, surface, instances,
+         surface_valid) = self._load_arrays(index)
 
+        # The aberration surface travels with the other arrays through cropping
+        # and augmentation. Rendering it on the full field and then cropping it
+        # keeps it registered to the hologram; rendering it on the crop's own
+        # coordinates would silently re-centre the bowl on every crop.
+        stack = [hologram, phase, mask, hologram_raw, surface, instances]
         if self.crop_size:
-            if self.split == "train":
-                hologram, phase, mask, hologram_raw = random_crop(
-                    [hologram, phase, mask, hologram_raw], self.crop_size, self._rng
-                )
-            else:
-                hologram, phase, mask, hologram_raw = center_crop(
-                    [hologram, phase, mask, hologram_raw], self.crop_size
-                )
-
+            stack = (random_crop(stack, self.crop_size, self._rng)
+                     if self.split == "train"
+                     else center_crop(stack, self.crop_size))
         if self.augment is not None:
-            hologram, phase, mask, hologram_raw = self.augment(
-                hologram, phase, mask, hologram_raw
-            )
+            stack = self.augment(*stack)
+        hologram, phase, mask, hologram_raw, surface, instances = stack
+        # Cropping can leave gaps in the label sequence; the loss scatters into
+        # one bin per label value, so they must stay dense and start at 1.
+        instances = _relabel_dense(instances)
 
         return {
             "hologram": torch.from_numpy(np.ascontiguousarray(hologram)).unsqueeze(0).float(),
             "hologram_raw": torch.from_numpy(
                 np.ascontiguousarray(hologram_raw)
             ).unsqueeze(0).float(),
+            "aberration": torch.from_numpy(
+                np.ascontiguousarray(surface)
+            ).unsqueeze(0).float(),
+            # False where the surface could not be recovered, so the
+            # forward-model term can skip the field instead of being handed a
+            # phase error larger than the signal.
+            "aberration_valid": torch.tensor(bool(surface_valid)),
             "phase": torch.from_numpy(np.ascontiguousarray(phase)).unsqueeze(0).float(),
             "mask": torch.from_numpy(np.ascontiguousarray(mask)).long(),
+            "instances": torch.from_numpy(np.ascontiguousarray(instances)).long(),
             "condition": torch.tensor(meta.condition_id, dtype=torch.long),
             "cell_line": torch.tensor(meta.cell_line_id, dtype=torch.long),
             "stem": meta.stem,
         }
+
+
+def _relabel_dense(instances: np.ndarray) -> np.ndarray:
+    """Renumber instance labels to 1..N with no gaps.
+
+    A random crop can remove whole cells and leave the surviving labels sparse
+    (say 3, 7, 12). The loss allocates one accumulator bin per label value, so a
+    sparse set would allocate bins for cells that are no longer present and
+    average the per-cell error over the wrong denominator.
+    """
+    present = np.unique(instances)
+    present = present[present != 0]
+    if present.size == 0:
+        return np.zeros_like(instances, dtype=np.int32)
+    lookup = np.zeros(int(instances.max()) + 1, dtype=np.int32)
+    lookup[present] = np.arange(1, present.size + 1, dtype=np.int32)
+    return lookup[instances]
 
 
 def _seed_worker(worker_id: int) -> None:

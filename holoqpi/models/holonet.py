@@ -73,11 +73,21 @@ class HoloQPINet(nn.Module):
         self.segmentation_head = SegmentationHead(
             trunk_channels, head_hidden, model_cfg.segmentation_classes
         )
-        self.condition_classifier = ConditionClassifier(
-            in_channels=encoder_channels[-1],
-            hidden=model_cfg.classifier_hidden,
-            num_classes=model_cfg.condition_classes,
-            dropout=model_cfg.classifier_dropout,
+        # The drug-condition head is optional. Measured over three runs of the
+        # same configuration its accuracy varied by +/- 9.5 points on the
+        # off-axis arm, larger than every difference the v1 study reported from
+        # it, and it is not part of the v2 research question. Disabling it
+        # removes the parameters entirely rather than merely zeroing its loss
+        # weight, so the parameter count and the exported graph reflect the
+        # model actually being studied.
+        self.condition_classifier = (
+            ConditionClassifier(
+                in_channels=encoder_channels[-1],
+                hidden=model_cfg.classifier_hidden,
+                num_classes=model_cfg.condition_classes,
+                dropout=model_cfg.classifier_dropout,
+            )
+            if model_cfg.classifier_enabled else None
         )
 
         if model_cfg.lora.enabled:
@@ -104,9 +114,9 @@ class HoloQPINet(nn.Module):
         segmentation = self._to_input_size(
             self.segmentation_head(segmentation_trunk), padding, original_size
         )
-        condition = self.condition_classifier(features[-1])
-
-        outputs = {"phase": phase, "segmentation": segmentation, "condition": condition}
+        outputs = {"phase": phase, "segmentation": segmentation}
+        if self.condition_classifier is not None:
+            outputs["condition"] = self.condition_classifier(features[-1])
         if self.amplitude_head is not None:
             outputs["amplitude"] = self._to_input_size(
                 self.amplitude_head(phase_trunk), padding, original_size

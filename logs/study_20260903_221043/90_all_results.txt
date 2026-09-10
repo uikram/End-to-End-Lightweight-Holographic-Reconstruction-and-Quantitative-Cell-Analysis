@@ -1,0 +1,4519 @@
+########## MODALITY COMPARISON TABLES ##########
+
+===== runs/base_modality_comparison.csv =====
+metric,off_axis,gabor,difference
+phase_mae_rad,0.16390863416996676,0.18464395654412497,-0.020735322374158205
+phase_rmse_rad,0.25084837338544397,0.2831537807001814,-0.03230540731473741
+phase_psnr_db,30.856986172638223,29.82234073522011,1.0346454374181135
+phase_ssim,0.6237762242028143,0.5780981235799536,0.04567810062286071
+phase_pearson_r,0.8646800523310636,0.7931819441274995,0.07149810820356406
+phase_mae_rad_in_cell,0.29112822819600065,0.3740863265980661,-0.08295809840206547
+phase_bias_rad_in_cell,-0.20553678870860453,-0.24092459149526813,0.03538780278666359
+phase_mae_rad_background,0.14570566490951892,0.15797147088873703,-0.012265805979218114
+seg_dice,0.8284561141732348,0.7575932986936844,0.07086281547955042
+seg_iou,0.7071490229225078,0.6097788251601678,0.09737019776234002
+seg_aji,0.6615827435140396,0.5618122808753363,0.09977046263870326
+seg_boundary_f1,0.43722211399474475,0.28630787751827447,0.1509142364764703
+cls_accuracy,0.584070796460177,0.7787610619469026,-0.19469026548672563
+cls_macro_f1,0.5647480977465505,0.7836170957601827,-0.21886899801363213
+area_mape,0.1574118518465202,0.1738925563364597,-0.01648070448993949
+area_cell_pearson_r,0.8857211112489422,0.8437321617542821,0.04198894949466003
+area_image_pearson_r,0.8182849257880167,0.7792292643622581,0.03905566142575856
+area_relative_bias,0.05282644720150367,0.04642243555263591,0.006404011648867766
+optical_volume_mape,0.1826678752466372,0.23560107460296134,-0.05293319935632415
+dry_mass_mape,0.1826678752466372,0.23560107460296129,-0.052933199356324095
+dry_mass_cell_pearson_r,0.9210114954936243,0.8640877221127741,0.056923773380850196
+dry_mass_image_pearson_r,0.9511332291433814,0.8997804960921824,0.05135273305119903
+dry_mass_relative_bias,-0.03042295708159685,-0.022856485240834366,-0.007566471840762486
+dry_mass_loa_lower,-0.2217752534424773,-0.30895106578067794,0.08717581233820063
+dry_mass_loa_upper,0.16092933927928363,0.26323809529900916,-0.10230875601972553
+cells_reference,3045,3045,0.0
+cells_detected,2163,2116,47.0
+cells_matched,1847,1683,164.0
+detection_recall,0.606568144499179,0.5527093596059113,0.053858784893267675
+detection_precision,0.8539066111881646,0.7953686200378072,0.058537991150357405
+detection_f1,0.7092933947772658,0.6521991862042239,0.05709420857304193
+
+===== runs/classification_only_modality_comparison.csv =====
+metric,off_axis,gabor,difference
+phase_mae_rad,0.48113404174821567,0.4748142034606596,0.006319838287556057
+phase_rmse_rad,0.6843805349959088,0.6699321652240708,0.014448369771837943
+phase_psnr_db,21.73423243368421,21.911759534924652,-0.17752710124044313
+phase_ssim,0.17052378643930485,0.17364140257107474,-0.0031176161317698903
+phase_pearson_r,-0.01043857462535225,0.08251864570337224,-0.09295722032872449
+phase_mae_rad_in_cell,1.3995097379768844,1.3234871383261892,0.07602259965069513
+phase_bias_rad_in_cell,-1.3991950011886327,-1.322216345145639,-0.0769786560429937
+phase_mae_rad_background,0.3424859537487536,0.34610104745468206,-0.0036150937059284405
+seg_dice,0.20041612749424606,0.14215613003770405,0.058259997456542006
+seg_iou,0.11136803933188474,0.07651672583261222,0.03485131349927252
+seg_aji,0.026949800463959908,0.015823698262727816,0.011126102201232092
+seg_boundary_f1,0.06253300189220777,0.055301342949550934,0.0072316589426568365
+cls_accuracy,0.5929203539823009,0.7610619469026548,-0.1681415929203539
+cls_macro_f1,0.5228820473052513,0.762445700258138,-0.23956365295288662
+area_mape,0.29320619785458885,0.4468580294802172,-0.15365183162562834
+area_cell_pearson_r,nan,nan,nan
+area_image_pearson_r,nan,nan,nan
+area_relative_bias,-0.3435754189944135,-0.5754245754245754,0.23184915643016185
+optical_volume_mape,1.5817570827948195,1.6102558696264673,-0.02849878683164775
+dry_mass_mape,1.5817570827948195,1.6102558696264675,-0.02849878683164797
+dry_mass_cell_pearson_r,nan,nan,nan
+dry_mass_image_pearson_r,nan,nan,nan
+dry_mass_relative_bias,-7.563820056366167,-8.263143658292892,0.699323601926725
+dry_mass_loa_lower,-7.563820056366167,-8.263143658292892,0.699323601926725
+dry_mass_loa_upper,-7.563820056366167,-8.263143658292892,0.699323601926725
+cells_reference,3045,3045,0.0
+cells_detected,11463,3731,7732.0
+cells_matched,1,1,0.0
+detection_recall,0.0003284072249589491,0.0003284072249589491,0.0
+detection_precision,8.723719794120213e-05,0.0002680246582685607,-0.00018078746032735858
+detection_f1,0.00013785497656465398,0.00029515938606847696,-0.00015730440950382298
+
+===== runs/no_measurement_modality_comparison.csv =====
+metric,off_axis,gabor,difference
+phase_mae_rad,0.16362276040347276,0.184270903270329,-0.020648142866856234
+phase_rmse_rad,0.2515869899656163,0.2831699039587937,-0.03158291399317742
+phase_psnr_db,30.826576545649367,29.834981453267662,0.9915950923817043
+phase_ssim,0.6220606883278991,0.5793220209600651,0.04273866736783394
+phase_pearson_r,0.8638913953198796,0.7944791895807185,0.06941220573916107
+phase_mae_rad_in_cell,0.296617615011941,0.37626499952995673,-0.07964738451801573
+phase_bias_rad_in_cell,-0.21767924943592695,-0.23199357382491625,0.014314324388989302
+phase_mae_rad_background,0.14436469319383655,0.15731483612176592,-0.01295014292792937
+seg_dice,0.8259251898753612,0.7611941067788126,0.06473108309654863
+seg_iou,0.7034689636069118,0.6144579315808133,0.0890110320260985
+seg_aji,0.6573010407235707,0.5640587634159043,0.09324227730766632
+seg_boundary_f1,0.4282421911064482,0.2923831913758596,0.13585899973058857
+cls_accuracy,0.6814159292035398,0.8407079646017699,-0.15929203539823011
+cls_macro_f1,0.6618239810779635,0.8407552084247868,-0.17893122734682332
+area_mape,0.15971542391124355,0.17301747722089858,-0.013302053309655032
+area_cell_pearson_r,0.8828499308932354,0.8524947771038474,0.030355153789388023
+area_image_pearson_r,0.8155431013416256,0.8383875916409879,-0.022844490299362308
+area_relative_bias,0.06198631305285961,0.0596127558844901,0.002373557168369504
+optical_volume_mape,0.18304791385624294,0.23071811645332369,-0.04767020259708074
+dry_mass_mape,0.18304791385624294,0.2307181164533237,-0.04767020259708077
+dry_mass_cell_pearson_r,0.9177799580596943,0.8693367564020049,0.04844320165768934
+dry_mass_image_pearson_r,0.9385468659084776,0.9226257670526974,0.01592109885578019
+dry_mass_relative_bias,-0.05024456430694191,-0.004101027066505763,-0.04614353724043614
+dry_mass_loa_lower,-0.28350347292771083,-0.27023388597758574,-0.01326958695012509
+dry_mass_loa_upper,0.183014344313827,0.2620318318445742,-0.0790174875307472
+cells_reference,3045,3045,0.0
+cells_detected,2166,2181,-15.0
+cells_matched,1840,1708,132.0
+detection_recall,0.6042692939244664,0.5609195402298851,0.04334975369458127
+detection_precision,0.8494921514312096,0.7831270059605685,0.0663651454706411
+detection_f1,0.7061984264056803,0.6536548029085343,0.05254362349714603
+
+===== runs/no_physics_modality_comparison.csv =====
+metric,off_axis,gabor,difference
+phase_mae_rad,0.16183974435635373,0.18397385027028818,-0.022134105913934443
+phase_rmse_rad,0.24800553235475725,0.2821394773756238,-0.03413394502086653
+phase_psnr_db,30.92904032352557,29.848347989285045,1.0806923342405241
+phase_ssim,0.6258853749100086,0.5791506727712344,0.046734702138774176
+phase_pearson_r,0.8657661866297764,0.7950014103846872,0.07076477624508926
+phase_mae_rad_in_cell,0.28507652760079477,0.3816722429695383,-0.0965957153687435
+phase_bias_rad_in_cell,-0.19370908474763937,-0.26374551846513905,0.07003643371749968
+phase_mae_rad_background,0.14414978620752825,0.156212880218451,-0.012063094010922759
+seg_dice,0.8276026363374619,0.7614238437789885,0.06617879255847336
+seg_iou,0.7059062583969427,0.6147573889216065,0.09114886947533618
+seg_aji,0.6622193454782573,0.5655395981853535,0.09667974729290385
+seg_boundary_f1,0.43524633080906383,0.2925158092846731,0.14273052152439075
+cls_accuracy,0.5752212389380531,0.7699115044247787,-0.19469026548672563
+cls_macro_f1,0.5416135803497457,0.7674668464100469,-0.2258532660603012
+area_mape,0.15929472049196863,0.17290028059829934,-0.01360556010633071
+area_cell_pearson_r,0.8878164729567906,0.8608566977046511,0.02695977525213944
+area_image_pearson_r,0.8009627457454781,0.8026454348755082,-0.0016826891300301128
+area_relative_bias,0.06266751423669346,0.06910440684330162,-0.006436892606608152
+optical_volume_mape,0.1828152543169963,0.2338712212659564,-0.05105596694896011
+dry_mass_mape,0.18281525431699633,0.2338712212659564,-0.051055966948960085
+dry_mass_cell_pearson_r,0.9203576746180164,0.8675655686128456,0.052792106005170814
+dry_mass_image_pearson_r,0.9183053239241016,0.8940674484790079,0.024237875445093704
+dry_mass_relative_bias,-0.027230440860676063,-0.057894384031449496,0.030663943170773433
+dry_mass_loa_lower,-0.25181087680957726,-0.35935204011508737,0.10754116330551011
+dry_mass_loa_upper,0.19734999508822515,0.2435632720521884,-0.04621327696396324
+cells_reference,3045,3045,0.0
+cells_detected,2155,2164,-9.0
+cells_matched,1854,1704,150.0
+detection_recall,0.6088669950738916,0.5596059113300492,0.049261083743842415
+detection_precision,0.8603248259860788,0.7874306839186691,0.07289414206740974
+detection_f1,0.7130769230769229,0.6542522557112689,0.05882466736565406
+
+===== runs/physics_coupling_only_modality_comparison.csv =====
+metric,off_axis,gabor,difference
+phase_mae_rad,0.1645415185299595,0.18449816490169121,-0.019956646371731723
+phase_rmse_rad,0.25031434225323634,0.28351459751821995,-0.0332002552649836
+phase_psnr_db,30.80881744720514,29.825041754227055,0.9837756929780852
+phase_ssim,0.6171105348430903,0.5792343671870442,0.03787616765604607
+phase_pearson_r,0.8635606923989491,0.7941143361406516,0.06944635625829743
+phase_mae_rad_in_cell,0.29210800842373774,0.3763336009156387,-0.08422559249190098
+phase_bias_rad_in_cell,-0.205089463333113,-0.22783717392342148,0.022747710590308473
+phase_mae_rad_background,0.14647892921899272,0.1575153679710574,-0.01103643875206467
+seg_dice,0.8273553852481857,0.7609977162764495,0.06635766897173623
+seg_iou,0.7055465695574721,0.6142020287399611,0.09134454081751098
+seg_aji,0.6611242303729276,0.5631080182491777,0.09801621212374989
+seg_boundary_f1,0.4335039923383965,0.2917738804667079,0.1417301118716886
+cls_accuracy,0.5663716814159292,0.7876106194690266,-0.22123893805309736
+cls_macro_f1,0.5326674599937424,0.7868430667689124,-0.2541756067751699
+area_mape,0.1657375010393729,0.17123685415693315,-0.005499353117560252
+area_cell_pearson_r,0.8812128518283983,0.8602772621213353,0.020935589707062996
+area_image_pearson_r,0.8193975774920474,0.825404585646617,-0.00600700815456956
+area_relative_bias,0.07355719954643834,0.06651148666167345,0.007045712884764896
+optical_volume_mape,0.1863390868341912,0.23137002174563018,-0.045030934911438975
+dry_mass_mape,0.1863390868341912,0.23137002174563018,-0.045030934911438975
+dry_mass_cell_pearson_r,0.917570908182965,0.870734246963285,0.04683666121968
+dry_mass_image_pearson_r,0.930728244357385,0.9061520453681583,0.024576198989226694
+dry_mass_relative_bias,-0.02592566313486943,0.006180574192523897,-0.03210623732739333
+dry_mass_loa_lower,-0.2381529027223672,-0.26392204043602807,0.025769137713660878
+dry_mass_loa_upper,0.18630157645262832,0.27628318882107583,-0.08998161236844751
+cells_reference,3045,3045,0.0
+cells_detected,2168,2150,18.0
+cells_matched,1867,1696,171.0
+detection_recall,0.6131362889983579,0.5569786535303777,0.05615763546798025
+detection_precision,0.8611623616236163,0.7888372093023256,0.07232515232129066
+detection_f1,0.7162862075580281,0.6529355149181906,0.0633506926398375
+
+########## CONVENTIONAL BASELINE ##########
+
+===== runs/conventional_baseline_test.csv =====
+metric,off_axis,gabor
+aberration_order,3,3
+area_cell_pearson_r,0.9203772763530488,0.7868637156435178
+area_image_pearson_r,0.9027156951888454,0.7699242664618348
+area_loa_lower,-0.2223682439174039,-0.765218891846205
+area_loa_upper,0.16092753875963622,0.5203470669942195
+area_mae,41.655666948191275,76.31768140921581
+area_mape,0.14157158310906434,0.29942659742320593
+area_median_relative_bias,-0.03592887998725685,-0.18033949804647903
+area_n_cells,789,33
+area_relative_bias,-0.030720352578883826,-0.12243591242599275
+cell_count_ratio,0.31527093596059114,0.7399014778325124
+cells_detected,960,2253
+cells_false_positive,171,2220
+cells_matched,789,33
+cells_missed,2256,3012
+cells_reference,3045,3045
+circularity_cell_pearson_r,0.8708605401715659,0.22353740629708635
+circularity_image_pearson_r,0.9339923635992006,0.09218795415809572
+circularity_loa_lower,-0.06412000636395378,-0.640595685906689
+circularity_loa_upper,0.08576699213924845,0.44324452975433837
+circularity_mae,0.03915803563365329,0.15853639580020237
+circularity_mape,0.055112389064952416,0.2050617121698091
+circularity_median_relative_bias,0.005955685729454924,-0.08527410657095971
+circularity_n_cells,789,33
+circularity_relative_bias,0.010823492887647338,-0.09867557807617534
+detection_f1,0.39400749063670415,0.01245753114382786
+detection_precision,0.821875,0.014647137150466045
+detection_recall,0.25911330049261083,0.01083743842364532
+distance_um,0.0,0.0
+dry_mass_cell_pearson_r,0.9163701697430705,0.32426323274194235
+dry_mass_image_pearson_r,0.9207840855633207,0.2296517929437471
+dry_mass_loa_lower,-0.20692250337396806,0.35025714528076013
+dry_mass_loa_upper,0.23134885039701814,2.3552854097658242
+dry_mass_mae,31.818678411917293,881.6075838850259
+dry_mass_mape,0.2031491051531428,9.659131449360673
+dry_mass_median_relative_bias,0.016331710297730704,1.5952904469392322
+dry_mass_n_cells,789,33
+dry_mass_relative_bias,0.01221317351152503,1.352771277523292
+false_positive_median_area_um2,74.28085961202,92.488728858381
+gs_iterations,0,0
+missed_median_area_um2,196.814082500466,239.45008809891
+optical_volume_cell_pearson_r,0.9163701697430706,0.3242632327419424
+optical_volume_image_pearson_r,0.9207840855633205,0.2296517929437471
+optical_volume_loa_lower,-0.20692250337396811,0.3502571452807606
+optical_volume_loa_upper,0.23134885039701814,2.3552854097658242
+optical_volume_mae,55.534070192119735,1538.6955049345802
+optical_volume_mape,0.2031491051531428,9.659131449360673
+optical_volume_median_relative_bias,0.016331710297730694,1.5952904469392324
+optical_volume_n_cells,789,33
+optical_volume_relative_bias,0.012213173511525023,1.3527712775232923
+phase_bias_rad,0.0010832578424856312,0.5298156592403973
+phase_bias_rad_background,0.1791494939799742,0.7002567657211844
+phase_bias_rad_in_cell,-1.0103163579561278,-0.645200678567707
+phase_mae_rad,0.43039012060756177,3.7709941663573274
+phase_mae_rad_background,0.32401254819293995,3.7792407432488635
+phase_mae_rad_in_cell,1.1222157338551715,3.666737629249033
+phase_n_images,113,113
+phase_pearson_r,-0.0071990097650384485,-0.0018386552233780288
+phase_psnr_db,24.309321981747534,2.643498388518673
+phase_rmse_rad,0.8093111963039475,6.281562166926326
+phase_ssim,0.1307945401465471,0.012260178776135446
+reconstruction,conventional,conventional
+reconstruction_valid,False,False
+recovered_phase_contrast_rad,-0.27929437160491943,-0.15144659578800201
+seg_aji,0.2933652122656516,0.0393563936095031
+seg_boundary_f1,0.14449257400617646,0.052837087216818686
+seg_dice,0.46598615672150234,0.10259375598896894
+seg_dice_macro,0.46598615672150234,0.10259375598896894
+seg_instance_count_mape,0.6707118843338706,0.8017101699316194
+seg_iou,0.30376919919157713,0.05407052723305624
+seg_n_images,113,113
+
+########## LABEL AUDIT ##########
+
+===== runs/label_audit_thresholds.json =====
+{
+  "n_images": 800,
+  "level_mean_rad": 0.4057699005689587,
+  "level_sd_rad": 0.15063307214128951,
+  "level_min_rad": 0.06384450948173448,
+  "level_max_rad": 1.0656524017910276,
+  "level_cv": 0.37122781145194905,
+  "between_condition_sd": 0.04548836717739774,
+  "within_condition_sd": 0.1456714727410994,
+  "anova_F": 15.264768250544718,
+  "anova_p": 4.935563822941241e-12,
+  "kruskal_H": 56.09539372659219,
+  "kruskal_p": 1.9149248096647148e-11,
+  "per_condition": {
+    "blebbistatin": {
+      "n": 150,
+      "mean_rad": 0.3632915732386429,
+      "sd_rad": 0.14498484985984034
+    },
+    "control": {
+      "n": 200,
+      "mean_rad": 0.3746681169042612,
+      "sd_rad": 0.1433478041753659
+    },
+    "fccp": {
+      "n": 150,
+      "mean_rad": 0.42218772847619446,
+      "sd_rad": 0.09526732637519933
+    },
+    "rotenone": {
+      "n": 150,
+      "mean_rad": 0.4781149022751621,
+      "sd_rad": 0.18971660649129116
+    },
+    "staurosporine": {
+      "n": 150,
+      "mean_rad": 0.4009544431720983,
+      "sd_rad": 0.1395114187038991
+    }
+  }
+}
+===== runs/z_calibration.json =====
+{
+  "off_axis": {
+    "reference_floor": 0.14000632986426353,
+    "z_forward_um": -140.0,
+    "forward_residual_min": 0.14000632986426353,
+    "forward_well_depth": 6.731823468541442,
+    "z_inverse_um": -240.0,
+    "inverse_prominence": 2.4252782919593994,
+    "per_image_median_z_um": 0.0,
+    "per_image_iqr_um": 280.0,
+    "images_agree": false,
+    "peak_at_scan_edge": false,
+    "grid_step_um": 10.0,
+    "identifiable": false,
+    "recommended_z_um": null,
+    "forward_model_usable": false,
+    "forward_model_verdict": "anti_discriminative",
+    "discrimination": {
+      "usable": false,
+      "verdict": "anti_discriminative",
+      "floor": 0.14000632986426353,
+      "near_margin": -0.008632542565464973,
+      "far_margin": -0.028028426691889763,
+      "scores": {
+        "reference": 0.14000632986426353,
+        "scaled_0.9": 0.13137378729879856,
+        "scaled_0.5": 0.11736439913511276,
+        "noisy_0.3": 0.1827281303703785,
+        "mirrored": 0.11197790317237377,
+        "zero": 0.29528371430933475
+      },
+      "distance_um": -140.0
+    },
+    "curve": {
+      "modality": "off_axis",
+      "images": 4,
+      "reference_floor": 0.14000632986426353,
+      "distances_um": [
+        -600.0,
+        -590.0,
+        -580.0,
+        -570.0,
+        -560.0,
+        -550.0,
+        -540.0,
+        -530.0,
+        -520.0,
+        -510.0,
+        -500.0,
+        -490.0,
+        -480.0,
+        -470.0,
+        -460.0,
+        -450.0,
+        -440.0,
+        -430.0,
+        -420.0,
+        -410.0,
+        -400.0,
+        -390.0,
+        -380.0,
+        -370.0,
+        -360.0,
+        -350.0,
+        -340.0,
+        -330.0,
+        -320.0,
+        -310.0,
+        -300.0,
+        -290.0,
+        -280.0,
+        -270.0,
+        -260.0,
+        -250.0,
+        -240.0,
+        -230.0,
+        -220.0,
+        -210.0,
+        -200.0,
+        -190.0,
+        -180.0,
+        -170.0,
+        -160.0,
+        -150.0,
+        -140.0,
+        -130.0,
+        -120.0,
+        -110.0,
+        -100.0,
+        -90.0,
+        -80.0,
+        -70.0,
+        -60.0,
+        -50.0,
+        -40.0,
+        -30.0,
+        -20.0,
+        -10.0,
+        0.0,
+        10.0,
+        20.0,
+        30.0,
+        40.0,
+        50.0,
+        60.0,
+        70.0,
+        80.0,
+        90.0,
+        100.0,
+        110.0,
+        120.0,
+        130.0,
+        140.0,
+        150.0,
+        160.0,
+        170.0,
+        180.0,
+        190.0,
+        200.0,
+        210.0,
+        220.0,
+        230.0,
+        240.0,
+        250.0,
+        260.0,
+        270.0,
+        280.0,
+        290.0,
+        300.0,
+        310.0,
+        320.0,
+        330.0,
+        340.0,
+        350.0,
+        360.0,
+        370.0,
+        380.0,
+        390.0,
+        400.0,
+        410.0,
+        420.0,
+        430.0,
+        440.0,
+        450.0,
+        460.0,
+        470.0,
+        480.0,
+        490.0,
+        500.0,
+        510.0,
+        520.0,
+        530.0,
+        540.0,
+        550.0,
+        560.0,
+        570.0,
+        580.0,
+        590.0,
+        600.0
+      ],
+      "forward_residual": [
+        0.8739869296550751,
+        0.8733031451702118,
+        0.8726797997951508,
+        0.8721783608198166,
+        0.8718139827251434,
+        0.8715493083000183,
+        0.8713780343532562,
+        0.8713148385286331,
+        0.8713578581809998,
+        0.8716131299734116,
+        0.8720335215330124,
+        0.8725736141204834,
+        0.8731655031442642,
+        0.8738278746604919,
+        0.8744194656610489,
+        0.875015377998352,
+        0.8755556792020798,
+        0.8761159181594849,
+        0.876738578081131,
+        0.8773915022611618,
+        0.8781399875879288,
+        0.8790381401777267,
+        0.8800817131996155,
+        0.8812056183815002,
+        0.8823207467794418,
+        0.8833052068948746,
+        0.8841265887022018,
+        0.8846482932567596,
+        0.8848799765110016,
+        0.884767696261406,
+        0.8841848373413086,
+        0.8831450194120407,
+        0.88
+########## HARDWARE BENCHMARK ##########
+
+===== runs/base_hardware_benchmark_cuda.csv =====
+experiment,modality,encoder,frontend,lora,device,gpu_name,input_size,torch_version,params_total,params_trainable,params_frozen,params_trainable_fraction,gmacs,runtime,precision,latency_mean_ms,latency_p50_ms,latency_p99_ms,latency_std_ms,fps,timed_runs,peak_allocated_mb,peak_reserved_mb
+base,off_axis,mobilenet_v2,none,False,cuda,NVIDIA RTX A5000,900,2.6.0+cu124,9762968,9762968,0,1.0,45.850678912,pytorch,fp32,12.345093175768852,12.331588193774223,13.76005195081234,0.20467227189214293,81.00384385618216,500,235.94677734375,364.0
+base,off_axis,mobilenet_v2,none,False,cuda,NVIDIA RTX A5000,900,2.6.0+cu124,9762968,9762968,0,1.0,45.850678912,pytorch,fp16,9.361144080758095,9.316546842455864,9.684800840914248,0.20701465001963013,106.82454958208665,500,124.85546875,2508.0
+base,gabor,mobilenet_v2,none,False,cuda,NVIDIA RTX A5000,900,2.6.0+cu124,9762968,9762968,0,1.0,45.850678912,pytorch,fp32,12.376758813858032,12.368079274892807,12.43581160902977,0.04494503756752885,80.79659748078133,500,238.54052734375,1436.0
+base,gabor,mobilenet_v2,none,False,cuda,NVIDIA RTX A5000,900,2.6.0+cu124,9762968,9762968,0,1.0,45.850678912,pytorch,fp16,9.473792344331741,9.428480640053749,9.74341347813606,0.21036746744790816,105.55435074511733,500,125.978515625,2506.0
+
+########## FULL TEST METRICS PER RUN ##########
+
+===== runs/base_gabor/metrics_test.json =====
+{
+  "phase_mae_rad": 0.18464395654412497,
+  "phase_rmse_rad": 0.2831537807001814,
+  "phase_bias_rad": -0.005472028772899133,
+  "phase_psnr_db": 29.82234073522011,
+  "phase_ssim": 0.5780981235799536,
+  "phase_pearson_r": 0.7931819441274995,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 0.3740863265980661,
+  "phase_bias_rad_in_cell": -0.24092459149526813,
+  "phase_mae_rad_background": 0.15797147088873703,
+  "phase_bias_rad_background": 0.030251492621130888,
+  "seg_dice": 0.7575932986936844,
+  "seg_iou": 0.6097788251601678,
+  "seg_dice_macro": 0.7575932986936844,
+  "seg_aji": 0.5618122808753363,
+  "seg_boundary_f1": 0.28630787751827447,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 0.331691082532249,
+  "cls_accuracy": 0.7787610619469026,
+  "cls_macro_f1": 0.7836170957601827,
+  "cls_balanced_accuracy": 0.7934318551383975,
+  "cls_n_images": 113,
+  "cls_f1_control": 0.7083333282552083,
+  "cls_f1_blebbistatin": 0.7999999946125,
+  "cls_f1_fccp": 0.7391304294990548,
+  "cls_f1_staurosporine": 0.9767441805949162,
+  "cls_f1_rotenone": 0.6938775458392337,
+  "area_mape": 0.1738925563364597,
+  "area_mae": 52.05681325662242,
+  "area_cell_pearson_r": 0.8437321617542821,
+  "area_n_cells": 1683,
+  "area_image_pearson_r": 0.7792292643622581,
+  "area_relative_bias": 0.04642243555263591,
+  "area_median_relative_bias": 0.038930619497617315,
+  "area_loa_lower": -0.1966022054143342,
+  "area_loa_upper": 0.289447076519606,
+  "optical_volume_mape": 0.23560107460296134,
+  "optical_volume_mae": 69.8062356014098,
+  "optical_volume_cell_pearson_r": 0.8640877221127741,
+  "optical_volume_n_cells": 1683,
+  "optical_volume_image_pearson_r": 0.8997804960921826,
+  "optical_volume_relative_bias": -0.022856485240834386,
+  "optical_volume_median_relative_bias": -0.009415355439623007,
+  "optical_volume_loa_lower": -0.30895106578067794,
+  "optical_volume_loa_upper": 0.26323809529900916,
+  "dry_mass_mape": 0.23560107460296129,
+  "dry_mass_mae": 39.996026836566536,
+  "dry_mass_cell_pearson_r": 0.8640877221127741,
+  "dry_mass_n_cells": 1683,
+  "dry_mass_image_pearson_r": 0.8997804960921824,
+  "dry_mass_relative_bias": -0.022856485240834366,
+  "dry_mass_median_relative_bias": -0.00941535543962297,
+  "dry_mass_loa_lower": -0.30895106578067794,
+  "dry_mass_loa_upper": 0.26323809529900916,
+  "circularity_mape": 0.07558803464380191,
+  "circularity_mae": 0.05446155126713177,
+  "circularity_cell_pearson_r": 0.8077677909816204,
+  "circularity_n_cells": 1683,
+  "circularity_image_pearson_r": 0.8415079401655238,
+  "circularity_relative_bias": 0.02145939597080537,
+  "circularity_median_relative_bias": 0.004620074532266463,
+  "circularity_loa_lower": -0.10255318652833137,
+  "circularity_loa_upper": 0.14547197846994211,
+  "cells_detected": 2116,
+  "cells_reference": 3045,
+  "cells_matched": 1683,
+  "cell_count_ratio": 0.6949096880131362,
+  "detection_recall": 0.5527093596059113,
+  "detection_precision": 0.7953686200378072,
+  "detection_f1": 0.6521991862042239,
+  "cells_missed": 1362,
+  "cells_false_positive": 433,
+  "missed_median_area_um2": 91.945210373415,
+  "false_positive_median_area_um2": 161.485380977676
+}
+===== runs/base_off_axis/metrics_test.json =====
+{
+  "phase_mae_rad": 0.16390863416996676,
+  "phase_rmse_rad": 0.25084837338544397,
+  "phase_bias_rad": -0.005218601116083307,
+  "phase_psnr_db": 30.856986172638223,
+  "phase_ssim": 0.6237762242028143,
+  "phase_pearson_r": 0.8646800523310636,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 0.29112822819600065,
+  "phase_bias_rad_in_cell": -0.20553678870860453,
+  "phase_mae_rad_background": 0.14570566490951892,
+  "phase_bias_rad_background": 0.025780346267238522,
+  "seg_dice": 0.8284561141732348,
+  "seg_iou": 0.7071490229225078,
+  "seg_dice_macro": 0.8284561141732348,
+  "seg_aji": 0.6615827435140396,
+  "seg_boundary_f1": 0.43722211399474475,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 0.3338527553474176,
+  "cls_accuracy": 0.584070796460177,
+  "cls_macro_f1": 0.5647480977465505,
+  "cls_balanced_accuracy": 0.5628899833342447,
+  "cls_n_images": 113,
+  "cls_f1_control": 0.5434782564343101,
+  "cls_f1_blebbistatin": 0.6999999946625,
+  "cls_f1_fccp": 0.17391304173913044,
+  "cls_f1_staurosporine": 0.7777777724845678,
+  "cls_f1_rotenone": 0.6285714234122449,
+  "area_mape": 0.1574118518465202,
+  "area_mae": 45.61500873658106,
+  "area_cell_pearson_r": 0.8857211112489422,
+  "area_n_cells": 1847,
+  "area_image_pearson_r": 0.8182849257880167,
+  "area_relative_bias": 0.05282644720150367,
+  "area_median_relative_bias": 0.04005293339214812,
+  "area_loa_lower": -0.16195556096744962,
+  "area_loa_upper": 0.26760845537045697,
+  "optical_volume_mape": 0.1826678752466372,
+  "optical_volume_mae": 53.569868064647814,
+  "optical_volume_cell_pearson_r": 0.9210114954936242,
+  "optical_volume_n_cells": 1847,
+  "optical_volume_image_pearson_r": 0.9511332291433816,
+  "optical_volume_relative_bias": -0.030422957081596855,
+  "optical_volume_median_relative_bias": -0.03503579884855091,
+  "optical_volume_loa_lower": -0.22177525344247734,
+  "optical_volume_loa_upper": 0.1609293392792836,
+  "dry_mass_mape": 0.1826678752466372,
+  "dry_mass_mae": 30.693273491769713,
+  "dry_mass_cell_pearson_r": 0.9210114954936243,
+  "dry_mass_n_cells": 1847,
+  "dry_mass_image_pearson_r": 0.9511332291433814,
+  "dry_mass_relative_bias": -0.03042295708159685,
+  "dry_mass_median_relative_bias": -0.035035798848550875,
+  "dry_mass_loa_lower": -0.2217752534424773,
+  "dry_mass_loa_upper": 0.16092933927928363,
+  "circularity_mape": 0.06572458597990505,
+  "circularity_mae": 0.0467622109358808,
+  "circularity_cell_pearson_r": 0.8532066812302056,
+  "circularity_n_cells": 1847,
+  "circularity_image_pearson_r": 0.880459554926705,
+  "circularity_relative_bias": 0.02061332038493517,
+  "circularity_median_relative_bias": 0.006509291923875247,
+  "circularity_loa_lower": -0.07834505142602179,
+  "circularity_loa_upper": 0.11957169219589213,
+  "cells_detected": 2163,
+  "cells_reference": 3045,
+  "cells_matched": 1847,
+  "cell_count_ratio": 0.7103448275862069,
+  "detection_recall": 0.606568144499179,
+  "detection_precision": 0.8539066111881646,
+  "detection_f1": 0.7092933947772658,
+  "cells_missed": 1198,
+  "cells_false_positive": 316,
+  "missed_median_area_um2": 81.25601350241699,
+  "false_positive_median_area_um2": 122.53322288844598
+}
+===== runs/classification_only_gabor/metrics_test.json =====
+{
+  "phase_mae_rad": 0.4748142034606596,
+  "phase_rmse_rad": 0.6699321652240708,
+  "phase_bias_rad": -0.3822992554808085,
+  "phase_psnr_db": 21.911759534924652,
+  "phase_ssim": 0.17364140257107474,
+  "phase_pearson_r": 0.08251864570337224,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 1.3234871383261892,
+  "phase_bias_rad_in_cell": -1.322216345145639,
+  "phase_mae_rad_background": 0.34610104745468206,
+  "phase_bias_rad_background": -0.2337219817975981,
+  "seg_dice": 0.14215613003770405,
+  "seg_iou": 0.07651672583261222,
+  "seg_dice_macro": 0.14215613003770405,
+  "seg_aji": 0.015823698262727816,
+  "seg_boundary_f1": 0.055301342949550934,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 46.28958256292871,
+  "cls_accuracy": 0.7610619469026548,
+  "cls_macro_f1": 0.762445700258138,
+  "cls_balanced_accuracy": 0.7691297205048195,
+  "cls_n_images": 113,
+  "cls_f1_control": 0.7450980340176856,
+  "cls_f1_blebbistatin": 0.809523804138322,
+  "cls_f1_fccp": 0.6530612193252812,
+  "cls_f1_staurosporine": 0.9545454491219008,
+  "cls_f1_rotenone": 0.6499999946875,
+  "area_mape": 0.4468580294802172,
+  "area_mae": 34.78518303782399,
+  "area_cell_pearson_r": NaN,
+  "area_n_cells": 1,
+  "area_image_pearson_r": NaN,
+  "area_relative_bias": -0.5754245754245754,
+  "area_median_relative_bias": -0.5754245754245754,
+  "area_loa_lower": -0.5754245754245754,
+  "area_loa_upper": -0.5754245754245754,
+  "optical_volume_mape": 1.6102558696264673,
+  "optical_volume_mae": 47.71465203818487,
+  "optical_volume_cell_pearson_r": NaN,
+  "optical_volume_n_cells": 1,
+  "optical_volume_image_pearson_r": NaN,
+  "optical_volume_relative_bias": -8.263143658292892,
+  "optical_volume_median_relative_bias": -8.263143658292892,
+  "optical_volume_loa_lower": -8.263143658292892,
+  "optical_volume_loa_upper": -8.263143658292892,
+  "dry_mass_mape": 1.6102558696264675,
+  "dry_mass_mae": 27.338481827232847,
+  "dry_mass_cell_pearson_r": NaN,
+  "dry_mass_n_cells": 1,
+  "dry_mass_image_pearson_r": NaN,
+  "dry_mass_relative_bias": -8.263143658292892,
+  "dry_mass_median_relative_bias": -8.263143658292892,
+  "dry_mass_loa_lower": -8.263143658292892,
+  "dry_mass_loa_upper": -8.263143658292892,
+  "circularity_mape": 0.9307876320719285,
+  "circularity_mae": 0.7838752968043077,
+  "circularity_cell_pearson_r": NaN,
+  "circularity_n_cells": 1,
+  "circularity_image_pearson_r": NaN,
+  "circularity_relative_bias": -1.7410715775306946,
+  "circularity_median_relative_bias": -1.7410715775306946,
+  "circularity_loa_lower": -1.7410715775306946,
+  "circularity_loa_upper": -1.7410715775306946,
+  "cells_detected": 3731,
+  "cells_reference": 3045,
+  "cells_matched": 1,
+  "cell_count_ratio": 1.2252873563218392,
+  "detection_recall": 0.0003284072249589491,
+  "detection_precision": 0.0002680246582685607,
+  "detection_f1": 0.00029515938606847696,
+  "cells_missed": 3044,
+  "cells_false_positive": 3730,
+  "missed_median_area_um2": 239.69165187000596,
+  "false_positive_median_area_um2": 36.53652037827
+}
+===== runs/classification_only_off_axis/metrics_test.json =====
+{
+  "phase_mae_rad": 0.48113404174821567,
+  "phase_rmse_rad": 0.6843805349959088,
+  "phase_bias_rad": -0.39713163383766614,
+  "phase_psnr_db": 21.73423243368421,
+  "phase_ssim": 0.17052378643930485,
+  "phase_pearson_r": -0.01043857462535225,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 1.3995097379768844,
+  "phase_bias_rad_in_cell": -1.3991950011886327,
+  "phase_mae_rad_background": 0.3424859537487536,
+  "phase_bias_rad_background": -0.24006737115900073,
+  "seg_dice": 0.20041612749424606,
+  "seg_iou": 0.11136803933188474,
+  "seg_dice_macro": 0.20041612749424606,
+  "seg_aji": 0.026949800463959908,
+  "seg_boundary_f1": 0.06253300189220777,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 41.63050643096786,
+  "cls_accuracy": 0.5929203539823009,
+  "cls_macro_f1": 0.5228820473052513,
+  "cls_balanced_accuracy": 0.5697865350560045,
+  "cls_n_images": 113,
+  "cls_f1_control": 0.7536231833144298,
+  "cls_f1_blebbistatin": 0.5652173860964084,
+  "cls_f1_fccp": 0.09090908995867768,
+  "cls_f1_staurosporine": 0.5238095185600907,
+  "cls_f1_rotenone": 0.6808510585966501,
+  "area_mape": 0.29320619785458885,
+  "area_mae": 14.856171922404002,
+  "area_cell_pearson_r": NaN,
+  "area_n_cells": 1,
+  "area_image_pearson_r": NaN,
+  "area_relative_bias": -0.3435754189944135,
+  "area_median_relative_bias": -0.3435754189944135,
+  "area_loa_lower": -0.3435754189944135,
+  "area_loa_upper": -0.3435754189944135,
+  "optical_volume_mape": 1.5817570827948195,
+  "optical_volume_mae": 48.84405002556257,
+  "optical_volume_cell_pearson_r": NaN,
+  "optical_volume_n_cells": 1,
+  "optical_volume_image_pearson_r": NaN,
+  "optical_volume_relative_bias": -7.563820056366167,
+  "optical_volume_median_relative_bias": -7.563820056366167,
+  "optical_volume_loa_lower": -7.563820056366167,
+  "optical_volume_loa_upper": -7.563820056366167,
+  "dry_mass_mape": 1.5817570827948195,
+  "dry_mass_mae": 27.985579207905957,
+  "dry_mass_cell_pearson_r": NaN,
+  "dry_mass_n_cells": 1,
+  "dry_mass_image_pearson_r": NaN,
+  "dry_mass_relative_bias": -7.563820056366167,
+  "dry_mass_median_relative_bias": -7.563820056366167,
+  "dry_mass_loa_lower": -7.563820056366167,
+  "dry_mass_loa_upper": -7.563820056366167,
+  "circularity_mape": 0.9159500917556457,
+  "circularity_mae": 0.8478878407587891,
+  "circularity_cell_pearson_r": NaN,
+  "circularity_n_cells": 1,
+  "circularity_image_pearson_r": NaN,
+  "circularity_relative_bias": -1.6898670158813067,
+  "circularity_median_relative_bias": -1.6898670158813067,
+  "circularity_loa_lower": -1.6898670158813067,
+  "circularity_loa_upper": -1.6898670158813067,
+  "cells_detected": 11463,
+  "cells_reference": 3045,
+  "cells_matched": 1,
+  "cell_count_ratio": 3.7645320197044336,
+  "detection_recall": 0.0003284072249589491,
+  "detection_precision": 8.723719794120213e-05,
+  "detection_f1": 0.00013785497656465398,
+  "cells_missed": 3044,
+  "cells_false_positive": 11462,
+  "missed_median_area_um2": 239.69165187000596,
+  "false_positive_median_area_um2": 37.442384519879994
+}
+===== runs/conventional_gabor/metrics_test.json =====
+{
+  "phase_mae_rad": 3.7709941663573274,
+  "phase_rmse_rad": 6.281562166926326,
+  "phase_bias_rad": 0.5298156592403973,
+  "phase_psnr_db": 2.643498388518673,
+  "phase_ssim": 0.012260178776135446,
+  "phase_pearson_r": -0.0018386552233780288,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 3.666737629249033,
+  "phase_bias_rad_in_cell": -0.645200678567707,
+  "phase_mae_rad_background": 3.7792407432488635,
+  "phase_bias_rad_background": 0.7002567657211844,
+  "seg_dice": 0.10259375598896894,
+  "seg_iou": 0.05407052723305624,
+  "seg_dice_macro": 0.10259375598896894,
+  "seg_aji": 0.0393563936095031,
+  "seg_boundary_f1": 0.052837087216818686,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 0.8017101699316194,
+  "area_mape": 0.29942659742320593,
+  "area_mae": 76.31768140921581,
+  "area_cell_pearson_r": 0.7868637156435178,
+  "area_n_cells": 33,
+  "area_image_pearson_r": 0.7699242664618348,
+  "area_relative_bias": -0.12243591242599275,
+  "area_median_relative_bias": -0.18033949804647903,
+  "area_loa_lower": -0.765218891846205,
+  "area_loa_upper": 0.5203470669942195,
+  "optical_volume_mape": 9.659131449360673,
+  "optical_volume_mae": 1538.6955049345802,
+  "optical_volume_cell_pearson_r": 0.3242632327419424,
+  "optical_volume_n_cells": 33,
+  "optical_volume_image_pearson_r": 0.2296517929437471,
+  "optical_volume_relative_bias": 1.3527712775232923,
+  "optical_volume_median_relative_bias": 1.5952904469392324,
+  "optical_volume_loa_lower": 0.3502571452807606,
+  "optical_volume_loa_upper": 2.3552854097658242,
+  "dry_mass_mape": 9.659131449360673,
+  "dry_mass_mae": 881.6075838850259,
+  "dry_mass_cell_pearson_r": 0.32426323274194235,
+  "dry_mass_n_cells": 33,
+  "dry_mass_image_pearson_r": 0.2296517929437471,
+  "dry_mass_relative_bias": 1.352771277523292,
+  "dry_mass_median_relative_bias": 1.5952904469392322,
+  "dry_mass_loa_lower": 0.35025714528076013,
+  "dry_mass_loa_upper": 2.3552854097658242,
+  "circularity_mape": 0.2050617121698091,
+  "circularity_mae": 0.15853639580020237,
+  "circularity_cell_pearson_r": 0.22353740629708635,
+  "circularity_n_cells": 33,
+  "circularity_image_pearson_r": 0.09218795415809572,
+  "circularity_relative_bias": -0.09867557807617534,
+  "circularity_median_relative_bias": -0.08527410657095971,
+  "circularity_loa_lower": -0.640595685906689,
+  "circularity_loa_upper": 0.44324452975433837,
+  "cells_detected": 2253,
+  "cells_reference": 3045,
+  "cells_matched": 33,
+  "cell_count_ratio": 0.7399014778325124,
+  "detection_recall": 0.01083743842364532,
+  "detection_precision": 0.014647137150466045,
+  "detection_f1": 0.01245753114382786,
+  "cells_missed": 3012,
+  "cells_false_positive": 2220,
+  "missed_median_area_um2": 239.45008809891,
+  "false_positive_median_area_um2": 92.488728858381,
+  "reconstruction": "conventional",
+  "distance_um": 0.0,
+  "gs_iterations": 0,
+  "aberration_order": 3,
+  "recovered_phase_contrast_rad": -0.15144659578800201,
+  "reconstruction_valid": false
+}
+===== runs/conventional_off_axis/metrics_test.json =====
+{
+  "phase_mae_rad": 0.43039012060756177,
+  "phase_rmse_rad": 0.8093111963039475,
+  "phase_bias_rad": 0.0010832578424856312,
+  "phase_psnr_db": 24.309321981747534,
+  "phase_ssim": 0.1307945401465471,
+  "phase_pearson_r": -0.0071990097650384485,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 1.1222157338551715,
+  "phase_bias_rad_in_cell": -1.0103163579561278,
+  "phase_mae_rad_background": 0.32401254819293995,
+  "phase_bias_rad_background": 0.1791494939799742,
+  "seg_dice": 0.46598615672150234,
+  "seg_iou": 0.30376919919157713,
+  "seg_dice_macro": 0.46598615672150234,
+  "seg_aji": 0.2933652122656516,
+  "seg_boundary_f1": 0.14449257400617646,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 0.6707118843338706,
+  "area_mape": 0.14157158310906434,
+  "area_mae": 41.655666948191275,
+  "area_cell_pearson_r": 0.9203772763530488,
+  "area_n_cells": 789,
+  "area_image_pearson_r": 0.9027156951888454,
+  "area_relative_bias": -0.030720352578883826,
+  "area_median_relative_bias": -0.03592887998725685,
+  "area_loa_lower": -0.2223682439174039,
+  "area_loa_upper": 0.16092753875963622,
+  "optical_volume_mape": 0.2031491051531428,
+  "optical_volume_mae": 55.534070192119735,
+  "optical_volume_cell_pearson_r": 0.9163701697430706,
+  "optical_volume_n_cells": 789,
+  "optical_volume_image_pearson_r": 0.9207840855633205,
+  "optical_volume_relative_bias": 0.012213173511525023,
+  "optical_volume_median_relative_bias": 0.016331710297730694,
+  "optical_volume_loa_lower": -0.20692250337396811,
+  "optical_volume_loa_upper": 0.23134885039701814,
+  "dry_mass_mape": 0.2031491051531428,
+  "dry_mass_mae": 31.818678411917293,
+  "dry_mass_cell_pearson_r": 0.9163701697430705,
+  "dry_mass_n_cells": 789,
+  "dry_mass_image_pearson_r": 0.9207840855633207,
+  "dry_mass_relative_bias": 0.01221317351152503,
+  "dry_mass_median_relative_bias": 0.016331710297730704,
+  "dry_mass_loa_lower": -0.20692250337396806,
+  "dry_mass_loa_upper": 0.23134885039701814,
+  "circularity_mape": 0.055112389064952416,
+  "circularity_mae": 0.03915803563365329,
+  "circularity_cell_pearson_r": 0.8708605401715659,
+  "circularity_n_cells": 789,
+  "circularity_image_pearson_r": 0.9339923635992006,
+  "circularity_relative_bias": 0.010823492887647338,
+  "circularity_median_relative_bias": 0.005955685729454924,
+  "circularity_loa_lower": -0.06412000636395378,
+  "circularity_loa_upper": 0.08576699213924845,
+  "cells_detected": 960,
+  "cells_reference": 3045,
+  "cells_matched": 789,
+  "cell_count_ratio": 0.31527093596059114,
+  "detection_recall": 0.25911330049261083,
+  "detection_precision": 0.821875,
+  "detection_f1": 0.39400749063670415,
+  "cells_missed": 2256,
+  "cells_false_positive": 171,
+  "missed_median_area_um2": 196.814082500466,
+  "false_positive_median_area_um2": 74.28085961202,
+  "reconstruction": "conventional",
+  "distance_um": 0.0,
+  "gs_iterations": 0,
+  "aberration_order": 3,
+  "recovered_phase_contrast_rad": -0.27929437160491943,
+  "reconstruction_valid": false
+}
+===== runs/no_measurement_gabor/metrics_test.json =====
+{
+  "phase_mae_rad": 0.184270903270329,
+  "phase_rmse_rad": 0.2831699039587937,
+  "phase_bias_rad": -0.010846939576126272,
+  "phase_psnr_db": 29.834981453267662,
+  "phase_ssim": 0.5793220209600651,
+  "phase_pearson_r": 0.7944791895807185,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 0.37626499952995673,
+  "phase_bias_rad_in_cell": -0.23199357382491625,
+  "phase_mae_rad_background": 0.15731483612176592,
+  "phase_bias_rad_background": 0.02288251080544072,
+  "seg_dice": 0.7611941067788126,
+  "seg_iou": 0.6144579315808133,
+  "seg_dice_macro": 0.7611941067788126,
+  "seg_aji": 0.5640587634159043,
+  "seg_boundary_f1": 0.2923831913758596,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 0.3108574830609567,
+  "cls_accuracy": 0.8407079646017699,
+  "cls_macro_f1": 0.8407552084247868,
+  "cls_balanced_accuracy": 0.8495894905832598,
+  "cls_n_images": 113,
+  "cls_f1_control": 0.8076923024482249,
+  "cls_f1_blebbistatin": 0.8372092969388859,
+  "cls_f1_fccp": 0.7619047565419502,
+  "cls_f1_staurosporine": 0.9333333279407408,
+  "cls_f1_rotenone": 0.8636363582541322,
+  "area_mape": 0.17301747722089858,
+  "area_mae": 51.25027150588846,
+  "area_cell_pearson_r": 0.8524947771038474,
+  "area_n_cells": 1708,
+  "area_image_pearson_r": 0.8383875916409879,
+  "area_relative_bias": 0.0596127558844901,
+  "area_median_relative_bias": 0.052528369429186664,
+  "area_loa_lower": -0.16187306935497853,
+  "area_loa_upper": 0.28109858112395875,
+  "optical_volume_mape": 0.23071811645332369,
+  "optical_volume_mae": 67.03158809025018,
+  "optical_volume_cell_pearson_r": 0.869336756402005,
+  "optical_volume_n_cells": 1708,
+  "optical_volume_image_pearson_r": 0.922625767052697,
+  "optical_volume_relative_bias": -0.004101027066505779,
+  "optical_volume_median_relative_bias": 0.002367024281293037,
+  "optical_volume_loa_lower": -0.2702338859775858,
+  "optical_volume_loa_upper": 0.26203183184457424,
+  "dry_mass_mape": 0.2307181164533237,
+  "dry_mass_mae": 38.406270916307285,
+  "dry_mass_cell_pearson_r": 0.8693367564020049,
+  "dry_mass_n_cells": 1708,
+  "dry_mass_image_pearson_r": 0.9226257670526974,
+  "dry_mass_relative_bias": -0.004101027066505763,
+  "dry_mass_median_relative_bias": 0.0023670242812930814,
+  "dry_mass_loa_lower": -0.27023388597758574,
+  "dry_mass_loa_upper": 0.2620318318445742,
+  "circularity_mape": 0.07463495021907857,
+  "circularity_mae": 0.05399764547907648,
+  "circularity_cell_pearson_r": 0.8070769511872314,
+  "circularity_n_cells": 1708,
+  "circularity_image_pearson_r": 0.8557775672295599,
+  "circularity_relative_bias": 0.012900543240123004,
+  "circularity_median_relative_bias": 0.006033232169240859,
+  "circularity_loa_lower": -0.09381053362762434,
+  "circularity_loa_upper": 0.11961162010787035,
+  "cells_detected": 2181,
+  "cells_reference": 3045,
+  "cells_matched": 1708,
+  "cell_count_ratio": 0.716256157635468,
+  "detection_recall": 0.5609195402298851,
+  "detection_precision": 0.7831270059605685,
+  "detection_f1": 0.6536548029085343,
+  "cells_missed": 1337,
+  "cells_false_positive": 473,
+  "missed_median_area_um2": 90.88836887486998,
+  "false_positive_median_area_um2": 155.869023299694
+}
+===== runs/no_measurement_off_axis/metrics_test.json =====
+{
+  "phase_mae_rad": 0.16362276040347276,
+  "phase_rmse_rad": 0.2515869899656163,
+  "phase_bias_rad": -0.023158546953178236,
+  "phase_psnr_db": 30.826576545649367,
+  "phase_ssim": 0.6220606883278991,
+  "phase_pearson_r": 0.8638913953198796,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 0.296617615011941,
+  "phase_bias_rad_in_cell": -0.21767924943592695,
+  "phase_mae_rad_background": 0.14436469319383655,
+  "phase_bias_rad_background": 0.007452421473824435,
+  "seg_dice": 0.8259251898753612,
+  "seg_iou": 0.7034689636069118,
+  "seg_dice_macro": 0.8259251898753612,
+  "seg_aji": 0.6573010407235707,
+  "seg_boundary_f1": 0.4282421911064482,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 0.3392435894630532,
+  "cls_accuracy": 0.6814159292035398,
+  "cls_macro_f1": 0.6618239810779635,
+  "cls_balanced_accuracy": 0.6597701146537192,
+  "cls_n_images": 113,
+  "cls_f1_control": 0.6746987904717665,
+  "cls_f1_blebbistatin": 0.4444444406584363,
+  "cls_f1_fccp": 0.5454545404958678,
+  "cls_f1_staurosporine": 0.8717948663773833,
+  "cls_f1_rotenone": 0.7727272673863637,
+  "area_mape": 0.15971542391124355,
+  "area_mae": 46.24058999526712,
+  "area_cell_pearson_r": 0.8828499308932354,
+  "area_n_cells": 1840,
+  "area_image_pearson_r": 0.8155431013416256,
+  "area_relative_bias": 0.06198631305285961,
+  "area_median_relative_bias": 0.05646527385657818,
+  "area_loa_lower": -0.1649179915578981,
+  "area_loa_upper": 0.28889061766361734,
+  "optical_volume_mape": 0.18304791385624294,
+  "optical_volume_mae": 55.654310479407414,
+  "optical_volume_cell_pearson_r": 0.9177799580596943,
+  "optical_volume_n_cells": 1840,
+  "optical_volume_image_pearson_r": 0.9385468659084778,
+  "optical_volume_relative_bias": -0.050244564306941915,
+  "optical_volume_median_relative_bias": -0.04192276298764368,
+  "optical_volume_loa_lower": -0.28350347292771083,
+  "optical_volume_loa_upper": 0.183014344313827,
+  "dry_mass_mape": 0.18304791385624294,
+  "dry_mass_mae": 31.887571021807545,
+  "dry_mass_cell_pearson_r": 0.9177799580596943,
+  "dry_mass_n_cells": 1840,
+  "dry_mass_image_pearson_r": 0.9385468659084776,
+  "dry_mass_relative_bias": -0.05024456430694191,
+  "dry_mass_median_relative_bias": -0.04192276298764361,
+  "dry_mass_loa_lower": -0.28350347292771083,
+  "dry_mass_loa_upper": 0.183014344313827,
+  "circularity_mape": 0.06433233400658729,
+  "circularity_mae": 0.0458010441597452,
+  "circularity_cell_pearson_r": 0.858621708205351,
+  "circularity_n_cells": 1840,
+  "circularity_image_pearson_r": 0.9055103360604123,
+  "circularity_relative_bias": 0.01682652072522239,
+  "circularity_median_relative_bias": 0.01044388921751342,
+  "circularity_loa_lower": -0.07237423840787886,
+  "circularity_loa_upper": 0.10602727985832365,
+  "cells_detected": 2166,
+  "cells_reference": 3045,
+  "cells_matched": 1840,
+  "cell_count_ratio": 0.7113300492610838,
+  "detection_recall": 0.6042692939244664,
+  "detection_precision": 0.8494921514312096,
+  "detection_f1": 0.7061984264056803,
+  "cells_missed": 1205,
+  "cells_false_positive": 326,
+  "missed_median_area_um2": 81.34659991657799,
+  "false_positive_median_area_um2": 123.62025985837798
+}
+===== runs/no_physics_gabor/metrics_test.json =====
+{
+  "phase_mae_rad": 0.18397385027028818,
+  "phase_rmse_rad": 0.2821394773756238,
+  "phase_bias_rad": -0.014687525373739314,
+  "phase_psnr_db": 29.848347989285045,
+  "phase_ssim": 0.5791506727712344,
+  "phase_pearson_r": 0.7950014103846872,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 0.3816722429695383,
+  "phase_bias_rad_in_cell": -0.26374551846513905,
+  "phase_mae_rad_background": 0.156212880218451,
+  "phase_bias_rad_background": 0.023268050908737414,
+  "seg_dice": 0.7614238437789885,
+  "seg_iou": 0.6147573889216065,
+  "seg_dice_macro": 0.7614238437789885,
+  "seg_aji": 0.5655395981853535,
+  "seg_boundary_f1": 0.2925158092846731,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 0.3212815056159675,
+  "cls_accuracy": 0.7699115044247787,
+  "cls_macro_f1": 0.7674668464100469,
+  "cls_balanced_accuracy": 0.7839080456191231,
+  "cls_n_images": 113,
+  "cls_f1_control": 0.7083333282552083,
+  "cls_f1_blebbistatin": 0.7999999946666667,
+  "cls_f1_fccp": 0.6499999946875,
+  "cls_f1_staurosporine": 0.9130434729017013,
+  "cls_f1_rotenone": 0.765957441539158,
+  "area_mape": 0.17290028059829934,
+  "area_mae": 50.57426035144865,
+  "area_cell_pearson_r": 0.8608566977046511,
+  "area_n_cells": 1704,
+  "area_image_pearson_r": 0.8026454348755082,
+  "area_relative_bias": 0.06910440684330162,
+  "area_median_relative_bias": 0.05754459054810574,
+  "area_loa_lower": -0.15393896321733652,
+  "area_loa_upper": 0.2921477769039398,
+  "optical_volume_mape": 0.2338712212659564,
+  "optical_volume_mae": 69.77423572237068,
+  "optical_volume_cell_pearson_r": 0.8675655686128455,
+  "optical_volume_n_cells": 1704,
+  "optical_volume_image_pearson_r": 0.8940674484790079,
+  "optical_volume_relative_bias": -0.05789438403144951,
+  "optical_volume_median_relative_bias": -0.05068528429132113,
+  "optical_volume_loa_lower": -0.35935204011508737,
+  "optical_volume_loa_upper": 0.24356327205218833,
+  "dry_mass_mape": 0.2338712212659564,
+  "dry_mass_mae": 39.977692256427815,
+  "dry_mass_cell_pearson_r": 0.8675655686128456,
+  "dry_mass_n_cells": 1704,
+  "dry_mass_image_pearson_r": 0.8940674484790079,
+  "dry_mass_relative_bias": -0.057894384031449496,
+  "dry_mass_median_relative_bias": -0.05068528429132102,
+  "dry_mass_loa_lower": -0.35935204011508737,
+  "dry_mass_loa_upper": 0.2435632720521884,
+  "circularity_mape": 0.07467727933393715,
+  "circularity_mae": 0.05325485009197056,
+  "circularity_cell_pearson_r": 0.829229946500905,
+  "circularity_n_cells": 1704,
+  "circularity_image_pearson_r": 0.8792930568480132,
+  "circularity_relative_bias": 0.032591949499200294,
+  "circularity_median_relative_bias": 0.023396716479215714,
+  "circularity_loa_lower": -0.06702048702200927,
+  "circularity_loa_upper": 0.13220438602040985,
+  "cells_detected": 2164,
+  "cells_reference": 3045,
+  "cells_matched": 1704,
+  "cell_count_ratio": 0.7106732348111658,
+  "detection_recall": 0.5596059113300492,
+  "detection_precision": 0.7874306839186691,
+  "detection_f1": 0.6542522557112689,
+  "cells_missed": 1341,
+  "cells_false_positive": 460,
+  "missed_median_area_um2": 90.70719604654799,
+  "false_positive_median_area_um2": 144.575917000956
+}
+===== runs/no_physics_off_axis/metrics_test.json =====
+{
+  "phase_mae_rad": 0.16183974435635373,
+  "phase_rmse_rad": 0.24800553235475725,
+  "phase_bias_rad": -0.002680597824842434,
+  "phase_psnr_db": 30.92904032352557,
+  "phase_ssim": 0.6258853749100086,
+  "phase_pearson_r": 0.8657661866297764,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 0.28507652760079477,
+  "phase_bias_rad_in_cell": -0.19370908474763937,
+  "phase_mae_rad_background": 0.14414978620752825,
+  "phase_bias_rad_background": 0.02731056978531487,
+  "seg_dice": 0.8276026363374619,
+  "seg_iou": 0.7059062583969427,
+  "seg_dice_macro": 0.8276026363374619,
+  "seg_aji": 0.6622193454782573,
+  "seg_boundary_f1": 0.43524633080906383,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 0.3213561292624293,
+  "cls_accuracy": 0.5752212389380531,
+  "cls_macro_f1": 0.5416135803497457,
+  "cls_balanced_accuracy": 0.5454844004224266,
+  "cls_n_images": 113,
+  "cls_f1_control": 0.5894736798448754,
+  "cls_f1_blebbistatin": 0.3703703666392319,
+  "cls_f1_fccp": 0.3076923043491124,
+  "cls_f1_staurosporine": 0.7428571376326532,
+  "cls_f1_rotenone": 0.6976744132828556,
+  "area_mape": 0.15929472049196863,
+  "area_mae": 45.864152304309414,
+  "area_cell_pearson_r": 0.8878164729567906,
+  "area_n_cells": 1854,
+  "area_image_pearson_r": 0.8009627457454781,
+  "area_relative_bias": 0.06266751423669346,
+  "area_median_relative_bias": 0.0673976999197647,
+  "area_loa_lower": -0.15968920463276826,
+  "area_loa_upper": 0.2850242331061552,
+  "optical_volume_mape": 0.1828152543169963,
+  "optical_volume_mae": 53.46493034094018,
+  "optical_volume_cell_pearson_r": 0.9203576746180167,
+  "optical_volume_n_cells": 1854,
+  "optical_volume_image_pearson_r": 0.9183053239241016,
+  "optical_volume_relative_bias": -0.027230440860676063,
+  "optical_volume_median_relative_bias": -0.03311889232177576,
+  "optical_volume_loa_lower": -0.25181087680957726,
+  "optical_volume_loa_upper": 0.19734999508822512,
+  "dry_mass_mape": 0.18281525431699633,
+  "dry_mass_mae": 30.63314860496814,
+  "dry_mass_cell_pearson_r": 0.9203576746180164,
+  "dry_mass_n_cells": 1854,
+  "dry_mass_image_pearson_r": 0.9183053239241016,
+  "dry_mass_relative_bias": -0.027230440860676063,
+  "dry_mass_median_relative_bias": -0.033118892321776,
+  "dry_mass_loa_lower": -0.25181087680957726,
+  "dry_mass_loa_upper": 0.19734999508822515,
+  "circularity_mape": 0.06512884552417939,
+  "circularity_mae": 0.04576486115698329,
+  "circularity_cell_pearson_r": 0.8613934121760727,
+  "circularity_n_cells": 1854,
+  "circularity_image_pearson_r": 0.9155457462846962,
+  "circularity_relative_bias": 0.02537689901960537,
+  "circularity_median_relative_bias": 0.019874278335415874,
+  "circularity_loa_lower": -0.058541958836598545,
+  "circularity_loa_upper": 0.10929575687580928,
+  "cells_detected": 2155,
+  "cells_reference": 3045,
+  "cells_matched": 1854,
+  "cell_count_ratio": 0.7077175697865353,
+  "detection_recall": 0.6088669950738916,
+  "detection_precision": 0.8603248259860788,
+  "detection_f1": 0.7130769230769229,
+  "cells_missed": 1191,
+  "cells_false_positive": 301,
+  "missed_median_area_um2": 81.34659991657799,
+  "false_positive_median_area_um2": 106.28805928223998
+}
+===== runs/physics_coupling_only_gabor/metrics_test.json =====
+{
+  "phase_mae_rad": 0.18449816490169121,
+  "phase_rmse_rad": 0.28351459751821995,
+  "phase_bias_rad": -0.010162820409832983,
+  "phase_psnr_db": 29.825041754227055,
+  "phase_ssim": 0.5792343671870442,
+  "phase_pearson_r": 0.7941143361406516,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 0.3763336009156387,
+  "phase_bias_rad_in_cell": -0.22783717392342148,
+  "phase_mae_rad_background": 0.1575153679710574,
+  "phase_bias_rad_background": 0.02314100949316743,
+  "seg_dice": 0.7609977162764495,
+  "seg_iou": 0.6142020287399611,
+  "seg_dice_macro": 0.7609977162764495,
+  "seg_aji": 0.5631080182491777,
+  "seg_boundary_f1": 0.2917738804667079,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 0.32659093769778025,
+  "cls_accuracy": 0.7876106194690266,
+  "cls_macro_f1": 0.7868430667689124,
+  "cls_balanced_accuracy": 0.808210180252701,
+  "cls_n_images": 113,
+  "cls_f1_control": 0.6818181770144629,
+  "cls_f1_blebbistatin": 0.7916666614149306,
+  "cls_f1_fccp": 0.6976744132828556,
+  "cls_f1_staurosporine": 0.9545454491219008,
+  "cls_f1_rotenone": 0.808510633010412,
+  "area_mape": 0.17123685415693315,
+  "area_mae": 49.94580222480211,
+  "area_cell_pearson_r": 0.8602772621213353,
+  "area_n_cells": 1696,
+  "area_image_pearson_r": 0.825404585646617,
+  "area_relative_bias": 0.06651148666167345,
+  "area_median_relative_bias": 0.06043390959400569,
+  "area_loa_lower": -0.14561677376958382,
+  "area_loa_upper": 0.2786397470929307,
+  "optical_volume_mape": 0.23137002174563018,
+  "optical_volume_mae": 66.95879081703477,
+  "optical_volume_cell_pearson_r": 0.8707342469632849,
+  "optical_volume_n_cells": 1696,
+  "optical_volume_image_pearson_r": 0.9061520453681584,
+  "optical_volume_relative_bias": 0.006180574192523878,
+  "optical_volume_median_relative_bias": 0.016688411237542704,
+  "optical_volume_loa_lower": -0.26392204043602807,
+  "optical_volume_loa_upper": 0.27628318882107583,
+  "dry_mass_mape": 0.23137002174563018,
+  "dry_mass_mae": 38.364561151154255,
+  "dry_mass_cell_pearson_r": 0.870734246963285,
+  "dry_mass_n_cells": 1696,
+  "dry_mass_image_pearson_r": 0.9061520453681583,
+  "dry_mass_relative_bias": 0.006180574192523897,
+  "dry_mass_median_relative_bias": 0.016688411237542812,
+  "dry_mass_loa_lower": -0.26392204043602807,
+  "dry_mass_loa_upper": 0.27628318882107583,
+  "circularity_mape": 0.07275043512887547,
+  "circularity_mae": 0.05258766943168393,
+  "circularity_cell_pearson_r": 0.8227978194117694,
+  "circularity_n_cells": 1696,
+  "circularity_image_pearson_r": 0.8591661577841085,
+  "circularity_relative_bias": 0.015805027728003747,
+  "circularity_median_relative_bias": 0.0029012675410519293,
+  "circularity_loa_lower": -0.08704960077833165,
+  "circularity_loa_upper": 0.11865965623433913,
+  "cells_detected": 2150,
+  "cells_reference": 3045,
+  "cells_matched": 1696,
+  "cell_count_ratio": 0.7060755336617406,
+  "detection_recall": 0.5569786535303777,
+  "detection_precision": 0.7888372093023256,
+  "detection_f1": 0.6529355149181906,
+  "cells_missed": 1349,
+  "cells_false_positive": 454,
+  "missed_median_area_um2": 92.27736055867199,
+  "false_positive_median_area_um2": 160.45873495051796
+}
+===== runs/physics_coupling_only_off_axis/metrics_test.json =====
+{
+  "phase_mae_rad": 0.1645415185299595,
+  "phase_rmse_rad": 0.25031434225323634,
+  "phase_bias_rad": 0.0026633983344471687,
+  "phase_psnr_db": 30.80881744720514,
+  "phase_ssim": 0.6171105348430903,
+  "phase_pearson_r": 0.8635606923989491,
+  "phase_n_images": 113,
+  "phase_mae_rad_in_cell": 0.29210800842373774,
+  "phase_bias_rad_in_cell": -0.205089463333113,
+  "phase_mae_rad_background": 0.14647892921899272,
+  "phase_bias_rad_background": 0.034780226635491164,
+  "seg_dice": 0.8273553852481857,
+  "seg_iou": 0.7055465695574721,
+  "seg_dice_macro": 0.8273553852481857,
+  "seg_aji": 0.6611242303729276,
+  "seg_boundary_f1": 0.4335039923383965,
+  "seg_n_images": 113,
+  "seg_instance_count_mape": 0.32231693650505067,
+  "cls_accuracy": 0.5663716814159292,
+  "cls_macro_f1": 0.5326674599937424,
+  "cls_balanced_accuracy": 0.5385878487006667,
+  "cls_n_images": 113,
+  "cls_f1_control": 0.5454545412019182,
+  "cls_f1_blebbistatin": 0.4374999952148438,
+  "cls_f1_fccp": 0.09090908995867768,
+  "cls_f1_staurosporine": 0.7999999947428571,
+  "cls_f1_rotenone": 0.7894736788504156,
+  "area_mape": 0.1657375010393729,
+  "area_mae": 47.37609619568274,
+  "area_cell_pearson_r": 0.8812128518283983,
+  "area_n_cells": 1867,
+  "area_image_pearson_r": 0.8193975774920474,
+  "area_relative_bias": 0.07355719954643834,
+  "area_median_relative_bias": 0.07242292972200014,
+  "area_loa_lower": -0.14162241773896989,
+  "area_loa_upper": 0.2887368168318466,
+  "optical_volume_mape": 0.1863390868341912,
+  "optical_volume_mae": 54.629893325390704,
+  "optical_volume_cell_pearson_r": 0.9175709081829653,
+  "optical_volume_n_cells": 1867,
+  "optical_volume_image_pearson_r": 0.9307282443573851,
+  "optical_volume_relative_bias": -0.02592566313486944,
+  "optical_volume_median_relative_bias": -0.03313271413582743,
+  "optical_volume_loa_lower": -0.23815290272236717,
+  "optical_volume_loa_upper": 0.1863015764526283,
+  "dry_mass_mape": 0.1863390868341912,
+  "dry_mass_mae": 31.300623227947938,
+  "dry_mass_cell_pearson_r": 0.917570908182965,
+  "dry_mass_n_cells": 1867,
+  "dry_mass_image_pearson_r": 0.930728244357385,
+  "dry_mass_relative_bias": -0.02592566313486943,
+  "dry_mass_median_relative_bias": -0.03313271413582749,
+  "dry_mass_loa_lower": -0.2381529027223672,
+  "dry_mass_loa_upper": 0.18630157645262832,
+  "circularity_mape": 0.0652044580530622,
+  "circularity_mae": 0.04673311196822969,
+  "circularity_cell_pearson_r": 0.8518212832044613,
+  "circularity_n_cells": 1867,
+  "circularity_image_pearson_r": 0.8884937808985335,
+  "circularity_relative_bias": 0.009606683776378295,
+  "circularity_median_relative_bias": 0.0009564737534971774,
+  "circularity_loa_lower": -0.08266052449127757,
+  "circularity_loa_upper": 0.10187389204403417,
+  "cells_detected": 2168,
+  "cells_reference": 3045,
+  "cells_matched": 1867,
+  "cell_count_ratio": 0.7119868637110016,
+  "detection_recall": 0.6131362889983579,
+  "detection_precision": 0.8611623616236163,
+  "detection_f1": 0.7162862075580281,
+  "cells_missed": 1178,
+  "cells_false_positive": 301,
+  "missed_median_area_um2": 81.34659991657799,
+  "false_positive_median_area_um2": 119.63445763529398
+}
+########## CONFUSION MATRICES ##########
+
+===== runs/base_gabor/confusion_test.json =====
+{
+  "labels": [
+    "control",
+    "blebbistatin",
+    "fccp",
+    "staurosporine",
+    "rotenone"
+  ],
+  "matrix": [
+    [
+      17,
+      3,
+      4,
+      1,
+      4
+    ],
+    [
+      2,
+      16,
+      0,
+      0,
+      3
+    ],
+    [
+      0,
+      0,
+      17,
+      0,
+      4
+    ],
+    [
+      0,
+      0,
+      0,
+      21,
+      0
+    ],
+    [
+      0,
+      0,
+      4,
+      0,
+      17
+    ]
+  ]
+}
+===== runs/base_off_axis/confusion_test.json =====
+{
+  "labels": [
+    "control",
+    "blebbistatin",
+    "fccp",
+    "staurosporine",
+    "rotenone"
+  ],
+  "matrix": [
+    [
+      25,
+      3,
+      0,
+      0,
+      1
+    ],
+    [
+      7,
+      14,
+      0,
+      0,
+      0
+    ],
+    [
+      15,
+      2,
+      2,
+      1,
+      1
+    ],
+    [
+      6,
+      0,
+      0,
+      14,
+      1
+    ],
+    [
+      10,
+      0,
+      0,
+      0,
+      11
+    ]
+  ]
+}
+===== runs/classification_only_gabor/confusion_test.json =====
+{
+  "labels": [
+    "control",
+    "blebbistatin",
+    "fccp",
+    "staurosporine",
+    "rotenone"
+  ],
+  "matrix": [
+    [
+      19,
+      4,
+      5,
+      1,
+      0
+    ],
+    [
+      3,
+      17,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      16,
+      0,
+      5
+    ],
+    [
+      0,
+      0,
+      0,
+      21,
+      0
+    ],
+    [
+      0,
+      0,
+      7,
+      1,
+      13
+    ]
+  ]
+}
+===== runs/classification_only_off_axis/confusion_test.json =====
+{
+  "labels": [
+    "control",
+    "blebbistatin",
+    "fccp",
+    "staurosporine",
+    "rotenone"
+  ],
+  "matrix": [
+    [
+      26,
+      1,
+      0,
+      0,
+      2
+    ],
+    [
+      7,
+      13,
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      3,
+      1,
+      9,
+      7
+    ],
+    [
+      4,
+      5,
+      0,
+      11,
+      1
+    ],
+    [
+      2,
+      3,
+      0,
+      0,
+      16
+    ]
+  ]
+}
+===== runs/no_measurement_gabor/confusion_test.json =====
+{
+  "labels": [
+    "control",
+    "blebbistatin",
+    "fccp",
+    "staurosporine",
+    "rotenone"
+  ],
+  "matrix": [
+    [
+      21,
+      3,
+      3,
+      1,
+      1
+    ],
+    [
+      2,
+      18,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      16,
+      2,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      21,
+      0
+    ],
+    [
+      0,
+      0,
+      2,
+      0,
+      19
+    ]
+  ]
+}
+===== runs/no_measurement_off_axis/confusion_test.json =====
+{
+  "labels": [
+    "control",
+    "blebbistatin",
+    "fccp",
+    "staurosporine",
+    "rotenone"
+  ],
+  "matrix": [
+    [
+      28,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      11,
+      6,
+      2,
+      1,
+      1
+    ],
+    [
+      9,
+      0,
+      9,
+      0,
+      3
+    ],
+    [
+      2,
+      0,
+      1,
+      17,
+      1
+    ],
+    [
+      4,
+      0,
+      0,
+      0,
+      17
+    ]
+  ]
+}
+===== runs/no_physics_gabor/confusion_test.json =====
+{
+  "labels": [
+    "control",
+    "blebbistatin",
+    "fccp",
+    "staurosporine",
+    "rotenone"
+  ],
+  "matrix": [
+    [
+      17,
+      5,
+      4,
+      1,
+      2
+    ],
+    [
+      2,
+      18,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      13,
+      2,
+      5
+    ],
+    [
+      0,
+      0,
+      0,
+      21,
+      0
+    ],
+    [
+      0,
+      0,
+      2,
+      1,
+      18
+    ]
+  ]
+}
+===== runs/no_physics_off_axis/confusion_test.json =====
+{
+  "labels": [
+    "control",
+    "blebbistatin",
+    "fccp",
+    "staurosporine",
+    "rotenone"
+  ],
+  "matrix": [
+    [
+      28,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      14,
+      5,
+      1,
+      0,
+      1
+    ],
+    [
+      12,
+      0,
+      4,
+      1,
+      4
+    ],
+    [
+      6,
+      1,
+      0,
+      13,
+      1
+    ],
+    [
+      6,
+      0,
+      0,
+      0,
+      15
+    ]
+  ]
+}
+===== runs/physics_coupling_only_gabor/confusion_test.json =====
+{
+  "labels": [
+    "control",
+    "blebbistatin",
+    "fccp",
+    "staurosporine",
+    "rotenone"
+  ],
+  "matrix": [
+    [
+      15,
+      7,
+      4,
+      1,
+      2
+    ],
+    [
+      0,
+      19,
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      15,
+      1,
+      4
+    ],
+    [
+      0,
+      0,
+      0,
+      21,
+      0
+    ],
+    [
+      0,
+      0,
+      2,
+      0,
+      19
+    ]
+  ]
+}
+===== runs/physics_coupling_only_off_axis/confusion_test.json =====
+{
+  "labels": [
+    "control",
+    "blebbistatin",
+    "fccp",
+    "staurosporine",
+    "rotenone"
+  ],
+  "matrix": [
+    [
+      27,
+      1,
+      0,
+      0,
+      1
+    ],
+    [
+      14,
+      7,
+      0,
+      0,
+      0
+    ],
+    [
+      18,
+      2,
+      1,
+      0,
+      0
+    ],
+    [
+      6,
+      0,
+      0,
+      14,
+      1
+    ],
+    [
+      5,
+      1,
+      0,
+      0,
+      15
+    ]
+  ]
+}
+########## RESOLVED CONFIGS ##########
+
+===== runs/base_gabor/resolved_config.yaml =====
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.185
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.211994
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: gabor
+  phase_size: 900
+  align: center_crop
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  in_channels: 1
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 1.0
+    segmentation: 1.0
+    classification: 0.2
+    phase_mask_contrast: 0.1
+    boundary_gradient_alignment: 0.05
+    phase_volume: 0.1
+    forward_model: 0.0
+    dry_mass_consistency: 0.1
+    projected_area_consistency: 0.05
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: null
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 512
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 10000.0
+  checkpoint_metric: composite
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: base
+_config_file: /sda/usama/QPI_Extended/config/base.yaml
+
+===== runs/base_off_axis/resolved_config.yaml =====
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.185
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.211994
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: off_axis
+  phase_size: 900
+  align: center_crop
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  in_channels: 1
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 1.0
+    segmentation: 1.0
+    classification: 0.2
+    phase_mask_contrast: 0.1
+    boundary_gradient_alignment: 0.05
+    phase_volume: 0.1
+    forward_model: 0.0
+    dry_mass_consistency: 0.1
+    projected_area_consistency: 0.05
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: null
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 512
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 10000.0
+  checkpoint_metric: composite
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: base
+_config_file: /sda/usama/QPI_Extended/config/base.yaml
+
+===== runs/classification_only_gabor/resolved_config.yaml =====
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.185
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.211994
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: gabor
+  phase_size: 900
+  align: center_crop
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  in_channels: 1
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 0.0
+    segmentation: 0.0
+    classification: 1.0
+    phase_mask_contrast: 0.0
+    boundary_gradient_alignment: 0.0
+    phase_volume: 0.0
+    forward_model: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: null
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 512
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 10000.0
+  checkpoint_metric: cls_accuracy
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: classification_only
+_config_file: /sda/usama/QPI_Extended/config/ablation/classification_only.yaml
+
+===== runs/classification_only_off_axis/resolved_config.yaml =====
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.185
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.211994
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: off_axis
+  phase_size: 900
+  align: center_crop
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  in_channels: 1
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 0.0
+    segmentation: 0.0
+    classification: 1.0
+    phase_mask_contrast: 0.0
+    boundary_gradient_alignment: 0.0
+    phase_volume: 0.0
+    forward_model: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: null
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 512
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 10000.0
+  checkpoint_metric: cls_accuracy
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: classification_only
+_config_file: /sda/usama/QPI_Extended/config/ablation/classification_only.yaml
+
+===== runs/no_measurement_gabor/resolved_config.yaml =====
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.185
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.211994
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: gabor
+  phase_size: 900
+  align: center_crop
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  in_channels: 1
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 1.0
+    segmentation: 1.0
+    classification: 0.2
+    phase_mask_contrast: 0.1
+    boundary_gradient_alignment: 0.05
+    phase_volume: 0.1
+    forward_model: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: null
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 512
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 10000.0
+  checkpoint_metric: composite
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: no_measurement
+_config_file: /sda/usama/QPI_Extended/config/ablation/no_measurement.yaml
+
+===== runs/no_measurement_off_axis/resolved_config.yaml =====
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.185
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.211994
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: off_axis
+  phase_size: 900
+  align: center_crop
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  in_channels: 1
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 1.0
+    segmentation: 1.0
+    classification: 0.2
+    phase_mask_contrast: 0.1
+    boundary_gradient_alignment: 0.05
+    phase_volume: 0.1
+    forward_model: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: null
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 512
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 10000.0
+  checkpoint_metric: composite
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: no_measurement
+_config_file: /sda/usama/QPI_Extended/config/ablation/no_measurement.yaml
+
+===== runs/no_physics_gabor/resolved_config.yaml =====
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.185
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.211994
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: gabor
+  phase_size: 900
+  align: center_crop
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  in_channels: 1
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 1.0
+    segmentation: 1.0
+    classification: 0.2
+    phase_mask_contrast: 0.0
+    boundary_gradient_alignment: 0.0
+    phase_volume: 0.0
+    forward_model: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: null
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 512
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 10000.0
+  checkpoint_metric: composite
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: no_physics
+_config_file: /sda/usama/QPI_Extended/config/ablation/no_physics.yaml
+
+===== runs/no_physics_off_axis/resolved_config.yaml =====
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.185
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.211994
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: off_axis
+  phase_size: 900
+  align: center_crop
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  in_channels: 1
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 1.0
+    segmentation: 1.0
+    classification: 0.2
+    phase_mask_contrast: 0.0
+    boundary_gradient_alignment: 0.0
+    phase_volume: 0.0
+    forward_model: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: null
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 512
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 10000.0
+  checkpoint_metric: composite
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: no_physics
+_config_file: /sda/usama/QPI_Extended/config/ablation/no_physics.yaml
+
+===== runs/physics_coupling_only_gabor/resolved_config.yaml =====
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.185
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.211994
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: gabor
+  phase_size: 900
+  align: center_crop
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  in_channels: 1
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 1.0
+    segmentation: 1.0
+    classification: 0.2
+    phase_mask_contrast: 0.1
+    boundary_gradient_alignment: 0.05
+    phase_volume: 0.1
+    forward_model: 0.0
+    dry_mass_consistency: 0.1
+    projected_area_consistency: 0.05
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: null
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 512
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 10000.0
+  checkpoint_metric: composite
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: physics_coupling_only
+_config_file: /sda/usama/QPI_Extended/config/ablation/physics_coupling_only.yaml
+
+===== runs/physics_coupling_only_off_axis/resolved_config.yaml =====
+project:
+  name: holo_qpi
+  seed: 42
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.185
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.211994
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+  warn_on_header_pitch_mismatch: true
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: off_axis
+  phase_size: 900
+  align: center_crop
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  in_channels: 1
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 1.0
+    segmentation: 1.0
+    classification: 0.2
+    phase_mask_contrast: 0.1
+    boundary_gradient_alignment: 0.05
+    phase_volume: 0.1
+    forward_model: 0.0
+    dry_mass_consistency: 0.1
+    projected_area_consistency: 0.05
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: null
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 512
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 10000.0
+  checkpoint_metric: composite
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: physics_coupling_only
+_config_file: /sda/usama/QPI_Extended/config/ablation/physics_coupling_only.yaml

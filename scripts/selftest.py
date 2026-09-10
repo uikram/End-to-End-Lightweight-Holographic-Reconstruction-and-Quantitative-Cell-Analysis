@@ -95,6 +95,50 @@ def test_calibration(cfg) -> None:
         f"{cells[0]['circularity']:.3f}",
     )
 
+    # ALPHA CANCELS FROM EVERY RELATIVE QUANTITY, and this is pinned here so that
+    # nobody later tunes the refraction increment hoping to improve dry_mass_mape.
+    # The same constant lambda/(2 pi alpha) multiplies the predicted mass and the
+    # reference mass, so it survives in absolute picograms and vanishes from any
+    # ratio. A sweep of alpha against MAPE would return a flat line by
+    # arithmetic, not by coincidence.
+    from dataclasses import replace
+
+    low, high = cfg.optics.refraction_increment_range_ml_per_g
+    shifted = replace(calibration, refraction_increment=float(high))
+    shifted_cells = measure_cells(
+        phase, mask, shifted, cfg.evaluation.measurement,
+        cfg.evaluation.segmentation.instance_from,
+        cfg.mask_generation.watershed_min_distance_px,
+    )
+    expected_scale = calibration.refraction_increment / float(high)
+    absolute_ratio = shifted_cells[0]["dry_mass_pg"] / cells[0]["dry_mass_pg"]
+    check(
+        "absolute dry mass scales as 1/alpha",
+        abs(absolute_ratio - expected_scale) < 1e-6,
+        f"alpha {calibration.refraction_increment:.3f} -> {float(high):.3f} "
+        f"scales mass by {absolute_ratio:.4f}",
+    )
+    # A relative error computed entirely at the shifted alpha must equal the one
+    # computed at the configured alpha, for any prediction whatsoever.
+    predicted = np.array([c["dry_mass_pg"] for c in cells]) * 0.8
+    reference = np.array([c["dry_mass_pg"] for c in cells])
+    mape_base = float(np.mean(np.abs(predicted - reference) / reference))
+    predicted_shifted = predicted * expected_scale
+    reference_shifted = reference * expected_scale
+    mape_shifted = float(np.mean(
+        np.abs(predicted_shifted - reference_shifted) / reference_shifted
+    ))
+    check(
+        "relative dry-mass error is invariant to alpha",
+        abs(mape_base - mape_shifted) < 1e-12,
+        f"MAPE {mape_base:.6f} at both alphas -- alpha cannot explain mass error",
+    )
+    check(
+        "the configured alpha lies inside the literature range",
+        float(low) <= calibration.refraction_increment <= float(high),
+        f"{calibration.refraction_increment:.3f} in [{float(low):.3f}, {float(high):.3f}]",
+    )
+
 
 def test_metrics_identity(cfg) -> None:
     print("\n[2] metrics on an identical prediction")
@@ -257,14 +301,24 @@ def test_loss_terms(cfg) -> None:
     loss, components = criterion(perfect, targets)
     check("total loss is finite", math.isfinite(components["total"]),
           f"{components['total']:.4f}")
-    for name in ("phase", "segmentation", "phase_volume", "dry_mass_consistency",
-                 "projected_area_consistency"):
-        check(f"component '{name}' is finite", math.isfinite(components[name]),
-              f"{components[name]:.5f}")
+    # Iterate over whatever the configured objective actually produced rather
+    # than a fixed list: the v2 defaults switch several v1 terms off, and a
+    # hard-coded name would turn a deliberate configuration change into a test
+    # failure.
+    for name, value in sorted(components.items()):
+        if name == "total":
+            continue
+        check(f"component '{name}' is finite", math.isfinite(value), f"{value:.5f}")
+    active = [n for n in components if n != "total"]
+    check("the configured objective produced at least the supervised terms",
+          {"phase", "segmentation"} <= set(active),
+          f"active: {', '.join(sorted(active))}")
 
     check("phase term vanishes on an exact reconstruction", components["phase"] < 1e-4)
-    check("phase-volume term vanishes on an exact prediction",
-          components["phase_volume"] < 1e-2, f"{components['phase_volume']:.5f}")
+    for name in ("phase_volume", "cell_integrated_phase"):
+        if name in components:
+            check(f"'{name}' vanishes on an exact prediction",
+                  components[name] < 1e-2, f"{components[name]:.5f}")
 
     loss.backward()
     check("gradient reaches the phase head", perfect["phase"].grad is not None
@@ -283,7 +337,14 @@ def test_loss_terms(cfg) -> None:
 
 def test_physics(cfg) -> None:
     print("\n[6] forward model: propagation, hologram formation, consistency loss")
-    from holoqpi.physics import form_hologram, propagate, unwrap_phase_2d
+    from holoqpi.physics import (
+        detrend_polynomial,
+        form_hologram,
+        phase_skewness,
+        propagate,
+        resolve_conjugate,
+        unwrap_phase_2d,
+    )
     from holoqpi.losses.terms import ForwardModelConsistency
 
     optics = cfg.optics
@@ -344,18 +405,11 @@ def test_physics(cfg) -> None:
           f"std {float(off_axis_at_zero.std()):.4f}")
 
     # The loss must vanish when the phase is exactly right and rise when it is not.
-<<<<<<< Updated upstream
-    overrides = {"distance_um": 200.0, "criterion": "correlation", "feature_um": 1.0,
-                 "pad_px": 0, "border_px": 8, "reference_ratio": 1.0,
-                 "dc_exclusion_px": 20}
-    forward_cfg = type("Cfg", (), overrides)()
-=======
     forward_cfg = type("Cfg", (), {
         "distance_um": 200.0, "learn_distance": False, "criterion": "l2",
         "fit_radiometry": True, "feature_um": 1.0, "pad_px": 0, "border_px": 8,
         "dc_exclusion_frac": 0.13, "dc_exclusion_px": None,
     })()
->>>>>>> Stashed changes
     term = ForwardModelConsistency(forward_cfg, optics)
 
     measured = form_hologram(phase_t, amplitude_t, "gabor",
@@ -375,8 +429,6 @@ def test_physics(cfg) -> None:
           and torch.isfinite(gradient_probe.grad).all()
           and float(gradient_probe.grad.abs().sum()) > 0)
 
-<<<<<<< Updated upstream
-=======
     # ---- the four checks the forward model must pass to be trusted ----
     # Recovery must be exact through the FULL operator, and must not depend on
     # camera gain or black level: those are fitted, not assumed. A term that
@@ -435,7 +487,120 @@ def test_physics(cfg) -> None:
     check("z is recoverable by gradient descent from a wrong start",
           abs(recovered - 200.0) < 5.0, f"140.0 -> {recovered:.2f} um (true 200.0)")
 
->>>>>>> Stashed changes
+    # THE CANCELLATION THE PER-CELL TERM EXISTS TO CATCH.
+    # Two cells, one over-measured by 20% and one under-measured by 20%. The
+    # image-level phase-volume term sums them and scores zero; the per-cell term
+    # must not. If this check ever fails, experiment B is measuring nothing.
+    from holoqpi.losses.terms import CellIntegratedPhase, PhaseVolumePreservation
+
+    field = torch.zeros(1, 1, 64, 64)
+    labels = torch.zeros(1, 64, 64, dtype=torch.long)
+    field[0, 0, 8:24, 8:24] = 1.0
+    labels[0, 8:24, 8:24] = 1
+    field[0, 0, 40:56, 40:56] = 1.0
+    labels[0, 40:56, 40:56] = 2
+
+    truth = field.clone()
+    skewed = field.clone()
+    skewed[0, 0, 8:24, 8:24] *= 1.2          # +20% on cell 1
+    skewed[0, 0, 40:56, 40:56] *= 0.8        # -20% on cell 2
+    ones = torch.ones_like(field)
+
+    image_level = PhaseVolumePreservation(1e-4)(ones, skewed, ones, truth)
+    per_cell = CellIntegratedPhase(1e-4, 1.0, None)(ones, skewed, ones, truth, labels)
+    check("image-level phase volume is blind to +20%/-20% cancelling cells",
+          float(image_level) < 1e-6, f"loss {float(image_level):.2e}")
+    check("per-cell integrated phase catches it",
+          abs(float(per_cell) - 0.2) < 1e-4, f"loss {float(per_cell):.4f} (expected 0.2000)")
+
+    exact = CellIntegratedPhase(1e-4, 1.0, None)(ones, truth, ones, truth, labels)
+    check("per-cell integrated phase vanishes on an exact prediction",
+          float(exact) < 1e-6, f"{float(exact):.2e}")
+
+    graded = CellIntegratedPhase(1e-4, 1.0, None)(
+        ones, truth * 1.1, ones, truth, labels)
+    check("per-cell integrated phase scales with the error",
+          abs(float(graded) - 0.1) < 1e-4, f"10% error -> {float(graded):.4f}")
+
+    tiny = CellIntegratedPhase(1e-4, 1e9, None)(ones, skewed, ones, truth, labels)
+    check("cells below the reference floor are skipped",
+          float(tiny) == 0.0, "all cells excluded -> zero, not a division blow-up")
+
+    probe = (truth * 1.1).clone().requires_grad_(True)
+    CellIntegratedPhase(1e-4, 1.0, None)(ones, probe, ones, truth, labels).mean().backward()
+    check("per-cell integrated phase is differentiable w.r.t. phase",
+          probe.grad is not None and torch.isfinite(probe.grad).all()
+          and float(probe.grad.abs().sum()) > 0)
+
+    # The off-axis residual must not depend on the global piston phase, which
+    # is unmeasurable and cycles completely every half wavelength of z. Without
+    # the quadrature components this test swings over most of the residual's
+    # range for a sub-micrometre change in distance.
+    piston_cfg = type("Cfg", (), {
+        "distance_um": 40.0, "learn_distance": False, "criterion": "l2",
+        "fit_radiometry": True, "feature_um": 1.0, "pad_px": 0, "border_px": 8,
+        "dc_exclusion_frac": 0.13, "dc_exclusion_px": None,
+        "warn_on_short_pad": False,
+    })()
+    carrier_y = torch.full((1,), 0.11)
+    carrier_x = torch.full((1,), 0.09)
+    measured = form_hologram(phase_t, amplitude_t, "off_axis", wavelength, dx, dy,
+                             40.0, carrier=(carrier_y, carrier_x))
+    swings = []
+    for step in range(5):
+        shifted = type("Cfg", (), {**piston_cfg.__class__.__dict__,
+                                   "distance_um": 40.0 + step * wavelength / 4})()
+        swings.append(float(ForwardModelConsistency(shifted, optics)(
+            phase_t, amplitude_t, measured, "off_axis").mean()))
+    swing = max(swings) - min(swings)
+    check("off_axis: residual is invariant to the unmeasurable piston phase",
+          swing < 0.02, f"range {swing:.5f} over one wavelength of z")
+
+    # The conjugate sideband must be resolved by the physical prior, and it must
+    # be resolved on the DETRENDED phase. A synthetic field of Gaussian "cells"
+    # on a strong quadratic bowl reproduces the situation exactly: the bowl's own
+    # skewness is larger than the cells', so a test that skips detrending reads
+    # the aberration instead of the specimen and answers backwards.
+    grid = torch.linspace(-1, 1, size)
+    yy, xx = torch.meshgrid(grid, grid, indexing="ij")
+    cells = torch.zeros(size, size)
+    for cy, cx in ((-0.4, -0.3), (0.2, 0.5), (0.5, -0.6)):
+        cells = cells + 3.0 * torch.exp(-((yy - cy) ** 2 + (xx - cx) ** 2) / 0.01)
+    bowl = 18.0 * (xx ** 2 + yy ** 2) + 4.0 * xx - 3.0 * yy
+    truth = (cells + bowl).view(1, 1, size, size)
+    upright = torch.polar(torch.ones_like(truth), truth)
+
+    fixed, flipped, skews = resolve_conjugate(upright, detrend_order=2, min_skewness=0.0)
+    check("conjugate rule leaves a correctly signed field alone",
+          flipped == [False] and skews[0] > 0, f"skewness {skews[0]:+.2f}")
+
+    fixed, flipped, _ = resolve_conjugate(upright.conj(), detrend_order=2, min_skewness=0.0)
+    recovered = unwrap_phase_2d(torch.angle(fixed))
+    reference = unwrap_phase_2d(torch.angle(upright))
+    agreement = float(torch.corrcoef(torch.stack([
+        detrend_polynomial(recovered[0, 0], 2).flatten(),
+        detrend_polynomial(reference[0, 0], 2).flatten(),
+    ]))[0, 1])
+    check("conjugate rule recovers a conjugated field", flipped == [True] and agreement > 0.99,
+          f"flipped, detrended r = {agreement:.4f}")
+
+    # A surface whose own skewness opposes the cells' defeats a test that does
+    # not detrend, which is what the real data does: measured on this dataset,
+    # the raw unwrapped skewness picks the wrong sideband on 13 of 13 fields.
+    domed = (cells - 18.0 * (xx ** 2 + yy ** 2) + 4.0 * xx).view(1, 1, size, size)
+    naive = domed[0, 0] - domed[0, 0].mean()
+    raw_skew = float(((naive / naive.std()) ** 3).mean())
+    detrended_skew = phase_skewness(domed[0, 0], 2)
+    check("a surface's own skewness answers backwards without detrending",
+          raw_skew < 0 < detrended_skew,
+          f"raw {raw_skew:+.2f} vs detrended {detrended_skew:+.2f}")
+
+    try:
+        phase_skewness(truth[0, 0], 1)
+        check("detrend order below 2 is refused", False, "no error raised")
+    except ValueError:
+        check("detrend order below 2 is refused", True)
+
     # Unwrapping must undo a wrap it did not create.
     ramp = torch.linspace(0, 6 * math.pi, size).view(1, 1, 1, size).expand(1, 1, size, size)
     wrapped = torch.atan2(torch.sin(ramp), torch.cos(ramp))
