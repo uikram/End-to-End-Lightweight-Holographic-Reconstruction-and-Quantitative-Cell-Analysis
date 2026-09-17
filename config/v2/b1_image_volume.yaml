@@ -1,0 +1,38 @@
+# HoloQPI v2, experiment B': the IMAGE-LEVEL control for B
+#
+# WHY THIS ARM EXISTS. B raises cell_integrated_phase and, if it beats A, the
+# tempting claim is "a measurement-aware loss helps". That claim does not need
+# the per-cell part: an image-level phase-volume term is also measurement-aware.
+# So A vs B cannot establish the contribution of the words PER-CELL, and B vs B'
+# is the comparison that can.
+#
+# The two terms are not interchangeable. scripts/selftest.py asserts that on a
+# field with one cell over-measured by 20% and another under-measured by 20%,
+# the image-level term scores 0.0000 and the per-cell term scores 0.2000. That
+# cancellation is the error a per-cell dry-mass result cares about. This arm
+# measures how much it costs in practice rather than in a constructed example.
+#
+# THE WEIGHT IS NOT COPIED FROM B. The two terms have different gradient
+# magnitudes, so equal weights are not a fair comparison. Set this weight from
+# `python scripts/check_gradient_path.py --config config/v2/b1_image_volume.yaml`
+# so both arms present the same gradient magnitude to the segmentation decoder,
+# and record both measured ratios in the paper. Until that is run the value
+# below is B's weight and the comparison is NOT yet matched.
+extends: ../base.yaml
+
+experiment_name: v2_image_volume
+
+data:
+  modality: off_axis
+
+model:
+  classifier_enabled: false
+
+loss:
+  weights:
+    classification: 0.0
+    phase_volume: 1.0                 # the image-level term, matched to B by gradient
+    cell_integrated_phase: 0.0        # off: that is the whole point of this arm
+    boundary_gradient_alignment: 0.0
+    projected_area_consistency: 0.0
+    forward_model: 0.0

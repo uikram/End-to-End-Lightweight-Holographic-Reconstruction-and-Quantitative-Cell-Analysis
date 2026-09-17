@@ -75,12 +75,22 @@ LOGGER = get_logger(__name__)
 
 
 def _polynomial_design(height: int, width: int, order: int, device) -> torch.Tensor:
-    """Design matrix for a 2-D polynomial surface of the given total order."""
-    y = torch.linspace(-1, 1, height, device=device).view(-1, 1).expand(height, width)
-    x = torch.linspace(-1, 1, width, device=device).view(1, -1).expand(height, width)
-    columns = [(x ** i) * (y ** j)
-               for i in range(order + 1) for j in range(order + 1 - i)]
-    return torch.stack(columns, dim=-1).reshape(-1, len(columns))
+    """Design matrix for a 2-D polynomial surface, from the shared basis.
+
+    This was a local copy of holoqpi.physics.surface.polynomial_basis with the
+    dtype argument dropped, so it ran in float32 and was solved with a plain
+    lstsq. That module says why it exists in its own docstring: "the high-order
+    monomials are strongly collinear on a dense grid and a plain lstsq loses
+    accuracy above order 3" -- and the configured
+    evaluation.conventional_baseline.aberration_order IS 3, with this file's own
+    advice being to try 4 or 5 if the reconstruction fails. Two copies of one
+    basis, one of them at the precision the other warns against, is how the
+    classical baseline ends up incomparable with the learned arm for a reason
+    that has nothing to do with either.
+    """
+    from holoqpi.physics import polynomial_basis
+
+    return polynomial_basis(height, width, order, device, torch.float64)
 
 
 def remove_aberration(phase: torch.Tensor, mask: torch.Tensor, order: int) -> torch.Tensor:
@@ -103,15 +113,24 @@ def remove_aberration(phase: torch.Tensor, mask: torch.Tensor, order: int) -> to
 
     corrected = []
     for item in range(batch):
-        values = phase[item, 0].reshape(-1)
+        values = phase[item, 0].reshape(-1).to(torch.float64)
         background = ~mask[item].reshape(-1).bool()
         if background.sum() < design.shape[1] * 4:
-            corrected.append(phase[item, 0] - values.median())
+            corrected.append(phase[item, 0] - phase[item, 0].reshape(-1).median())
             continue
-        solution = torch.linalg.lstsq(
-            design[background], values[background].unsqueeze(1)
-        ).solution
-        corrected.append(phase[item, 0] - (design @ solution).reshape(height, width))
+        # RIDGE-STABILISED NORMAL EQUATIONS in float64, matching
+        # holoqpi.physics.surface.fit_polynomial_surface. torch.linalg.lstsq on
+        # CUDA uses the `gels` driver, which requires full rank and gives
+        # undefined results otherwise -- and a degree-3 monomial basis on a
+        # dense grid is exactly the ill-conditioned case.
+        rows = design[background]
+        gram = rows.T @ rows
+        stabiliser = 1e-8 * torch.diag(torch.diagonal(gram).clamp(min=1e-12))
+        solution = torch.linalg.solve(
+            gram + stabiliser, rows.T @ values[background]
+        )
+        surface = (design @ solution).reshape(height, width)
+        corrected.append(phase[item, 0] - surface.to(phase.dtype))
     return torch.stack(corrected).unsqueeze(1)
 
 
@@ -277,7 +296,15 @@ def main() -> int:
 
         contrast = float(np.median(diagnostics["contrast"])) if diagnostics["contrast"] else float("nan")
         metrics["recovered_phase_contrast_rad"] = contrast
-        metrics["reconstruction_valid"] = bool(contrast > 0.1)
+        # From configuration: this threshold decides whether the ENTIRE
+        # classical baseline is reported or declared failed, and it propagates
+        # into figure 14's title. It sat as a literal 0.1 beside gs_iterations
+        # and aberration_order, both of which are config keys.
+        minimum_contrast = float(
+            cfg.evaluation.conventional_baseline.min_recovered_contrast_rad
+        )
+        metrics["reconstruction_valid"] = bool(contrast > minimum_contrast)
+        metrics["min_recovered_contrast_rad"] = minimum_contrast
         results[modality] = metrics
 
         destination = output_root / f"conventional_{modality}"

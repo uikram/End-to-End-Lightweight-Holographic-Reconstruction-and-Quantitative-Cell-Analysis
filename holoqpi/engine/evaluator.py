@@ -16,6 +16,7 @@ from ..analysis.cells import calibration_from_config, match_cells, measure_cells
 from ..config import Config
 from ..data.masks import split_instances
 from ..metrics import (
+    AmplitudeMetrics,
     ClassificationMetrics,
     ForwardModelMetrics,
     MeasurementMetrics,
@@ -25,6 +26,15 @@ from ..metrics import (
 from ..utils import get_logger, write_csv
 
 LOGGER = get_logger(__name__)
+
+
+def _to_device(value, device):
+    """Move a batch entry to ``device``, passing ``None`` through unchanged.
+
+    The optional keys in this file are fetched with ``batch.get`` and may be
+    absent, so a bare ``.to(device)`` would raise on ``None``.
+    """
+    return value.to(device) if isinstance(value, torch.Tensor) else value
 
 
 class Evaluator:
@@ -49,11 +59,21 @@ class Evaluator:
         )
         self.classification_metrics = ClassificationMetrics(list(cfg.labels.conditions))
         self.measurement_metrics = MeasurementMetrics(
-            report_bland_altman=self.measurement_cfg.report_bland_altman
+            report_bland_altman=self.measurement_cfg.report_bland_altman,
+            report_coverage_adjusted=self.measurement_cfg.report_coverage_adjusted,
+            field_bootstrap_resamples=self.measurement_cfg.field_bootstrap_resamples,
+            bootstrap_seed=cfg.project.seed,
         )
         self.forward_metrics = (
             ForwardModelMetrics(cfg.loss.forward_model, cfg.optics, cfg.data.modality)
             if evaluation.forward_model.report_residual else None
+        )
+        # Only for an arm whose amplitude head is switched on. With the head off
+        # the model emits no amplitude at all, and scoring the unity field the
+        # dataset substitutes would put a perfect amplitude agreement in the
+        # table for an arm that never predicted one.
+        self.amplitude_metrics = (
+            AmplitudeMetrics() if cfg.model.amplitude.enabled else None
         )
 
     def reset(self) -> None:
@@ -63,6 +83,8 @@ class Evaluator:
         self.measurement_metrics.reset()
         if self.forward_metrics is not None:
             self.forward_metrics.reset()
+        if self.amplitude_metrics is not None:
+            self.amplitude_metrics.reset()
 
     @torch.no_grad()
     def run(
@@ -105,6 +127,23 @@ class Evaluator:
 
             outputs = predict_fn(batch) if predict_fn is not None else model(hologram)
 
+            # Fetched once, before the loss block, because the amplitude metric
+            # needs it whether or not a loss is being evaluated: the final test
+            # pass of an arm runs with loss_fn set, but a bare `main.py evaluate`
+            # does not, and the amplitude row must appear in both.
+            #
+            # The guard is the dataset flag, not the key. The dataset returns a
+            # field of ones when no reference directory is configured, and
+            # scoring against that would report the thin-phase assumption as a
+            # perfect amplitude agreement.
+            amplitude_reference = None
+            if "amplitude" in batch and getattr(
+                loader.dataset, "provide_amplitude", False
+            ):
+                amplitude_reference = batch["amplitude"].to(
+                    self.device, non_blocking=True
+                )
+
             if loss_fn is not None:
                 moved = {
                     "phase": phase_target,
@@ -113,9 +152,23 @@ class Evaluator:
                     "hologram": hologram,
                     "hologram_raw": raw_hologram,
                     "aberration": aberration,
-                    "aberration_valid": batch.get("aberration_valid"),
-                    "instances": batch.get("instances"),
+                    # Moved to the device like every other key here. These two
+                    # used to be handed over straight off the CPU batch, and
+                    # the asymmetry with Trainer._train_one_epoch -- which does
+                    # move them -- is what made the forward-model term fail in
+                    # validation while training was fine.
+                    "aberration_valid": _to_device(
+                        batch.get("aberration_valid"), self.device
+                    ),
+                    "instances": _to_device(batch.get("instances"), self.device),
                 }
+                # Present only when the dataset actually loaded a reference. The
+                # dataset returns ones when it did not, and passing those would
+                # have the amplitude loss score a field of ones rather than
+                # raise, so an arm configured without the reference would report
+                # a small meaningless amplitude loss instead of failing.
+                if amplitude_reference is not None:
+                    moved["amplitude"] = amplitude_reference
                 _, components = loss_fn(outputs, moved)
                 for key, value in components.items():
                     loss_totals[key] = loss_totals.get(key, 0.0) + value
@@ -152,6 +205,16 @@ class Evaluator:
             ]
 
             self.phase_metrics.update(phase_prediction, phase_reference, mask=mask_reference)
+            if (
+                self.amplitude_metrics is not None
+                and amplitude_reference is not None
+                and outputs.get("amplitude") is not None
+            ):
+                self.amplitude_metrics.update(
+                    outputs["amplitude"].squeeze(1).float().cpu().numpy(),
+                    amplitude_reference.squeeze(1).float().cpu().numpy(),
+                    mask=mask_reference,
+                )
             if self.forward_metrics is not None:
                 self.forward_metrics.update(
                     outputs["phase"].float(), outputs.get("amplitude"),
@@ -194,6 +257,8 @@ class Evaluator:
         results.update(self.measurement_metrics.compute())
         if self.forward_metrics is not None:
             results.update(self.forward_metrics.compute())
+        if self.amplitude_metrics is not None:
+            results.update(self.amplitude_metrics.compute())
 
         if batches:
             for key, value in loss_totals.items():

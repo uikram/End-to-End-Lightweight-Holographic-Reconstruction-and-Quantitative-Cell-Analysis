@@ -90,6 +90,124 @@ def run_directory(output_root: str | Path, experiment_name: str, modality: str) 
     return path
 
 
+def pooled_between_seed_sd(values_a, values_b) -> tuple[float, str | None]:
+    """The project's significance yardstick, in one place.
+
+    Returns ``(pooled_sd, reason_it_cannot_be_used)``, where the reason is
+    ``None`` when the value is usable.
+
+    ``sqrt(((n_a - 1) s_a^2 + (n_b - 1) s_b^2) / (n_a + n_b - 2))`` -- the
+    textbook pooled standard deviation of two seed populations. A difference
+    counts as resolved when it exceeds
+    ``evaluation.seed_replication.resolve_factor`` times this.
+
+    WHY IT LIVES HERE. The same rule was implemented three times with two
+    different formulas and one hardcoded constant:
+
+        scripts/aggregate_seeds.py    sqrt(s_a^2 + s_b^2)
+        scripts/collect_results.py    sqrt(0.5 (v_a + v_b))
+        scripts/make_figures.py       sqrt(0.5 (v_a + v_b)) for the band,
+                                      and a flat +/-2% in figure 7's shading
+
+    The first is larger than the second by sqrt(2) for equal n, so the SAME
+    comparison could be called resolved by one document and unresolved by
+    another -- and the flat 2% had no relation to any measurement at all.
+
+    Two cases are refused rather than answered:
+
+    * fewer than two runs on either arm, because a spread of one run is not a
+      spread;
+    * a pooled SD of exactly zero, which means the metric did not move between
+      seeds at all. Calling a large difference "within noise" when the noise is
+      measurably nil inverts the verdict, and zero-variance metrics have already
+      appeared in this project's results.
+    """
+    a = np.asarray([v for v in np.asarray(values_a, dtype=float).ravel()
+                    if np.isfinite(v)], dtype=float)
+    b = np.asarray([v for v in np.asarray(values_b, dtype=float).ravel()
+                    if np.isfinite(v)], dtype=float)
+    if a.size < 2 or b.size < 2:
+        return float("nan"), f"needs 2+ runs per arm (have {a.size} and {b.size})"
+    variance = ((a.size - 1) * a.var(ddof=1) + (b.size - 1) * b.var(ddof=1)) / (
+        a.size + b.size - 2
+    )
+    sd = float(np.sqrt(variance))
+    if not np.isfinite(sd):
+        return float("nan"), "spread is not finite"
+    if sd == 0.0:
+        return 0.0, "between-seed spread is exactly zero -- check the runs differ"
+    return sd, None
+
+
+_PROVENANCE_NAME = "_provenance.json"
+
+
+def provenance_path(directory: str | Path) -> Path:
+    return Path(directory) / _PROVENANCE_NAME
+
+
+def read_provenance(directory: str | Path) -> dict | None:
+    """The parameters a generated directory was produced with, if recorded."""
+    path = provenance_path(directory)
+    if not path.is_file():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def write_provenance(directory: str | Path, parameters: Mapping[str, Any]) -> Path:
+    """Record the parameters a generated directory was produced with."""
+    return write_json(dict(parameters), provenance_path(directory))
+
+
+def assert_provenance(
+    directory: str | Path, parameters: Mapping[str, Any], regenerate_hint: str
+) -> None:
+    """Refuse to reuse a generated directory built with different parameters.
+
+    THE FAILURE THIS PREVENTS, which has already happened in this project.
+
+    Both generators that fill a directory -- the phase-derived masks and the
+    classical amplitude reference -- skip any file that already exists. Neither
+    recorded what produced it, and the only consumer-side check was the array's
+    SHAPE, which a parameter change does not alter. So changing
+    ``mask_generation.smoothing_sigma_px``, ``otsu_scale``,
+    ``border_buffer_px`` or ``model.frontend.sideband_radius_px`` and re-running
+    silently reused every old file, and the run then trained and measured
+    against artefacts from a different configuration. For the masks that is
+    especially bad: they are simultaneously the segmentation target and the
+    reference for every per-cell measurement.
+
+    Raising is the right response rather than warning. A warning in a stage log
+    is exactly what was missed before, and regenerating is one flag away.
+    """
+    stored = read_provenance(directory)
+    if stored is None:
+        return
+    current = dict(parameters)
+    differences = {
+        key: (stored.get(key), current[key])
+        for key in sorted(set(stored) | set(current))
+        if stored.get(key) != current.get(key)
+    }
+    if not differences:
+        return
+    lines = "\n".join(
+        f"    {key}: produced with {was!r}, config now says {now!r}"
+        for key, (was, now) in differences.items()
+    )
+    raise ValueError(
+        f"{directory} was generated with different parameters and would be "
+        f"reused as-is:\n{lines}\n"
+        f"  Existing files are skipped rather than rebuilt, so the run would "
+        f"train and measure against artefacts from another configuration.\n"
+        f"  {regenerate_hint}"
+    )
+
+
 def write_json(payload: Any, destination: str | Path) -> Path:
     destination = Path(destination)
     destination.parent.mkdir(parents=True, exist_ok=True)

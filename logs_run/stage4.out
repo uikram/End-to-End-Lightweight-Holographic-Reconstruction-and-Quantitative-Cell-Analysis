@@ -1,0 +1,54 @@
+HoloQPI v2 study, started Wed Sep 16 19:17:37 KST 2026
+log directory logs/v2_20260916_191737
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   extra seeds: none
+
+########## stage 4: pre-flight diagnostics
+
+=== gradient_path  19:17:37
+    python scripts/check_gradient_path.py --config config/v2/b_cell_ipp.yaml --batches 30
+    OK   -> logs/v2_20260916_191737/gradient_path.log
+      magnitude ratio at weight 1.0   median 3.0216e-01   min 1.7963e-01   max 6.7458e-01
+      cosine with the seg gradient    median +0.5275   min +0.0987   max +0.6682
+      per-batch detail -> runs/gradient_path_b_cell_ipp_512.csv
+          weight w    effective ratio       seg : term
+      parity (effective ratio 1.0) is at w = 3.309
+      -> CONNECTED, comparable in scale (ratio 0.302, within an order of
+
+=== amplitude_sensitivity_per_field  19:19:14
+    python scripts/amplitude_sensitivity.py --config config/base.yaml --split test --set optics.aberration.mode=per_field data.train_crop=null data.augmentation.enabled=false
+    VERDICT exit 2 -- the script ran and is reporting a finding 
+    (not a crash) -> logs/v2_20260916_191737/amplitude_sensitivity_per_field.log
+      amplitude response  unity -> reference        0.030495
+      phase response      reference -> x0.9         -0.000639   (must be POSITIVE)
+      phase response      reference -> x0.5         +0.024684   (must be POSITIVE)
+      ratio, amplitude / |mild phase|               47.6866
+      per-batch detail -> runs/amplitude_sensitivity_off_axis_per_field.csv
+      -> the term ranks a WRECKED phase correctly (+0.024684 at 0.5x) but a
+
+=== amplitude_sensitivity_global  19:29:14
+    python scripts/amplitude_sensitivity.py --config config/base.yaml --split test --set optics.aberration.mode=global data.train_crop=null data.augmentation.enabled=false
+    VERDICT exit 2 -- the script ran and is reporting a finding 
+    (not a crash) -> logs/v2_20260916_191737/amplitude_sensitivity_global.log
+      amplitude response  unity -> reference        0.034728
+      phase response      reference -> x0.9         -0.000081   (must be POSITIVE)
+      phase response      reference -> x0.5         +0.003165   (must be POSITIVE)
+      ratio, amplitude / |mild phase|               428.4354
+      per-batch detail -> runs/amplitude_sensitivity_off_axis_global.csv
+      -> the term ranks a WRECKED phase correctly (+0.003165 at 0.5x) but a
+
+=== calibrate_z  19:38:50
+    python scripts/calibrate_z.py --config config/base.yaml --steps 41
+    OK   -> logs/v2_20260916_191737/calibrate_z.log
+
+########## done Wed Sep 16 19:39:37 KST 2026
+summary  logs/v2_20260916_191737/SUMMARY.txt
+logs     logs/v2_20260916_191737/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260916_191737/error_propagation.log     the label-free headline result
+  2. logs/v2_20260916_191737/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260916_191737/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260916_191737/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0

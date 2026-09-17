@@ -241,6 +241,64 @@ def test_measurement_agreement(cfg) -> None:
           nothing["cells_missed"] == len(reference),
           f"{nothing['cells_missed']}/{len(reference)}")
 
+    # ---- the hole coverage adjustment exists to close -------------------
+    # A detector that reports only the cells it is most confident about gets a
+    # flattering matched-cell MAPE. Here half the reference cells are dropped
+    # and the survivors are measured EXACTLY, so the matched MAPE stays at zero
+    # while the coverage-adjusted one must rise to the fraction that was lost.
+    half = MeasurementMetrics()
+    kept = reference[: max(1, len(reference) // 2)]
+    kept_labels = np.where(np.isin(labels, [c["label"] for c in kept]), labels, 0)
+    kept_cells = measure((kept_labels > 0).astype(np.int64))
+    kept_pairs = match_cells(kept_cells, reference, kept_labels, labels,
+                             cfg.evaluation.measurement.match_iou_threshold)
+    half.update_pairs(kept_pairs)
+    half.update_image(kept_pairs, kept_cells, reference)
+    selective = half.compute()
+    coverage = selective["coverage"]
+    check("a selective detector still scores a near-zero matched MAPE",
+          selective["dry_mass_mape"] < 1e-6,
+          f"matched MAPE {selective['dry_mass_mape']:.2e} at coverage {coverage:.2f}")
+    check("coverage adjustment charges it for the cells it never reported",
+          abs(selective["dry_mass_mape_coverage_adjusted"] - (1.0 - coverage)) < 1e-6,
+          f"adjusted {selective['dry_mass_mape_coverage_adjusted']:.4f} "
+          f"= 1 - coverage = {1.0 - coverage:.4f}")
+    check("the field total falls by the mass of the dropped cells",
+          selective["dry_mass_field_total_bias"] < -1e-3,
+          f"bias {selective['dry_mass_field_total_bias']:+.4f}")
+    check("an identical prediction has no field-total bias",
+          abs(identical["dry_mass_field_total_bias"]) < 1e-9)
+
+    # ---- the field bootstrap -------------------------------------------
+    # One field cannot be resampled, so the interval must be absent rather
+    # than a zero-width one masquerading as certainty. With several fields it
+    # must appear and must bracket the point estimate.
+    single = MeasurementMetrics(field_bootstrap_resamples=200)
+    single.update_pairs(eroded_pairs)
+    single.update_image(eroded_pairs, eroded_cells, reference)
+    one_field = single.compute()
+    check("no bootstrap interval is reported from a single field",
+          "dry_mass_mape_ci_lower" not in one_field)
+
+    several = MeasurementMetrics(field_bootstrap_resamples=200)
+    for _ in range(5):
+        several.update_pairs(eroded_pairs)
+        several.update_image(eroded_pairs, eroded_cells, reference)
+    bootstrapped = several.compute()
+    check("the field bootstrap reports an interval once there are fields to draw",
+          "dry_mass_mape_ci_lower" in bootstrapped,
+          f"{bootstrapped.get('dry_mass_bootstrap_fields')} fields")
+    check("the interval brackets the point estimate",
+          bootstrapped["dry_mass_mape_ci_lower"] - 1e-9
+          <= bootstrapped["dry_mass_mape"]
+          <= bootstrapped["dry_mass_mape_ci_upper"] + 1e-9,
+          f"{bootstrapped['dry_mass_mape_ci_lower']:.4f} <= "
+          f"{bootstrapped['dry_mass_mape']:.4f} <= "
+          f"{bootstrapped['dry_mass_mape_ci_upper']:.4f}")
+    check("pooling fields does not change the point estimate",
+          abs(bootstrapped["dry_mass_mape"] - eroded_results["dry_mass_mape"]) < 1e-9,
+          "grouping by field is bookkeeping, not a different statistic")
+
 
 def test_phase_masked_errors(cfg) -> None:
     print("\n[5] phase error inside cells versus background")
@@ -271,6 +329,60 @@ def test_phase_masked_errors(cfg) -> None:
     single.update(prediction, phase)
     check("a 2-D array counts as one image", single.compute()["phase_n_images"] == 1,
           f"{single.compute()['phase_n_images']}")
+
+
+def test_amplitude_metric(cfg) -> None:
+    """The amplitude metric must expose a collapsed head rather than flatter it.
+
+    The failure this guards against is specific: an amplitude head that has
+    learned nothing predicts 1 everywhere, which is the thin-phase-object
+    assumption, and a bare MAE against a reference whose background is also 1
+    looks respectable for it. The ratio against that assumption is the row that
+    settles it, so the ratio has to be exactly 1 for a collapsed head and below
+    1 for a head carrying real structure.
+    """
+    print("\n[5b] amplitude metric against the thin-phase assumption")
+    from holoqpi.metrics import AmplitudeMetrics
+
+    _, mask = synthetic_field()
+    # A reference that departs from unity only inside the cells, which is what a
+    # transmitting specimen does.
+    reference = np.ones_like(mask, dtype=np.float64)
+    reference[mask > 0] = 0.8
+
+    collapsed = AmplitudeMetrics()
+    collapsed.update(np.ones_like(reference)[None], reference[None], mask=mask[None])
+    collapsed_results = collapsed.compute()
+    check("a collapsed head scores exactly the A = 1 assumption",
+          abs(collapsed_results["amplitude_mae_over_unity"] - 1.0) < 1e-12,
+          f"ratio {collapsed_results['amplitude_mae_over_unity']:.6f}")
+    check("and its predicted spread is reported as zero",
+          collapsed_results["amplitude_pred_sd"] < 1e-12,
+          f"sd {collapsed_results['amplitude_pred_sd']:.2e}")
+
+    perfect = AmplitudeMetrics()
+    perfect.update(reference[None], reference[None], mask=mask[None])
+    perfect_results = perfect.compute()
+    check("a correct head beats the A = 1 assumption",
+          perfect_results["amplitude_mae_over_unity"] < 1e-12,
+          f"ratio {perfect_results['amplitude_mae_over_unity']:.2e}")
+    check("the in-cell error is reported separately",
+          "amplitude_mae_in_cell" in perfect_results
+          and perfect_results["amplitude_mae_in_cell"] < 1e-12,
+          f"{perfect_results.get('amplitude_mae_in_cell')}")
+
+    # A head biased high inside cells must be worse than assuming unity there,
+    # so the sign of the comparison cannot be the other way round.
+    biased = AmplitudeMetrics()
+    prediction = np.ones_like(reference)
+    prediction[mask > 0] = 1.4
+    biased.update(prediction[None], reference[None], mask=mask[None])
+    biased_results = biased.compute()
+    check("a head biased the wrong way scores above 1.0",
+          biased_results["amplitude_mae_over_unity"] > 1.0,
+          f"ratio {biased_results['amplitude_mae_over_unity']:.4f}")
+    check("an empty accumulator reports nothing rather than zeros",
+          AmplitudeMetrics().compute() == {}, "{}")
 
 
 def test_loss_terms(cfg) -> None:
@@ -532,6 +644,57 @@ def test_physics(cfg) -> None:
           probe.grad is not None and torch.isfinite(probe.grad).all()
           and float(probe.grad.abs().sum()) > 0)
 
+    # THE SAME ARGUMENT FOR AREA, WHICH THE PHASE TERM CANNOT MAKE.
+    # cell_integrated_phase constrains the mass of each cell, and mass is the
+    # product of an area and a phase. A boundary pulled inwards while the phase
+    # inside is scaled up leaves the product unchanged, so the phase term alone
+    # cannot pin the morphology -- and projected area and circularity are
+    # reported outputs in their own right. This term constrains the area
+    # directly, per cell, over the SAME reference bins.
+    from holoqpi.losses.terms import AmplitudeReconstructionLoss, CellProjectedArea
+
+    area_term = CellProjectedArea(1e-4, 1.0, None)
+    exact_area = area_term(ones, ones, labels)
+    check("per-cell area vanishes when the foreground is exact",
+          float(exact_area) < 1e-6, f"{float(exact_area):.2e}")
+
+    # Half of each cell's foreground removed: 50% area error on both cells, and
+    # unlike the mass term this cannot be hidden by compensating phase.
+    thinned = ones.clone()
+    thinned[0, 0, 8:16, 8:24] = 0.0
+    thinned[0, 0, 40:48, 40:56] = 0.0
+    halved = area_term(thinned, ones, labels)
+    check("per-cell area catches a boundary that lost half of every cell",
+          abs(float(halved) - 0.5) < 1e-4, f"loss {float(halved):.4f} (expected 0.5000)")
+
+    # One cell wrong by 25% and the other exact averages to 0.125 -- the mean is
+    # over CELLS, so a single bad cell costs a fixed share of the loss no matter
+    # how large the field is. An image-level area term would divide the same
+    # error by the whole field's foreground and all but lose it.
+    lopsided = ones.clone()
+    lopsided[0, 0, 8:12, 8:24] = 0.0          # -25% on cell 1, cell 2 untouched
+    one_bad = area_term(lopsided, ones, labels)
+    check("per-cell area averages over cells, so one bad cell is not diluted",
+          abs(float(one_bad) - 0.125) < 1e-4,
+          f"loss {float(one_bad):.4f} (expected 0.1250 = 0.25 / 2 cells)")
+
+    small = CellProjectedArea(1e-4, 1e9, None)(thinned, ones, labels)
+    check("cells below the reference pixel floor are skipped by the area term",
+          float(small) == 0.0, "all cells excluded -> zero, not a division blow-up")
+
+    area_probe = thinned.clone().requires_grad_(True)
+    area_term(area_probe, ones, labels).mean().backward()
+    check("per-cell area is differentiable w.r.t. the foreground probability",
+          area_probe.grad is not None and torch.isfinite(area_probe.grad).all()
+          and float(area_probe.grad.abs().sum()) > 0)
+
+    amplitude_term = AmplitudeReconstructionLoss(type("Cfg", (), {"l1": 1.0})())
+    check("amplitude loss vanishes on an exact prediction",
+          float(amplitude_term(ones, ones).mean()) < 1e-9)
+    check("amplitude loss is the mean absolute error",
+          abs(float(amplitude_term(ones * 0.9, ones).mean()) - 0.1) < 1e-6,
+          f"{float(amplitude_term(ones * 0.9, ones).mean()):.4f} (expected 0.1000)")
+
     # The off-axis residual must not depend on the global piston phase, which
     # is unmeasurable and cycles completely every half wavelength of z. Without
     # the quadrature components this test swings over most of the residual's
@@ -613,6 +776,372 @@ def test_physics(cfg) -> None:
           f"r = {correlation:.4f}")
 
 
+def test_mixed_precision(cfg) -> None:
+    """Does the radiometric fit survive an autocast region?
+
+    This is here because experiment D1 died at epoch 1 twice for the same
+    reason. The Gram matrix in ForwardModelConsistency._fit_components is built
+    by a matmul, and autocast re-casts a matmul's operands to float16 EVEN WHEN
+    THEY ARE ALREADY float32 -- so `gram` came back Half while the right-hand
+    side, built from elementwise ops that autocast leaves alone, stayed Float,
+    and torch.linalg.solve refused the mismatch. Casting the inputs does not
+    help; the region has to leave autocast.
+
+    Training runs with training.mixed_precision true, so nothing else in the
+    test suite exercises that path. These checks do.
+    """
+    print("\n--- mixed precision (the D1 crash) ---")
+    from holoqpi.losses.terms import ForwardModelConsistency
+
+    batch, terms, pixels = 2, 6, 64
+    measured = torch.randn(batch, pixels, dtype=torch.float32)
+
+    # First establish the hazard is real, so this test cannot pass vacuously if
+    # a future torch stops down-casting.
+    with torch.autocast(device_type="cpu", dtype=torch.bfloat16):
+        probe = torch.randn(batch, terms, pixels)
+        gram_dtype = (probe.float() @ probe.float().transpose(1, 2)).dtype
+    check("autocast does down-cast a float32 matmul (the hazard is real)",
+          gram_dtype != torch.float32, f"gram came back {gram_dtype}")
+
+    for dtype in (torch.float16, torch.bfloat16):
+        components = torch.randn(batch, terms, pixels,
+                                 dtype=torch.float16, requires_grad=True)
+        failure = ""
+        try:
+            with torch.autocast(device_type="cpu", dtype=dtype):
+                fitted, coefficients = ForwardModelConsistency._fit_components(
+                    components, measured
+                )
+            residual = (fitted - measured).pow(2).mean()
+            residual.backward()
+            finite = bool(torch.isfinite(components.grad).all())
+            nonzero = float(components.grad.abs().sum()) > 0.0
+        except RuntimeError as exc:
+            failure, finite, nonzero = str(exc)[:70], False, False
+        check(f"radiometric fit runs under autocast {dtype}",
+              not failure, failure)
+        check(f"its gradient is finite and non-zero under autocast {dtype}",
+              finite and nonzero)
+
+    # Outside autocast the behaviour must be untouched.
+    plain = torch.randn(batch, terms, pixels)
+    fitted, coefficients = ForwardModelConsistency._fit_components(plain, measured)
+    check("outside autocast the fit still returns float32",
+          fitted.dtype == torch.float32 and coefficients.dtype == torch.float32)
+
+    # The ridge only does its job if it is representable, which is the second
+    # reason the solve is pinned to float32.
+    with torch.autocast(device_type="cpu", dtype=torch.float16):
+        collinear = torch.ones(1, 3, 32, dtype=torch.float16)
+        collinear[0, 1] += 1e-4
+        _, coefficients = ForwardModelConsistency._fit_components(
+            collinear, torch.randn(1, 32)
+        )
+    check("near-collinear components still give finite coefficients",
+          bool(torch.isfinite(coefficients).all()))
+
+
+def test_autocast_integrals(cfg) -> None:
+    """Do the measurement terms survive autocast at this dataset's magnitudes?
+
+    Nothing else in this file exercised that. Every other test here runs in
+    float32 while training runs under ``training.mixed_precision``, so the terms
+    were only ever checked at a precision they never see, on toy fields two
+    orders of magnitude smaller than the real ones.
+
+    THE HAZARD. ``scatter_add`` accumulates in the tensor's own dtype, and the
+    per-cell integrals on this dataset are large (median 5964 px of area,
+    5399 rad of integrated phase). A half-precision accumulator's spacing at
+    4096 already exceeds the per-pixel increment, so the running total stops
+    growing and every large cell reports the same saturated integral; an
+    image-level integral overflows to ``inf`` outright on a 512 px crop.
+
+    WHAT THIS DID AND DID NOT CATCH. On CUDA, autocast promotes ``softmax`` and
+    ``sum`` to float32, so the GPU runs were already accumulating in float32 and
+    no recorded result was affected -- see the long note on
+    ``holoqpi.losses.terms._accumulation_dtype`` for the proof. The CPU autocast
+    policy is a different, smaller list that does not include ``softmax``, and
+    under it the same code RAISED. These checks pin the behaviour explicitly on
+    both, so the study's central measurement no longer depends on which ops a
+    given PyTorch release happens to promote.
+
+    The magnitudes below are the measured ones, not convenient ones, and the
+    first check establishes that a low-precision accumulator really does fail
+    here so the rest cannot pass vacuously.
+    """
+    print("\n[7] measurement integrals under autocast, at real magnitudes")
+    from holoqpi.losses.terms import (
+        CellIntegratedPhase,
+        CellProjectedArea,
+        PhaseVolumePreservation,
+    )
+
+    size = 128
+    # One cell of 6084 px carrying ~1 rad, i.e. an integral of ~6084 -- the
+    # median cell on this dataset is 5964 px and 5399 rad.
+    foreground = torch.zeros(1, 1, size, size)
+    labels = torch.zeros(1, size, size, dtype=torch.long)
+    foreground[0, 0, 25:103, 25:103] = 1.0
+    labels[0, 25:103, 25:103] = 1
+    phase = foreground.clone()
+    cell_pixels = int(foreground.sum())
+
+    # The hazard, demonstrated rather than asserted: a low-precision
+    # accumulation of the same data must NOT reproduce the true sum.
+    flat = foreground.reshape(-1)
+    index = labels.reshape(-1)
+    low = torch.zeros(2, dtype=torch.bfloat16).scatter_add(
+        0, index, flat.to(torch.bfloat16)
+    )
+    check(
+        "a half-precision accumulator does lose this integral (the hazard is real)",
+        abs(float(low[1]) - cell_pixels) > 1.0,
+        f"{cell_pixels} px accumulated as {float(low[1]):.0f}",
+    )
+
+    area_term = CellProjectedArea(1e-4, 1.0, None)
+    phase_term = CellIntegratedPhase(1e-4, 1.0, None)
+    volume_term = PhaseVolumePreservation(1e-4)
+
+    # A 10% shortfall in both quantities, so the correct answer is exactly 0.1
+    # and any accumulation error shows up directly in the number.
+    thinned = foreground.clone()
+    thinned[0, 0, 25:33, 25:103] = 0.0            # removes 8 of 78 rows
+    expected_area = 1.0 - float(thinned.sum()) / cell_pixels
+
+    reference_area = float(area_term(thinned, foreground, labels))
+    reference_phase = float(phase_term(foreground, phase * 0.9, foreground, phase, labels))
+    reference_volume = float(volume_term(foreground, phase * 0.9, foreground, phase))
+
+    for dtype in (torch.bfloat16, torch.float16):
+        with torch.autocast(device_type="cpu", dtype=dtype):
+            # Cast the inputs the way the model's heads would hand them over.
+            low_foreground = foreground.to(dtype)
+            low_phase = phase.to(dtype)
+            low_thinned = thinned.to(dtype)
+
+            area = float(area_term(low_thinned, low_foreground, labels))
+            integrated = float(
+                phase_term(low_foreground, low_phase * 0.9, low_foreground, phase, labels)
+            )
+            volume = float(
+                volume_term(low_foreground, low_phase * 0.9, low_foreground, phase)
+            )
+
+        check(
+            f"per-cell area is exact under autocast {dtype}",
+            abs(area - expected_area) < 2e-3,
+            f"{area:.5f} vs {expected_area:.5f} in float32 {reference_area:.5f}",
+        )
+        check(
+            f"per-cell integrated phase is exact under autocast {dtype}",
+            abs(integrated - 0.1) < 2e-3 and abs(integrated - reference_phase) < 2e-3,
+            f"{integrated:.5f} (expected 0.1000)",
+        )
+        check(
+            f"image-level phase volume is finite and exact under autocast {dtype}",
+            math.isfinite(volume) and abs(volume - reference_volume) < 2e-3,
+            f"{volume:.5f} (expected {reference_volume:.5f})",
+        )
+
+    # A 512 px crop at this dataset's ~19% foreground holds ~50,000 cell pixels
+    # and an integral near 70,000, which exceeds float16's largest finite value.
+    # The term must not return inf.
+    big = torch.zeros(1, 1, 512, 512)
+    big[0, 0, :230, :230] = 1.0                   # 52,900 px
+    big_phase = big * 1.4                         # integral ~74,000
+    with torch.autocast(device_type="cpu", dtype=torch.float16):
+        overflowing = float(
+            volume_term(big.half(), (big_phase * 0.9).half(), big, big_phase)
+        )
+    check(
+        "a full-crop phase integral does not overflow under autocast float16",
+        math.isfinite(overflowing) and abs(overflowing - 0.1) < 2e-3,
+        f"{overflowing:.5f} on an integral of {float(big_phase.sum()):.0f} rad",
+    )
+
+
+def test_composite_under_autocast(cfg) -> None:
+    """The whole objective, for every arm, inside an autocast region.
+
+    The dtype crash that killed experiment D1 twice was only reachable by
+    running an arm, because ``config/base.yaml`` switches every physics term off
+    and the self-test only ever loaded base.yaml. So the configurations the study
+    actually trains were never constructed here at all. These checks build each
+    one and push a batch through its full objective under autocast, which is the
+    combination that fails.
+    """
+    print("\n[8] every arm's objective, constructed and run under autocast")
+    import torch.nn.functional as F
+
+    from holoqpi.losses import build_loss
+
+    arm_configs = sorted(Path("config/v2").glob("*.yaml"))
+    check("the v2 arm configurations are present", bool(arm_configs),
+          f"{len(arm_configs)} found under config/v2/")
+
+    batch, size = 2, 96
+    phase_map, mask = synthetic_field(size=size, radius=30, amplitude=2.0)
+    phase_target = torch.from_numpy(phase_map).unsqueeze(0).unsqueeze(0).repeat(
+        batch, 1, 1, 1
+    )
+    mask_target = torch.from_numpy(mask).unsqueeze(0).repeat(batch, 1, 1)
+    instances = torch.from_numpy(
+        split_instances((mask > 0).astype(np.uint8),
+                        cfg.evaluation.segmentation.instance_from,
+                        cfg.mask_generation.watershed_min_distance_px).astype(np.int64)
+    ).unsqueeze(0).repeat(batch, 1, 1)
+
+    for path in arm_configs:
+        arm = load_config(str(path))
+        # Floors that gate the physics terms are set for a 512 px crop; this
+        # batch is 96 px, so lower them or every term is skipped and the arm is
+        # not exercised at all.
+        arm = arm.merged({
+            "loss": {"physics": {"min_foreground_pixels": 1,
+                                 "cell_min_reference_rad": 1.0}}
+        })
+        try:
+            criterion = build_loss(arm)
+        except Exception as exc:
+            check(f"{path.name}: objective builds", False, f"{type(exc).__name__}: {exc}")
+            continue
+
+        targets = {
+            "phase": phase_target,
+            "mask": mask_target,
+            "condition": torch.zeros(batch, dtype=torch.long),
+            "instances": instances,
+            "hologram_raw": torch.rand(batch, 1, size, size) * 200.0 + 20.0,
+            "aberration": torch.zeros(batch, 1, size, size),
+            "aberration_valid": torch.ones(batch, dtype=torch.bool),
+        }
+        if arm.data.provide_amplitude:
+            targets["amplitude"] = torch.ones(batch, 1, size, size)
+
+        failure = ""
+        finite = False
+        try:
+            with torch.autocast(device_type="cpu", dtype=torch.bfloat16):
+                # Through convolutions, so the outputs carry the reduced dtype
+                # the real heads would produce rather than a float32 literal.
+                phase_out = F.conv2d(
+                    phase_target, torch.ones(1, 1, 1, 1), padding=0
+                ).requires_grad_(True)
+                seg_out = F.conv2d(
+                    torch.stack([(mask_target == 0).float(),
+                                 (mask_target == 1).float()], dim=1) * 8.0,
+                    torch.eye(2).view(2, 2, 1, 1),
+                ).requires_grad_(True)
+                outputs = {"phase": phase_out, "segmentation": seg_out}
+                if arm.model.amplitude.enabled:
+                    outputs["amplitude"] = torch.ones(
+                        batch, 1, size, size, requires_grad=True
+                    )
+                if arm.model.classifier_enabled:
+                    outputs["condition"] = torch.zeros(
+                        batch, arm.model.condition_classes, requires_grad=True
+                    )
+                loss, components = criterion(outputs, targets)
+            total = float(loss.detach())
+            loss.backward()
+            finite = (
+                math.isfinite(total)
+                and all(math.isfinite(v) for v in components.values())
+                and phase_out.grad is not None
+                and bool(torch.isfinite(phase_out.grad).all())
+            )
+        except Exception as exc:
+            failure = f"{type(exc).__name__}: {exc}"[:110]
+
+        check(f"{path.name}: objective runs under autocast", not failure, failure)
+        if not failure:
+            check(f"{path.name}: loss and every component are finite", finite)
+
+
+def test_learned_distance_domain(cfg) -> None:
+    """Does the residual's comparison domain stay fixed while z moves?
+
+    It did not. ``required_pad`` derived the diffraction margin from the live
+    value of z, and ``border_px`` defaults to that margin, so every step z took
+    changed WHICH PIXELS the residual was computed over. Gradient descent could
+    then lower the residual by shrinking |z|, purely because a smaller border
+    keeps a different set of pixels, and two residuals from different epochs were
+    not on the same scale. "Learn z" only means something over one fixed domain.
+    """
+    print("\n[9] the learned-distance arm's residual domain")
+    from holoqpi.losses.terms import ForwardModelConsistency
+
+    settings = type("Cfg", (), {
+        "distance_um": 33.77, "learn_distance": True, "criterion": "l2",
+        "fit_radiometry": True, "feature_um": 1.0, "pad_px": None, "border_px": None,
+        "dc_exclusion_frac": 0.13, "dc_exclusion_px": None, "warn_on_short_pad": False,
+    })()
+    term = ForwardModelConsistency(settings, cfg.optics)
+
+    at_start = term.required_pad()
+    with torch.no_grad():
+        term.distance.fill_(-4.95)                 # where z actually ended up
+    after_move = term.required_pad()
+    with torch.no_grad():
+        term.distance.fill_(120.0)
+    after_big_move = term.required_pad()
+
+    check("the diffraction pad is set by the configured distance, not the live one",
+          at_start == after_move == after_big_move and at_start > 0,
+          f"pad {at_start} px at z = 33.77, {after_move} at -4.95, "
+          f"{after_big_move} at 120.0")
+    check("and it is the value the configured distance implies",
+          at_start == int(math.ceil(
+              abs(cfg.optics.wavelength_um * 33.77) / 1.0
+              / min(cfg.optics.pixel_pitch_x_um, cfg.optics.pixel_pitch_y_um))),
+          f"{at_start} px")
+
+    # An explicit pad_px must still win, because a z sweep needs one domain
+    # across every candidate distance.
+    explicit = type("Cfg", (), {**settings.__class__.__dict__, "pad_px": 64})()
+    check("an explicit pad_px overrides the derived value",
+          ForwardModelConsistency(explicit, cfg.optics).required_pad() == 64)
+
+    # The criterion options must be genuinely different. `correlation` used to be
+    # a verbatim copy of `l2`, so selecting it silently got l2.
+    from holoqpi.physics import form_hologram
+
+    grid_y, grid_x = np.mgrid[0:128, 0:128]
+    smooth = 1.5 * np.exp(
+        -(((grid_y - 64) ** 2 + (grid_x - 64) ** 2) / (2 * 14.0 ** 2))
+    ).astype(np.float32)
+    phase_t = torch.from_numpy(smooth).view(1, 1, 128, 128)
+    amplitude_t = torch.ones_like(phase_t)
+    measured = form_hologram(phase_t, amplitude_t, "gabor",
+                             cfg.optics.wavelength_um, cfg.optics.pixel_pitch_x_um,
+                             cfg.optics.pixel_pitch_y_um, 200.0)
+
+    values = {}
+    for name in ("l1", "l2", "correlation"):
+        options = type("Cfg", (), {
+            "distance_um": 200.0, "learn_distance": False, "criterion": name,
+            "fit_radiometry": True, "feature_um": 1.0, "pad_px": 0, "border_px": 8,
+            "dc_exclusion_frac": 0.13, "dc_exclusion_px": None,
+            "warn_on_short_pad": False,
+        })()
+        built = ForwardModelConsistency(options, cfg.optics)
+        values[name] = (
+            float(built(phase_t, amplitude_t, measured, "gabor").mean()),
+            float(built(phase_t * 0.3, amplitude_t, measured, "gabor").mean()),
+        )
+
+    for name, (exact, wrong) in values.items():
+        check(f"criterion '{name}' vanishes on the true phase and rises on a wrong one",
+              exact < 1e-3 and wrong > exact,
+              f"exact {exact:.2e}, degraded {wrong:.4f}")
+    check("'correlation' is not silently the same function as 'l2'",
+          abs(values["correlation"][1] - values["l2"][1]) > 1e-6,
+          f"correlation {values['correlation'][1]:.4f} vs l2 {values['l2'][1]:.4f} "
+          f"on the same degraded phase")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="config/base.yaml")
@@ -625,8 +1154,13 @@ def main() -> int:
     test_metrics_identity(cfg)
     test_measurement_agreement(cfg)
     test_phase_masked_errors(cfg)
+    test_amplitude_metric(cfg)
     test_loss_terms(cfg)
     test_physics(cfg)
+    test_mixed_precision(cfg)
+    test_autocast_integrals(cfg)
+    test_composite_under_autocast(cfg)
+    test_learned_distance_domain(cfg)
 
     print("\n" + "=" * 60)
     if _failures:

@@ -57,6 +57,49 @@ class HologramQPIDataset(Dataset):
             data_io.load_aberration(self.data_root / cfg.paths.aberration_file)
             if cfg.optics.aberration.enabled else None
         )
+        # WHICH surface each field gets.
+        #
+        # per_field looks up the field's own fitted surface. That surface was
+        # obtained from the difference between the field's classical
+        # reconstruction and its DELIVERED REFERENCE PHASE, i.e. the network's
+        # target, so it could not be reproduced at inference on a new hologram --
+        # and it makes the forward-model discrimination test partly circular,
+        # because the surface was fitted assuming the reference phase is right.
+        #
+        # global looks up a single instrument-wide surface, fitted from the
+        # TRAIN split only and applied to every field. That is what an optical
+        # aberration is, and it is obtainable from a one-off calibration.
+        #
+        # hybrid is the global curvature plus a per-field ramp predicted from
+        # the hologram's carrier. It is equally deployable, but on this data it
+        # was MEASURED not to help: the carrier explains 10.9% of the fitted
+        # tilt. It is selectable so that result can be reproduced, not because
+        # it is recommended. See scripts/estimate_aberration.py.
+        self.aberration_mode = cfg.optics.aberration.mode
+        if self.aberration_mode not in ("global", "per_field", "hybrid"):
+            raise ValueError(
+                f"optics.aberration.mode must be global, per_field or hybrid, "
+                f"got {self.aberration_mode!r}"
+            )
+        self.aberration_key = {"global": "__global__"}.get(self.aberration_mode)
+        probe = (
+            self.aberration_key if self.aberration_key is not None
+            else f"hybrid::{stems[0]}" if self.aberration_mode == "hybrid" and stems
+            else None
+        )
+        if (
+            cfg.optics.aberration.enabled
+            and probe is not None
+            and self.aberration is not None
+            and probe not in self.aberration.get("coefficients", {})
+        ):
+            LOGGER.warning(
+                "optics.aberration.mode is %r but %s carries no %r surface. Every field "
+                "will fall back to the pure-phase assumption and the forward-model term "
+                "will be skipped. Re-run "
+                "`python scripts/estimate_aberration.py --config <cfg>` to write it.",
+                self.aberration_mode, self.data_root / cfg.paths.aberration_file, probe,
+            )
         if cfg.optics.aberration.enabled and self.aberration is None:
             LOGGER.warning(
                 "optics.aberration.enabled is true but %s is missing. The forward-model "
@@ -67,6 +110,10 @@ class HologramQPIDataset(Dataset):
             )
 
         self.provide_instances = bool(data_cfg.provide_instances)
+        # Classical-reconstruction amplitude, a REFERENCE and not a measurement.
+        self.provide_amplitude = bool(data_cfg.provide_amplitude)
+        self.amplitude_dir = cfg.paths.amplitude_dir
+        self.amplitude_suffix = cfg.formats.amplitude.suffix
         self.instance_method = cfg.evaluation.segmentation.instance_from
         self.watershed_min_distance = cfg.mask_generation.watershed_min_distance_px
 
@@ -149,9 +196,20 @@ class HologramQPIDataset(Dataset):
             ).astype(np.int32)
         else:
             instances = np.zeros_like(mask, dtype=np.int32)
-        surface, surface_valid = data_io.render_aberration(
-            self.aberration, stem, phase.shape[0], phase.shape[1]
+        surface_key = (
+            self.aberration_key
+            or (f"hybrid::{stem}" if self.aberration_mode == "hybrid" else stem)
         )
+        surface, surface_valid = data_io.render_aberration(
+            self.aberration, surface_key, phase.shape[0], phase.shape[1]
+        )
+
+        if self.provide_amplitude:
+            amplitude = self._read_amplitude(stem, phase.shape)
+        else:
+            # Unit transmittance: the thin-phase-object assumption. Carried as an
+            # array anyway so the sample dict has a stable shape.
+            amplitude = np.ones_like(phase, dtype=np.float32)
 
         if phase.shape != hologram.shape or mask.shape != phase.shape:
             raise ValueError(
@@ -161,28 +219,45 @@ class HologramQPIDataset(Dataset):
 
         arrays = (hologram.astype(np.float32), phase.astype(np.float32),
                   mask.astype(np.int64), hologram_raw.astype(np.float32),
-                  surface.astype(np.float32), instances, bool(surface_valid))
+                  surface.astype(np.float32), instances,
+                  amplitude.astype(np.float32), bool(surface_valid))
         if self._cache is not None:
             self._cache[index] = arrays
         return arrays
 
+    def _read_amplitude(self, stem: str, shape: tuple[int, int]) -> np.ndarray:
+        """Load the precomputed classical-reconstruction amplitude for one field."""
+        path = self.data_root / self.amplitude_dir / f"{stem}{self.amplitude_suffix}"
+        if not path.is_file():
+            raise FileNotFoundError(
+                f"{path} is missing but data.provide_amplitude is true. Run "
+                "`python scripts/prepare_amplitude.py --config <cfg>` first."
+            )
+        amplitude = np.load(path).astype(np.float32)
+        if amplitude.shape != tuple(shape):
+            raise ValueError(
+                f"{stem}: amplitude reference is {amplitude.shape} but the phase is "
+                f"{tuple(shape)}. Regenerate the amplitude with the same phase_size."
+            )
+        return amplitude
+
     def __getitem__(self, index: int) -> dict:
         meta = self.samples[index]
-        (hologram, phase, mask, hologram_raw, surface, instances,
+        (hologram, phase, mask, hologram_raw, surface, instances, amplitude,
          surface_valid) = self._load_arrays(index)
 
         # The aberration surface travels with the other arrays through cropping
         # and augmentation. Rendering it on the full field and then cropping it
         # keeps it registered to the hologram; rendering it on the crop's own
         # coordinates would silently re-centre the bowl on every crop.
-        stack = [hologram, phase, mask, hologram_raw, surface, instances]
+        stack = [hologram, phase, mask, hologram_raw, surface, instances, amplitude]
         if self.crop_size:
             stack = (random_crop(stack, self.crop_size, self._rng)
                      if self.split == "train"
                      else center_crop(stack, self.crop_size))
         if self.augment is not None:
             stack = self.augment(*stack)
-        hologram, phase, mask, hologram_raw, surface, instances = stack
+        hologram, phase, mask, hologram_raw, surface, instances, amplitude = stack
         # Cropping can leave gaps in the label sequence; the loss scatters into
         # one bin per label value, so they must stay dense and start at 1.
         instances = _relabel_dense(instances)
@@ -200,6 +275,11 @@ class HologramQPIDataset(Dataset):
             # phase error larger than the signal.
             "aberration_valid": torch.tensor(bool(surface_valid)),
             "phase": torch.from_numpy(np.ascontiguousarray(phase)).unsqueeze(0).float(),
+            # Named 'amplitude' but it is a classical reconstruction, not a
+            # measurement. See scripts/prepare_amplitude.py.
+            "amplitude": torch.from_numpy(
+                np.ascontiguousarray(amplitude)
+            ).unsqueeze(0).float(),
             "mask": torch.from_numpy(np.ascontiguousarray(mask)).long(),
             "instances": torch.from_numpy(np.ascontiguousarray(instances)).long(),
             "condition": torch.tensor(meta.condition_id, dtype=torch.long),

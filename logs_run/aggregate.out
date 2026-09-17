@@ -1,0 +1,170 @@
+
+baseline arm: v2_baseline   split: test   resolve factor: 2x the pooled between-seed SD
+restricted to the study's 15 arms (pass --all-runs to pool every run directory)
+
+==========================================================================
+ off_axis
+==========================================================================
+  runs found:
+    v2_amplitude               1 run(s)   seeds: 42
+    v2_baseline                3 run(s)   seeds: 42, 1337, 2024
+    v2_cell_ipp                3 run(s)   seeds: 42, 1337, 2024
+    v2_cell_ipp_area           1 run(s)   seeds: 42
+    v2_cell_ipp_bga            1 run(s)   seeds: 42
+    v2_compact_baseline        1 run(s)   seeds: 42
+    v2_compact_cell_ipp        1 run(s)   seeds: 42
+    v2_forward_amplitude       1 run(s)   seeds: 42
+    v2_image_volume            3 run(s)   seeds: 42, 1337, 2024
+    v2_ipp_w01                 1 run(s)   seeds: 42
+    v2_ipp_w03                 1 run(s)   seeds: 42
+    v2_ipp_w30                 1 run(s)   seeds: 42
+    v2_learned_z               1 run(s)   seeds: 42
+
+  10 arm(s) have a single run, so no spread can be
+  estimated for them and every comparison involving one is
+  unresolvable by construction: v2_amplitude, v2_cell_ipp_area, v2_cell_ipp_bga, v2_compact_baseline, v2_compact_cell_ipp, v2_forward_amplitude, v2_ipp_w01, v2_ipp_w03, v2_ipp_w30, v2_learned_z
+  Fill this in with:  SEEDS="1337 2024" bash run_v2.sh --stage 6
+
+  phase_mae_rad
+    v2_baseline                  0.1593 +/- 0.0008  (n=3)
+    v2_amplitude                 0.1708             (n=1)   d=+0.0115   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp                  0.1697 +/- 0.0022  (n=3)   d=+0.0104   RESOLVED
+    v2_cell_ipp_area             0.1682             (n=1)   d=+0.0089   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp_bga              0.1677             (n=1)   d=+0.0083   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_baseline          0.1599             (n=1)   d=+0.0006   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_cell_ipp          0.1702             (n=1)   d=+0.0108   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_forward_amplitude         0.1677             (n=1)   d=+0.0083   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_image_volume              0.1666 +/- 0.0006  (n=3)   d=+0.0073   RESOLVED
+    v2_ipp_w01                   0.1583             (n=1)   d=-0.0011   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w03                   0.1610             (n=1)   d=+0.0017   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w30                   0.1851             (n=1)   d=+0.0258   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_learned_z                 0.1679             (n=1)   d=+0.0086   unresolvable (needs 2+ runs per arm (have 3 and 1))
+
+  phase_pearson_r
+    v2_baseline                  0.8701 +/- 0.0011  (n=3)
+    v2_amplitude                 0.8547             (n=1)   d=-0.0155   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp                  0.8561 +/- 0.0016  (n=3)   d=-0.0140   RESOLVED
+    v2_cell_ipp_area             0.8603             (n=1)   d=-0.0098   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp_bga              0.8579             (n=1)   d=-0.0123   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_baseline          0.8699             (n=1)   d=-0.0002   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_cell_ipp          0.8572             (n=1)   d=-0.0129   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_forward_amplitude         0.8590             (n=1)   d=-0.0111   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_image_volume              0.8579 +/- 0.0004  (n=3)   d=-0.0123   RESOLVED
+    v2_ipp_w01                   0.8692             (n=1)   d=-0.0009   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w03                   0.8671             (n=1)   d=-0.0030   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w30                   0.8152             (n=1)   d=-0.0549   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_learned_z                 0.8565             (n=1)   d=-0.0136   unresolvable (needs 2+ runs per arm (have 3 and 1))
+
+  seg_dice
+    v2_baseline                  0.8312 +/- 0.0014  (n=3)
+    v2_amplitude                 0.8265             (n=1)   d=-0.0047   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp                  0.8245 +/- 0.0015  (n=3)   d=-0.0067   RESOLVED
+    v2_cell_ipp_area             0.8273             (n=1)   d=-0.0039   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp_bga              0.8269             (n=1)   d=-0.0043   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_baseline          0.8321             (n=1)   d=+0.0009   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_cell_ipp          0.8279             (n=1)   d=-0.0033   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_forward_amplitude         0.8276             (n=1)   d=-0.0037   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_image_volume              0.8242 +/- 0.0007  (n=3)   d=-0.0070   RESOLVED
+    v2_ipp_w01                   0.8322             (n=1)   d=+0.0009   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w03                   0.8319             (n=1)   d=+0.0007   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w30                   0.8101             (n=1)   d=-0.0212   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_learned_z                 0.8262             (n=1)   d=-0.0050   unresolvable (needs 2+ runs per arm (have 3 and 1))
+
+  seg_aji
+    v2_baseline                  0.6696 +/- 0.0007  (n=3)
+    v2_amplitude                 0.6545             (n=1)   d=-0.0151   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp                  0.6517 +/- 0.0027  (n=3)   d=-0.0178   RESOLVED
+    v2_cell_ipp_area             0.6558             (n=1)   d=-0.0138   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp_bga              0.6554             (n=1)   d=-0.0142   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_baseline          0.6675             (n=1)   d=-0.0021   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_cell_ipp          0.6570             (n=1)   d=-0.0126   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_forward_amplitude         0.6579             (n=1)   d=-0.0116   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_image_volume              0.6541 +/- 0.0005  (n=3)   d=-0.0154   RESOLVED
+    v2_ipp_w01                   0.6687             (n=1)   d=-0.0009   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w03                   0.6673             (n=1)   d=-0.0023   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w30                   0.6277             (n=1)   d=-0.0419   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_learned_z                 0.6589             (n=1)   d=-0.0107   unresolvable (needs 2+ runs per arm (have 3 and 1))
+
+  seg_boundary_f1
+    v2_baseline                  0.4574 +/- 0.0018  (n=3)
+    v2_amplitude                 0.4367             (n=1)   d=-0.0207   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp                  0.4353 +/- 0.0056  (n=3)   d=-0.0221   RESOLVED
+    v2_cell_ipp_area             0.4323             (n=1)   d=-0.0251   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp_bga              0.4396             (n=1)   d=-0.0178   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_baseline          0.4598             (n=1)   d=+0.0024   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_cell_ipp          0.4422             (n=1)   d=-0.0152   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_forward_amplitude         0.4360             (n=1)   d=-0.0214   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_image_volume              0.4223 +/- 0.0047  (n=3)   d=-0.0351   RESOLVED
+    v2_ipp_w01                   0.4539             (n=1)   d=-0.0035   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w03                   0.4538             (n=1)   d=-0.0036   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w30                   0.4006             (n=1)   d=-0.0568   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_learned_z                 0.4367             (n=1)   d=-0.0207   unresolvable (needs 2+ runs per arm (have 3 and 1))
+
+  dry_mass_mape
+    v2_baseline                  0.1763 +/- 0.0024  (n=3)
+    v2_amplitude                 0.2015             (n=1)   d=+0.0252   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp                  0.1915 +/- 0.0044  (n=3)   d=+0.0152   RESOLVED
+    v2_cell_ipp_area             0.1917             (n=1)   d=+0.0154   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp_bga              0.1978             (n=1)   d=+0.0214   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_baseline          0.1783             (n=1)   d=+0.0020   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_cell_ipp          0.1836             (n=1)   d=+0.0073   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_forward_amplitude         0.1980             (n=1)   d=+0.0216   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_image_volume              0.1935 +/- 0.0028  (n=3)   d=+0.0171   RESOLVED
+    v2_ipp_w01                   0.1853             (n=1)   d=+0.0090   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w03                   0.1828             (n=1)   d=+0.0064   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w30                   0.2107             (n=1)   d=+0.0343   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_learned_z                 0.1934             (n=1)   d=+0.0171   unresolvable (needs 2+ runs per arm (have 3 and 1))
+
+  area_mape
+    v2_baseline                  0.1546 +/- 0.0010  (n=3)
+    v2_amplitude                 0.1644             (n=1)   d=+0.0098   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp                  0.1630 +/- 0.0019  (n=3)   d=+0.0085   RESOLVED
+    v2_cell_ipp_area             0.1852             (n=1)   d=+0.0306   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp_bga              0.1648             (n=1)   d=+0.0102   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_baseline          0.1534             (n=1)   d=-0.0012   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_cell_ipp          0.1685             (n=1)   d=+0.0140   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_forward_amplitude         0.1698             (n=1)   d=+0.0152   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_image_volume              0.1642 +/- 0.0021  (n=3)   d=+0.0097   RESOLVED
+    v2_ipp_w01                   0.1596             (n=1)   d=+0.0050   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w03                   0.1575             (n=1)   d=+0.0029   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w30                   0.1934             (n=1)   d=+0.0388   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_learned_z                 0.1625             (n=1)   d=+0.0079   unresolvable (needs 2+ runs per arm (have 3 and 1))
+
+  detection_f1
+    v2_baseline                  0.6996 +/- 0.0033  (n=3)
+    v2_amplitude                 0.6901             (n=1)   d=-0.0094   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp                  0.6831 +/- 0.0012  (n=3)   d=-0.0164   RESOLVED
+    v2_cell_ipp_area             0.6877             (n=1)   d=-0.0119   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_cell_ipp_bga              0.6843             (n=1)   d=-0.0153   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_baseline          0.7006             (n=1)   d=+0.0010   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_compact_cell_ipp          0.6858             (n=1)   d=-0.0138   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_forward_amplitude         0.6885             (n=1)   d=-0.0111   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_image_volume              0.6932 +/- 0.0014  (n=3)   d=-0.0064   RESOLVED
+    v2_ipp_w01                   0.7018             (n=1)   d=+0.0023   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w03                   0.6952             (n=1)   d=-0.0043   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_ipp_w30                   0.6528             (n=1)   d=-0.0467   unresolvable (needs 2+ runs per arm (have 3 and 1))
+    v2_learned_z                 0.6898             (n=1)   d=-0.0098   unresolvable (needs 2+ runs per arm (have 3 and 1))
+
+==========================================================================
+ 16 difference(s) exceed 2x the pooled seed SD:
+   off_axis  phase_mae_rad          v2_cell_ipp              d=+0.0104  (threshold 0.0034)
+   off_axis  phase_mae_rad          v2_image_volume          d=+0.0073  (threshold 0.0014)
+   off_axis  phase_pearson_r        v2_cell_ipp              d=-0.0140  (threshold 0.0028)
+   off_axis  phase_pearson_r        v2_image_volume          d=-0.0123  (threshold 0.0017)
+   off_axis  seg_dice               v2_cell_ipp              d=-0.0067  (threshold 0.0029)
+   off_axis  seg_dice               v2_image_volume          d=-0.0070  (threshold 0.0022)
+   off_axis  seg_aji                v2_cell_ipp              d=-0.0178  (threshold 0.0039)
+   off_axis  seg_aji                v2_image_volume          d=-0.0154  (threshold 0.0012)
+   off_axis  seg_boundary_f1        v2_cell_ipp              d=-0.0221  (threshold 0.0083)
+   off_axis  seg_boundary_f1        v2_image_volume          d=-0.0351  (threshold 0.0072)
+   off_axis  dry_mass_mape          v2_cell_ipp              d=+0.0152  (threshold 0.0070)
+   off_axis  dry_mass_mape          v2_image_volume          d=+0.0171  (threshold 0.0052)
+   off_axis  area_mape              v2_cell_ipp              d=+0.0085  (threshold 0.0030)
+   off_axis  area_mape              v2_image_volume          d=+0.0097  (threshold 0.0033)
+   off_axis  detection_f1           v2_cell_ipp              d=-0.0164  (threshold 0.0050)
+   off_axis  detection_f1           v2_image_volume          d=-0.0064  (threshold 0.0051)
+ Of the rest, 0 are within
+ seed noise and 80 have no replication to judge them by.
+
+  -> runs/seed_aggregate.json
+  -> runs/seed_aggregate.csv

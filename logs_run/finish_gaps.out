@@ -1,0 +1,56 @@
+nohup: ignoring input
+
+[2026-09-17 15:09:20] HoloQPI gap-closing run starting in /sda/usama/QPI_Extended
+
+[2026-09-17 15:09:20] step 1 of 5: self-test (about 2 minutes)
+  checks passed: 143
+
+[2026-09-17 15:09:26] step 2 of 5: stage 5, label-free analyses (about 30 minutes)
+  stage 5 OK
+
+[2026-09-17 15:38:51] step 3 of 5: re-scoring arm D0 for the amplitude metric (about 2 minutes)
+    15:39:50 | INFO    | holoqpi |   amplitude_mae                      0.0656
+    15:39:50 | INFO    | holoqpi |   amplitude_mae_in_cell              0.0921
+    15:39:50 | INFO    | holoqpi |   amplitude_mae_over_unity           0.4464
+    15:39:50 | INFO    | holoqpi |   amplitude_pred_sd                  0.1216
+  arm D0 OK
+
+[2026-09-17 15:39:53] step 3 of 5: re-scoring arm D1 for the amplitude metric (about 2 minutes)
+    15:40:52 | INFO    | holoqpi |   amplitude_mae                      0.0637
+    15:40:52 | INFO    | holoqpi |   amplitude_mae_in_cell              0.0887
+    15:40:52 | INFO    | holoqpi |   amplitude_mae_over_unity           0.4337
+    15:40:52 | INFO    | holoqpi |   amplitude_pred_sd                  0.1200
+  arm D1 OK
+
+[2026-09-17 15:40:54] step 3 of 5: re-scoring arm D2 for the amplitude metric (about 2 minutes)
+    15:41:54 | INFO    | holoqpi |   amplitude_mae                      0.0642
+    15:41:54 | INFO    | holoqpi |   amplitude_mae_in_cell              0.0877
+    15:41:54 | INFO    | holoqpi |   amplitude_mae_over_unity           0.4368
+    15:41:54 | INFO    | holoqpi |   amplitude_pred_sd                  0.1230
+  arm D2 OK
+
+[2026-09-17 15:41:56] step 4 of 5: figures (about 5 minutes)
+  figures OK: 18 PNG(s) in figures/
+
+[2026-09-17 15:43:19] step 5 of 5: seed aggregate and the results tables (about 2 minutes)
+  tables OK
+
+[2026-09-17 15:43:24] FINISHED. Read runs/RESULTS.md.
+
+What should be different from before:
+  * Table 3c exists and carries the amplitude numbers for D0, D1 and D2.
+  * Table 4 no longer marks every row UNSTABLE.
+  * The 'Results that need no trained model' section is populated.
+  * figures/ contains figures 17 and 18, and _manifest.json lists them all.
+
+Send these back:
+
+    tar -czf holoqpi_finish.tar.gz \
+        runs/RESULTS.md runs/results_table.csv runs/seed_aggregate.json \
+        runs/z_calibration.json runs/error_propagation_summary.csv \
+        runs/synthetic_validation_fields.csv \
+        runs/v2_amplitude_off_axis/metrics_test.json \
+        runs/v2_forward_amplitude_off_axis/metrics_test.json \
+        runs/v2_learned_z_off_axis/metrics_test.json \
+        figures/ selftest.out stage5.out stage9.out finish_gaps.out
+

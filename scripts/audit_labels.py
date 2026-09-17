@@ -73,14 +73,35 @@ def audit_thresholds(cfg) -> dict:
         smoothed = ndimage.gaussian_filter(
             record.phase.astype(np.float64), mask_cfg.smoothing_sigma_px
         )
-        level = float(threshold_otsu(smoothed)) * mask_cfg.otsu_scale
+        # THE METHOD THE LABELS WERE ACTUALLY MADE WITH.
+        #
+        # This hardcoded Otsu while holoqpi/data/masks.py branches on
+        # mask_generation.threshold_method -- and this script's own verdict
+        # RECOMMENDS switching to `fixed`. Under that setting the audit was
+        # reporting per-image variability, a CV and an ANOVA p-value for a
+        # threshold that is a constant and has none.
+        if mask_cfg.threshold_method == "otsu":
+            level = float(threshold_otsu(smoothed)) * mask_cfg.otsu_scale
+        elif mask_cfg.threshold_method == "fixed":
+            level = float(mask_cfg.fixed_threshold_rad)
+        else:
+            raise ValueError(
+                f"unknown mask_generation.threshold_method "
+                f"{mask_cfg.threshold_method!r}"
+            )
         meta = schema.parse(stem)
         rows.append({
             "stem": stem,
             "cell_line": meta.cell_line,
             "condition": meta.condition,
             "otsu_level_rad": level,
-            "foreground_fraction": float((smoothed > level).mean()),
+            # The RAW threshold's foreground fraction, before binary_closing,
+            # fill_holes, clear_border and the area filter -- which is not the
+            # written mask's fraction, and the difference is not small: raw
+            # Otsu output carries 4-11 border-touching components per field
+            # that closing then removes entirely. Named accordingly rather than
+            # labelled as if it described the mask.
+            "threshold_foreground_fraction": float((smoothed > level).mean()),
             "phase_p50_rad": float(np.percentile(record.phase, 50)),
             "phase_p99_rad": float(np.percentile(record.phase, 99)),
         })
@@ -98,9 +119,25 @@ def audit_thresholds(cfg) -> dict:
         "level_min_rad": float(levels.min()),
         "level_max_rad": float(levels.max()),
         "level_cv": float(levels.std(ddof=1) / levels.mean()) if levels.mean() else float("nan"),
-        "between_condition_sd": float(np.std([g.mean() for g in groups], ddof=1))
+        # UNWEIGHTED descriptive spreads, and named so. A condition with three
+        # fields counts as much as one with three hundred in both, so they must
+        # not be read as a variance ratio -- the f_oneway and kruskal results
+        # below are the size-aware tests and are the ones to quote.
+        "between_condition_sd_unweighted": float(np.std([g.mean() for g in groups], ddof=1))
         if len(groups) > 1 else 0.0,
-        "within_condition_sd": float(np.sqrt(np.mean([g.var(ddof=1) for g in groups if g.size > 1]))),
+        "within_condition_sd_unweighted": float(
+            np.sqrt(np.mean([g.var(ddof=1) for g in groups if g.size > 1]))
+        ) if any(g.size > 1 for g in groups) else 0.0,
+        # The size-weighted pooled within-condition SD, which is the one that
+        # can be compared against the between-condition spread.
+        "within_condition_sd_pooled": float(np.sqrt(
+            sum((g.size - 1) * g.var(ddof=1) for g in groups if g.size > 1)
+            / max(sum(g.size - 1 for g in groups if g.size > 1), 1)
+        )) if any(g.size > 1 for g in groups) else 0.0,
+        "threshold_method": mask_cfg.threshold_method,
+        "smoothing_sigma_px": mask_cfg.smoothing_sigma_px,
+        "otsu_scale": mask_cfg.otsu_scale,
+        "labels_read_from": str(cfg.paths.manual_mask_dir or cfg.paths.mask_dir),
     }
 
     # Does the label definition separate by condition more than by chance?
@@ -131,8 +168,9 @@ def report_thresholds(result: dict) -> None:
     print(f"  level  {summary['level_mean_rad']:.4f} +/- {summary['level_sd_rad']:.4f} rad "
           f"[{summary['level_min_rad']:.4f}, {summary['level_max_rad']:.4f}]  "
           f"CV = {summary['level_cv']:.1%}")
-    print(f"  between-condition SD {summary['between_condition_sd']:.4f} rad   "
-          f"within-condition SD {summary['within_condition_sd']:.4f} rad")
+    print(f"  between-condition SD {summary['between_condition_sd_unweighted']:.4f} rad "
+          f"(unweighted)   within-condition SD "
+          f"{summary['within_condition_sd_pooled']:.4f} rad (pooled)")
     for condition, stats in summary["per_condition"].items():
         print(f"    {condition:<22} n={stats['n']:<4} {stats['mean_rad']:.4f} "
               f"+/- {stats['sd_rad']:.4f} rad")
@@ -197,8 +235,19 @@ def audit_redundancy(cfg, modality: str, device, split: str) -> dict | None:
                 head_vs_gt.append(_dice(head[i], gt[i]))
                 derived_vs_gt.append(_dice(derived, gt[i]))
 
+    if not head_vs_gt:
+        LOGGER.warning("no images read for %s / %s; skipping", modality, split)
+        return None
+
     return {
         "modality": modality,
+        # The provenance this payload was missing. It carried modality and an
+        # image count and nothing about WHICH split or WHICH arm produced it, so
+        # a run at --split val overwrote a run at --split test with no trace, and
+        # figure 10 plots these bars with no way to say what they describe.
+        "split": split,
+        "experiment": cfg.experiment_name,
+        "labels_read_from": str(cfg.paths.manual_mask_dir or cfg.paths.mask_dir),
         "images": len(head_vs_gt),
         "dice_head_vs_threshold_of_predicted_phase": float(np.mean(head_vs_derived)),
         "dice_head_vs_ground_truth": float(np.mean(head_vs_gt)),
@@ -254,11 +303,32 @@ def main() -> int:
     output_root = Path(cfg.paths.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
+    # THE LABELS MAY NOT BE PHASE-DERIVED AT ALL. paths.manual_mask_dir
+    # overrides mask_dir in the loader, and run_v2.sh evaluates one arm against
+    # the membrane masks -- for which this whole section's premise ("the labels
+    # rest on a per-image Otsu threshold") is simply false. Said out loud
+    # instead of reported as though it applied.
+    if cfg.paths.manual_mask_dir:
+        print(f"\nNOTE: paths.manual_mask_dir is {cfg.paths.manual_mask_dir!r}, so the "
+              f"labels in use are\n  NOT phase-derived and section 1 below does not "
+              f"describe them. It still reports\n  what a phase threshold WOULD do, "
+              f"which is the comparison, not the label audit.")
+
     thresholds = audit_thresholds(cfg)
     report_thresholds(thresholds)
+    # Scoped by split and label source, so a second run cannot silently replace
+    # the first. The split was not even recorded in the payload before, and
+    # figure 10 reads these files by their fixed names.
+    tag = f"_{args.split}" + (
+        f"_{Path(str(cfg.paths.manual_mask_dir)).name}" if cfg.paths.manual_mask_dir else ""
+    )
+    write_csv(thresholds["rows"], output_root / f"label_audit_thresholds{tag}.csv")
+    write_json(thresholds["summary"], output_root / f"label_audit_thresholds{tag}.json")
+    # Also written under the unsuffixed name that figure 10 reads, so the figure
+    # keeps working while the scoped copy preserves the provenance.
     write_csv(thresholds["rows"], output_root / "label_audit_thresholds.csv")
     write_json(thresholds["summary"], output_root / "label_audit_thresholds.json")
-    print(f"\n  per-image detail -> {output_root / 'label_audit_thresholds.csv'}")
+    print(f"\n  per-image detail -> {output_root / f'label_audit_thresholds{tag}.csv'}")
 
     if not args.skip_redundancy:
         device = resolve_device(args.device)

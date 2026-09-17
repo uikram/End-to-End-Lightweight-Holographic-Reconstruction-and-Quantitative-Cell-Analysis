@@ -1,0 +1,31 @@
+HoloQPI v2 study, started Wed Sep 16 19:00:56 KST 2026
+log directory logs/v2_20260916_190056
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   extra seeds: none
+
+########## stage 2: aberration surfaces
+
+=== aberration  19:00:56
+    python scripts/estimate_aberration.py --config config/base.yaml
+    OK   -> logs/v2_20260916_190056/aberration.log
+      surface peak-to-valley  median 18.1 rad   p95 23.6 rad   max 492.9 rad
+      peak-to-valley of the global surface        12.20 rad
+      per-field departure, all terms              median 12.07 rad   p95 20.63   max 24.47
+      per-field departure, degree >= 2 only       median 2.58 rad   p95 4.47   max 6.58
+      share of the tilt the carrier explains      -2.0%
+      -> most of the variation is degree <= 1, but the carrier does not
+      surfaces -> data/aberration.json
+      per-image quality -> runs/aberration_fit.csv
+      -> the difference between the raw reconstruction and the delivered
+
+########## done Wed Sep 16 19:17:35 KST 2026
+summary  logs/v2_20260916_190056/SUMMARY.txt
+logs     logs/v2_20260916_190056/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260916_190056/error_propagation.log     the label-free headline result
+  2. logs/v2_20260916_190056/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260916_190056/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260916_190056/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0

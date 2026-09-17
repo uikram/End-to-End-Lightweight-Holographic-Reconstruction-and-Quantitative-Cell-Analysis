@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -35,9 +36,35 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
 from holoqpi.config import load_config, parse_overrides
-from holoqpi.utils import get_logger, resolve_device, run_directory
+from holoqpi.utils import (
+    get_logger,
+    pooled_between_seed_sd,
+    resolve_device,
+    run_directory,
+    write_json,
+)
 
 LOGGER = get_logger(__name__)
+
+_SEED_RUN = re.compile(r"_(?:seed|s)\d+$")
+
+
+def comparison_files(output_root: Path) -> list[Path]:
+    """Modality-comparison JSONs that are ABLATION ARMS, not seed replicates.
+
+    ``glob("*_modality_comparison.json")`` also matches the seed-replication
+    runs, which run_study.sh names ``<arm>_s<seed>`` and run_v2.sh names
+    ``v2_<arm>_seed<seed>``. Figures 7 and 13 plotted each of those as a
+    SEPARATE ABLATION ROW, so pure seed noise appeared as an ablation effect with
+    nothing in the figure to say so -- which is the exact opposite of what the
+    seed replication exists to establish. The replicates belong to
+    scripts/aggregate_seeds.py, which pools them.
+    """
+    return [
+        path for path in sorted(output_root.glob("*_modality_comparison.json"))
+        if not _SEED_RUN.search(path.name.replace("_modality_comparison.json", ""))
+    ]
+
 
 # One colour per modality, used everywhere, so a reader can follow an arm across
 # figures without re-reading a legend.
@@ -70,6 +97,16 @@ def style() -> None:
 # ---------------------------------------------------------------------------
 # small helpers
 # ---------------------------------------------------------------------------
+#: Figures that actually wrote a file during this run, with their provenance.
+#: `main` appended a figure number to `built` whenever its function RETURNED,
+#: and every figure returns normally when it skips for a missing input -- so a
+#: run that produced nothing still reported a list of "built" figures. The
+#: summary then printed a directory listing of fig*.png, which also included
+#: PNGs left over from previous runs. Recording the writes themselves is the
+#: only thing that distinguishes what this run made from what was already there.
+_WRITTEN: dict[int, dict] = {}
+
+
 def save(fig, out_dir: Path, number: int, name: str) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = out_dir / f"fig{number:02d}_{name}"
@@ -77,6 +114,7 @@ def save(fig, out_dir: Path, number: int, name: str) -> Path:
     fig.savefig(stem.with_suffix(".pdf"))
     plt.close(fig)
     LOGGER.info("wrote %s.png / .pdf", stem)
+    _WRITTEN[number] = {"name": name, "stem": str(stem)}
     return stem
 
 
@@ -371,7 +409,14 @@ def figure_error_decomposition(cfg, args, out_dir: Path) -> None:
     names = [m for m, _ in ordered(args, data)]
     width = 0.35
     positions = np.arange(3)
-    for offset, modality in zip((-width / 2, width / 2), names):
+    # One offset per modality, computed rather than hardcoded to two. With a
+    # fixed 2-tuple a third modality appeared in this figure's other two panels
+    # and silently vanished from this one, and a single modality sat off-centre.
+    offsets = (
+        np.zeros(1) if len(names) == 1
+        else np.linspace(-width / 2, width / 2, len(names))
+    )
+    for offset, modality in zip(offsets, names):
         rows = data[modality]
         factors = [
             geometric(column(rows, "domain_factor")),
@@ -538,15 +583,23 @@ def figure_modality_summary(cfg, args, out_dir: Path) -> None:
         ("optical_volume_mape", "Optical volume MAPE", True),
         ("dry_mass_mape", "Dry mass MAPE", True),
     ]
-    modalities = [m for m in args.modalities if m in payload]
+    # `payload[m] or {}` everywhere below, because a comparison JSON can carry
+    # `"gabor": null` for an arm that was never evaluated -- and a bare
+    # `.get` on None is an AttributeError, not a skip. Figures 7 and 13 already
+    # guarded this; figure 5 did not.
+    modalities = [m for m in args.modalities if isinstance(payload.get(m), dict)]
     if len(modalities) < 1:
-        skip(5, "modality_summary", "comparison JSON holds none of the requested modalities")
+        skip(5, "modality_summary",
+             "comparison JSON holds no populated entry for any requested modality")
         return
 
     usable = [
         spec for spec in axes_spec
         if any(isinstance(payload[m].get(spec[0]), (int, float)) for m in modalities)
     ]
+    if not usable:
+        skip(5, "modality_summary", "no requested metric is present for either modality")
+        return
 
     fig, axes = plt.subplots(1, 2, figsize=(13, 0.42 * len(usable) + 2.0),
                              gridspec_kw={"width_ratios": [1.5, 1]})
@@ -700,7 +753,7 @@ def figure_ablations(cfg, args, out_dir: Path) -> None:
     than argued from four decimal places.
     """
     output_root = Path(cfg.paths.output_root)
-    files = sorted(output_root.glob("*_modality_comparison.json"))
+    files = comparison_files(output_root)
     if len(files) < 2:
         skip(7, "ablations", f"need >= 2 comparison JSONs in {output_root}, found {len(files)}")
         return
@@ -799,20 +852,44 @@ def figure_efficiency(cfg, args, out_dir: Path) -> None:
             continue
         stats = metrics.get(modality) or {}
         dice = stats.get("seg_dice")
-        comparable = str(row.get("comparable_to_pytorch_row", "True")).lower() != "false"
+        # COMPARABILITY IS RUNTIME-AWARE, and unknown provenance is not trusted.
+        #
+        # `comparable_to_pytorch_row` is written only by benchmark_onnx, so a
+        # PyTorch row never carries it -- it IS the reference row. An ONNX row
+        # is comparable only when it says so; defaulting a missing flag to
+        # "True", which is what this did, drew a CSV written before the column
+        # existed as fully comparable, the permissive direction on a figure
+        # whose own title warns against that comparison.
+        if runtime == "pytorch":
+            comparable = True
+        else:
+            flag = row.get("comparable_to_pytorch_row")
+            comparable = flag is not None and str(flag).lower() not in ("false", "")
+        # A timing measured on a contended device is not a property of the model.
+        # Marked here so a contaminated point cannot be read off this figure as
+        # an efficiency result. Rows written before the flag existed are treated
+        # as unknown rather than stable.
+        stability = row.get("timing_stable")
+        unstable = stability is not None and str(stability).lower() == "false"
         if dice is None:
             continue
         pareto_ax.scatter(
             latency, float(dice), s=90, marker=markers.get(runtime, "^"),
             facecolor=COLOUR.get(modality, GREY) if comparable else "none",
-            edgecolor=COLOUR.get(modality, GREY), linewidth=1.4, zorder=3,
+            edgecolor="#c44e52" if unstable else COLOUR.get(modality, GREY),
+            linewidth=2.4 if unstable else 1.4, zorder=3,
         )
-        pareto_ax.annotate(f"{runtime}/{precision}", (latency, float(dice)),
-                           textcoords="offset points", xytext=(6, 4), fontsize=6.8)
+        pareto_ax.annotate(
+            f"{runtime}/{precision}" + (" UNSTABLE" if unstable else ""),
+            (latency, float(dice)),
+            textcoords="offset points", xytext=(6, 4), fontsize=6.8,
+            color="#c44e52" if unstable else "0.2",
+        )
     pareto_ax.set_xscale("log")
     pareto_ax.set_xlabel("Median latency per field (ms, log scale)")
     pareto_ax.set_ylabel("Segmentation Dice")
-    pareto_ax.set_title("Accuracy against inference cost\nhollow = not comparable to the PyTorch row")
+    pareto_ax.set_title("Accuracy against inference cost\nhollow = not comparable to the "
+                        "PyTorch row; red edge = contended device")
 
     labels = [f"{r.get('modality','')[:8]}\n{r.get('runtime','')}/{r.get('precision','')}"
               for r in rows]
@@ -1177,7 +1254,7 @@ def figure_forward_model(cfg, args, out_dir: Path) -> None:
     optimised it are still scored on it.
     """
     output_root = Path(cfg.paths.output_root)
-    files = sorted(output_root.glob("*_modality_comparison.json"))
+    files = comparison_files(output_root)
     if not files:
         skip(13, "forward_model", "no *_modality_comparison.json")
         return
@@ -1554,6 +1631,539 @@ def figure_recall_by_size(cfg, args, out_dir: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
+# ===========================================================================
+# FIGURE 17 -- boundary error to measurement error                 [ESSENTIAL]
+# ===========================================================================
+def figure_error_propagation(cfg, args, out_dir: Path) -> None:
+    """The exchange rate between a segmentation error and a measurement error.
+
+    THE ONE FIGURE IN THIS SET THAT NEEDS NO MODEL. It is built from the
+    reference masks and the reference phase, by moving the boundary a known
+    number of pixels and measuring what happens to area and to dry mass. So it
+    is a property of the specimen and the optics rather than of any method,
+    which is what makes it a calibration curve other people can use instead of
+    a score only this project can quote.
+
+    The two curves must be plotted separately and never averaged. Dilation adds
+    an annulus outside the cell, where the phase is near zero, so mass
+    saturates while area keeps growing. Erosion removes an annulus just inside
+    the membrane, where the cell is thinnest but not empty, so mass tracks area
+    more closely. The gap between the two is the sign of the segmenter's bias,
+    which is exactly what a Bland-Altman plot of the final result is about.
+
+    Input: runs/error_propagation_summary.csv, from scripts/error_propagation.py
+    """
+    number, name = 17, "error_propagation"
+    rows = read_csv_rows(Path(cfg.paths.output_root) / "error_propagation_summary.csv")
+    if not rows:
+        skip(number, name, "runs/error_propagation_summary.csv missing; "
+                           "run scripts/error_propagation.py")
+        return
+
+    shift = column(rows, "shift_px")
+    shift_um = column(rows, "shift_um")
+    dice = column(rows, "dice")
+    area = column(rows, "area_signed")
+    mass = column(rows, "mass_signed")
+    ratio = column(rows, "mass_over_area")
+    order = np.argsort(shift)
+    shift, shift_um, dice = shift[order], shift_um[order], dice[order]
+    area, mass, ratio = area[order], mass[order], ratio[order]
+
+    fig, axes = plt.subplots(1, 3, figsize=(11.2, 3.5))
+
+    ax = axes[0]
+    ax.axhline(0.0, color="0.6", lw=0.8)
+    ax.axvline(0.0, color="0.6", lw=0.8)
+    ax.plot(shift, 100 * area, "o-", color="#c44e52", label="projected area")
+    ax.plot(shift, 100 * mass, "s-", color="#4c72b0", label="dry mass")
+    ax.set_xlabel("boundary displacement (pixels)")
+    ax.set_ylabel("relative error (%)")
+    # Extra pad: this panel carries a secondary axis above it, and the title
+    # would otherwise sit on top of the micrometre scale.
+    ax.set_title("what a boundary error costs", pad=30)
+    ax.legend(loc="upper left")
+    # The physical scale, so the x axis is not only in pixels.
+    secondary = ax.secondary_xaxis(
+        "top",
+        functions=(lambda v: v * float(cfg.optics.pixel_pitch_x_um),
+                   lambda v: v / float(cfg.optics.pixel_pitch_x_um)),
+    )
+    secondary.set_xlabel("micrometres")
+
+    # Against Dice, because that is the number a segmentation paper reports and
+    # therefore the number a reader arrives with.
+    ax = axes[1]
+    outward, inward = shift > 0, shift < 0
+    ax.plot(dice[outward], 100 * np.abs(mass[outward]), "s-", color="#4c72b0",
+            label="dilated (mass)")
+    ax.plot(dice[inward], 100 * np.abs(mass[inward]), "s--", color="#4c72b0",
+            label="eroded (mass)")
+    ax.plot(dice[outward], 100 * np.abs(area[outward]), "o-", color="#c44e52",
+            label="dilated (area)")
+    ax.plot(dice[inward], 100 * np.abs(area[inward]), "o--", color="#c44e52",
+            label="eroded (area)")
+    ax.invert_xaxis()
+    ax.set_xlabel("Dice against the reference mask")
+    ax.set_ylabel("|relative error| (%)")
+    ax.set_title("the exchange rate a reader can use")
+    ax.legend(loc="upper left", ncol=2)
+
+    ax = axes[2]
+    ax.axhline(1.0, color="0.6", lw=0.8, ls=":")
+    finite = np.isfinite(ratio)
+    ax.plot(shift[finite], ratio[finite], "D-", color="#55a868")
+    ax.set_xlabel("boundary displacement (pixels)")
+    ax.set_ylabel("mass error / area error")
+    ax.set_title("mass is the more robust measurement")
+    # `np.nanmax` of an empty slice raises, and `finite` is empty whenever every
+    # mass/area ratio is non-finite -- which is what a run with no matched cells
+    # produces. The figure should still draw its other panels.
+    ceiling = (
+        float(np.nanmax(ratio[finite])) * 1.1 if bool(np.any(finite)) else 1.15
+    )
+    ax.set_ylim(0.0, max(1.15, ceiling))
+    ax.text(0.03, 0.06,
+            "below 1: the boundary sits where\nthe cell is thinnest, so the\n"
+            "pixels a boundary error moves\ncarry little phase",
+            transform=ax.transAxes, fontsize=7.5, va="bottom", color="0.3")
+
+    fig.suptitle(
+        "Segmentation error propagated into quantitative measurement\n"
+        "(reference masks and reference phase only; no model involved)",
+        y=1.13, fontsize=10,
+    )
+    save(fig, out_dir, number, name)
+
+
+# ===========================================================================
+# FIGURE 18 -- the pipeline's own error floor                      [ESSENTIAL]
+# ===========================================================================
+def figure_synthetic_floor(cfg, args, out_dir: Path) -> None:
+    """What the measurement chain gets wrong when the answer is known exactly.
+
+    Every reported measurement error is the sum of model error and pipeline
+    error, and on real data the two cannot be separated because no real cell's
+    true mass is known. On synthetic spherical caps it can be: area is pi r^2
+    and integrated phase is phi_0 (2/3) pi r^2, both exact.
+
+    Two floors come out of this, and they are different numbers for different
+    claims. The PER-CELL floor is discretisation, and it falls with cell size.
+    The FIELD-TOTAL floor is the area filter discarding small cells, and it is
+    an order of magnitude larger. Quoting the first where the second applies
+    would understate a population mean's bias by that whole factor.
+
+    Input: runs/synthetic_validation_cells.csv and _fields.csv, from
+    scripts/synthetic_validation.py
+    """
+    number, name = 18, "synthetic_floor"
+    root = Path(cfg.paths.output_root)
+    cells = read_csv_rows(root / "synthetic_validation_cells.csv")
+    fields = read_csv_rows(root / "synthetic_validation_fields.csv")
+    if not cells:
+        skip(number, name, "runs/synthetic_validation_cells.csv missing; "
+                           "run scripts/synthetic_validation.py")
+        return
+
+    radius = column(cells, "radius_um")
+    area_error = 100 * column(cells, "area_relative_error")
+    mass_error = 100 * column(cells, "mass_relative_error")
+
+    fig, axes = plt.subplots(1, 3, figsize=(11.2, 3.5))
+
+    ax = axes[0]
+    ax.axhline(0.0, color="0.6", lw=0.8)
+    ax.scatter(radius, area_error, s=14, alpha=0.7, color="#c44e52", label="area")
+    ax.scatter(radius, mass_error, s=14, alpha=0.7, color="#4c72b0", label="dry mass")
+    ax.set_xlabel("cell radius (um)")
+    ax.set_ylabel("pipeline error (%)")
+    ax.set_title("error against exact ground truth")
+    ax.legend()
+
+    # Binned, because the scatter's message is a trend and the trend is the
+    # thing that sets a minimum measurable cell size.
+    ax = axes[1]
+    edges = np.percentile(radius[np.isfinite(radius)], [0, 20, 40, 60, 80, 100])
+    centres, area_band, mass_band = [], [], []
+    for low, high in zip(edges[:-1], edges[1:]):
+        band = (radius >= low) & (radius <= high)
+        if band.sum() == 0:
+            continue
+        centres.append(0.5 * (low + high))
+        area_band.append(np.nanmean(np.abs(area_error[band])))
+        mass_band.append(np.nanmean(np.abs(mass_error[band])))
+    ax.plot(centres, area_band, "o-", color="#c44e52", label="area")
+    ax.plot(centres, mass_band, "s-", color="#4c72b0", label="dry mass")
+    ax.set_yscale("log")
+    ax.set_xlabel("cell radius (um)")
+    ax.set_ylabel("mean |pipeline error| (%)")
+    ax.set_title("discretisation falls with cell size")
+    ax.legend()
+    floor_um2 = float(cfg.evaluation.measurement.min_cell_area_um2)
+    floor_radius = float(np.sqrt(floor_um2 / np.pi))
+    ax.axvline(floor_radius, color="0.4", ls="--", lw=0.9)
+    # Bottom of the axes, not the top: the top is where the area curve starts.
+    ax.text(floor_radius, ax.get_ylim()[0],
+            f"  min_cell_area = {floor_um2:.0f} um^2\n  ({floor_radius:.2f} um radius)",
+            fontsize=7.5, va="bottom", color="0.3")
+
+    # The two floors side by side, which is the point of the figure.
+    ax = axes[2]
+    per_cell = float(np.nanmean(np.abs(mass_error)))
+    total = (
+        100 * float(np.nanmean(column(fields, "mass_total_relative_error")))
+        if fields else np.nan
+    )
+    # TWO DIFFERENT STATISTICS, so they are labelled as two.
+    #
+    # The left bar is a mean ABSOLUTE error -- a scatter measure -- and the right
+    # one is the magnitude of a MEAN, which is a bias. Both were labelled
+    # "|bias| (%)", and the caption tells the reader to quote one or the other,
+    # so the mislabelling was load-bearing.
+    labels = ["per cell\nmean |error|\n(discretisation)",
+              "field total\nmean bias\n(area filter)"]
+    values = [per_cell, abs(total)]
+    bars = ax.bar(labels, values, color=["#4c72b0", "#dd8452"], width=0.55)
+    ax.set_ylabel("error magnitude (%)")
+    ax.set_title("two floors, two different claims")
+    ax.set_yscale("log")
+    finite_values = [v for v in values if np.isfinite(v) and v > 0]
+    if finite_values:
+        # Headroom for the value labels, and a floor low enough that the
+        # smaller bar is visible on a log scale rather than clipped to nothing.
+        ax.set_ylim(min(finite_values) / 6.0, max(finite_values) * 3.0)
+    for bar, value in zip(bars, values):
+        if np.isfinite(value):
+            ax.text(bar.get_x() + bar.get_width() / 2, value * 1.18,
+                    f"{value:.2f}%", ha="center", fontsize=9)
+    # Below the axes: inside them it sat on top of the bars.
+    ax.text(0.5, -0.30,
+            "quote the left number for 'the mass of this cell',\n"
+            "the right one for 'the mass on this field'",
+            transform=ax.transAxes, ha="center", va="top",
+            fontsize=7.5, color="0.3")
+
+    fig.suptitle(
+        "Measurement pipeline validated against exact analytic ground truth\n"
+        "(synthetic spherical caps; no model, no reconstruction)",
+        y=1.09, fontsize=10,
+    )
+    save(fig, out_dir, number, name)
+
+
+# ===========================================================================
+# FIGURE 19 -- the v2 ablation, with the significance rule drawn  [ESSENTIAL]
+# ===========================================================================
+def figure_v2_ablation(cfg, args, out_dir: Path) -> None:
+    """What each term is worth, against the noise it has to clear.
+
+    THE PAPER'S CENTRAL FIGURE, and the one that did not exist. Figure 7 reads
+    `*_modality_comparison.json`, which only `main.py compare` writes for the
+    v1 off-axis-versus-Gabor study; v2 is off-axis only, so figure 7 can never
+    build for it and the v2 ablation had no figure at all.
+
+    This reads `runs/<arm>/metrics_test.json` directly -- the same source
+    `scripts/collect_results.py` uses, so the figure and the table cannot
+    disagree -- and plots each arm's signed delta against ITS OWN comparator,
+    because each pair differs by exactly one term.
+
+    THE SHADED BAND IS THE POINT. It is +/- 2x the pooled between-seed standard
+    deviation of the same metric, which is the threshold a difference has to
+    clear to count in this project. A bar inside the band is seed noise. Drawing
+    the band rather than printing a p-value means a reader cannot mistake a
+    difference that did not clear it for one that did -- and the v1 round
+    resolved 0 of 54 comparisons by this rule, so the band is usually wider than
+    the bars. That is the honest picture and it should be legible at a glance.
+
+    When no seed replication exists the band cannot be computed, and the figure
+    says so across the axes instead of drawing a band of zero width, which
+    would read as "every difference is significant".
+
+    Input: runs/<arm>/metrics_test.json for each arm, plus runs/v2_<arm>_seed*
+    """
+    number, name = 19, "v2_ablation"
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    try:
+        from collect_results import ARMS, experiment_name, load_metrics, seed_spread
+    except Exception as exc:
+        skip(number, name, f"cannot import collect_results: {exc}")
+        return
+
+    root = Path(cfg.paths.output_root)
+    modality = args.modalities[0] if args.modalities else cfg.data.modality
+
+    found, comparator_of, labels = {}, {}, {}
+    for code, config_path, label, comparator in ARMS:
+        experiment = experiment_name(Path(config_path))
+        if experiment is None:
+            continue
+        metrics = load_metrics(root, experiment, modality, args.split)
+        if metrics is not None:
+            found[code] = metrics
+            comparator_of[code] = comparator
+            labels[code] = label
+    if len(found) < 2:
+        skip(number, name,
+             f"need >= 2 trained arms in {root}; found {len(found)}. Run stage 6.")
+        return
+
+    metrics_wanted = [
+        ("dry_mass_mape",    "Dry mass MAPE",   True),
+        ("area_mape",        "Area MAPE",       True),
+        ("detection_recall", "Detection recall", False),
+        ("seg_dice",         "Segmentation Dice", False),
+        ("phase_mae_rad",    "Phase MAE",       True),
+    ]
+    # Keep only metrics at least one arm actually reported, so an untrained
+    # study does not produce five empty panels.
+    def _reported(code: str, key: str) -> bool:
+        """Did this arm report a finite value for this metric?
+
+        `x or np.nan` was the old test, and `0.0 or np.nan` is `np.nan` -- so a
+        metric that is genuinely 0.0 on every arm was treated as unreported and
+        its whole panel was dropped. That is live in this project: an earlier
+        seed aggregate carried cls_accuracy = 0.0 on every arm, which is a
+        result and not a missing value.
+        """
+        value = found[code].get(key)
+        return isinstance(value, (int, float)) and np.isfinite(value)
+
+    metrics_wanted = [
+        entry for entry in metrics_wanted
+        if any(_reported(c, entry[0]) for c in found)
+    ]
+    if not metrics_wanted:
+        skip(number, name,
+             "no arm reports any of the headline metrics. The usual cause is that "
+             "no cell was detected, so no per-cell error exists -- check "
+             "detection_recall before reading anything into the arms.")
+        return
+
+    pairs = [(c, comparator_of[c]) for c in found
+             if comparator_of.get(c) and comparator_of[c] in found]
+    if not pairs:
+        skip(number, name, "no arm has its comparator trained; nothing to difference")
+        return
+
+    fig, axes = plt.subplots(
+        1, len(metrics_wanted),
+        figsize=(3.0 * len(metrics_wanted) + 1.5, 0.42 * len(pairs) + 2.4),
+        sharey=True,
+    )
+    axes = np.atleast_1d(axes)
+    positions = np.arange(len(pairs))
+    # From configuration, so the band drawn is the rule the project states.
+    resolve_factor = float(cfg.evaluation.seed_replication.resolve_factor)
+    any_band = False
+
+    for axis, (key, title, lower_is_better) in zip(axes, metrics_wanted):
+        deltas, bands = [], []
+        for code, comparator in pairs:
+            value = found[code].get(key)
+            reference = found[comparator].get(key)
+            if value is None or reference is None:
+                deltas.append(np.nan)
+                bands.append(np.nan)
+                continue
+            deltas.append(float(value) - float(reference))
+            a = seed_spread(root, code, modality, args.split, key)
+            b = seed_spread(root, comparator, modality, args.split, key)
+            # THE SHARED IMPLEMENTATION of the project's significance rule.
+            # This used to compute sqrt(0.5 (v_a + v_b)) while
+            # scripts/aggregate_seeds.py computed sqrt(v_a + v_b) for the same
+            # rule -- a factor of sqrt(2) apart, so one document could call a
+            # comparison resolved and the other could call it noise.
+            pooled, reason = pooled_between_seed_sd(a, b)
+            bands.append(resolve_factor * pooled if reason is None else np.nan)
+
+        deltas = np.asarray(deltas, float)
+        bands = np.asarray(bands, float)
+
+        # Green where the delta is an improvement, red where it is a
+        # regression, grey where it is inside the seed band and therefore not a
+        # difference at all.
+        colours = []
+        for delta, band in zip(deltas, bands):
+            if not np.isfinite(delta):
+                colours.append("0.85")
+            elif np.isfinite(band) and abs(delta) <= band:
+                colours.append("0.72")
+            else:
+                improved = (delta < 0) if lower_is_better else (delta > 0)
+                colours.append("#55a868" if improved else "#c44e52")
+
+        axis.barh(positions, np.nan_to_num(deltas), color=colours, height=0.62)
+        axis.axvline(0.0, color="0.25", lw=1.0)
+
+        # EACH BAR'S OWN BAND, drawn as a marker on that bar's row.
+        #
+        # A single shaded span of the WIDEST band was drawn before while each bar
+        # was COLOURED against its own, so a grey bar ("inside the band") could
+        # sit outside the shading and a coloured one inside it -- the plot
+        # contradicting its own caption. The bands differ per comparison because
+        # the arms have different numbers of seed replicates.
+        for position, band in zip(positions, bands):
+            if np.isfinite(band) and band > 0:
+                axis.plot([-band, band], [position, position],
+                          color="#4c72b0", lw=6.0, alpha=0.22,
+                          solid_capstyle="butt", zorder=0)
+                any_band = True
+
+        axis.set_yticks(positions)
+        axis.set_yticklabels([f"{c} vs {k}" for c, k in pairs])
+        axis.invert_yaxis()
+        axis.set_title(title, fontsize=9.5)
+        axis.set_xlabel("delta (lower is better)" if lower_is_better
+                        else "delta (higher is better)")
+        finite = deltas[np.isfinite(deltas)]
+        # The axis has to hold the widest band as well as the largest delta, or
+        # a band would be drawn off the edge of its own panel.
+        finite_bands = bands[np.isfinite(bands)]
+        span = max(float(np.abs(finite).max()) if finite.size else 1.0,
+                   float(finite_bands.max()) if finite_bands.size else 0.0)
+        # A panel where every arm scored identically would otherwise be drawn on
+        # a 1e-9 axis, which looks like structure at the limit of float
+        # precision instead of what it is: no variation at all. Byte-identical
+        # metrics across arms have appeared in this project before and meant the
+        # model had collapsed, so this case gets said out loud.
+        if span < 1e-6:
+            axis.set_xlim(-1.0, 1.0)
+            axis.set_xticks([-1, 0, 1])
+            axis.text(0.5, 0.5, "every arm identical\n(no variation to plot)",
+                      transform=axis.transAxes, ha="center", va="center",
+                      fontsize=8.5, color="#c44e52")
+        else:
+            axis.set_xlim(-1.25 * span, 1.25 * span)
+
+    if any_band:
+        caption = ("Shaded band: +/- 2x the pooled between-seed SD. A bar inside it "
+                   "is seed noise, not a difference. Grey bars are inside the band.")
+    else:
+        caption = ("NO SEED REPLICATION: the significance band cannot be computed, so "
+                   "NO bar here can be called a difference. Run "
+                   'SEEDS="1337 2024" bash run_v2.sh.')
+    fig.suptitle("HoloQPI v2 ablation: each arm against its own comparator, "
+                 "one term apart\n" + caption, y=1.02, fontsize=9.5)
+    save(fig, out_dir, number, name)
+
+
+# ===========================================================================
+# FIGURE 20 -- the membrane channel against the phase labels     [ESSENTIAL]
+# ===========================================================================
+def figure_membrane(cfg, args, out_dir: Path) -> None:
+    """Independent labels, and what they say about the circular ones.
+
+    Every mask in this study is `Otsu(gaussian * phase_reference)`, so the
+    segmentation metrics measure agreement with a threshold of the network's own
+    input. The membrane fluorescence channel is an independent measurement of
+    where the cell is, and this figure is the evidence that it is now usable:
+    registered onto the phase grid by a single global transform.
+
+    READ THE THIRD PANEL CAREFULLY. It shows where the two label sources
+    disagree, and the disagreement is not symmetric. The phase threshold keeps
+    the thick perinuclear body and drops the thin spread periphery, because a
+    phase threshold can only see where the cell is optically thick. That is a
+    systematic bias in projected area, and -- by exactly the mechanism figure 17
+    measures -- a much smaller one in dry mass.
+
+    The membrane mask is PROVISIONAL and the figure says so. Membrane stain
+    marks the perimeter rather than the interior, so a threshold returns rings
+    and filling them fails wherever a lamellipodium leaves one open. Manual
+    annotation on 25-40 fields remains the gold standard; this makes producing
+    it cheap, because the annotator traces on an already-aligned image.
+
+    Input: data/membrane_aligned/<stem>_membrane.npy from
+    scripts/prepare_membrane.py, plus the phase and the Otsu mask.
+    """
+    number, name = 20, "membrane_labels"
+    root = Path(cfg.paths.data_root)
+    aligned = root / cfg.membrane.output_dir
+    if not aligned.is_dir():
+        skip(number, name, f"{aligned} missing; run scripts/prepare_membrane.py")
+        return
+
+    from holoqpi.data import io as data_io
+
+    manifest = root / cfg.paths.manifest_file
+    if not manifest.is_file():
+        skip(number, name, "no manifest; run `python main.py prepare`")
+        return
+    with open(manifest, newline="") as handle:
+        stems = [row["stem"] for row in csv.DictReader(handle)]
+    stems = [s for s in stems
+             if (aligned / f"{s}{cfg.membrane.suffix}").is_file()][:3]
+    if not stems:
+        skip(number, name, f"no aligned membrane arrays in {aligned}")
+        return
+
+    from scipy.ndimage import binary_fill_holes, binary_opening, gaussian_filter
+
+    size = cfg.data.phase_size
+    fig, axes = plt.subplots(len(stems), 4, figsize=(14.5, 3.7 * len(stems)))
+    axes = np.atleast_2d(axes)
+    agreement = []
+
+    for row, stem in enumerate(stems):
+        phase = data_io.read_phase_bin(
+            data_io.phase_path(root, cfg, stem), cfg.formats.phase_binary
+        ).phase.astype(np.float32)
+        otsu = data_io.align_to_phase_grid(
+            data_io.read_mask(data_io.mask_path(root, cfg, stem)), size, cfg.data.align
+        ) > 0
+        membrane = np.load(aligned / f"{stem}{cfg.membrane.suffix}")
+        valid_path = aligned / f"{stem}{cfg.membrane.valid_suffix}"
+        valid = (np.load(valid_path) if valid_path.is_file()
+                 else np.ones_like(otsu, dtype=bool))
+
+        smooth = gaussian_filter(membrane, 2.0)
+        threshold = float(np.percentile(smooth[valid], cfg.membrane.threshold_percentile))
+        derived = binary_fill_holes(
+            binary_opening((smooth > threshold) & valid, np.ones((3, 3)))
+        )
+        otsu = otsu & valid
+        intersection = float((derived & otsu).sum())
+        agreement.append(2 * intersection / (derived.sum() + otsu.sum() + 1e-9))
+
+        axes[row, 0].imshow(phase, cmap="viridis")
+        axes[row, 0].set_title(f"{stem}\nquantitative phase", fontsize=9)
+
+        axes[row, 1].imshow(np.log1p(np.clip(membrane, 0, None)), cmap="magma")
+        axes[row, 1].set_title("membrane, warped to the phase grid", fontsize=9)
+
+        # Red/green rather than a difference image: which source claims a pixel
+        # is the question, and a signed difference hides that.
+        overlay = np.zeros((size, size, 3))
+        overlay[..., 0] = derived
+        overlay[..., 1] = otsu
+        axes[row, 2].imshow(overlay)
+        axes[row, 2].set_title(
+            f"red = membrane   green = phase Otsu\nyellow = agree   "
+            f"Dice {agreement[-1]:.3f}", fontsize=9,
+        )
+
+        axes[row, 3].imshow(phase, cmap="gray")
+        axes[row, 3].contour(derived, [0.5], colors="#c44e52", linewidths=0.7)
+        axes[row, 3].contour(otsu, [0.5], colors="#55a868", linewidths=0.7)
+        if not valid.all():
+            axes[row, 3].contour(valid, [0.5], colors="#4c72b0",
+                                 linewidths=0.8, linestyles="dashed")
+        axes[row, 3].set_title("contours on the phase\n(blue dashed = illuminated window)",
+                               fontsize=9)
+        for axis in axes[row]:
+            axis.axis("off")
+
+    fig.suptitle(
+        "Independent membrane labels registered onto the phase grid "
+        f"(scale {cfg.membrane.scale:.4f} = 0.284871/0.211994, "
+        f"offset {cfg.membrane.offset_y},{cfg.membrane.offset_x})\n"
+        f"median Dice against the phase-threshold labels {np.median(agreement):.3f}. "
+        "The membrane mask is PROVISIONAL: stain marks the perimeter, so a "
+        "threshold returns rings and filling them leaks where they open.",
+        y=1.0, fontsize=9.5,
+    )
+    save(fig, out_dir, number, name)
+
+
 FIGURES = {
     1: ("qualitative_panel", "ESSENTIAL", figure_qualitative),
     2: ("bland_altman", "ESSENTIAL", figure_bland_altman),
@@ -1571,6 +2181,10 @@ FIGURES = {
     14: ("learned_vs_classical", "ESSENTIAL", figure_conventional_baseline),
     15: ("recall_by_cell_size", "IMPORTANT", figure_recall_by_size),
     16: ("forward_model_diagnostics", "ESSENTIAL", figure_forward_model_diagnostics),
+    17: ("error_propagation", "ESSENTIAL", figure_error_propagation),
+    18: ("synthetic_floor", "ESSENTIAL", figure_synthetic_floor),
+    19: ("v2_ablation", "ESSENTIAL", figure_v2_ablation),
+    20: ("membrane_labels", "ESSENTIAL", figure_membrane),
 }
 
 
@@ -1604,7 +2218,8 @@ def main() -> int:
     out_dir = Path(args.out_dir)
     wanted = sorted(args.only) if args.only else sorted(FIGURES)
 
-    built, failed = [], []
+    _WRITTEN.clear()
+    skipped, failed = [], []
     for number in wanted:
         if number not in FIGURES:
             LOGGER.warning("no figure %s", number)
@@ -1613,15 +2228,84 @@ def main() -> int:
         LOGGER.info("--- figure %02d (%s, %s) ---", number, name, tier)
         try:
             function(cfg, args, out_dir)
-            built.append(number)
+            if number not in _WRITTEN:
+                # Returned without writing, i.e. it took a `skip(...)` branch
+                # for a missing input. That is not the same as built.
+                skipped.append(number)
         except Exception as exc:                 # one bad figure must not stop the rest
             LOGGER.warning("figure %02d (%s) failed: %s: %s",
                            number, name, type(exc).__name__, exc)
             failed.append(number)
 
+    built = sorted(_WRITTEN)
+    # A MANIFEST, because the filenames carry no experiment, modality or split.
+    # `figures/fig19_v2_ablation.png` built from one config overwrites the
+    # identically named file built from another, and nothing in the directory
+    # said which config produced what. This is the record.
+    #
+    # MERGED, NOT OVERWRITTEN. Stage 9 calls this script three times -- global
+    # figures from config/base.yaml, per-arm figures from one arm's config, and
+    # the modality pair -- and each writes to the same directory. A whole-file
+    # write meant the last invocation's manifest was the only one left: after the
+    # 2026-09-17 run the file recorded three figures, 5, 13 and 14, while
+    # seventeen sat in the directory beside it. The manifest existed precisely so
+    # nobody had to guess which config produced which figure, and it was
+    # answering that question for three of them.
+    entry = {
+        "config": str(Path(args.config)),
+        "experiment_name": cfg.experiment_name,
+        "modalities": list(args.modalities),
+        "split": args.split,
+    }
+    manifest_path = out_dir / "_manifest.json"
+    existing = {}
+    if manifest_path.is_file():
+        try:
+            existing = json.loads(manifest_path.read_text())
+        except Exception as exc:
+            # A corrupt manifest is replaced rather than allowed to block the
+            # record of this run, and the loss is said out loud.
+            LOGGER.warning("could not read the existing figure manifest (%s); "
+                           "it will be replaced", exc)
+            existing = {}
+    if not isinstance(existing.get("figures"), dict):
+        existing = {"figures": {}}
+
+    figures = existing["figures"]
+    for number in built:
+        figures[str(number)] = {"name": _WRITTEN[number]["name"], **entry}
+    # A figure this run tried and skipped or failed loses its old entry: the file
+    # on disk is then from an earlier run and the manifest must not vouch for it.
+    for number in list(skipped) + list(failed):
+        figures.pop(str(number), None)
+
+    manifest = {
+        "figures": dict(sorted(figures.items(), key=lambda kv: int(kv[0]))),
+        "last_run": {
+            **entry,
+            "built": [f"{n:02d}" for n in built],
+            "skipped_missing_input": skipped,
+            "failed": failed,
+        },
+    }
+    try:
+        write_json(manifest, manifest_path)
+    except Exception as exc:
+        LOGGER.warning("could not write the figure manifest: %s", exc)
+
     print(f"\nfigures written to {out_dir.resolve()}")
-    for path in sorted(out_dir.glob("fig*.png")):
-        print(f"  {path.name}")
+    print(f"  from {args.config} (experiment {cfg.experiment_name}, "
+          f"{'+'.join(args.modalities)}, {args.split} split)")
+    if built:
+        print(f"\n{len(built)} figure(s) written by THIS run:")
+        for number in built:
+            print(f"  fig{number:02d}_{_WRITTEN[number]['name']}.png / .pdf")
+    else:
+        print("\n  none: no figure wrote a file in this run.")
+    if skipped:
+        print(f"\n{len(skipped)} figure(s) skipped for a missing input: {skipped}")
+        print("Each printed its reason above. Any file for these in the directory is")
+        print("from an EARLIER run and does not describe this one.")
     if failed:
         print(f"\n{len(failed)} figure(s) could not be built: {failed}")
         print("Each prints its reason above; the usual cause is a missing input file.")

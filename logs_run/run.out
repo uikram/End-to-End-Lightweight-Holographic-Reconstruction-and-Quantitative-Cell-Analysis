@@ -1,0 +1,54 @@
+nohup: ignoring input
+
+[2026-09-16 18:10:54] HoloQPI re-run starting in /sda/usama/QPI_Extended
+
+[2026-09-16 18:10:54] code and data present
+
+[2026-09-16 18:10:54] phase 1 of 10: archiving the old runs/ and figures/
+  runs -> runs_before_audit_20260916_181054
+  figures -> figures_before_audit_20260916_181054
+
+[2026-09-16 18:10:54] phase 2 of 10: self-test (about 2 minutes)
+  checks passed: 137
+
+[2026-09-16 18:11:01] phase 3 of 10: regenerating masks with provenance (about 10 minutes)
+  18:12:44 | INFO    | holoqpi.data.masks | masks written=800 skipped=0 mean foreground=0.136
+  18:12:44 | INFO    | holoqpi.data.splits | splits: train=560 val=127 test=113 (stratified by cell_line+condition, seed=42)
+
+[2026-09-16 18:12:45] phase 4 of 10: stage 1
+  stage 1 OK
+
+[2026-09-16 19:00:56] phase 4 of 10: stage 2
+  stage 2 OK
+
+[2026-09-16 19:17:35] phase 4 of 10: stage 3
+  stage 3 OK
+
+[2026-09-16 19:17:37] phase 5 of 10: pre-flight diagnostics in the background (about 3 hours)
+  stage 4 pid 6410 -> stage4.out
+
+[2026-09-16 19:17:37] phase 5 of 10: GPU 2 training, 10 runs (about 35 hours)
+  GPU 2 pid 6412 -> gpu2.out
+
+[2026-09-16 19:17:37] phase 5 of 10: GPU 3 training, 10 runs (about 35 hours)
+  GPU 3 pid 6415 -> gpu3.out
+
+[2026-09-16 19:17:37] waiting for 6410 6412 6415 -- this is the long wait, about 35 hours.
+  check progress at any time from another terminal with:
+      bash RUN_ON_SERVER.sh --status
+
+[2026-09-17 10:54:42] training and diagnostics finished
+
+[2026-09-17 11:07:38] FINISHED. Read runs/RESULTS.md first.
+
+Anything that failed anywhere:
+  nothing
+
+Collect these into one archive and send them back:
+    tar -czf holoqpi_results.tar.gz \
+        runs/RESULTS.md runs/results_table.csv runs/seed_aggregate.json \
+        runs/z_calibration.json runs/*/metrics_test.json runs/*/history.json \
+        runs/*/per_cell_test.csv runs/*_modality_comparison.json \
+        runs/*hardware_benchmark*.json figures/ \
+        selftest.out stage4.out gpu2.out gpu3.out finish.out
+

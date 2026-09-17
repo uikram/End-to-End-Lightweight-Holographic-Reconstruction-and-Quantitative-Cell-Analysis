@@ -46,19 +46,46 @@ class HoloQPINet(nn.Module):
             name=model_cfg.encoder,
             in_channels=encoder_in_channels,
             pretrained=model_cfg.pretrained_encoder,
+            pretrained_dir=model_cfg.pretrained_dir,
         )
         encoder_channels = self.encoder.out_channels
         decoder_channels = list(model_cfg.decoder_channels)
 
+        # ------------------------------------------------------------------
+        # Optional 1x1 projection of the deepest encoder feature map.
+        #
+        # Without it, each decoder's first block is
+        # ConvTranspose2d(1280 -> 640, k2, s2) = 3,277,440 parameters, which is
+        # 34.1% of the whole model, duplicated across two decoders -- 68.3% of
+        # the network in two copies of one layer, against a MobileNetV2 encoder
+        # that is only 23%. Projecting 1280 -> 256 first costs 0.33 M and saves
+        # about 2.9 M per decoder.
+        #
+        # The projection is SHARED by both decoders on purpose: it is a channel
+        # reduction of a common representation, not a task-specific transform,
+        # and sharing it keeps the saving rather than paying for it twice.
+        # ------------------------------------------------------------------
+        bottleneck = model_cfg.decoder_bottleneck
+        if bottleneck:
+            self.decoder_bottleneck = nn.Sequential(
+                nn.Conv2d(encoder_channels[-1], int(bottleneck), kernel_size=1, bias=False),
+                nn.BatchNorm2d(int(bottleneck)),
+                nn.ReLU6(inplace=True),
+            )
+            decoder_input_channels = list(encoder_channels[:-1]) + [int(bottleneck)]
+        else:
+            self.decoder_bottleneck = None
+            decoder_input_channels = list(encoder_channels)
+
         self.share_decoder = model_cfg.share_decoder
         if self.share_decoder:
-            self.shared_decoder = UNetDecoder(encoder_channels, decoder_channels)
+            self.shared_decoder = UNetDecoder(decoder_input_channels, decoder_channels)
             self.phase_decoder = self.segmentation_decoder = None
             trunk_channels = self.shared_decoder.out_channels
         else:
             self.shared_decoder = None
-            self.phase_decoder = UNetDecoder(encoder_channels, decoder_channels)
-            self.segmentation_decoder = UNetDecoder(encoder_channels, decoder_channels)
+            self.phase_decoder = UNetDecoder(decoder_input_channels, decoder_channels)
+            self.segmentation_decoder = UNetDecoder(decoder_input_channels, decoder_channels)
             trunk_channels = self.phase_decoder.out_channels
 
         head_hidden = decoder_channels[-1]
@@ -102,6 +129,8 @@ class HoloQPINet(nn.Module):
         x, padding = pad_to_multiple(x, self.size_divisor)
 
         features = self.encoder(x)
+        if self.decoder_bottleneck is not None:
+            features = [*features[:-1], self.decoder_bottleneck(features[-1])]
 
         if self.share_decoder:
             trunk = self.shared_decoder(features)
@@ -149,15 +178,37 @@ class HoloQPINet(nn.Module):
 
 
 class ExportWrapper(nn.Module):
-    """Tuple-returning view of the model, for tracers that dislike dicts."""
+    """Tuple-returning view of the model, for tracers that dislike dicts.
+
+    The returned tuple contains only the heads the model actually has, in the
+    order given by ``OUTPUT_ORDER``. ``active_outputs`` reports that order so
+    the exporter can name the outputs to match.
+
+    This used to return ``out["phase"], out["segmentation"], out["condition"]``
+    unconditionally. ``condition`` is absent whenever
+    ``model.classifier_enabled`` is false -- which is every v2 configuration --
+    so ONNX export raised KeyError for the entire v2 study and the failure was
+    only reachable by running the export stage.
+    """
+
+    OUTPUT_ORDER = ("phase", "segmentation", "amplitude", "condition")
 
     def __init__(self, model: HoloQPINet):
         super().__init__()
         self.model = model
 
+    @property
+    def active_outputs(self) -> list[str]:
+        present = ["phase", "segmentation"]
+        if self.model.amplitude_head is not None:
+            present.append("amplitude")
+        if self.model.condition_classifier is not None:
+            present.append("condition")
+        return [name for name in self.OUTPUT_ORDER if name in present]
+
     def forward(self, hologram: torch.Tensor):
         out = self.model(hologram)
-        return out["phase"], out["segmentation"], out["condition"]
+        return tuple(out[name] for name in self.OUTPUT_ORDER if name in out)
 
 
 def build_model(cfg: Config) -> HoloQPINet:

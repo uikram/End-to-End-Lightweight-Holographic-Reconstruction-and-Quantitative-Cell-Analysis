@@ -131,10 +131,20 @@ def phase_sensitivity(cfg, modality: str, distance_um: float, phase, carrier) ->
     # exactly the case that carries no phase information at all.
     change = (predicted - base).flatten(1).std(dim=1)
     scale = base.flatten(1).mean(dim=1).abs().clamp(min=1e-8)
-    return float((change / scale).mean() / epsilon)
+    # PER RADIAN, which needs the perturbation's size in radians and not just
+    # epsilon. The perturbation is epsilon * (phase - mean), whose magnitude is
+    # epsilon * std(phase) radians, so dividing by epsilon alone gave
+    # d(relative intensity) / d(FRACTIONAL phase contrast) while the caller
+    # prints it as "/rad" and thresholds it at 1e-3. That made the threshold
+    # scale with each batch's own phase contrast: two batches at genuinely
+    # different sensitivities could report the same number.
+    contrast = phase.flatten(1).std(dim=1).clamp(min=1e-8)
+    return float((change / scale / (epsilon * contrast)).mean())
 
 
-def _forward_term(cfg, distance_um: float, border_px: int | None = None):
+def _forward_term(
+    cfg, distance_um: float, border_px: int | None = None, pad_px: int | None = None
+):
     """The training residual, instantiated at one distance.
 
     ``border_px`` overrides the margin dropped from the residual. A sweep MUST
@@ -144,6 +154,17 @@ def _forward_term(cfg, distance_um: float, border_px: int | None = None):
     covers 58%. Fewer, more central pixels are easier for four free radiometric
     coefficients to fit, so the residual falls with |z| for a reason that has
     nothing to do with focus, and the minimum runs to the edge of the scan.
+
+    ``pad_px`` fixes the DIFFRACTION CONTEXT the same way, and a sweep needs it
+    for the same reason. Freezing only the border leaves the residual's domain
+    constant but not its inputs: the amount of reflection padding synthesised
+    into those fixed pixels still grew from 0 px at z = 0 to 225 px at the ends
+    of a +/-96 um scan, and the padded FFT grid changed size with it. Both are
+    properties of the scan rather than of the specimen, so both are held still.
+
+    ``fit_radiometry`` is read from the config rather than hardcoded true, so the
+    calibration cannot end up characterising a different observation model from
+    the one training uses.
     """
     from holoqpi.losses.terms import ForwardModelConsistency
 
@@ -152,9 +173,9 @@ def _forward_term(cfg, distance_um: float, border_px: int | None = None):
         "distance_um": float(distance_um),
         "learn_distance": False,
         "criterion": forward.criterion,
-        "fit_radiometry": True,
+        "fit_radiometry": bool(forward.fit_radiometry),
         "feature_um": forward.feature_um,
-        "pad_px": forward.pad_px,
+        "pad_px": forward.pad_px if pad_px is None else int(pad_px),
         "border_px": forward.border_px if border_px is None else int(border_px),
         "dc_exclusion_frac": forward.dc_exclusion_frac,
         "dc_exclusion_px": forward.dc_exclusion_px,
@@ -162,6 +183,30 @@ def _forward_term(cfg, distance_um: float, border_px: int | None = None):
         "warn_on_short_pad": False,
     })()
     return ForwardModelConsistency(settings, cfg.optics)
+
+
+def training_border_px(cfg) -> int:
+    """The border the OBJECTIVE uses, at the configured distance.
+
+    The fixed-z tests -- the discrimination verdict and the phase-scale probe --
+    must run on this, not on the sweep's border.
+
+    ``fixed_border_px`` sizes a border for the largest |z| in the scan, which is
+    225 px for a +/-96 um sweep. Reusing it for the fixed-z tests scored them on
+    a 450 px window while training and ``holoqpi/metrics/forward.py`` use a
+    742 px one. Those verdicts are thresholded in RESIDUAL UNITS
+    (``discrimination_tolerance``), and a residual's level depends on how many
+    pixels and which pixels it covers -- so the decision that gates
+    ``loss.weights.forward_model`` was being taken at a window size that has
+    nothing to do with the term as trained. Freezing the border across the sweep
+    was right; carrying the sweep's border into a single-distance test was not.
+    """
+    forward = cfg.loss.forward_model
+    if forward.border_px is not None:
+        return int(forward.border_px)
+    # Instantiated at the configured distance, so this is exactly the term the
+    # objective builds, and the pad rule lives in one place only.
+    return _forward_term(cfg, float(forward.distance_um or 0.0)).required_pad()
 
 
 
@@ -487,7 +532,8 @@ def fixed_border_px(cfg, distances: np.ndarray) -> int:
 
 
 def scan(cfg, modality: str, device, distances: np.ndarray, batches: int,
-         split: str = "val", border_px: int | None = None) -> dict:
+         split: str = "val", border_px: int | None = None,
+         pad_px: int | None = None) -> dict:
     optics = cfg.optics
     wavelength = optics.wavelength_um
     dx, dy = optics.pixel_pitch_x_um, optics.pixel_pitch_y_um
@@ -516,17 +562,37 @@ def scan(cfg, modality: str, device, distances: np.ndarray, batches: int,
             surface = batch.get("aberration")
             if surface is not None:
                 surface = surface.to(device).float()
+
+            # FIELDS WITH NO RECOVERABLE ABERRATION SURFACE ARE DROPPED HERE TOO.
+            #
+            # discrimination() and phase_scale_response() both do this already;
+            # the scan did not, so `z_forward_um` and `per_image_best` were
+            # computed over a SUPERSET of the images the verdict was computed
+            # over. Without the surface the forward model is wrong by more than
+            # the signal, so those fields contribute a residual that is not a
+            # function of z at all and the minimum they pull on is meaningless.
+            usable = batch.get("aberration_valid")
+            if usable is not None and not bool(usable.all()):
+                keep = usable.to(torch.bool).reshape(-1)
+                if not bool(keep.any()):
+                    continue
+                hologram, phase = hologram[keep], phase[keep]
+                if surface is not None:
+                    surface = surface[keep]
+
             amplitude = torch.ones_like(phase)
             carrier = estimate_carrier(hologram) if modality == "off_axis" else None
             seen += hologram.shape[0]
-            if index == 0:
+            if not sensitivity_probe:
                 sensitivity_probe.append((phase, carrier))
 
             per_image = np.zeros((hologram.shape[0], len(distances)), dtype=np.float64)
             for position, distance in enumerate(distances):
                 # The training residual itself, so calibration and optimisation
                 # cannot disagree about what "consistent" means.
-                term = _forward_term(cfg, float(distance), border_px).to(device)
+                term = _forward_term(
+                    cfg, float(distance), border_px, pad_px=pad_px
+                ).to(device)
                 value = term(phase, amplitude, hologram, modality,
                              aberration=surface)
                 per_image[:, position] = value.detach().cpu().numpy()
@@ -536,13 +602,33 @@ def scan(cfg, modality: str, device, distances: np.ndarray, batches: int,
                                       torch.zeros_like(hologram))
                 back = propagate(field, wavelength, dx, dy, -float(distance))
                 recovered = torch.angle(back)
-                inverse_scores[position] += float(
-                    _correlation(recovered, phase).abs().sum()
-                )
+                # Scored on the SAME window as the forward residual. It was
+                # previously correlated over the whole field while the forward
+                # score was cropped to the sweep border, so `z_inverse_um` and
+                # `z_forward_um` were two estimates from two different pixel
+                # regions, printed side by side as though they corroborated each
+                # other.
+                if border_px and 2 * border_px + 8 < min(recovered.shape[-2:]):
+                    window = (slice(None), slice(None),
+                              slice(border_px, -border_px),
+                              slice(border_px, -border_px))
+                    inverse_scores[position] += float(
+                        _correlation(recovered[window], phase[window]).abs().sum()
+                    )
+                else:
+                    inverse_scores[position] += float(
+                        _correlation(recovered, phase).abs().sum()
+                    )
             per_image_best.extend(distances[per_image.argmin(axis=1)].tolist())
 
     if seen == 0:
-        raise SystemExit("no images were read; check the split file and data root")
+        # A misconfiguration, not a verdict. Raised rather than returned so the
+        # traceback reaches the log: run_v2.sh reads a traceback-free non-zero
+        # exit as a reported finding, and a missing split file is not one.
+        raise RuntimeError(
+            f"no images were read for modality {modality!r}, split {split!r}. "
+            f"Check {cfg.paths.data_root}/{cfg.paths.splits_file} and the data root."
+        )
 
     forward_scores /= seen
     inverse_scores /= seen
@@ -688,12 +774,22 @@ def main() -> int:
     parser.add_argument("--discrimination-batches", type=int, default=None,
                         help="batches for the discrimination test; default: "
                              "loss.forward_model.discrimination_batches")
-    parser.add_argument("--feature-um", type=float, default=1.0,
-                        help="smallest object feature, used to bound the z range")
+    parser.add_argument(
+        "--feature-um", type=float, default=None,
+        help="smallest object feature, used to bound the z range. Default: "
+             "loss.forward_model.feature_um, which is the value the residual's "
+             "own padding rule uses -- a CLI default of 1.0 made the two "
+             "disagree whenever that key was overridden.",
+    )
     parser.add_argument("--refine", action="store_true",
-                        help="second pass on a 20x finer grid around the coarse peak")
+                        help="second pass on a 10x finer grid around the coarse minimum")
     parser.add_argument("--device", default="auto")
-    parser.add_argument("--out", default="runs/z_calibration.json")
+    parser.add_argument(
+        "--out", default=None,
+        help="default: <paths.output_root>/z_calibration.json. The old default "
+             "was the literal 'runs/...', which diverged from output_root and "
+             "from where make_figures reads it.",
+    )
     parser.add_argument("--set", nargs="*", default=[], metavar="KEY=VALUE")
     args = parser.parse_args()
 
@@ -701,7 +797,11 @@ def main() -> int:
     device = resolve_device(args.device)
 
     field_px = cfg.data.eval_size or cfg.data.phase_size
-    limit = usable_z_range_um(cfg, field_px, args.feature_um)
+    feature_um = (
+        args.feature_um if args.feature_um is not None
+        else float(cfg.loss.forward_model.feature_um)
+    )
+    limit = usable_z_range_um(cfg, field_px, feature_um)
     z_range = args.z_range or [-limit, limit]
     if max(abs(z_range[0]), abs(z_range[1])) > limit * 1.05:
         LOGGER.warning(
@@ -709,8 +809,13 @@ def main() -> int:
             "around beyond %.1f um; scores outside that are not physical",
             max(abs(z_range[0]), abs(z_range[1])), field_px, limit,
         )
-    probe = np.linspace(z_range[0], z_range[1], args.steps)
-    beyond = int((np.abs(probe) > limit).sum())
+    # ONE grid, built once. It used to be built twice from the same three
+    # arguments -- once here as `probe` for the out-of-range count and again
+    # below as `distances` for the scan itself -- so editing one and not the
+    # other would have made the reported "usable |z|" note describe a different
+    # grid from the one actually swept.
+    distances = np.linspace(z_range[0], z_range[1], args.steps)
+    beyond = int((np.abs(distances) > limit).sum())
     print(f"field {field_px} px -> physically usable |z| <= {limit:.1f} um; "
           f"scanning [{z_range[0]:+.1f}, {z_range[1]:+.1f}] um in {args.steps} steps")
     if beyond:
@@ -721,11 +826,21 @@ def main() -> int:
 
     # One margin for the whole sweep, so every distance is scored on identical
     # pixels. See _forward_term for what happens without it.
-    distances = np.linspace(z_range[0], z_range[1], args.steps)
     border = fixed_border_px(cfg, distances)
+    # The diffraction context is frozen along with the border: see _forward_term.
+    # Without this the padded FFT grid, and so the residual's inputs, still grew
+    # with |z| even though its output domain did not.
+    sweep_pad = border
     print(f"  residual scored on a fixed {field_px - 2 * border} px window at every "
-          f"distance (border {border} px, sized for |z| = "
-          f"{np.abs(distances).max():.1f} um)")
+          f"distance (border {border} px, pad {sweep_pad} px, both sized for "
+          f"|z| = {np.abs(distances).max():.1f} um)")
+    # The fixed-distance tests below use the border the OBJECTIVE uses, which is
+    # a different and smaller number. See training_border_px.
+    verdict_border = training_border_px(cfg)
+    print(f"  the discrimination and phase-scale tests instead use the border "
+          f"training uses ({verdict_border} px -> a "
+          f"{field_px - 2 * verdict_border} px window), because their thresholds "
+          f"are in residual units")
 
     forward_cfg = cfg.loss.forward_model
     discrimination_batches = (
@@ -736,7 +851,7 @@ def main() -> int:
     payload = {}
     for modality in args.modality:
         result = scan(cfg, modality, device, distances, args.batches, args.split,
-                      border_px=border)
+                      border_px=border, pad_px=sweep_pad)
         summary = summarise(result)
 
         if args.refine and summary["identifiable"]:
@@ -746,8 +861,11 @@ def main() -> int:
                 centre = summary["z_forward_um"]
             fine = np.linspace(centre - span, centre + span, 41)
             LOGGER.info("refining %s around %+.3f um", modality, centre)
+            # The refinement keeps the coarse sweep's border AND pad, so the two
+            # passes are on one scale and the fine minimum can be compared with
+            # the coarse one.
             result = scan(cfg, modality, device, fine, args.batches, args.split,
-                          border_px=border)
+                          border_px=border, pad_px=sweep_pad)
             summary = summarise(result)
 
         report(result, summary)
@@ -785,15 +903,23 @@ def main() -> int:
                                  discrimination_batches,
                                  forward_cfg.discrimination_tolerance,
                                  forward_cfg.discrimination_win_rate,
-                                 border_px=border)
+                                 border_px=verdict_border)
         report_discrimination(modality, verdict)
 
         scale = phase_scale_response(cfg, modality, device, float(best), args.split,
-                                     discrimination_batches, border_px=border)
+                                     discrimination_batches,
+                                     border_px=verdict_border)
         report_scale_response(modality, scale)
         payload[modality] = {**summary, "forward_model_usable": verdict["usable"],
                              "forward_model_verdict": verdict["verdict"],
                              "discrimination": verdict, "scale_response": scale,
+                             # Recorded, because every residual level in this
+                             # file depends on them and a figure or a later
+                             # comparison has no other way to know.
+                             "sweep_border_px": int(border),
+                             "sweep_pad_px": int(sweep_pad),
+                             "verdict_border_px": int(verdict_border),
+                             "field_px": int(field_px),
                              "curve": result}
 
     # The same specimen was recorded at the same distance in both geometries, but
@@ -808,10 +934,37 @@ def main() -> int:
         print("     because its carrier encodes phase without needing defocus. Same")
         print("     specimen, same acquisition, same distance.")
 
-    destination = Path(args.out)
+    destination = (
+        Path(args.out) if args.out
+        else Path(cfg.paths.output_root) / "z_calibration.json"
+    )
     destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(json.dumps(payload, indent=2))
+    # MERGED WITH WHAT IS ALREADY THERE, not replaced.
+    #
+    # The payload only ever holds the modalities this invocation scanned, and a
+    # whole-file write therefore DELETED the other one. `--modality gabor` after
+    # a full run silently removed the off_axis entry, and both
+    # `scripts/resolve_z.py` and figure 16 then saw a single-arm calibration --
+    # which matters, because the off-axis/in-line contrast in this file is the
+    # result it exists to record.
+    existing: dict = {}
+    if destination.is_file():
+        try:
+            loaded = json.loads(destination.read_text())
+            if isinstance(loaded, dict):
+                existing = loaded
+        except Exception as exc:
+            LOGGER.warning("could not read existing %s (%s); it will be replaced",
+                           destination, exc)
+    replaced = sorted(set(existing) & set(payload))
+    kept = sorted(set(existing) - set(payload))
+    existing.update(payload)
+    destination.write_text(json.dumps(existing, indent=2))
     print(f"\ncurves and estimates -> {destination}")
+    if replaced:
+        print(f"  updated: {', '.join(replaced)}")
+    if kept:
+        print(f"  kept from a previous run, not re-measured: {', '.join(kept)}")
 
     verdicts = {m: (payload[m] or {}).get("forward_model_verdict", "unknown")
                 for m in payload}
@@ -858,13 +1011,29 @@ def main() -> int:
             print("itself a result worth reporting.")
         return 0
 
-    if not any((payload[m] or {}).get("forward_model_usable", True) for m in payload):
-        print("\nThe forward operator does not reproduce these holograms even from the")
-        print("ground-truth phase, in either geometry. This is not a tuning problem and")
-        print("no distance will fix it. The delivered phase has been demodulated,")
-        print("filtered, aberration-corrected and unwrapped by a pipeline we are")
-        print("reverse-engineering, and the accumulated approximation dominates the")
-        print("residual.")
+    # REACHING HERE MEANS NO ARM IS USABLE, and the two branches below used to be
+    # written as though it could mean anything. The first tested
+    # `not any(... , True)`, whose True default can never apply because every
+    # entry always carries the key -- and it is only reached when every arm is
+    # unusable, so the condition was a tautology and it returned 2 every time.
+    # The identifiability advice underneath it was therefore UNREACHABLE, and the
+    # message that did print ("the forward operator does not reproduce these
+    # holograms even from the ground-truth phase") is the wrong diagnosis for the
+    # marginal and uninformative verdicts that are the only way to get here.
+    #
+    # Both are now reported for what they actually are, and both are reachable.
+    anti = sorted(m for m, v in verdicts.items() if v == "anti_discriminative")
+    other = sorted(m for m, v in verdicts.items()
+                   if v not in ("usable", "anti_discriminative"))
+
+    if anti:
+        print(f"\nANTI-DISCRIMINATIVE on: {', '.join(anti)}. A degraded phase scores")
+        print("BETTER than the ground-truth phase there, so minimising this residual")
+        print("would push the reconstruction away from the truth. The forward operator")
+        print("does not reproduce these holograms even from the reference phase: the")
+        print("delivered phase has been demodulated, filtered, aberration-corrected and")
+        print("unwrapped by a pipeline being reverse-engineered here, and the")
+        print("accumulated approximation dominates the residual. No distance fixes that.")
         print("\nWhat unblocks it, in order:")
         print("  1. The acquiring group's reconstruction code or its exact parameters:")
         print("     demodulation and sideband filter, aberration model, unwrapping, and")
@@ -876,25 +1045,36 @@ def main() -> int:
         print("implemented and verified against synthetic data where the operator is")
         print("known (scripts/selftest.py section 6); what is missing is this")
         print("dataset's operator, not the code.")
-        return 2
+    if other:
+        print(f"\nNot usable, and not anti-discriminative, on: {', '.join(other)} "
+              f"({', '.join(verdicts[m] for m in other)}).")
+        print("The term is correctly signed there but its margins do not clear")
+        print("loss.forward_model.discrimination_tolerance. Report the margins; keep")
+        print("loss.weights.forward_model at 0.0.")
 
-    if not any(payload[m]["identifiable"] for m in payload):
-        print("\nNo modality produced an identifiable z.")
+    unidentifiable = sorted(
+        m for m in payload if not (payload[m] or {}).get("identifiable")
+    )
+    if unidentifiable:
+        print(f"\nz is not identifiable from: {', '.join(unidentifiable)}.")
+        print("For an off-axis hologram that is the PHYSICALLY EXPECTED answer -- the")
+        print("carrier records phase at any distance, so the residual is close to flat")
+        print("in z -- and it should be reported as a statement about the geometry, not")
+        print("as a calibration failure.")
         print("Next steps, in order:")
         print("  1. Ask the acquiring group for the reconstruction distance. This is one")
         print("     email and it settles the question outright.")
         print("  2. Re-run with a wider range: --z-range -600 600 --steps 121 --feature-um 2")
         print("     A minimum at the edge of the scan means the range was too narrow.")
-        print("  3. If z is genuinely unknown, train with")
+        print("  3. If z is genuinely unknown, train arm D2")
         print("        loss.forward_model.learn_distance: true")
-        print("     and an initial distance_um from the Gabor forward minimum above. The")
+        print("     from an initial distance_um at the in-line forward minimum above. The")
         print("     propagation kernel is differentiable in z, so it is refined alongside")
-        print("     the weights; report the converged value in the paper.")
+        print("     the weights; report the whole trajectory, not a single number.")
         print("  4. Until one of those, leave loss.weights.forward_model at 0.0. Training")
         print("     the term with a wrong z is worse than not training it: the residual")
         print("     then measures the error in z rather than in the reconstruction.")
-        return 2
-    return 0
+    return 2
 
 
 if __name__ == "__main__":

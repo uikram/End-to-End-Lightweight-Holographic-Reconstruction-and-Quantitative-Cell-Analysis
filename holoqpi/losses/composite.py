@@ -43,8 +43,10 @@ from ..utils import get_logger
 
 LOGGER = get_logger(__name__)
 from .terms import (
+    AmplitudeReconstructionLoss,
     BoundaryGradientAlignment,
     CellIntegratedPhase,
+    CellProjectedArea,
     DryMassConsistency,
     ForwardModelConsistency,
     PhaseMaskContrast,
@@ -57,6 +59,7 @@ from .terms import (
 _PHYSICS_KEYS = (
     "forward_model",
     "cell_integrated_phase",
+    "cell_projected_area",
     "phase_mask_contrast",
     "boundary_gradient_alignment",
     "phase_volume",
@@ -103,6 +106,14 @@ class JointPhysicsAwareLoss(nn.Module):
             physics_cfg.cell_min_reference_rad,
             physics_cfg.max_relative_error,
         )
+        self.cell_projected_area = CellProjectedArea(
+            physics_cfg.volume_epsilon,
+            # A footprint floor in PIXELS, reusing the same "one cell" threshold
+            # the gated terms use, so the two per-cell terms skip the same cells.
+            float(physics_cfg.min_foreground_pixels),
+            physics_cfg.max_relative_error,
+        )
+        self.amplitude_loss = AmplitudeReconstructionLoss(loss_cfg.amplitude)
         self.dry_mass = DryMassConsistency(physics_cfg.volume_epsilon)
         self.projected_area = ProjectedAreaConsistency(physics_cfg.volume_epsilon)
 
@@ -115,6 +126,22 @@ class JointPhysicsAwareLoss(nn.Module):
     @property
     def active_physics_terms(self) -> list[str]:
         return [key for key in _PHYSICS_KEYS if self.weights.get(key, 0.0) != 0.0]
+
+    @property
+    def active_terms(self) -> dict[str, float]:
+        """Every term with a non-zero weight, and its weight.
+
+        Logged at the start of training, because this one line is what tells
+        someone reading a log six weeks later which arm the checkpoint belongs
+        to. ``active_physics_terms`` lists only the physics group, so an arm
+        configured with an amplitude weight and nothing else appeared as
+        'none' -- which is exactly the case where the log is load-bearing.
+        """
+        return {
+            key: float(weight)
+            for key, weight in sorted(self.weights.items())
+            if float(weight) != 0.0
+        }
 
     def forward(self, outputs: dict, batch: dict) -> tuple[torch.Tensor, dict]:
         phase_pred = outputs["phase"]
@@ -137,6 +164,28 @@ class JointPhysicsAwareLoss(nn.Module):
         segmentation_term = self.segmentation_loss(seg_logits, mask_target)
         total = total + self.weights["segmentation"] * segmentation_term
         components["segmentation"] = float(segmentation_term.mean().detach())
+
+        # Amplitude, against the classical-reconstruction reference. Skipped
+        # rather than zeroed when either the head or the target is absent, so a
+        # missing precompute is visible in the logged breakdown instead of
+        # looking like a satisfied constraint.
+        if self.weights.get("amplitude", 0.0):
+            amplitude_pred = outputs.get("amplitude")
+            amplitude_target = batch.get("amplitude")
+            if amplitude_pred is None:
+                raise KeyError(
+                    "loss.weights.amplitude is non-zero but the model has no amplitude "
+                    "head. Set model.amplitude.enabled: true."
+                )
+            if amplitude_target is None:
+                raise KeyError(
+                    "loss.weights.amplitude is non-zero but the batch carries no "
+                    "'amplitude' target. Set data.provide_amplitude: true and run "
+                    "`python scripts/prepare_amplitude.py --config <cfg>` first."
+                )
+            amplitude_term = self.amplitude_loss(amplitude_pred, amplitude_target)
+            total = total + self.weights["amplitude"] * amplitude_term
+            components["amplitude"] = float(amplitude_term.mean().detach())
 
         # Absent when model.classifier_enabled is false, in which case the term
         # is skipped rather than contributing a zero that would still appear in
@@ -211,7 +260,18 @@ class JointPhysicsAwareLoss(nn.Module):
             # than the signal, and averaging that in would corrupt the batch.
             usable = batch.get("aberration_valid")
             if usable is not None:
-                weight = usable.to(forward_term.dtype).reshape(-1)
+                # DEVICE as well as dtype. `.to(dtype)` alone leaves the tensor
+                # where it was, and the evaluator hands this key straight off
+                # the CPU batch while the trainer moves it, so on the GPU the
+                # multiply below raised "Expected all tensors to be on the same
+                # device" at the end of D1's first epoch -- in validation, not
+                # in training, which is why it looked like a training bug. The
+                # per-cell terms further down already move at the point of use
+                # (`instances.to(phase_pred.device)`); this now matches them, so
+                # the branch is correct whichever caller reaches it.
+                weight = usable.to(
+                    device=forward_term.device, dtype=forward_term.dtype
+                ).reshape(-1)
                 forward_term = forward_term * weight
                 divisor = weight.sum().clamp(min=1.0)
                 components["forward_model_fields_used"] = float(weight.sum())
@@ -220,8 +280,21 @@ class JointPhysicsAwareLoss(nn.Module):
                     float(forward_term.numel()), device=forward_term.device
                 ).clamp(min=1.0)
 
-            total = total + self.weights["forward_model"] * forward_term
-            components["forward_model"] = float(forward_term.sum().detach() / divisor)
+            # AVERAGED OVER USABLE FIELDS, ONCE, AND THE SAME WAY IT IS LOGGED.
+            #
+            # `total` is a per-sample vector that the caller reduces with
+            # .mean(), i.e. divides by the batch size. Adding the per-sample
+            # `forward_term` to it therefore contributed sum/B, while the value
+            # recorded in `components` was sum/n_usable -- so the weight the
+            # objective actually applied drifted from the logged one by
+            # n_usable/B, and it drifted BATCH BY BATCH as the number of fields
+            # with a recoverable aberration surface changed. Reducing to a scalar
+            # here makes the contribution exactly w * sum/n_usable (a scalar
+            # broadcast across the vector survives .mean() unchanged), which is
+            # how every other physics term below is already handled.
+            forward_mean = forward_term.sum() / divisor
+            total = total + self.weights["forward_model"] * forward_mean
+            components["forward_model"] = float(forward_mean.detach())
             # Logged so the calibration is inspectable. A gain that changes sign
             # or drifts across epochs means the forward model is wrong, and that
             # would otherwise be invisible inside the residual.
@@ -272,6 +345,19 @@ class JointPhysicsAwareLoss(nn.Module):
             raw_terms["cell_integrated_phase"] = self.cell_integrated_phase(
                 foreground, phase_pred, target_foreground, phase_target,
                 instances.to(phase_pred.device),
+            )
+
+        # Per-cell projected area. Same reference domains as the integrated-phase
+        # term, so the two constrain the two factors of the same measurement.
+        if self.weights.get("cell_projected_area", 0.0):
+            instances = batch.get("instances")
+            if instances is None:
+                raise KeyError(
+                    "loss.weights.cell_projected_area is non-zero but the batch "
+                    "carries no 'instances' tensor. Set data.provide_instances: true."
+                )
+            raw_terms["cell_projected_area"] = self.cell_projected_area(
+                foreground, target_foreground, instances.to(phase_pred.device),
             )
 
         if self.weights.get("dry_mass_consistency", 0.0):

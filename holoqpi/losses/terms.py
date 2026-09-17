@@ -30,6 +30,62 @@ LOGGER = get_logger(__name__)
 _WARNED_PAD: set = set()
 
 
+def _accumulation_dtype(*tensors: torch.Tensor) -> torch.dtype:
+    """float32 unless something wider is already in play.
+
+    WHY EVERY PER-CELL AND PER-IMAGE INTEGRAL IN THIS FILE IS PINNED EXPLICITLY.
+
+    These terms sum over thousands of pixels, and this dataset's per-cell
+    quantities are large:
+
+        projected area      median  5964 px      max  9717 px
+        integrated phase    median  5399 rad     max  9429 rad
+
+    In float16 (11-bit mantissa) the spacing at 4096 is 4, so a sequential
+    accumulation of values near unity STALLS -- 4096 + 1 rounds back to 4096 --
+    and an integral saturates instead of growing. An image-level integral is
+    worse: a 512 px crop at this dataset's ~19% coverage sums to roughly 70,000,
+    past float16's largest finite value of 65504, giving ``inf`` and then
+    ``inf/inf``. ``scatter_add`` is the acute case because it accumulates in the
+    output tensor's own dtype rather than in a wider one.
+
+    WHAT WAS AND WAS NOT ACTUALLY HAPPENING, because the distinction matters
+    for what may be said about the runs already recorded.
+
+    Training runs under autocast, and CUDA autocast places ``softmax`` and
+    ``sum`` in its FP32 list (``AT_FORALL_FP32_SET_OPT_DTYPE`` in
+    ``ATen/autocast_mode.h``: prod, softmax, log_softmax, cumprod, cumsum,
+    linalg norms, sum). So on the GPU the foreground probability map came back
+    float32, the products with it were float32, and these integrals were ALREADY
+    accumulating in float32. The saturation above did not occur on the study's
+    runs, and no recorded result is affected by this change.
+
+    There is an independent proof of that, which does not rely on reading the
+    policy table: before this change ``CellIntegratedPhase`` built its
+    accumulator from ``foreground * phase`` while the reference map was
+    ``(mask > 0).to(phase.dtype) * phase_target``, whose float32 target promotes
+    the product to float32. If ``foreground`` had been float16 the two would have
+    disagreed and ``scatter_add`` would have raised
+    "Expected self.dtype to be equal to src.dtype" on the first step. Arm B
+    trained for sixty epochs with that term at weight 1.0, so ``foreground`` was
+    float32.
+
+    IT IS STILL PINNED, for three reasons. The CPU autocast policy is a
+    different and smaller list -- ``softmax`` is NOT on it -- so the same code
+    raised under CPU autocast, which is reachable by any future run that enables
+    mixed precision off the GPU and is what ``selftest.test_autocast_integrals``
+    reproduces. The policy is a PyTorch implementation detail that has changed
+    between releases. And the correctness of the study's central measurement
+    should not rest on an op being on a version-specific promotion list. float32
+    costs nothing measurable here: these are reductions, not convolutions, and
+    the gradient flows back into the half-precision graph unchanged.
+    """
+    for tensor in tensors:
+        if tensor is not None and tensor.dtype in (torch.float64, torch.complex128):
+            return torch.float64
+    return torch.float32
+
+
 # ---------------------------------------------------------------------------
 # Phase reconstruction
 # ---------------------------------------------------------------------------
@@ -132,19 +188,29 @@ class SegmentationLoss(nn.Module):
             loss = loss + self.w_ce * cross_entropy.mean(dim=[1, 2])
 
         if self.w_dice > 0:
-            probabilities = torch.softmax(logits, dim=1)
-            dice_total = torch.zeros_like(loss)
+            # float32 for the same reason as every other integral in this file
+            # (see _accumulation_dtype). These sums are over the WHOLE crop:
+            # 512 x 512 = 262,144 pixels, so a background-class sum reaches
+            # ~131,000 and overflows float16 outright. CUDA autocast promotes
+            # softmax and sum to float32 so this did not bite on the GPU, but
+            # this is the one term with weight 1.0 in EVERY arm and its
+            # correctness should not depend on that policy.
+            dtype = _accumulation_dtype(logits)
+            probabilities = torch.softmax(logits, dim=1).to(dtype)
+            dice_total = torch.zeros_like(loss, dtype=dtype)
             weight_total = 0.0
             for class_index in range(self.num_classes):
                 predicted = probabilities[:, class_index]
-                actual = (target == class_index).to(probabilities.dtype)
+                actual = (target == class_index).to(dtype)
                 intersection = (predicted * actual).sum(dim=[1, 2])
                 union = predicted.sum(dim=[1, 2]) + actual.sum(dim=[1, 2])
                 class_dice = 1.0 - (2 * intersection + self.smooth) / (union + self.smooth)
                 weight = float(self.class_weights[class_index])
                 dice_total = dice_total + weight * class_dice
                 weight_total += weight
-            loss = loss + self.w_dice * dice_total / max(weight_total, 1e-8)
+            loss = loss + self.w_dice * (
+                dice_total / max(weight_total, 1e-8)
+            ).to(loss.dtype)
 
         return loss
 
@@ -162,8 +228,11 @@ class PhaseMaskContrast(nn.Module):
         self._warnings_emitted = 0
 
     def forward(self, foreground: torch.Tensor, phase: torch.Tensor) -> torch.Tensor:
-        foreground = foreground.squeeze(1)
-        phase = phase.squeeze(1)
+        # Pixel-count and phase sums over a whole crop, so float32: see
+        # _accumulation_dtype.
+        dtype = _accumulation_dtype(foreground, phase)
+        foreground = foreground.squeeze(1).to(dtype)
+        phase = phase.squeeze(1).to(dtype)
 
         cell_area = foreground.sum(dim=[1, 2]).clamp(min=1.0)
         background_area = (1.0 - foreground).sum(dim=[1, 2]).clamp(min=1.0)
@@ -175,10 +244,14 @@ class PhaseMaskContrast(nn.Module):
             ratio = float(foreground.mean().detach())
             if ratio > self.collapse_warn_ratio:
                 self._warnings_emitted += 1
-                print(
-                    f"[PhaseMaskContrast] foreground fraction {ratio:.1%} exceeds "
-                    f"{self.collapse_warn_ratio:.0%}: the mask may be collapsing to "
-                    f"all-cell ({self._warnings_emitted}/3)"
+                # Through the logger, so it lands in the run's train.log next to
+                # the epoch it belongs to rather than only on a terminal nobody
+                # is watching by the time it fires.
+                LOGGER.warning(
+                    "PhaseMaskContrast: foreground fraction %.1f%% exceeds %.0f%%; "
+                    "the mask may be collapsing to all-cell (%d/3)",
+                    100.0 * ratio, 100.0 * self.collapse_warn_ratio,
+                    self._warnings_emitted,
                 )
 
         return F.relu(mean_background - mean_cell + self.margin)
@@ -227,8 +300,13 @@ class PhaseVolumePreservation(nn.Module):
         target_foreground: torch.Tensor,
         target_phase: torch.Tensor,
     ) -> torch.Tensor:
-        predicted = (foreground.squeeze(1) * phase.squeeze(1)).sum(dim=[1, 2])
-        reference = (target_foreground.squeeze(1) * target_phase.squeeze(1)).sum(dim=[1, 2])
+        # float32: a 512 px crop's phase integral reaches ~70,000, past
+        # float16's maximum finite value. See _accumulation_dtype.
+        dtype = _accumulation_dtype(foreground, phase, target_phase)
+        predicted = (foreground.squeeze(1).to(dtype)
+                     * phase.squeeze(1).to(dtype)).sum(dim=[1, 2])
+        reference = (target_foreground.squeeze(1).to(dtype)
+                     * target_phase.squeeze(1).to(dtype)).sum(dim=[1, 2])
         return (predicted - reference).abs() / (reference.abs() + self.epsilon)
 
 
@@ -253,8 +331,12 @@ class DryMassConsistency(nn.Module):
         target_foreground: torch.Tensor,
         target_phase: torch.Tensor,
     ) -> torch.Tensor:
-        predicted = (foreground.squeeze(1) * phase.squeeze(1)).sum(dim=[1, 2])
-        reference = (target_foreground.squeeze(1) * target_phase.squeeze(1)).sum(dim=[1, 2])
+        # float32, for the same overflow reason as PhaseVolumePreservation.
+        dtype = _accumulation_dtype(foreground, phase, target_phase)
+        predicted = (foreground.squeeze(1).to(dtype)
+                     * phase.squeeze(1).to(dtype)).sum(dim=[1, 2])
+        reference = (target_foreground.squeeze(1).to(dtype)
+                     * target_phase.squeeze(1).to(dtype)).sum(dim=[1, 2])
         return F.smooth_l1_loss(
             predicted / (reference.abs() + self.epsilon),
             torch.ones_like(predicted),
@@ -271,8 +353,12 @@ class ProjectedAreaConsistency(nn.Module):
         self.epsilon = epsilon
 
     def forward(self, foreground: torch.Tensor, target_foreground: torch.Tensor) -> torch.Tensor:
-        predicted = foreground.squeeze(1).sum(dim=[1, 2])
-        reference = target_foreground.squeeze(1).sum(dim=[1, 2])
+        # float32: a foreground pixel count over a 512 px crop reaches ~50,000,
+        # which float16 can represent but not accumulate. See
+        # _accumulation_dtype.
+        dtype = _accumulation_dtype(foreground, target_foreground)
+        predicted = foreground.squeeze(1).to(dtype).sum(dim=[1, 2])
+        reference = target_foreground.squeeze(1).to(dtype).sum(dim=[1, 2])
         return (predicted - reference).abs() / (reference + self.epsilon)
 
 
@@ -322,10 +408,22 @@ class CellIntegratedPhase(nn.Module):
         target_phase: torch.Tensor,
         instances: torch.Tensor,
     ) -> torch.Tensor:
-        foreground = foreground.squeeze(1)
-        phase = phase.squeeze(1)
-        target_foreground = target_foreground.squeeze(1)
-        target_phase = target_phase.squeeze(1)
+        # PINNED TO float32, AND THIS IS LOAD-BEARING.
+        #
+        # scatter_add accumulates in the tensor's own dtype. Under autocast both
+        # operands arrive as float16, and this dataset's per-cell phase integral
+        # has a median of 5399 rad -- past the point where float16's spacing
+        # exceeds the per-pixel increment, so the accumulation stalls and every
+        # large cell reports the same saturated integral. The relative error then
+        # measures the arithmetic rather than the reconstruction. Two of the
+        # three integrals here used to be float16 and one float32, which also
+        # made the comparison between them systematically biased.
+        # See _accumulation_dtype for the measured numbers.
+        dtype = _accumulation_dtype(foreground, phase, target_foreground, target_phase)
+        foreground = foreground.squeeze(1).to(dtype)
+        phase = phase.squeeze(1).to(dtype)
+        target_foreground = target_foreground.squeeze(1).to(dtype)
+        target_phase = target_phase.squeeze(1).to(dtype)
         if instances.dim() == 4:
             instances = instances.squeeze(1)
 
@@ -362,6 +460,117 @@ class CellIntegratedPhase(nn.Module):
             losses.append(error.mean())
 
         return torch.stack(losses)
+
+
+class CellProjectedArea(nn.Module):
+    """Per-cell projected-area preservation: the symmetric partner of IPP.
+
+    ``CellIntegratedPhase`` constrains one of the two quantities a per-cell
+    measurement depends on. This constrains the other.
+
+    Dry mass is
+        m_i = (lambda / 2 pi alpha) * sum_{p in Omega_i} phi(p) * dx * dy
+    and projected area is
+        A_i = |Omega_i| * dx * dy
+    so the segmented footprint is a reported measurement in its own right and
+    also the domain over which the phase integral is taken. After the v2 change
+    switched off the image-level ``projected_area_consistency``, nothing
+    constrained it at all.
+
+    Formulated exactly like the integrated-phase term -- a relative error over
+    the REFERENCE instance domains, averaged over cells rather than pixels -- so
+    the two are directly comparable and share the same scatter-add machinery.
+    Using reference domains matters for the same reason: a term evaluated on
+    predicted domains could be satisfied by moving the boundary rather than by
+    getting the footprint right.
+
+    Note what this does and does not do. Inside Omega_i^GT it pushes the soft
+    foreground toward one, so it sharpens confidence within known cells. It
+    cannot suppress false-positive area OUTSIDE a reference cell, because those
+    pixels are never summed. That is the segmentation loss's job.
+    """
+
+    def __init__(self, epsilon: float, min_reference: float, max_relative_error: float | None):
+        super().__init__()
+        self.epsilon = epsilon
+        self.min_reference = min_reference
+        self.max_relative_error = max_relative_error
+
+    def forward(
+        self,
+        foreground: torch.Tensor,
+        target_foreground: torch.Tensor,
+        instances: torch.Tensor,
+    ) -> torch.Tensor:
+        # float32, for the reason given in CellIntegratedPhase: a per-cell
+        # footprint has a median of 5964 px on this dataset, and a float16
+        # accumulator stops growing at 4096 when the increments are near unity,
+        # so both the predicted and the reference area would saturate at the
+        # same value and the relative error would read close to zero however
+        # wrong the boundary was. See _accumulation_dtype.
+        dtype = _accumulation_dtype(foreground, target_foreground)
+        foreground = foreground.squeeze(1).to(dtype)
+        target_foreground = target_foreground.squeeze(1).to(dtype)
+        if instances.dim() == 4:
+            instances = instances.squeeze(1)
+
+        losses = []
+        for item in range(foreground.shape[0]):
+            labels = instances[item].reshape(-1).long()
+            count = int(labels.max().item())
+            if count < 1:
+                losses.append(foreground.new_zeros(()))
+                continue
+
+            bins = foreground.new_zeros(count + 1)
+            predicted = bins.scatter_add(0, labels, foreground[item].reshape(-1))
+            reference = bins.scatter_add(0, labels, target_foreground[item].reshape(-1))
+            predicted, reference = predicted[1:], reference[1:]
+
+            # min_reference is in PIXELS here, not radians: it is the smallest
+            # footprint worth measuring, so the same floor the mask generator
+            # uses for its area filter.
+            usable = reference >= self.min_reference
+            if not bool(usable.any()):
+                losses.append(foreground.new_zeros(()))
+                continue
+
+            error = (predicted[usable] - reference[usable]).abs() / (
+                reference[usable] + self.epsilon
+            )
+            if self.max_relative_error is not None:
+                error = error.clamp(max=float(self.max_relative_error))
+            losses.append(error.mean())
+
+        return torch.stack(losses)
+
+
+class AmplitudeReconstructionLoss(nn.Module):
+    """L1 against the classical-reconstruction amplitude REFERENCE.
+
+    The professor's brief asks for phase AND amplitude. Until now the amplitude
+    head had no target at all: it was zero-initialised to emit exactly 1.0 and
+    was trained only by the forward-model residual, which is itself off by
+    default. So the framework did not deliver one of its three stated outputs.
+
+    The target here is ``|reconstruct_off_axis(H)|`` precomputed by
+    ``scripts/prepare_amplitude.py``. It is a REFERENCE, not ground truth: it is
+    a classical reconstruction carrying its own errors, and no independent
+    amplitude measurement exists for this dataset. Any write-up must say so.
+
+    The weight is deliberately low for that reason. OAH-Net (Biomed. Opt.
+    Express 16(3):894, 2025) weights amplitude at 0.1 against phase in its
+    combined L1, on a dataset where amplitude ground truth came from the
+    instrument's own software; with a reconstructed pseudo-target the case for
+    keeping it modest is stronger, not weaker.
+    """
+
+    def __init__(self, cfg: Config):
+        super().__init__()
+        self.w_l1 = cfg.l1
+
+    def forward(self, prediction: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        return self.w_l1 * (prediction - target).abs().mean(dim=[1, 2, 3])
 
 
 class ForwardModelConsistency(nn.Module):
@@ -464,18 +673,43 @@ class ForwardModelConsistency(nn.Module):
             self.distance = nn.Parameter(torch.tensor(float(distance)))
         else:
             self.register_buffer("distance", torch.tensor(float(distance)))
-        self._warned = False
+        # THE PAD AND THE BORDER ARE FROZEN AT THE CONFIGURED DISTANCE, NEVER
+        # TAKEN FROM THE LIVE PARAMETER.
+        #
+        # required_pad() derives a diffraction margin from z, and border_px
+        # defaults to that margin, so the residual is computed over the field
+        # minus that border. If the margin tracked a learnable z, the objective's
+        # comparison DOMAIN would change every time z moved: at z = 33.77 um the
+        # border is 79 px and the residual is scored on a 742 px window, while at
+        # z = -5 um it is 12 px and a 776 px window. Gradient descent could then
+        # lower the residual by shrinking |z| purely because that changes which
+        # pixels are being compared, which is not a statement about the
+        # propagation distance at all -- and the two residuals are not on the
+        # same scale, so the trajectory could not be read either.
+        #
+        # Freezing it makes the residual a smooth function of z over one fixed
+        # domain, which is the only form in which "learn z" means anything. For a
+        # fixed-z arm the behaviour is identical to before, because the live value
+        # never changes.
+        self._reference_distance_um = None if distance is None else abs(float(distance))
 
     # -- helpers ----------------------------------------------------------
     @property
     def distance_um(self) -> float | None:
+        """The distance the operator currently propagates by, tracking z."""
         return None if self.distance is None else float(self.distance.detach())
 
     def required_pad(self) -> int:
-        """Diffraction spread over z, in pixels: the context the field needs."""
+        """Diffraction spread in pixels, at the CONFIGURED distance.
+
+        Deliberately independent of the live value of z; see the note in
+        ``__init__``. A distance sweep builds one term per candidate distance and
+        so still gets one pad per candidate, which is why a sweep must pass an
+        explicit ``pad_px`` if it wants a single domain across the scan.
+        """
         if self.pad_px is not None:
             return int(self.pad_px)
-        distance = self.distance_um
+        distance = self._reference_distance_um
         if not distance:
             return 0
         spread_um = abs(self.wavelength_um * distance) / self.feature_um
@@ -496,7 +730,7 @@ class ForwardModelConsistency(nn.Module):
         required = self.required_pad()
         affordable = max(0, size // 2 - 1)
         applied = min(required, affordable)
-        signature = (round(float(self.distance_um or 0.0), 1), size)
+        signature = (round(float(self._reference_distance_um or 0.0), 1), size)
         if required > applied and self.warn_on_short_pad and signature not in _WARNED_PAD:
             _WARNED_PAD.add(signature)
             LOGGER.warning(
@@ -505,8 +739,34 @@ class ForwardModelConsistency(nn.Module):
                 "Train on larger crops (data.train_crop), lower "
                 "loss.forward_model.distance_um, or set loss.forward_model.pad_px "
                 "explicitly to accept the approximation deliberately.",
-                self.distance_um, required, size, applied,
+                self._reference_distance_um, required, size, applied,
             )
+        # A SEPARATE CHECK ON THE LIVE DISTANCE, because the pad is deliberately
+        # frozen at the configured one. If a learned z drifts far from where the
+        # pad was sized, the residual becomes badly under-padded and nothing
+        # above would say so -- the warning keys on the reference distance, which
+        # by construction never moves. config/base.yaml's note on
+        # physics_parameter_lr_scale says such an excursion must be reported, so
+        # it is reported here rather than left to whoever reads history.json.
+        live = self.distance_um
+        reference = self._reference_distance_um
+        if (
+            self.learn_distance and live is not None and reference
+            and abs(abs(live) - reference) > max(2.0, 0.25 * reference)
+        ):
+            signature = ("drift", round(float(live), 0), size)
+            if signature not in _WARNED_PAD:
+                _WARNED_PAD.add(signature)
+                LOGGER.warning(
+                    "the learned propagation distance has moved to %.2f um, far from "
+                    "the %.2f um the diffraction pad was sized for. The pad is held "
+                    "fixed on purpose -- a residual whose domain moves with z cannot "
+                    "be compared across epochs -- but the synthesised field is now "
+                    "under-padded, so the residual is approximate. Report the "
+                    "trajectory, and consider lowering "
+                    "training.physics_parameter_lr_scale.",
+                    live, reference,
+                )
         return applied
 
     @staticmethod
@@ -518,15 +778,43 @@ class ForwardModelConsistency(nn.Module):
         form with a small ridge term, so it is differentiable and cannot blow up
         when two components are nearly collinear (which happens when |U|^2 is
         almost constant, i.e. exactly at the in-line degenerate case).
+
+        AUTOCAST IS DISABLED FOR THIS WHOLE REGION, and it has to be, for two
+        separate reasons.
+
+        The first one crashed experiment D1 twice. ``gram`` is built by a
+        matmul, and **autocast re-casts a matmul's operands to float16 even
+        when they are already float32** -- that is what autocast is for. So
+        ``gram`` came back Half while ``rhs``, which is elementwise multiply
+        plus sum and therefore left alone, stayed Float, and
+        ``torch.linalg.solve`` raised "Expected A and B to have the same dtype,
+        but found A of type Half and B of type Float". Casting the inputs with
+        ``.float()`` does not fix it, because the cast is undone by the very
+        next operation. Only leaving the autocast region does.
+
+        The second would have been worse if the first had not fired: float16
+        has an epsilon of about 1e-3, so a ridge of 1e-6 relative to the Gram
+        diagonal is far below the representable resolution and the
+        regularisation this function depends on would silently do nothing.
+
+        Verified by construction: inside ``torch.autocast`` a float32 matmul
+        returns reduced precision while the elementwise branch does not; with
+        the region disabled both come back float32.
         """
-        gram = components @ components.transpose(1, 2)
-        rhs = (components * measured.unsqueeze(1)).sum(dim=2, keepdim=True)
-        ridge = 1e-6 * torch.diag_embed(
-            torch.diagonal(gram, dim1=1, dim2=2).clamp(min=1e-12)
-        )
-        coefficients = torch.linalg.solve(gram + ridge, rhs)
-        fitted = (coefficients.transpose(1, 2) @ components).squeeze(1)
-        return fitted, coefficients.squeeze(2)
+        dtype = components.dtype
+        with torch.autocast(device_type=components.device.type, enabled=False):
+            comp = components.float()
+            meas = measured.float()
+            gram = comp @ comp.transpose(1, 2)
+            rhs = (comp * meas.unsqueeze(1)).sum(dim=2, keepdim=True)
+            ridge = 1e-6 * torch.diag_embed(
+                torch.diagonal(gram, dim1=1, dim2=2).clamp(min=1e-12)
+            )
+            coefficients = torch.linalg.solve(gram + ridge, rhs)
+            fitted = (coefficients.transpose(1, 2) @ comp).squeeze(1)
+        # Back to the surrounding graph's dtype so the residual is computed in
+        # the same precision as every other loss term.
+        return fitted.to(dtype), coefficients.squeeze(2).to(dtype)
 
     def forward(
         self,
@@ -632,10 +920,28 @@ class ForwardModelConsistency(nn.Module):
         if self.criterion == "l1":
             value = residual.abs().mean(dim=1)
         elif self.criterion == "l2":
+            # Mean squared residual in units of the measurement's own variance,
+            # i.e. the fraction of that variance the model fails to explain.
+            # Zero on a perfect fit, one when it explains nothing.
             value = (residual ** 2).mean(dim=1)
         else:
-            # Fraction of the measurement's variance the model fails to explain.
-            # Zero when the fit is perfect, one when it explains nothing.
-            value = (residual ** 2).mean(dim=1)
+            # 1 - Pearson r between the synthesised and the measured intensity.
+            #
+            # This branch used to be a verbatim copy of the l2 one, so selecting
+            # `correlation` silently got `l2` while the docstring described
+            # something else. The two are genuinely different: l2 is sensitive to
+            # a residual the radiometric fit could not absorb at all, whereas
+            # this is invariant to any remaining affine error and responds only
+            # to structure. Kept selectable because that invariance is sometimes
+            # what a diagnostic wants; `l2` remains the default and is what every
+            # arm in this study uses.
+            centred_prediction = predicted - predicted.mean(dim=1, keepdim=True)
+            centred_measurement = measured - measured.mean(dim=1, keepdim=True)
+            numerator = (centred_prediction * centred_measurement).sum(dim=1)
+            denominator = (
+                centred_prediction.pow(2).sum(dim=1).sqrt()
+                * centred_measurement.pow(2).sum(dim=1).sqrt()
+            ).clamp(min=1e-12)
+            value = 1.0 - numerator / denominator
 
         return (value, coefficients) if return_coefficients else value

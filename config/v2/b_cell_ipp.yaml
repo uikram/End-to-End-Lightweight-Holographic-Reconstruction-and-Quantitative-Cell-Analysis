@@ -7,7 +7,22 @@
 # where one cell is over-measured by 20% and another under-measured by 20%
 # (asserted in scripts/selftest.py). The per-cell version scores 0.2000. Dry
 # mass is reported per cell, so that cancellation is precisely the error this
-# study cares about.
+# study cares about. Experiment B' runs the image-level term at a matched
+# gradient magnitude, and B vs B' is what establishes the PER-CELL part.
+#
+# THE WEIGHT, AND WHY IT IS NOT 0.1. scripts/check_gradient_path.py measures
+# this term's gradient into the segmentation decoder as 0.25-0.29 times the
+# segmentation loss's gradient on the same parameters, AT WEIGHT 1.0, as a
+# median over several batches. The objective adds w * term, so the effective
+# ratio is w * 0.27: at w = 0.1 the segmentation loss is ahead 37 : 1 and the
+# term is swamped, which would make a null result a statement about the weight
+# rather than about the hypothesis. At w = 1.0 it is 3.7 : 1, which is heard
+# without dominating. config/v2/w_ipp_*.yaml brackets it.
+#
+# The gradient ratio also carries a measured caveat: it roughly doubles at a
+# 256 px crop, because the per-cell mean divides by the number of cells while
+# the segmentation loss is a per-pixel mean that does not. Re-run the script if
+# data.train_crop changes.
 #
 # Shared across all four v2 experiments:
 #   * off-axis only (the in-line arm is deferred to study 2)
@@ -27,7 +42,7 @@ model:
 loss:
   weights:
     classification: 0.0
-    cell_integrated_phase: 0.1
+    cell_integrated_phase: 1.0
     boundary_gradient_alignment: 0.0
     projected_area_consistency: 0.0
     forward_model: 0.0

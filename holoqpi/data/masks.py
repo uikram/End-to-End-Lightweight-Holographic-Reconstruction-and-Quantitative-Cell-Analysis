@@ -160,9 +160,37 @@ def generate_masks(
     """Write a mask for every stem; returns coverage statistics."""
     from . import io as data_io
 
+    from ..utils import assert_provenance, read_provenance, write_provenance
+
     mask_cfg = cfg.mask_generation
     destination = data_root / cfg.paths.mask_dir
     destination.mkdir(parents=True, exist_ok=True)
+
+    # EVERY PARAMETER THAT CHANGES A MASK, recorded beside the masks.
+    #
+    # These files are both the segmentation target and the domain for every
+    # per-cell measurement, and existing ones are skipped rather than rebuilt --
+    # so without this, changing a threshold and re-running left the whole study
+    # measuring against masks from the previous configuration, with nothing on
+    # disk to say so. The pixel area is included because it converts the two
+    # area limits into pixel counts.
+    parameters = {
+        "smoothing_sigma_px": mask_cfg.smoothing_sigma_px,
+        "threshold_method": mask_cfg.threshold_method,
+        "fixed_threshold_rad": mask_cfg.fixed_threshold_rad,
+        "otsu_scale": mask_cfg.otsu_scale,
+        "min_object_area_um2": mask_cfg.min_object_area_um2,
+        "max_object_area_um2": mask_cfg.max_object_area_um2,
+        "fill_holes": mask_cfg.fill_holes,
+        "binary_closing_px": mask_cfg.binary_closing_px,
+        "border_buffer_px": mask_cfg.border_buffer_px,
+        "pixel_area_um2": round(float(pixel_area_um2), 9),
+    }
+    if not mask_cfg.overwrite_existing:
+        assert_provenance(
+            destination, parameters,
+            "Regenerate with:  python main.py prepare --config <cfg> --force-masks",
+        )
 
     written = skipped = 0
     coverage: list[float] = []
@@ -185,9 +213,31 @@ def generate_masks(
         if position % 100 == 0:
             LOGGER.info("masks: %d/%d processed", position, len(stems))
 
+    # ONLY WHEN THIS RUN ACTUALLY WROTE SOMETHING.
+    #
+    # Writing it unconditionally would stamp the current configuration onto files
+    # produced by an unknown earlier one: the first run after this guard was
+    # added finds no provenance file, correctly skips the check, skips all 800
+    # existing masks, and would then certify them as matching -- after which the
+    # guard passes forever and blesses exactly the staleness it exists to catch.
+    if written:
+        write_provenance(destination, parameters)
+    elif skipped and read_provenance(destination) is None:
+        # Only when there is genuinely no record. Once a --force-masks run has
+        # written the provenance, a later skip-everything run is fine: the guard
+        # above has already confirmed the parameters match, so repeating the
+        # warning would be telling the user to fix something that is fixed.
+        LOGGER.warning(
+            "every mask already existed, so none was written and no provenance "
+            "was recorded. %s cannot be attributed to a configuration; "
+            "regenerate once with --force-masks so the settings that produced it "
+            "are recorded.", destination,
+        )
+
     stats = {
         "written": written,
         "skipped_existing": skipped,
+        "parameters": parameters,
         "mean_foreground_fraction": float(np.mean(coverage)) if coverage else None,
         "min_foreground_fraction": float(np.min(coverage)) if coverage else None,
         "max_foreground_fraction": float(np.max(coverage)) if coverage else None,

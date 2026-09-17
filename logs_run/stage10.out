@@ -1,0 +1,23 @@
+HoloQPI v2 study, started Thu Sep 17 15:43:21 KST 2026
+log directory logs/v2_20260917_154321
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   extra seeds: none
+
+########## stage 10: collect results
+
+=== collect_results  15:43:21
+    python scripts/collect_results.py --config config/base.yaml --split test
+    OK   -> logs/v2_20260917_154321/collect_results.log
+    -> runs/RESULTS.md is the document to read and to paste from
+
+########## done Thu Sep 17 15:43:24 KST 2026
+summary  logs/v2_20260917_154321/SUMMARY.txt
+logs     logs/v2_20260917_154321/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260917_154321/error_propagation.log     the label-free headline result
+  2. logs/v2_20260917_154321/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260917_154321/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260917_154321/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0

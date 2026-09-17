@@ -60,6 +60,11 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--checkpoint", default=None, help="defaults to the run's best_model.pt")
     evaluate.add_argument("--split", default="test", choices=["train", "val", "test"])
     evaluate.add_argument(
+        "--tag", default=None,
+        help="suffix for the output files, so a second label source (e.g. "
+             "paths.manual_mask_dir=membrane_mask) does not overwrite the first",
+    )
+    evaluate.add_argument(
         "--allow-untrained", action="store_true",
         help="evaluate even when no checkpoint is found (scores random weights)",
     )
@@ -69,9 +74,28 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("--init-from", default=None,
                          help="see `train --init-from`; applies to every arm")
     compare.add_argument("--modalities", nargs="+", default=["off_axis", "gabor"])
+    # TRAINING IS OPT-IN HERE, AND IT DID NOT USED TO BE.
+    #
+    # `compare` exists for two jobs: training a matched pair of arms, and pairing
+    # two arms that are ALREADY trained so that the modality-comparison JSON and
+    # figures 5, 13 and 14 can be written. The second is overwhelmingly the
+    # common one -- run_v2.sh trains the arms in stage 6 and then needs the
+    # pairing -- and with training on by default the documented invocation
+    # `python main.py compare --config config/v2/a_baseline.yaml` silently
+    # retrained both arms for 60 epochs each and overwrote the two checkpoints
+    # the study was about to report. A default that can destroy a day of GPU time
+    # and two results is the wrong default.
+    compare.add_argument(
+        "--train", action="store_true",
+        help="train each arm before evaluating it. Off by default: without it, "
+             "compare scores the checkpoints already in the run directories and "
+             "writes only the comparison table.",
+    )
     compare.add_argument(
         "--no-train", action="store_true",
-        help="evaluate existing checkpoints instead of training first",
+        help="force evaluation of existing checkpoints. This is already the "
+             "default; the flag is kept so older scripts and notes keep "
+             "working, and it overrides --train if both are given.",
     )
 
     benchmark = subparsers.add_parser("benchmark", help="profile latency, memory and size")
@@ -143,7 +167,7 @@ def command_train(args) -> int:
 
 def command_evaluate(args) -> int:
     from holoqpi.data import build_dataloaders
-    from holoqpi.engine import Evaluator, load_checkpoint, save_per_cell
+    from holoqpi.engine import Evaluator, apply_learned_physics, load_checkpoint, save_per_cell
     from holoqpi.models import build_model
     from holoqpi.utils import run_directory, write_json
 
@@ -153,6 +177,11 @@ def command_evaluate(args) -> int:
 
     run_dir = run_directory(cfg.paths.output_root, cfg.experiment_name, cfg.data.modality)
     checkpoint = Path(args.checkpoint) if args.checkpoint else run_dir / "best_model.pt"
+
+    # Before anything reads cfg.loss.forward_model: a learned propagation
+    # distance lives in the checkpoint, not in the config, and the forward-model
+    # metric has to be built at the value this run actually trained to.
+    cfg = apply_learned_physics(cfg, checkpoint)
 
     model = build_model(cfg)
     if checkpoint.is_file():
@@ -179,11 +208,26 @@ def command_evaluate(args) -> int:
         model, loaders[args.split], collect_per_cell=cfg.evaluation.save_per_cell_csv
     )
 
-    write_json(evaluation["metrics"], run_dir / f"metrics_{args.split}.json")
-    write_json(evaluation["confusion_matrix"], run_dir / f"confusion_{args.split}.json")
+    # A tag keeps a second evaluation of the SAME checkpoint from overwriting the
+    # first. That is not hypothetical: evaluating against the membrane labels
+    # (paths.manual_mask_dir=membrane_mask) reuses the run directory, and without
+    # a tag it silently replaces the Otsu-label metrics with the membrane-label
+    # ones under an identical filename. Two label sources are two results.
+    tag = f"_{args.tag}" if args.tag else ""
+    write_json(evaluation["metrics"], run_dir / f"metrics_{args.split}{tag}.json")
+    write_json(evaluation["confusion_matrix"], run_dir / f"confusion_{args.split}{tag}.json")
     if cfg.evaluation.save_per_cell_csv:
-        save_per_cell(evaluation["per_cell"], run_dir / f"per_cell_{args.split}.csv")
-        save_per_cell(evaluation["unmatched"], run_dir / f"unmatched_{args.split}.csv")
+        save_per_cell(evaluation["per_cell"], run_dir / f"per_cell_{args.split}{tag}.csv")
+        # The unmatched rows -- missed reference cells and false positives -- are
+        # the input to figure 15 (recall against cell size). This line used to
+        # sit inside the `if args.tag` block below while its filename carried no
+        # tag, so an untagged evaluation wrote no file at all and a tagged one
+        # wrote the membrane result under the Otsu result's name. It belongs
+        # here, beside per_cell, and it carries the same tag.
+        save_per_cell(evaluation["unmatched"], run_dir / f"unmatched_{args.split}{tag}.csv")
+    if args.tag:
+        LOGGER.info("labels from %s -> metrics_%s%s.json",
+                    cfg.paths.manual_mask_dir or cfg.paths.mask_dir, args.split, tag)
 
     for key, value in sorted(evaluation["metrics"].items()):
         LOGGER.info("  %-34s %s", key, f"{value:.4f}" if isinstance(value, float) else value)
@@ -194,7 +238,12 @@ def command_compare(args) -> int:
     from holoqpi.engine import compare_modalities
 
     cfg = _load(args)
-    compare_modalities(cfg, args.modalities, train=not args.no_train,
+    train = bool(args.train) and not bool(args.no_train)
+    if not train:
+        LOGGER.info(
+            "compare: scoring existing checkpoints (pass --train to train each arm first)"
+        )
+    compare_modalities(cfg, args.modalities, train=train,
                        init_from=getattr(args, 'init_from', None))
     return 0
 

@@ -40,19 +40,38 @@ def export_onnx(
 
     wrapper = ExportWrapper(model).to(device).eval()
 
+    # Name only the heads this model actually has. `onnx_cfg.output_names` is the
+    # full catalogue in canonical order; the wrapper reports which of them are
+    # present. Taking the config list verbatim would mislabel the outputs of any
+    # configuration with the classifier or the amplitude head disabled, and
+    # torch.onnx.export raises if the count does not match the returned tuple.
+    catalogue = {
+        "phase": "phase", "segmentation": "segmentation",
+        "amplitude": "amplitude", "condition": "condition_logits",
+    }
+    output_names = [catalogue[name] for name in wrapper.active_outputs]
+
     in_channels = cfg.model.in_channels
     dummy = torch.randn(
         cfg.deploy.benchmark.batch_size, in_channels, input_size, input_size, device=device
     )
 
     if precision == "fp16":
-        wrapper = wrapper.half()
+        # A COPY of the wrapper, so the caller's model is left in float32.
+        # ExportWrapper holds a reference to the model rather than a copy of it,
+        # so `wrapper.half()` converted the caller's weights in place and never
+        # restored them. profile_model exports fp16 last today, which is the only
+        # reason that did not corrupt a later measurement -- a reordering of
+        # deploy.benchmark.precisions would have been enough to do it.
+        import copy
+
+        wrapper = copy.deepcopy(wrapper).half()
         dummy = dummy.half()
 
     dynamic_axes = None
     if onnx_cfg.dynamic_axes:
         dynamic_axes = {onnx_cfg.input_name: {0: "batch", 2: "height", 3: "width"}}
-        for name in onnx_cfg.output_names:
+        for name in output_names:
             dynamic_axes[name] = {0: "batch"}
 
     export_kwargs = dict(
@@ -60,7 +79,7 @@ def export_onnx(
         opset_version=onnx_cfg.opset,
         do_constant_folding=onnx_cfg.constant_folding,
         input_names=[onnx_cfg.input_name],
-        output_names=list(onnx_cfg.output_names),
+        output_names=output_names,
         dynamic_axes=dynamic_axes,
     )
 

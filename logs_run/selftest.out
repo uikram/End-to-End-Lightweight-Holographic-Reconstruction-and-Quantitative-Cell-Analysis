@@ -1,0 +1,193 @@
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 175.37 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 179.08 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 182.69 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 186.18 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 189.54 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 192.74 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 195.75 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 198.54 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 201.11 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 203.42 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 205.45 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 207.21 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 208.67 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 209.84 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 210.72 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 211.66 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 208.34 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 206.28 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 204.10 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 201.97 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 200.04 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 198.45 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+15:09:24 | WARNING | holoqpi.losses.terms | the learned propagation distance has moved to 197.26 um, far from the 140.00 um the diffraction pad was sized for. The pad is held fixed on purpose -- a residual whose domain moves with z cannot be compared across epochs -- but the synthesised field is now under-padded, so the residual is approximate. Report the trajectory, and consider lowering training.physics_parameter_lr_scale.
+self-test using config/base.yaml
+
+[1] calibration and dry mass
+  PASS  prefactor equals lambda / (2 pi alpha)  [0.529986 pg/(rad*um^2)]
+  PASS  two synthetic cells detected  [found 2]
+  PASS  area equals pixel count times dx*dy  [228.928 um^2]
+  PASS  dry mass equals the analytic integral  [242.6576 pg]
+  PASS  circularity of a disc is near unity  [0.980]
+  PASS  absolute dry mass scales as 1/alpha  [alpha 0.200 -> 0.215 scales mass by 0.9302]
+  PASS  relative dry-mass error is invariant to alpha  [MAPE 0.200000 at both alphas -- alpha cannot explain mass error]
+  PASS  the configured alpha lies inside the literature range  [0.200 in [0.173, 0.215]]
+
+[2] metrics on an identical prediction
+  PASS  phase MAE is zero
+  PASS  phase Pearson r is one
+  PASS  Dice is one
+  PASS  AJI is one
+  PASS  boundary F1 is one
+
+[3] measurement agreement, identical then eroded
+  PASS  all cells pair with themselves  [2/2]
+  PASS  dry-mass MAPE is zero
+  PASS  area MAPE is zero
+  PASS  detection recall is one on an identical prediction  [1.0000]
+  PASS  detection precision is one on an identical prediction
+  PASS  nothing is recorded as missed or invented
+  PASS  Bland-Altman bias lies inside its own limits of agreement  [bias +0.0000 in [+0.0000, +0.0000]]
+  PASS  eroded prediction loses area  [MAPE 0.174]
+  PASS  eroded prediction loses dry mass  [MAPE 0.174]
+  PASS  area and mass degrade together for a uniform cell  [relative errors coincide as the physics predicts]
+  PASS  an empty prediction scores zero detection recall  [0.000]
+  PASS  every reference cell is counted as missed  [2/2]
+  PASS  a selective detector still scores a near-zero matched MAPE  [matched MAPE 0.00e+00 at coverage 0.50]
+  PASS  coverage adjustment charges it for the cells it never reported  [adjusted 0.5000 = 1 - coverage = 0.5000]
+  PASS  the field total falls by the mass of the dropped cells  [bias -0.5000]
+  PASS  an identical prediction has no field-total bias
+  PASS  no bootstrap interval is reported from a single field
+  PASS  the field bootstrap reports an interval once there are fields to draw  [5 fields]
+  PASS  the interval brackets the point estimate  [0.1744 <= 0.1744 <= 0.1744]
+  PASS  pooling fields does not change the point estimate  [grouping by field is bookkeeping, not a different statistic]
+
+[5] phase error inside cells versus background
+  PASS  in-cell bias recovers the injected offset  [0.50000 rad]
+  PASS  background is reported as clean  [0.00e+00 rad]
+  PASS  the field-wide MAE understates the in-cell error  [0.0430 vs 0.5000 rad]
+  PASS  a 2-D array counts as one image  [1]
+
+[5b] amplitude metric against the thin-phase assumption
+  PASS  a collapsed head scores exactly the A = 1 assumption  [ratio 1.000000]
+  PASS  and its predicted spread is reported as zero  [sd 0.00e+00]
+  PASS  a correct head beats the A = 1 assumption  [ratio 0.00e+00]
+  PASS  the in-cell error is reported separately  [0.0]
+  PASS  a head biased the wrong way scores above 1.0  [ratio 3.0000]
+  PASS  an empty accumulator reports nothing rather than zeros  [{}]
+
+[4] loss terms: finite, differentiable, correctly signed
+  PASS  total loss is finite  [0.3220]
+  PASS  component 'classification' is finite  [1.60944]
+  PASS  component 'phase' is finite  [0.00000]
+  PASS  component 'segmentation' is finite  [0.00012]
+  PASS  the configured objective produced at least the supervised terms  [active: classification, phase, segmentation]
+  PASS  phase term vanishes on an exact reconstruction
+  PASS  gradient reaches the phase head
+  PASS  a worse prediction scores a higher total loss  [2.5516 > 0.3220]
+
+[6] forward model: propagation, hologram formation, consistency loss
+  PASS  propagation round trip returns the field  [max |error| 1.19e-06]
+  PASS  propagation conserves energy  [ratio 1.000000]
+  PASS  propagating by zero is the identity  [max |error| 3.58e-07]
+  PASS  in-line intensity is flat at zero defocus  [std 1.55e-07]
+  PASS  in-line intensity gains contrast with defocus  [std 0.3370]
+  PASS  off-axis carries phase at zero defocus  [std 1.4142]
+  PASS  forward-model loss vanishes on the true phase  [3.543e-11]
+  PASS  forward-model loss rises on a wrong phase  [0.0657 > 0.0000]
+  PASS  forward-model loss is differentiable w.r.t. phase
+  PASS  gabor: residual vanishes on the true field  [3.54e-11]
+  PASS  gabor: residual is invariant to camera gain and offset  [3.54e-11 vs 1.70e-10]
+  PASS  gabor: residual grows as the phase degrades  [0.0000 < 0.0330 < 0.9999]
+  PASS  gabor: gradient is finite and non-zero
+  PASS  off_axis: residual vanishes on the true field  [1.82e-03]
+  PASS  off_axis: residual is invariant to camera gain and offset  [1.82e-03 vs 1.82e-03]
+  PASS  off_axis: residual grows as the phase degrades  [0.0018 < 0.0094 < 0.1456]
+  PASS  off_axis: gradient is finite and non-zero
+  PASS  z is recoverable by gradient descent from a wrong start  [140.0 -> 199.98 um (true 200.0)]
+  PASS  image-level phase volume is blind to +20%/-20% cancelling cells  [loss 0.00e+00]
+  PASS  per-cell integrated phase catches it  [loss 0.2000 (expected 0.2000)]
+  PASS  per-cell integrated phase vanishes on an exact prediction  [0.00e+00]
+  PASS  per-cell integrated phase scales with the error  [10% error -> 0.1000]
+  PASS  cells below the reference floor are skipped  [all cells excluded -> zero, not a division blow-up]
+  PASS  per-cell integrated phase is differentiable w.r.t. phase
+  PASS  per-cell area vanishes when the foreground is exact  [0.00e+00]
+  PASS  per-cell area catches a boundary that lost half of every cell  [loss 0.5000 (expected 0.5000)]
+  PASS  per-cell area averages over cells, so one bad cell is not diluted  [loss 0.1250 (expected 0.1250 = 0.25 / 2 cells)]
+  PASS  cells below the reference pixel floor are skipped by the area term  [all cells excluded -> zero, not a division blow-up]
+  PASS  per-cell area is differentiable w.r.t. the foreground probability
+  PASS  amplitude loss vanishes on an exact prediction
+  PASS  amplitude loss is the mean absolute error  [0.1000 (expected 0.1000)]
+  PASS  off_axis: residual is invariant to the unmeasurable piston phase  [range 0.00000 over one wavelength of z]
+  PASS  conjugate rule leaves a correctly signed field alone  [skewness +5.85]
+  PASS  conjugate rule recovers a conjugated field  [flipped, detrended r = 1.0000]
+  PASS  a surface's own skewness answers backwards without detrending  [raw -0.54 vs detrended +5.85]
+  PASS  detrend order below 2 is refused
+  PASS  phase unwrapping recovers a multi-turn ramp  [r = 1.0000]
+
+--- mixed precision (the D1 crash) ---
+  PASS  autocast does down-cast a float32 matmul (the hazard is real)  [gram came back torch.bfloat16]
+  PASS  radiometric fit runs under autocast torch.float16
+  PASS  its gradient is finite and non-zero under autocast torch.float16
+  PASS  radiometric fit runs under autocast torch.bfloat16
+  PASS  its gradient is finite and non-zero under autocast torch.bfloat16
+  PASS  outside autocast the fit still returns float32
+  PASS  near-collinear components still give finite coefficients
+
+[7] measurement integrals under autocast, at real magnitudes
+  PASS  a half-precision accumulator does lose this integral (the hazard is real)  [6084 px accumulated as 6080]
+  PASS  per-cell area is exact under autocast torch.bfloat16  [0.10256 vs 0.10256 in float32 0.10256]
+  PASS  per-cell integrated phase is exact under autocast torch.bfloat16  [0.10156 (expected 0.1000)]
+  PASS  image-level phase volume is finite and exact under autocast torch.bfloat16  [0.10156 (expected 0.10000)]
+  PASS  per-cell area is exact under autocast torch.float16  [0.10256 vs 0.10256 in float32 0.10256]
+  PASS  per-cell integrated phase is exact under autocast torch.float16  [0.10010 (expected 0.1000)]
+  PASS  image-level phase volume is finite and exact under autocast torch.float16  [0.10010 (expected 0.10000)]
+  PASS  a full-crop phase integral does not overflow under autocast float16  [0.10017 on an integral of 74060 rad]
+
+[8] every arm's objective, constructed and run under autocast
+  PASS  the v2 arm configurations are present  [16 found under config/v2/]
+  PASS  a_baseline.yaml: objective runs under autocast
+  PASS  a_baseline.yaml: loss and every component are finite15:09:25 | WARNING | holoqpi.losses.terms | forward model at z = 33.8 um needs 79 px of diffraction context but a 96 px field allows only 47. The residual is approximate on this crop. Train on larger crops (data.train_crop), lower loss.forward_model.distance_um, or set loss.forward_model.pad_px explicitly to accept the approximation deliberately.
+
+  PASS  b1_image_volume.yaml: objective runs under autocast
+  PASS  b1_image_volume.yaml: loss and every component are finite
+  PASS  b2_cell_area.yaml: objective runs under autocast
+  PASS  b2_cell_area.yaml: loss and every component are finite
+  PASS  b_cell_ipp.yaml: objective runs under autocast
+  PASS  b_cell_ipp.yaml: loss and every component are finite
+  PASS  c_cell_ipp_bga.yaml: objective runs under autocast
+  PASS  c_cell_ipp_bga.yaml: loss and every component are finite
+  PASS  d0_amplitude.yaml: objective runs under autocast
+  PASS  d0_amplitude.yaml: loss and every component are finite
+  PASS  d2_learned_z.yaml: objective runs under autocast
+  PASS  d2_learned_z.yaml: loss and every component are finite
+  PASS  d_forward_amplitude.yaml: objective runs under autocast
+  PASS  d_forward_amplitude.yaml: loss and every component are finite
+  PASS  g_baseline_gabor.yaml: objective runs under autocast
+  PASS  g_baseline_gabor.yaml: loss and every component are finite
+  PASS  k_compact_a.yaml: objective runs under autocast
+  PASS  k_compact_a.yaml: loss and every component are finite
+  PASS  k_compact_b.yaml: objective runs under autocast
+  PASS  k_compact_b.yaml: loss and every component are finite
+  PASS  l_lora.yaml: objective runs under autocast
+  PASS  l_lora.yaml: loss and every component are finite
+  PASS  w_ipp_01.yaml: objective runs under autocast
+  PASS  w_ipp_01.yaml: loss and every component are finite
+  PASS  w_ipp_03.yaml: objective runs under autocast
+  PASS  w_ipp_03.yaml: loss and every component are finite
+  PASS  w_ipp_10.yaml: objective runs under autocast
+  PASS  w_ipp_10.yaml: loss and every component are finite
+  PASS  w_ipp_30.yaml: objective runs under autocast
+  PASS  w_ipp_30.yaml: loss and every component are finite
+
+[9] the learned-distance arm's residual domain
+  PASS  the diffraction pad is set by the configured distance, not the live one  [pad 79 px at z = 33.77, 79 at -4.95, 79 at 120.0]
+  PASS  and it is the value the configured distance implies  [79 px]
+  PASS  an explicit pad_px overrides the derived value
+  PASS  criterion 'l1' vanishes on the true phase and rises on a wrong one  [exact 3.19e-06, degraded 0.2033]
+  PASS  criterion 'l2' vanishes on the true phase and rises on a wrong one  [exact 3.54e-11, degraded 0.0657]
+  PASS  criterion 'correlation' vanishes on the true phase and rises on a wrong one  [exact -1.19e-07, degraded 0.0334]
+  PASS  'correlation' is not silently the same function as 'l2'  [correlation 0.0334 vs l2 0.0657 on the same degraded phase]
+
+============================================================
+All checks passed.

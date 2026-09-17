@@ -1,0 +1,47 @@
+# HoloQPI v2, compact-decoder arm A: what the parameter budget buys
+#
+# WHERE THE PARAMETERS ARE, measured on config/v2/b_cell_ipp.yaml (9.5981 M):
+#
+#   phase_decoder          3.6781 M   38.3%
+#   segmentation_decoder   3.6781 M   38.3%
+#   encoder                2.2233 M   23.2%
+#   heads                  0.0093 M each
+#
+# and inside each decoder a single layer dominates:
+#
+#   decoder.blocks.0.up = ConvTranspose2d(1280 -> 640, k2, s2) = 3,277,440 params
+#
+# That one layer is 34.1% of the whole model, and there are TWO of them, one per
+# decoder: 68.3% of the network is two copies of the same transposed
+# convolution, whose only job is to lift the encoder's 1280-channel bottleneck.
+#
+# THE FIX. A shared 1x1 bottleneck compresses 1280 channels once, before either
+# decoder sees them, so the expensive transposed convolution shrinks in both.
+# model.decoder_bottleneck = 256 replaces 2 x 3.28 M with 2 x 0.66 M plus one
+# 0.33 M projection.
+#
+# THIS IS AN EXPERIMENT, NOT AN OPTIMISATION. An edge-efficiency claim needs
+# the accuracy cost of the saving measured, not asserted, so this arm is run
+# against its full-size twin on the same data, the same seed and the same
+# objective. A null cost is the interesting outcome and a real cost is
+# publishable too; either way the claim becomes quantitative.
+#
+# Compare k_compact_a against a_baseline, and k_compact_b against b_cell_ipp.
+extends: ../base.yaml
+
+experiment_name: v2_compact_baseline
+
+data:
+  modality: off_axis
+
+model:
+  classifier_enabled: false
+  decoder_bottleneck: 256             # null in every other arm = no bottleneck
+
+loss:
+  weights:
+    classification: 0.0
+    cell_integrated_phase: 0.0
+    boundary_gradient_alignment: 0.0
+    projected_area_consistency: 0.0
+    forward_model: 0.0

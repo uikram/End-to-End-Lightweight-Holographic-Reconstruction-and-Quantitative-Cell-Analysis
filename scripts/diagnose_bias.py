@@ -35,7 +35,7 @@ from holoqpi.config import load_config, parse_overrides
 from holoqpi.data import build_dataloaders
 from holoqpi.engine import load_checkpoint
 from holoqpi.models import build_model
-from holoqpi.utils import get_logger, resolve_device, run_directory, write_csv
+from holoqpi.utils import get_logger, resolve_device, run_name, write_csv
 
 LOGGER = get_logger(__name__)
 
@@ -65,9 +65,15 @@ def _median_ratio(values: list[float]) -> float:
     return float(np.median(finite)) if finite else float("nan")
 
 
-def diagnose(cfg, modality: str, device: torch.device, split: str) -> dict:
+def diagnose(cfg, modality: str, device: torch.device, split: str) -> dict | None:
     cfg = cfg.merged({"data": {"modality": modality}})
-    run_dir = run_directory(cfg.paths.output_root, cfg.experiment_name, modality)
+    # run_name, not run_directory: run_directory CREATES the path, and it was
+    # called BEFORE the checkpoint test below -- so every invocation against an
+    # untrained arm left a new empty runs/<experiment>_<modality>/ behind, and
+    # collect_results and make_figures then saw an arm directory that had never
+    # been trained. The directory is only needed once there is something to
+    # write into it.
+    run_dir = Path(cfg.paths.output_root) / run_name(cfg.experiment_name, modality)
     checkpoint = run_dir / "best_model.pt"
     if not checkpoint.is_file():
         # One missing arm should not abort the other: report and skip.
@@ -83,6 +89,13 @@ def diagnose(cfg, modality: str, device: torch.device, split: str) -> dict:
     domain, phase_factor, total = [], [], []
     area_ratio, intra_bias, background_bias = [], [], []
     unphysical: list[str] = []
+    # Counted separately from `unphysical`. An image with an empty GT or
+    # predicted mask was skipped and tallied NOWHERE, so a split in which every
+    # prediction was empty reported images = 0 and unphysical = 0 -- and the
+    # report then blamed inverted contrast, which was the wrong diagnosis for a
+    # detector that simply found nothing.
+    empty_prediction: list[str] = []
+    empty_reference: list[str] = []
     rows = []
 
     with torch.no_grad():
@@ -98,7 +111,12 @@ def diagnose(cfg, modality: str, device: torch.device, split: str) -> dict:
             for i in range(phase_pred.shape[0]):
                 pp, mp = phase_pred[i], mask_pred[i] > 0
                 pg, mg = phase_gt[i], mask_gt[i] > 0
-                if not mg.any() or not mp.any():
+                stem = batch["stem"][i] if "stem" in batch else f"image_{i}"
+                if not mg.any():
+                    empty_reference.append(stem)
+                    continue
+                if not mp.any():
+                    empty_prediction.append(stem)
                     continue
 
                 s_ref = float(pg[mg].sum())
@@ -138,6 +156,8 @@ def diagnose(cfg, modality: str, device: torch.device, split: str) -> dict:
         "modality": modality,
         "images": len(total),
         "unphysical": len(unphysical),
+        "empty_prediction": len(empty_prediction),
+        "empty_reference": len(empty_reference),
         "domain_factor": domain_factor,
         "phase_factor": phase_factor,
         "composed_ratio": domain_factor * phase_factor,
@@ -155,10 +175,33 @@ def report(result: dict) -> None:
     print(f"\n=== {result['modality']}  ({result['images']} images) ===")
     if result["unphysical"]:
         print(f"  {result['unphysical']} images excluded: non-positive phase integral")
+    if result.get("empty_prediction"):
+        print(f"  {result['empty_prediction']} images excluded: the model predicted "
+              f"no foreground at all")
+    if result.get("empty_reference"):
+        print(f"  {result['empty_reference']} images excluded: the reference mask is "
+              f"empty")
     if result["images"] == 0:
-        print("  nothing to report: every image had a non-positive integrated phase, "
-              "which means\n  the reconstruction has inverted contrast. Check the "
-              "checkpoint before reading further.")
+        # EACH CAUSE NAMED, because they call for different actions and this
+        # used to blame the wrong one. The message asserted inverted contrast
+        # unconditionally, so a detector that found nothing -- which leaves
+        # `unphysical` at zero -- was reported as a phase-sign problem.
+        if result.get("empty_prediction") and not result["unphysical"]:
+            print("  nothing to report: the model predicted NO foreground on any image, "
+                  "so there is\n  no predicted domain to integrate over. This is a "
+                  "detection failure, not a phase\n  problem -- check seg_dice and "
+                  "detection_recall in the arm's metrics first.")
+        elif result.get("empty_reference") and not result["unphysical"]:
+            print("  nothing to report: every REFERENCE mask is empty, so there is "
+                  "nothing to compare\n  against. Check that data/mask was generated "
+                  "for this split.")
+        elif result["unphysical"]:
+            print("  nothing to report: every image had a non-positive integrated phase, "
+                  "which means\n  the reconstruction has inverted contrast. Check the "
+                  "checkpoint before reading further.")
+        else:
+            print("  nothing to report: no image reached the measurement. The split may "
+                  "be empty.")
         return
     print(f"  mass ratio  pred/ref        {result['mass_ratio']:+.4f}"
           f"   ({100*(result['mass_ratio']-1):+.1f}% mass error)")
@@ -209,12 +252,22 @@ def main() -> int:
             continue
         report(result)
         destination = result["_run_dir"] / f"bias_diagnosis_{args.split}.csv"
+        # Created only now, when there is something to put in it.
+        destination.parent.mkdir(parents=True, exist_ok=True)
         write_csv(result["_rows"], destination)
         print(f"  per-image detail -> {destination}")
 
     if missing == len(args.modality):
-        print("\nNo checkpoints found for any requested modality.")
-        return 1
+        # Exit 3, not 1. run_v2.sh reads a traceback-free non-zero exit as a
+        # reported finding, so "no checkpoint exists" was being logged as a
+        # successful diagnostic -- and figure 3 then skipped for the same root
+        # cause in a different log, with neither counting as a failure. 3 is the
+        # reserved hard-error code the runner treats as FAILED.
+        print("\nHARD ERROR: no checkpoint was found for any requested modality "
+              f"({', '.join(args.modality)}).")
+        print("  Train the arm first, or point --config at an arm that has been "
+              "trained.")
+        return 3
     return 0
 
 

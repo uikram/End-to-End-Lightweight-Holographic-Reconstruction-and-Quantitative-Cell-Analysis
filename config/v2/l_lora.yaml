@@ -1,0 +1,59 @@
+# HoloQPI v2, experiment L: arm A's twin with LoRA adaptation of the encoder
+#
+# WHY THIS FILE EXISTS, AND WHY IT IS NOT IN THE DEFAULT ARM LIST
+#
+# The project is titled "Physics-Aware LoRA-Adapted Lightweight AI ...", and the
+# LoRA machinery is implemented and tested (holoqpi/models/lora.py, with the
+# merge path exercised by the ONNX exporter). But `model.lora.enabled` is FALSE
+# in config/base.yaml and is overridden nowhere, so as the study currently
+# stands NO ARM USES LoRA and the manuscript cannot claim it.
+#
+# That is a study-scope decision rather than a defect, which is why this arm is
+# provided but left out of run_v2.sh's default ARMS: training it costs another
+# 3-4 h and only the person writing the paper can say whether the claim is being
+# made. The three options are all defensible:
+#
+#   1. Train this arm and report LoRA as one more adaptation strategy:
+#          ARMS="L" bash run_v2.sh --stage 6
+#      L - A then isolates exactly what low-rank adaptation of a frozen encoder
+#      costs or buys, at the same objective, seed and schedule.
+#
+#   2. Leave it untrained and drop LoRA from the title and the claims, citing
+#      paper 1 (where it WAS used) for the LoRA result and describing this work
+#      as the end-to-end physics-aware extension. Nothing in the current results
+#      supports a LoRA claim.
+#
+#   3. Train it as a parameter-efficiency comparison alongside K A/K B, which
+#      attack the same cost from the decoder side. This is the most informative
+#      version: KA/KB shrink the decoder, L freezes the encoder, and the two are
+#      independent.
+#
+# WHAT IT CHANGES, AND WHAT IT DELIBERATELY DOES NOT
+#
+# Only the adaptation strategy. The objective, the data, the schedule and the
+# seed are arm A's, so L - A is one variable. The rank, alpha and strategy are
+# base.yaml's defaults; a rank sweep would be a separate set of arms and should
+# only be run if arm L itself turns out to be interesting.
+#
+# WHAT TO CHECK IN THE LOG BEFORE TRUSTING IT
+#
+# Two lines, both of which have been wrong in this project before:
+#
+#   "LoRA: injected N layers (rank=..., strategy=...)"   N must be > 0. A
+#       strategy whose patterns match nothing injects zero layers and the arm is
+#       then arm A with a frozen encoder, which is a different experiment.
+#
+#   "encoder=... weights=local (weights)"                LoRA freezes the
+#       encoder, so if the ImageNet weights failed to load this arm trains a
+#       frozen RANDOM encoder and measures nothing at all. This matters far more
+#       here than in any other arm.
+#
+# The trainer's "trainable X.XXM / Y.YYM parameters" line is the headline number
+# this arm exists to produce.
+extends: a_baseline.yaml
+
+experiment_name: v2_lora
+
+model:
+  lora:
+    enabled: true

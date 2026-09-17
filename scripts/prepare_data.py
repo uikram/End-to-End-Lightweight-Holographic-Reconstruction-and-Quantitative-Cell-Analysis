@@ -13,39 +13,72 @@ from pathlib import Path
 from holoqpi.analysis.cells import calibration_from_config
 from holoqpi.config import Config
 from holoqpi.data import build_splits, discover_samples, save_splits, summarise
-from holoqpi.data.io import phase_path, read_phase_bin
+from holoqpi.data.io import phase_path, read_phase_header
 from holoqpi.data.masks import generate_masks
 from holoqpi.utils import get_logger, write_csv, write_json
 
 LOGGER = get_logger(__name__)
 
 
-def check_header_geometry(data_root: Path, cfg: Config, stems: list[str], limit: int = 8) -> dict:
+def check_header_geometry(data_root: Path, cfg: Config, stems: list[str],
+                          limit: int | None = None) -> dict:
     """Compare the configured pixel pitch against what the phase headers declare.
 
     The pitch determines every area, volume and mass reported downstream, so a
     silent disagreement between the YAML and the acquisition would corrupt the
     whole measurement chain. This surfaces it before training starts.
+
+    EVERY file is inspected by default. It used to stop after eight and then
+    phrase its warnings as statements about the dataset ("phase files disagree on
+    image size"), so an odd file anywhere past the eighth passed `prepare` and
+    reappeared much later as a shape error inside the dataloader. Reading only
+    the 23-byte header and comparing the payload length against the file size
+    makes the full pass cost nothing worth saving. ``limit`` is kept for a quick
+    look on a slow filesystem.
     """
     optics = cfg.optics
     tolerance = optics.header_pitch_tolerance_um
     observed: list[tuple[float, float]] = []
-    sizes: set[tuple[int, int]] = set()
+    sizes: dict[tuple[int, int], list[str]] = {}
+    unreadable: list[str] = []
 
-    for stem in stems[:limit]:
-        record = read_phase_bin(phase_path(data_root, cfg, stem), cfg.formats.phase_binary)
-        sizes.add((record.height, record.width))
+    inspect = stems if limit is None else stems[:limit]
+    for stem in inspect:
+        try:
+            record = read_phase_header(
+                phase_path(data_root, cfg, stem), cfg.formats.phase_binary
+            )
+        except Exception as exc:
+            unreadable.append(f"{stem} ({exc})")
+            continue
+        sizes.setdefault((record.height, record.width), []).append(stem)
         if record.pitch_x_um is not None:
             observed.append((record.pitch_x_um, record.pitch_y_um))
 
     report = {
-        "inspected": min(limit, len(stems)),
+        "inspected": len(inspect),
         "phase_shapes": sorted(sizes),
         "configured_pitch_um": [optics.pixel_pitch_x_um, optics.pixel_pitch_y_um],
+        "unreadable": unreadable,
     }
 
+    if unreadable:
+        # A file whose declared geometry does not match its length is corrupt or
+        # is in a different format, and it will fail inside the dataloader. Name
+        # the files rather than letting the count speak for them.
+        raise ValueError(
+            f"{len(unreadable)} of {len(inspect)} phase files could not be read or "
+            f"disagree with their own headers. First few: {unreadable[:5]}"
+        )
     if len(sizes) > 1:
-        LOGGER.warning("phase files disagree on image size: %s", sorted(sizes))
+        # Named, with a few example stems per shape, because "the files disagree"
+        # is not actionable on its own.
+        detail = {shape: members[:3] for shape, members in sorted(sizes.items())}
+        raise ValueError(
+            f"phase files disagree on image size across {len(inspect)} files: "
+            f"{detail}. The dataloader requires one geometry; fix or exclude the "
+            f"odd files before training."
+        )
     expected = (cfg.data.phase_size, cfg.data.phase_size)
     if sizes and expected not in sizes:
         LOGGER.warning(
@@ -70,7 +103,32 @@ def check_header_geometry(data_root: Path, cfg: Config, stems: list[str], limit:
                 mean_x, mean_y, optics.pixel_pitch_x_um, optics.pixel_pitch_y_um,
             )
         if optics.trust_header_pitch:
-            LOGGER.info("optics.trust_header_pitch is set; header values will be preferred")
+            # REFUSED, RATHER THAN LOGGED AS IF IT HAPPENED.
+            #
+            # This used to print "header values will be preferred" and then do
+            # nothing at all: `trust_header_pitch` appeared in exactly two places
+            # in the codebase, both of them this branch, while
+            # calibration_from_config unconditionally reads
+            # optics.pixel_pitch_x_um / _y_um. Since the pitch multiplies every
+            # projected area, optical volume and dry mass the project reports,
+            # a flag that claims to change it and does not is the most dangerous
+            # kind of no-op -- and on THIS dataset honouring the header would be
+            # actively wrong, because the acquiring group stated that the
+            # header's y value (0.211994 um) is the fluorescence camera's pitch
+            # and must be disregarded.
+            #
+            # So it is an error rather than a silent lie. Implementing it would
+            # mean threading a per-file pitch through the dataset and every
+            # measurement, which nothing in this study needs.
+            raise ValueError(
+                "optics.trust_header_pitch is not implemented and must be false. "
+                "The pixel pitch used for every measurement comes from "
+                "optics.pixel_pitch_x_um / optics.pixel_pitch_y_um. On this "
+                "dataset the header's y pitch is the FLUORESCENCE camera's "
+                f"({mean_y:.6f} um) and the acquiring group confirmed it must be "
+                "disregarded; see the pixel-pitch note in config/base.yaml. Set "
+                "the pitch explicitly in the config instead."
+            )
     else:
         LOGGER.info("phase headers carry no pixel pitch; using the configured values")
 

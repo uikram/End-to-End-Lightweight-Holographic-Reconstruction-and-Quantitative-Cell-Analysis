@@ -24,6 +24,10 @@ paths:
     gabor: in_line_gabor_hologram
   mask_dir: mask                        # written by `prepare` (phase-derived masks)
   manual_mask_dir: null                 # set to a folder of manual annotations to override mask_dir
+  # Classical-reconstruction amplitude, written by scripts/prepare_amplitude.py.
+  # It is a REFERENCE, not ground truth: it is itself a reconstruction and
+  # carries its own errors. Never describe it as measured amplitude.
+  amplitude_dir: amplitude_reference
   splits_file: splits.json              # relative to data_root
   manifest_file: manifest.csv           # relative to data_root
   aberration_file: aberration.json      # relative to data_root; see optics.aberration
@@ -48,6 +52,26 @@ formats:
       gabor: _gabor.tif
   mask:
     suffix: _mask.png
+  amplitude:
+    suffix: _amp.npy
+
+# -----------------------------------------------------------------------------
+# Classical-reconstruction amplitude reference (scripts/prepare_amplitude.py)
+#
+# These were CLI defaults inside that script, which contradicts the promise at
+# the top of this file. clip_max in particular is a physical claim -- the
+# docstring's own words are "an amplitude above about 1.5 is ringing rather than
+# transmission" -- and it is recorded in the reference's provenance file, so it
+# has to be reproducible from configuration rather than from a remembered flag.
+# -----------------------------------------------------------------------------
+amplitude_reference:
+  # Upper clip on the normalised modulus. A transmittance cannot exceed one by
+  # much; anything far above it is sideband-filter ringing.
+  clip_max: 1.5
+  # A field needs at least this fraction of its pixels outside the cell mask
+  # before that background is trusted to normalise by. Below it the script falls
+  # back to a percentile of the whole field.
+  min_background_fraction: 0.05
 
 # -----------------------------------------------------------------------------
 # Optical / physical constants
@@ -58,18 +82,49 @@ formats:
 # -----------------------------------------------------------------------------
 optics:
   wavelength_um: 0.666                  # illumination wavelength
-  refraction_increment_ml_per_g: 0.185  # alpha, specific refraction increment
+  # alpha, specific refraction increment.
+  #
+  # 0.2 mL/g, CONFIRMED BY THE ACQUIRING GROUP (S. Park, 2026-09-10) as the
+  # value used for the dry-mass figures in Park et al., Microsyst. Nanoeng.
+  # 12:311 (2026) on this same dataset. Using the same alpha makes our absolute
+  # picogram values directly comparable with that paper. It replaces 0.185,
+  # which was a plausible literature mean but not what this dataset was
+  # analysed with.
+  refraction_increment_ml_per_g: 0.2
   # Literature range for alpha, propagated onto ABSOLUTE dry mass by
   # scripts/mass_uncertainty.py. Zhao, Brown & Schuck (Biophys. J. 2011) give a
-  # protein mean of 0.190 mL/g (SD 0.003) spanning 0.173-0.215; Chaumet et al.
-  # (Light Sci. Appl. 2024) give 0.18-0.21 for biological media.
+  # protein mean of 0.190 mL/g (SD 0.003) spanning 0.173-0.215; Barer & Joseph
+  # (1954) recommend 0.18 for whole protoplasm; Schuermann et al. (2016) use 0.2.
   #
   # This band does NOT apply to dry_mass_mape or to the mass ratio. The same
   # alpha multiplies the predicted and the reference mass, so it cancels from
   # every relative quantity exactly; selftest.py asserts that invariance.
   refraction_increment_range_ml_per_g: [0.173, 0.215]
+  # -----------------------------------------------------------------------------
+  # PIXEL PITCH. Both axes are 0.284871 um: the sampling is ISOTROPIC.
+  #
+  # CONFIRMED BY THE ACQUIRING GROUP (S. Park, 2026-09-10): "use 0.2849 um --
+  # that's the correct value, square pixels. The 0.2120 in the .bin header for y
+  # is off, disregard it."
+  #
+  # This is corroborated by the published field of view. Park et al., Eng. Appl.
+  # Artif. Intell. 163:112970 (2026), Sec. 2.3 states the 20x cancer-cell phase
+  # images cover 256.38 x 256.38 um at 900 x 900 px, and 900 * 0.284871 =
+  # 256.384 um. The previous dy of 0.211994 would have implied a 190.795 um field
+  # height, contradicting that.
+  #
+  # CONSEQUENCE OF THE CORRECTION. Pixel area 0.060391 -> 0.081168 um^2, a factor
+  # of 1.3440. Every ABSOLUTE projected area, optical volume and dry mass
+  # produced before this change was 34.4% too low. Relative quantities (MAPE,
+  # ratios, relative bias, Bland-Altman on relative differences) are UNAFFECTED,
+  # because the same pitch multiplies the predicted and the reference value --
+  # exactly as alpha does. No hypothesis test is invalidated by the correction.
+  #
+  # Because the header's y value is known to be wrong, header comparison is
+  # disabled below rather than left to warn on every field.
+  # -----------------------------------------------------------------------------
   pixel_pitch_x_um: 0.284871            # dx in the reconstructed phase plane
-  pixel_pitch_y_um: 0.211994            # dy in the reconstructed phase plane
+  pixel_pitch_y_um: 0.284871            # dy; isotropic, see the note above
   trust_header_pitch: false             # true -> take dx, dy from each .bin header
 
   aberration:
@@ -82,6 +137,49 @@ optics:
     order: 5                            # order 2 explains 98.6%, order 5 explains 99.6%
     span_tolerance_factor: 2.5          # reject surfaces this many times the median span
     min_agreement: 0.5                  # |corr| between detrended reconstruction and delivered phase
+    # -------------------------------------------------------------------------
+    # HOW THE SURFACE IS APPLIED.  global | per_field | hybrid
+    #
+    # per_field was the original behaviour and it is NOT deployable. Each
+    # field's surface was fitted from the difference between that field's
+    # classical reconstruction and that field's DELIVERED REFERENCE PHASE -- the
+    # network's own target. At inference on a new hologram no reference phase
+    # exists, so that surface could not be reproduced. Worse, it makes the
+    # forward-model discrimination test partly circular: the surface was fitted
+    # assuming the reference phase is correct, so of course the reference phase
+    # then minimises the residual.
+    #
+    # global fits one surface for the whole instrument as the per-coefficient
+    # MEDIAN over the TRAIN-SPLIT fields only, and applies it to every field
+    # including val and test. That is what an optical aberration actually is --
+    # a fixed property of the objective and the reference tilt -- and it is
+    # obtainable at inference time from a calibration performed once.
+    #
+    # hybrid is the global curvature plus a per-field ramp predicted from the
+    # hologram's own carrier frequency, which needs no reference phase and is
+    # therefore equally deployable. It was tried because integer-bin sideband
+    # centring provably leaves a sub-bin ramp behind. MEASURED ON THIS DATA IT
+    # DOES NOT HELP: the carrier explains 10.9% of the fitted degree-1 tilt and
+    # leaves a median 12.46 rad against 13.98 rad before. It is kept selectable
+    # so that negative result can be reproduced, not because it is recommended.
+    #
+    # WHAT THE CHOICE COSTS, measured over the 13 local fields:
+    #   global surface peak-to-valley                       15.21 rad
+    #   per-field departure from it, all terms     median    10.62 rad  (69.8%)
+    #   the same departure, degree >= 2 (curvature) median     3.91 rad  (25.7%)
+    # The curvature is close to static, as a fixed objective should be. The
+    # ramp is not, and no deployable estimate of it was found. So the global
+    # surface leaves an unmodelled per-field ramp of order 10 rad in the
+    # forward model, and the forward-model experiment must be reported as a
+    # DIAGNOSTIC on this instrument rather than a deployable constraint.
+    #
+    # Use global for anything that will be reported. per_field is retained only
+    # so the two can be compared and the difference quantified.
+    # -------------------------------------------------------------------------
+    mode: global
+    # Fields whose per-field fit was rejected are excluded from the global
+    # median, so one broken unwrap cannot drag the calibration.
+    global_from_split: train
 
   # ---------------------------------------------------------------------------
   # Off-axis conjugate sideband.
@@ -103,7 +201,10 @@ optics:
     detrend_order: 2                    # surface removed before measuring skewness; >= 2
     min_skewness: 0.2                   # below this the field is left as-is and flagged
 
-  warn_on_header_pitch_mismatch: true
+  # The .bin header's y pitch is known to be wrong on this dataset (see the
+  # pixel-pitch note above), so comparing against it would warn on every field
+  # and say nothing new. Set true if the dataset is ever replaced.
+  warn_on_header_pitch_mismatch: false
   header_pitch_tolerance_um: 0.001
 
 # -----------------------------------------------------------------------------
@@ -126,6 +227,10 @@ data:
   # integrated-phase term has fixed integration domains. Costs one connected-
   # component pass per sample load.
   provide_instances: true
+  # Load the classical-reconstruction amplitude alongside each sample, so the
+  # amplitude head can be supervised. Requires scripts/prepare_amplitude.py to
+  # have been run. Off by default because the files do not exist until then.
+  provide_amplitude: false
 
   split:
     train: 0.70
@@ -141,6 +246,65 @@ data:
     rot90: 0.75
     # Intensity-domain augmentation is deliberately absent: it would break the
     # quantitative relationship between fringe contrast and optical path length.
+
+# -----------------------------------------------------------------------------
+# Membrane fluorescence channel
+#
+# An INDEPENDENT measurement of where the cell is, and the only route out of the
+# label circularity: every mask in mask_dir is Otsu(gaussian * phase_reference),
+# so segmentation is currently scored against a threshold of its own input.
+#
+# THE GEOMETRY IS MEASURED, NOT ASSUMED. The membrane TIFFs are 2048 x 2048 and
+# the phase is 900 x 900 cropped from a 1024 hologram: different field of view
+# AND different sampling, so no crop or resize alone aligns them.
+# scripts/prepare_membrane.py --estimate registers them by cross-correlation
+# with both channels detrended, and over the 13 locally available fields found
+#
+#   scale  1.32-1.34 membrane px per phase px, winning on 13/13 fields
+#          (mean correlation 0.277, against 0.11 for every "same field of view"
+#          hypothesis, so those are excluded rather than merely worse)
+#   offset dy = 314 +/- 3.0 px, dx = 280 +/- 5.7 px -- CONSTANT across fields
+#
+# The preferred scale is indistinguishable from 0.284871 / 0.211994 = 1.343769,
+# and 0.211994 um is exactly the second pitch in the phase .bin header -- the
+# one the acquiring group said to disregard. It was never a wrong y-pitch for
+# the phase: it is the FLUORESCENCE camera's pitch. The ratio is used rather
+# than a fitted value because a constant from two stated pitches reproduces on
+# all 800 fields and a 13-field fit does not.
+# -----------------------------------------------------------------------------
+membrane:
+  source_dir: membrane                  # <stem>_membrane.tif, relative to data_root
+  output_dir: membrane_aligned          # warped arrays land here
+  mask_dir: membrane_mask               # PROVISIONAL masks from --write-masks
+  suffix: _membrane.npy
+  valid_suffix: _membrane_valid.npy
+  scale: 1.343769                       # = 0.284871 / 0.211994, membrane px per phase px
+  offset_y: 314                         # phase-grid pixels, from --estimate
+  offset_x: 280
+  # The fluorescence excitation does not cover the whole sensor, and outside it
+  # the channel carries no information -- a label there would be an absence of
+  # signal reported as an absence of cells. Every metric against these labels
+  # must be restricted to this window.
+  illumination_sigma: 8.0
+  illumination_factor: 1.05             # times the 2nd percentile of the smoothed field
+  # THRESHOLD FOR THE PROVISIONAL MASK, and why this number.
+  #
+  # Membrane stain marks the PERIMETER, not the interior, so thresholding gives
+  # rings and filling them fails wherever a lamellipodium leaves one open. The
+  # threshold was chosen by a falsification test: sweep it and ask what the
+  # newly included pixels are worth optically, since a cell cannot carry
+  # negative optical path. Measured on the 13 local fields:
+  #
+  #   pct   foreground   Dice vs Otsu   mean phase of the added pixels
+  #    60      41.3%         0.521            -0.187   <- background
+  #    70      30.9%         0.519            -0.039   <- background
+  #    75      25.9%         0.542            +0.083   <- signal
+  #    80      20.8%         0.545            +0.246
+  #
+  # The crossing is between 70 and 75, so 75 is the loosest defensible value.
+  # These masks remain PROVISIONAL; manual annotation on 25-40 fields, for
+  # EVALUATION only, is the gold standard.
+  threshold_percentile: 75.0
 
 # -----------------------------------------------------------------------------
 # Labels
@@ -192,7 +356,69 @@ model:
   name: holoqpinet
   encoder: mobilenet_v2                 # mobilenet_v2 | mobilenet_v3_large | resnet18
   pretrained_encoder: true
-  in_channels: 1                        # raised automatically when a front end is active
+  # WHERE THE IMAGENET WEIGHTS COME FROM.
+  #
+  # A directory holding torchvision state dicts under their canonical names
+  # (mobilenet_v2-b0353104.pth and so on). Searched BEFORE the download cache,
+  # so a machine with no outbound network -- or one behind a proxy that blocks
+  # download.pytorch.org, which is this project's situation -- still gets real
+  # ImageNet initialisation.
+  #
+  # This matters more than it looks. When the download fails the encoder falls
+  # back to RANDOM initialisation, and the study then trains thirteen arms from
+  # scratch while every config still says pretrained_encoder: true. The
+  # encoder's own log line reports which of the three routes was taken
+  # (`weights=local (...)` / `weights=download cache or random`), so check it
+  # in logs/v2_*/train_A.log before trusting a run.
+  #
+  # null disables the local search and uses the download cache only.
+  pretrained_dir: weights
+  # Channels of the MODEL's own input, i.e. the raw hologram: always 1. The
+  # front end, when active, widens what the ENCODER receives (it appends the
+  # demodulated amplitude and phase), and build_frontend reports that count to
+  # build_encoder directly -- this key is not involved and is not "raised
+  # automatically", which is what the previous comment claimed. It is read by
+  # the benchmark and the ONNX exporter to shape their dummy input, both of
+  # which feed the model, so 1 is correct for them.
+  in_channels: 1
+  # -----------------------------------------------------------------------------
+  # DECODER BOTTLENECK. 1x1 projection applied to the encoder's deepest feature
+  # map before the first upsample. null disables it (the original behaviour).
+  #
+  # WHY IT EXISTS. Measured on the v2 model: the first decoder block's
+  # ConvTranspose2d(1280 -> 640, k2, s2) holds 3,277,440 parameters = 34.1% of
+  # the whole network, and it appears once per decoder, so 68.3% of the model was
+  # two copies of one layer. The MobileNetV2 encoder chosen for efficiency was
+  # only 23%. A 1280-channel bottleneck at 29x29 is heavily over-parameterised
+  # for a 1-channel regression and a 2-class map.
+  #
+  # Projecting to 256 first costs 0.33 M and saves ~2.9 M per decoder.
+  # For context, OAH-Net (Biomed. Opt. Express 16(3):894, 2025) reports its
+  # 3.7 M model OUTPERFORMING its own 9.24 M variant on phase SSIM (0.997 vs
+  # 0.943) at half the latency -- and 9.24 M is almost exactly where we were.
+  # -----------------------------------------------------------------------------
+  decoder_bottleneck: null
+  # -----------------------------------------------------------------------------
+  # DECODER DEPTH, AND A LIMITATION THAT MUST BE STATED IN THE WRITE-UP.
+  #
+  # FOUR blocks from stride 32 reach stride 2, so the phase map and the class
+  # map are both produced at HALF RESOLUTION and bilinearly upsampled to the
+  # input size by HoloQPINet._to_input_size. The segmentation boundary that sets
+  # projected area and circularity is therefore resolved on a 2-pixel grid, not
+  # a 1-pixel one. scripts/error_propagation.py measures what a boundary error
+  # costs, so the size of this is quantified rather than guessed.
+  #
+  # A FIFTH entry in this list reaches stride 1 and removes the upsample. The
+  # code supports it directly -- UNetDecoder passes `None` for the skip once the
+  # encoder's feature maps run out -- so it is a one-word change here.
+  #
+  # It is deliberately NOT enabled, because it is an architecture change and not
+  # a bug fix: it alters the parameter count, the latency and therefore every
+  # number in the efficiency table, and the comparison between arms is only
+  # meaningful if they all share one architecture. Enabling it means retraining
+  # every arm. The previous version of this comment described the fifth block as
+  # though it were present, which it never was.
+  # -----------------------------------------------------------------------------
   decoder_channels: [256, 128, 64, 32]
   segmentation_classes: 2               # background + cell
   condition_classes: 5
@@ -271,9 +497,18 @@ loss:
     boundary_gradient_alignment: 0.0    # ablated in experiment C, not assumed
     phase_volume: 0.0                   # superseded by cell_integrated_phase
     cell_integrated_phase: 0.0          # experiment B raises this; A is the baseline
+    # Per-cell projected area, the symmetric partner of cell_integrated_phase.
+    # Experiment B'' raises this. Projected area is one of the four measurements
+    # the study reports, and after projected_area_consistency was switched off in
+    # v2 nothing constrained it at all.
+    cell_projected_area: 0.0
+    # L1 against the classical-reconstruction amplitude REFERENCE. Weight is
+    # deliberately low: the target is itself a reconstruction, not a measurement.
+    # 0.1 mirrors the amplitude weight OAH-Net uses in its weighted L1.
+    amplitude: 0.0
     forward_model: 0.0                  # diagnostic only; see loss.forward_model
     dry_mass_consistency: 0.0
-    projected_area_consistency: 0.05    # measurement consistency, not a physics constraint
+    projected_area_consistency: 0.0     # image-level; superseded by cell_projected_area
 
   phase:
     l1: 1.0
@@ -282,6 +517,9 @@ loss:
     ssim_window: 11
     ssim_sigma: 1.5
     ssim_data_range: 8.0                # radians spanned by the phase target
+
+  amplitude:
+    l1: 1.0                             # against paths.amplitude_dir, a reference not a truth
 
   segmentation:
     dice: 1.0
@@ -347,9 +585,12 @@ loss:
     skip_empty_targets: true
     # The measurement terms are relative errors. A crop holding only a sliver of
     # a cell divides by a near-zero reference and produces a loss spike, so such
-    # crops are excluded. 512 px is roughly one cell at the configured pitch,
-    # matching mask_generation.min_object_area_um2.
-    min_foreground_pixels: 512
+    # crops are excluded. This is one cell at the configured pitch, matching
+    # mask_generation.min_object_area_um2 = 30 um^2.
+    #
+    # 370 px, not 512: 30 / (0.284871 * 0.284871) = 370. The old 512 came from
+    # the wrong anisotropic pixel area (30 / 0.060391 = 497, rounded up).
+    min_foreground_pixels: 370
     # A cell whose reference phase integral falls below this is skipped by the
     # per-cell term: the relative error of a near-zero denominator is
     # meaningless and would dominate the batch. In radians summed over pixels.
@@ -373,9 +614,37 @@ training:
   amp_dtype: float16                    # float16 | bfloat16
   accumulation_steps: 1
   log_every_n_steps: 20
-  # z lives in micrometres, so it needs a far larger step than a network weight
-  # to move at all. Only used when loss.forward_model.learn_distance is true.
-  physics_parameter_lr_scale: 10000.0
+  # -----------------------------------------------------------------------------
+  # Step size for a PHYSICAL parameter of the objective, as a multiple of
+  # training.learning_rate. Only used when loss.forward_model.learn_distance is
+  # true, where it applies to the propagation distance z in micrometres.
+  #
+  # WHY 100 AND NOT 10000, WHICH IS WHAT THIS SAID BEFORE.
+  #
+  # The old value was justified by "z lives in micrometres, so it needs a far
+  # larger step than a network weight". That reasoning holds for SGD and is
+  # wrong for Adam, which is the configured optimiser: Adam normalises each step
+  # by a running estimate of the gradient's own magnitude, so the update is
+  # approximately +/- lr per step REGARDLESS of how large or small the gradient
+  # is. At 10000 the rate for z was 3.0e-4 * 10000 = 3.0, i.e. up to 3 um of
+  # travel per optimiser step and about 420 um per epoch at 140 steps -- larger
+  # than the whole physically plausible range of z on this instrument. That is
+  # not a search, and it is what sent z to excursions of -42 and +42 um before
+  # it settled somewhere meaningless.
+  #
+  # At 100 the rate is 0.03 um per step. Over a 60-epoch schedule that is up to
+  # roughly 250 um of coherent travel, so a real minimum anywhere near 33.77 um
+  # is comfortably reachable, while a single noisy batch cannot move z by more
+  # than a thirtieth of a micrometre. The cosine schedule decays it with
+  # everything else.
+  #
+  # z is NOT clamped. If it still leaves the physically sensible range, that is
+  # the reportable finding -- the off-axis residual is close to flat in z,
+  # because an off-axis carrier records phase at any distance -- and it must be
+  # reported as a negative result about identifiability rather than hidden
+  # behind a bound.
+  # -----------------------------------------------------------------------------
+  physics_parameter_lr_scale: 100.0
 
   checkpoint_metric: composite          # composite | phase_mae | seg_dice | dry_mass_mape
   checkpoint_mode: auto                 # auto resolves min/max from the metric name
@@ -427,6 +696,18 @@ evaluation:
     # curvature; order 3 is where the recovered in-cell contrast matches the
     # reference on this objective.
     aberration_order: 3
+    # Below this recovered in-cell phase contrast the classical reconstruction
+    # is declared FAILED and reported as an invalid baseline (it propagates into
+    # figure 14's title). It was a literal 0.1 inside the script, beside two
+    # settings that were already config keys.
+    #
+    # For scale: the measured cell-background phase gap on this dataset is
+    # 1.37 rad, so 0.1 rad is about 7% of it -- low enough that only a genuinely
+    # failed reconstruction trips it, which is the intent. The in-line arm does
+    # trip it, recovering -0.065 rad at z ~ 34 um, and that failure is a
+    # physical result rather than a bug: the in-line intensity of a pure phase
+    # object carries no phase at focus.
+    min_recovered_contrast_rad: 0.1
 
   segmentation:
     boundary_tolerance_px: 2
@@ -438,6 +719,21 @@ evaluation:
     max_cell_area_um2: 6000.0
     match_iou_threshold: 0.5            # predicted cell <-> GT cell pairing
     report_bland_altman: true
+    # Coverage-adjusted measurement error. The ordinary MAPE is computed over
+    # MATCHED cells only, so a model that finds the easiest 40% of cells and
+    # measures them perfectly reports an excellent MAPE. This variant assigns a
+    # missed reference cell a predicted value of zero, i.e. 100% error, so the
+    # reported number describes the whole cell population.
+    #
+    # Report it ALONGSIDE the matched-cell MAPE and the recall, never instead of
+    # them: a missed cell is strictly "not measured" rather than "measured as
+    # zero", and the convention should be visible.
+    report_coverage_adjusted: true
+    # Per-cell values are not independent -- cells in one field share
+    # illumination, focus, aberration and threshold. Bootstrapping FIELDS rather
+    # than cells is the honest primary statistic; cell-level numbers are
+    # reported as secondary.
+    field_bootstrap_resamples: 2000
   forward_model:
     # Reported as a metric regardless of the loss weight, so ablation arms that
     # do not optimise it can still be scored on it. Needs loss.forward_model.
@@ -453,7 +749,12 @@ deploy:
     opset: 17
     dynamic_axes: false
     input_name: hologram
-    output_names: [phase, segmentation, condition_logits]
+    # Names are matched to the heads that are actually present, in this order,
+    # skipping any that are disabled. ExportWrapper returns the same order.
+    # Previously this list was fixed at three and the wrapper indexed
+    # out["condition"] unconditionally, so export raised KeyError for every v2
+    # config (all of which set classifier_enabled: false).
+    output_names: [phase, segmentation, amplitude, condition_logits]
     constant_folding: true
     merge_lora_before_export: true
   benchmark:

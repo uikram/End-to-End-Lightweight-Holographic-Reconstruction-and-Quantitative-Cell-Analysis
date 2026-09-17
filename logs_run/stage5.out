@@ -1,0 +1,41 @@
+HoloQPI v2 study, started Thu Sep 17 15:09:26 KST 2026
+log directory logs/v2_20260917_150926
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   extra seeds: none
+
+########## stage 5: label-free analyses
+
+=== error_propagation  15:09:26
+    python scripts/error_propagation.py --config config/base.yaml --max-shift 5
+    OK   -> logs/v2_20260917_150926/error_propagation.log
+    === boundary error -> measurement error, 800 fields ===
+      ONE PIXEL of boundary error, which is 0.285 um:
+        dilated  by 1 px   Dice 0.9741   area +6.93%   mass +4.84%
+        eroded   by 1 px   Dice 0.9731   area -6.49%   mass -4.74%
+        asymmetry in mass  +0.10%   (outward minus inward, in magnitude)
+      mass error / area error   median 0.710   min 0.450   max 0.747
+      per-field detail -> runs/error_propagation.csv
+      summary -> runs/error_propagation_summary.csv
+      -> mass and area inherit the boundary error at about the same rate (ratio
+
+=== synthetic_validation  15:38:46
+    python scripts/synthetic_validation.py --config config/base.yaml --fields 12
+    OK   -> logs/v2_20260917_150926/synthetic_validation.log
+      area  signed  mean +0.0395%   median +0.0330%   p95 |.| 0.6787%
+      mass  signed  mean +0.0074%   median +0.0084%   p95 |.| 0.1346%
+      field-summed mass  mean -1.6655%   median -2.0152%
+      10 of 144 cells were never measured. min_cell_area_um2 = 30.0 um^2 rejects anything below 3.09 um of radius,
+      and a field-summed error of -1.67%: the filter discards small cells, so the
+      -> the measurement pipeline reproduces exact ground truth to 0.04% in dry
+
+########## done Thu Sep 17 15:38:51 KST 2026
+summary  logs/v2_20260917_150926/SUMMARY.txt
+logs     logs/v2_20260917_150926/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260917_150926/error_propagation.log     the label-free headline result
+  2. logs/v2_20260917_150926/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260917_150926/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260917_150926/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0

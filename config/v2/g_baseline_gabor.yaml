@@ -1,0 +1,55 @@
+# HoloQPI v2, experiment G: arm A's twin on IN-LINE (Gabor) holograms
+#
+# WHY THIS ARM EXISTS
+#
+# Every trained arm in this study reads the off-axis hologram. The only in-line
+# result is the CLASSICAL baseline, which fails by physics: at z ~ 34 um the
+# in-line intensity of a pure phase object is |A e^{i phi}|^2 = A^2 and
+# contains no phi, so Gerchberg-Saxton recovers in-cell contrast of -0.065 rad
+# -- that is, none -- with phase Pearson r = -0.136.
+#
+# That failure is what makes the learned in-line arm interesting, and without
+# it the study cannot say anything about the off-axis / in-line comparison it
+# is otherwise set up to make.
+#
+# IT SHARES ARM A'S experiment_name ON PURPOSE
+#
+# Run directories are named <experiment_name>_<modality>, so this writes
+# runs/v2_baseline_gabor/ alongside runs/v2_baseline_off_axis/. That is what
+# `main.py compare` needs: it loads both modalities of one experiment_name,
+# scores them through the same evaluator and the same instance labeller, and
+# writes v2_baseline_modality_comparison.json. Three figures are gated on that
+# file and are currently absent for exactly this reason -- figure 5 (modality
+# comparison), figure 13 (forward-model consistency across modalities) and
+# figure 14 (learned vs classical).
+#
+# WHAT IT CAN AND CANNOT SHOW
+#
+# It CAN answer: how much quantitative phase, segmentation and dry mass does a
+# network recover from a hologram whose classical inversion recovers nothing?
+# Measured in picograms and square micrometres, which is the question no
+# published work on this instrument asks.
+#
+# It CANNOT be treated as a paired comparison without checking first. The two
+# hologram sets were acquired in separate exposures through a motorised
+# reference-beam shutter, so whether a field's off-axis and Gabor frames are
+# close enough in time to be one specimen state is an acquisition question, not
+# a code question. Ask before claiming a paired test; an unpaired comparison of
+# distributions is still valid and is what should be reported until then.
+#
+# ALSO WORTH KNOWING BEFORE READING ITS NUMBERS
+#
+# scripts/null_input_probe.py already established that neither arm has an
+# unconditional shape prior -- a constant input produces zero cells in both --
+# and that the in-line arm invents LESS structure on out-of-distribution input
+# than off-axis does (2.7% of real foreground area against 11.7%). So a
+# plausible in-line result is not memorisation. That control exists; cite it
+# alongside these metrics rather than re-deriving it.
+extends: a_baseline.yaml
+
+# Deliberately NOT overridden: the run directory must be v2_baseline_gabor for
+# `main.py compare` to pair it with the off-axis arm.
+experiment_name: v2_baseline
+
+data:
+  modality: gabor

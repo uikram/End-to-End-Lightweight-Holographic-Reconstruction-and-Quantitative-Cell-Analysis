@@ -133,6 +133,30 @@ off-axis / Gabor classification gap.
 
 ## Running the whole study
 
+For the **v2 study** (the current one), use `run_v2.sh`:
+
+```bash
+CLEAN=1 nohup bash run_v2.sh > v2.out 2>&1 &   # everything, in dependency order
+bash run_v2.sh --stage 5                       # one stage
+ARMS="A B B1" bash run_v2.sh                   # only these arms
+SEEDS="1337 2024" bash run_v2.sh               # replicate the main arms
+NO_TRAIN=1 bash run_v2.sh                      # reuse checkpoints, re-evaluate only
+QUICK=1 bash run_v2.sh                         # tiny settings, plumbing only
+```
+
+Ten stages under `logs/v2_<timestamp>/`. Two of them produce results that need
+no trained model at all — stage 5's boundary-error propagation and synthetic
+ground-truth validation — so those survive any training failure. Stage 4 sets
+the per-cell loss weight from a measured gradient ratio and decides whether the
+forward-model term is usable; read it before stage 6. `config/v2/_shared.md`
+describes the thirteen arms and the one question each answers.
+
+`CLEAN=1` matters: the pixel pitch and refraction increment were corrected on
+2026-09-10, so any checkpoint or metric written before then reports areas 34.4%
+low and masses 24.3% low, and is not comparable with anything written after.
+
+For the **v1 study** (already reported), `run_study.sh` is unchanged:
+
 ```bash
 bash run_study.sh                 # everything, in dependency order
 bash run_study.sh --stage 5       # one stage
@@ -154,7 +178,32 @@ python scripts/diagnose_bias.py --config config/base.yaml  # boundary error or p
 python scripts/audit_labels.py --config config/base.yaml   # are the silver labels sound?
 python scripts/calibrate_z.py --config config/base.yaml    # recover the propagation distance
 python scripts/conventional_baseline.py --config config/base.yaml   # the classical floor
+python scripts/estimate_aberration.py --config config/base.yaml     # the removed surface
+python scripts/prepare_amplitude.py --config config/base.yaml       # the amplitude reference
+python scripts/check_gradient_path.py --config config/v2/b_cell_ipp.yaml --batches 30
+python scripts/amplitude_sensitivity.py --config config/base.yaml --split test
+python scripts/error_propagation.py --config config/base.yaml       # boundary -> measurement
+python scripts/synthetic_validation.py --config config/base.yaml    # the pipeline's own floor
 ```
+
+The last four were added on 2026-09-10 and each answers a question that was
+previously settled by argument instead of measurement:
+
+* `check_gradient_path.py` — the per-cell term's gradient into the segmentation
+  decoder, as a median over batches, plus its **cosine** with the segmentation
+  gradient. It prints the weight arithmetic explicitly (`effective = w x ratio`)
+  because the ratio is measured at weight 1.0 and was once read as if it were
+  the effective ratio at any weight.
+* `amplitude_sensitivity.py` — whether the forward-model residual responds to
+  the amplitude, and whether it responds to the phase *in the right direction*
+  at both a mild (x0.9) and a coarse (x0.5) degradation. On this data the mild
+  response has the wrong sign, which a coarse-only test does not reveal.
+* `error_propagation.py` — the exchange rate between a segmentation error and a
+  measurement error. No model involved: reference masks, reference phase, and a
+  boundary moved a known number of pixels.
+* `synthetic_validation.py` — the measurement chain against exact analytic
+  ground truth (spherical caps, closed-form area and integrated phase), which
+  is the only way to separate pipeline error from model error.
 
 `calibrate_z` recovers the sample-to-sensor distance the forward-model loss
 needs, by matching each hologram against its reference phase in both directions.
@@ -177,7 +226,7 @@ no GPU.
 ## Figures
 
 ```bash
-python scripts/make_figures.py --config config/base.yaml           # all twelve
+python scripts/make_figures.py --config config/base.yaml           # all eighteen
 python scripts/make_figures.py --config config/base.yaml --list    # what each one shows
 python scripts/make_figures.py --config config/base.yaml --only 2 4 5
 ```

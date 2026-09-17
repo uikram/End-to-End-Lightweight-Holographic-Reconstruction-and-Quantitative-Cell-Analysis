@@ -1,0 +1,191 @@
+{
+  "figures": {
+    "1": {
+      "name": "qualitative_panel",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis"
+      ],
+      "split": "test"
+    },
+    "2": {
+      "name": "bland_altman",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis"
+      ],
+      "split": "test"
+    },
+    "3": {
+      "name": "error_decomposition",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis"
+      ],
+      "split": "test"
+    },
+    "4": {
+      "name": "detection_gap",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis"
+      ],
+      "split": "test"
+    },
+    "5": {
+      "name": "modality_comparison",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis",
+        "gabor"
+      ],
+      "split": "test"
+    },
+    "6": {
+      "name": "loss_composition",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis"
+      ],
+      "split": "test"
+    },
+    "8": {
+      "name": "efficiency_tradeoff",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis"
+      ],
+      "split": "test"
+    },
+    "9": {
+      "name": "phase_error_structure",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis"
+      ],
+      "split": "test"
+    },
+    "10": {
+      "name": "label_audit",
+      "config": "config/base.yaml",
+      "experiment_name": "base",
+      "modalities": [
+        "off_axis",
+        "gabor"
+      ],
+      "split": "test"
+    },
+    "12": {
+      "name": "convergence",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis"
+      ],
+      "split": "test"
+    },
+    "13": {
+      "name": "forward_model_consistency",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis",
+        "gabor"
+      ],
+      "split": "test"
+    },
+    "14": {
+      "name": "learned_vs_classical",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis",
+        "gabor"
+      ],
+      "split": "test"
+    },
+    "15": {
+      "name": "recall_by_cell_size",
+      "config": "config/v2/a_baseline.yaml",
+      "experiment_name": "v2_baseline",
+      "modalities": [
+        "off_axis"
+      ],
+      "split": "test"
+    },
+    "16": {
+      "name": "forward_model_diagnostics",
+      "config": "config/base.yaml",
+      "experiment_name": "base",
+      "modalities": [
+        "off_axis",
+        "gabor"
+      ],
+      "split": "test"
+    },
+    "17": {
+      "name": "error_propagation",
+      "config": "config/base.yaml",
+      "experiment_name": "base",
+      "modalities": [
+        "off_axis",
+        "gabor"
+      ],
+      "split": "test"
+    },
+    "18": {
+      "name": "synthetic_floor",
+      "config": "config/base.yaml",
+      "experiment_name": "base",
+      "modalities": [
+        "off_axis",
+        "gabor"
+      ],
+      "split": "test"
+    },
+    "19": {
+      "name": "v2_ablation",
+      "config": "config/base.yaml",
+      "experiment_name": "base",
+      "modalities": [
+        "off_axis",
+        "gabor"
+      ],
+      "split": "test"
+    },
+    "20": {
+      "name": "membrane_labels",
+      "config": "config/base.yaml",
+      "experiment_name": "base",
+      "modalities": [
+        "off_axis",
+        "gabor"
+      ],
+      "split": "test"
+    }
+  },
+  "last_run": {
+    "config": "config/v2/a_baseline.yaml",
+    "experiment_name": "v2_baseline",
+    "modalities": [
+      "off_axis",
+      "gabor"
+    ],
+    "split": "test",
+    "built": [
+      "05",
+      "13",
+      "14"
+    ],
+    "skipped_missing_input": [],
+    "failed": []
+  }
+}

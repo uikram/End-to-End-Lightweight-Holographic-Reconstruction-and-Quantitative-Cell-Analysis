@@ -71,6 +71,50 @@ def read_phase_bin(path: str | Path, fmt: Config) -> PhaseRecord:
                        pitch_x_um=pitch_x, pitch_y_um=pitch_y)
 
 
+def read_phase_header(path: str | Path, fmt: Config) -> PhaseRecord:
+    """Decode only the header of a phase file, without loading the pixels.
+
+    ``read_phase_bin`` reads the whole file, which makes a geometry check over
+    the full dataset cost 800 x 3.2 MB. That is why the check used to inspect
+    only the first eight files and then report its conclusions as statements
+    about the dataset -- a size-inconsistent file at index 9 passed `prepare`
+    and surfaced much later as a shape error inside the dataloader.
+
+    ``phase`` is an empty array here: the payload length is validated against
+    the declared geometry from the file size instead of being read.
+    """
+    path = Path(path)
+    header_bytes = int(fmt.header_bytes)
+    with path.open("rb") as handle:
+        header = handle.read(header_bytes)
+    if len(header) < header_bytes:
+        raise ValueError(f"{path.name}: file shorter than its {header_bytes}-byte header")
+
+    order = _BYTE_ORDER[fmt.byte_order]
+    width = struct.unpack_from(f"{order}I", header, fmt.width_offset)[0]
+    height = struct.unpack_from(f"{order}I", header, fmt.height_offset)[0]
+
+    dtype = np.dtype(order + _DTYPES[fmt.dtype])
+    expected = width * height * dtype.itemsize
+    payload = path.stat().st_size - header_bytes
+    if payload != expected:
+        raise ValueError(
+            f"{path.name}: header declares {width}x{height} ({expected} bytes) "
+            f"but the payload holds {payload} bytes"
+        )
+
+    pitch_x = pitch_y = None
+    px_off, py_off = fmt.pitch_x_offset, fmt.pitch_y_offset
+    if px_off is not None and py_off is not None and max(px_off, py_off) + 4 <= header_bytes:
+        pitch_x = float(struct.unpack_from(f"{order}f", header, px_off)[0]) * 1e6
+        pitch_y = float(struct.unpack_from(f"{order}f", header, py_off)[0]) * 1e6
+
+    return PhaseRecord(
+        phase=np.empty((0, 0), dtype=np.float32),
+        width=width, height=height, pitch_x_um=pitch_x, pitch_y_um=pitch_y,
+    )
+
+
 def read_hologram(path: str | Path) -> np.ndarray:
     """Read one hologram TIFF as float32 in its native intensity units.
 

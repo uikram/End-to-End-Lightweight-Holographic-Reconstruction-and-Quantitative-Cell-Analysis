@@ -268,10 +268,19 @@ python main.py train --config config/v2/a_baseline.yaml \
     --set experiment_name=v2_pretrain training.epochs=60
 ```
 
-This is Experiment A's objective (`L_φ + L_seg`) on the **full 800 Otsu fields**,
+This is Experiment A's objective (`L_φ + L_seg`) on the **TRAIN SPLIT ONLY**,
 producing the checkpoint every later condition fine-tunes from. Report its
 held-out phase MAE and Dice so we can confirm pretraining converged before
 anything is built on it.
+
+**Corrected 2026-09-10.** This step was previously described as pretraining on
+"the full 800 Otsu fields". It does not, and it must not. `main.py` line 127
+builds only the train and val loaders for a training command
+(`build_dataloaders(cfg, splits_to_build=("train", "val"))`), so the test split
+was never reachable and there is no leak — but the description implied one, and
+a reader checking the claim against the code would have found them
+contradicting each other. The number of fields the pretrain sees is the train
+split's size, not 800.
 
 ### Not yet runnable — needs the independent labels
 

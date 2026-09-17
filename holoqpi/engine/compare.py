@@ -17,7 +17,7 @@ from ..data import build_dataloaders
 from ..models import build_model
 from ..utils import get_logger, resolve_device, run_directory, seed_everything, write_csv, write_json
 from .evaluator import Evaluator, save_per_cell
-from .trainer import Trainer, load_checkpoint
+from .trainer import Trainer, apply_learned_physics, load_checkpoint
 
 LOGGER = get_logger(__name__)
 
@@ -95,10 +95,31 @@ def run_single_modality(cfg: Config, modality: str, train: bool = True,
     if checkpoint_path.is_file():
         load_checkpoint(model, checkpoint_path, device)
     else:
-        LOGGER.warning("no checkpoint at %s; evaluating current weights", checkpoint_path)
+        # REFUSED, not warned about. Metrics from random weights look exactly
+        # like metrics: this path would write metrics_test.json, a comparison
+        # table, a per-cell CSV and every figure downstream of them, all from an
+        # untrained network, behind a single WARNING line in a stage log.
+        # `main.py evaluate` already refuses the same case (it lists the
+        # checkpoints it did find and tells you to pass --allow-untrained if you
+        # really mean it); this is the same rule for the same reason.
+        available = sorted(
+            str(p.parent) for p in Path(cfg.paths.output_root).glob("*/best_model.pt")
+        )
+        raise SystemExit(
+            f"No checkpoint at {checkpoint_path}, and compare was not asked to "
+            f"train (pass --train).\n"
+            f"Checkpoints found under {cfg.paths.output_root}: "
+            f"{available if available else 'none'}\n"
+            f"Scoring an untrained network would write a full set of metrics and "
+            f"figures that are indistinguishable from real ones."
+        )
     model.to(device)
 
     split = "test" if "test" in loaders else "val"
+    # Same reason as in `main.py evaluate`: a learned propagation distance is
+    # stored in the checkpoint rather than the config, so the evaluator has to
+    # be built from a config that carries it.
+    cfg = apply_learned_physics(cfg, checkpoint_path)
     evaluator = Evaluator(cfg, device)
     evaluation = evaluator.run(
         model, loaders[split], collect_per_cell=cfg.evaluation.save_per_cell_csv

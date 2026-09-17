@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 460" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#444"/>
+    </marker>
+    <marker id="ared" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#b3261e"/>
+    </marker>
+  </defs>
+  <rect width="980" height="460" fill="#ffffff"/>
+
+  <!-- Panel A -->
+  <text x="20" y="28" font-size="15" font-weight="bold" fill="#111">A · Previous study (paper 1) — two decoupled stages</text>
+  <rect x="20" y="44" width="940" height="132" fill="#fafafa" stroke="#ddd"/>
+
+  <rect x="36" y="72" width="118" height="70" rx="4" fill="#eef2f7" stroke="#4a6fa5"/>
+  <text x="95" y="98" font-size="12" text-anchor="middle" fill="#1a1a1a">raw</text>
+  <text x="95" y="114" font-size="12" text-anchor="middle" fill="#1a1a1a">hologram</text>
+  <text x="95" y="130" font-size="10" text-anchor="middle" fill="#666">I(x,y)</text>
+
+  <line x1="156" y1="107" x2="196" y2="107" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <rect x="198" y="66" width="168" height="82" rx="4" fill="#f3f0e8" stroke="#8a7b4f"/>
+  <text x="282" y="90" font-size="12" text-anchor="middle" fill="#1a1a1a">CONVENTIONAL</text>
+  <text x="282" y="106" font-size="12" text-anchor="middle" fill="#1a1a1a">numerical</text>
+  <text x="282" y="122" font-size="12" text-anchor="middle" fill="#1a1a1a">reconstruction</text>
+  <text x="282" y="138" font-size="9.5" text-anchor="middle" fill="#666">FFT · sideband · propagate · unwrap</text>
+
+  <line x1="368" y1="107" x2="408" y2="107" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <rect x="410" y="72" width="118" height="70" rx="4" fill="#eef2f7" stroke="#4a6fa5"/>
+  <text x="469" y="98" font-size="12" text-anchor="middle" fill="#1a1a1a">phase map</text>
+  <text x="469" y="114" font-size="12" text-anchor="middle" fill="#1a1a1a">φ(x,y)</text>
+  <text x="469" y="130" font-size="10" text-anchor="middle" fill="#666">radians</text>
+
+  <line x1="530" y1="107" x2="570" y2="107" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <rect x="572" y="66" width="168" height="82" rx="4" fill="#eaf3ea" stroke="#4a7a4a"/>
+  <text x="656" y="94" font-size="12" text-anchor="middle" fill="#1a1a1a">LIGHTWEIGHT</text>
+  <text x="656" y="110" font-size="12" text-anchor="middle" fill="#1a1a1a">segmentation net</text>
+  <text x="656" y="128" font-size="9.5" text-anchor="middle" fill="#666">MobileSAM / EdgeSAM + LoRA</text>
+
+  <line x1="742" y1="107" x2="782" y2="107" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <rect x="784" y="72" width="160" height="70" rx="4" fill="#f7eef2" stroke="#a54a6f"/>
+  <text x="864" y="96" font-size="12" text-anchor="middle" fill="#1a1a1a">measurements</text>
+  <text x="864" y="112" font-size="10" text-anchor="middle" fill="#666">area · circularity</text>
+  <text x="864" y="126" font-size="10" text-anchor="middle" fill="#666">integrated φ · dry mass</text>
+
+  <text x="282" y="166" font-size="10" text-anchor="middle" fill="#b3261e">φ is MEASURED — only the boundary is learned</text>
+
+  <!-- Panel B -->
+  <text x="20" y="212" font-size="15" font-weight="bold" fill="#111">B · This study (v2) — one end-to-end network</text>
+  <rect x="20" y="228" width="940" height="216" fill="#fafafa" stroke="#ddd"/>
+
+  <rect x="36" y="288" width="118" height="70" rx="4" fill="#eef2f7" stroke="#4a6fa5"/>
+  <text x="95" y="314" font-size="12" text-anchor="middle" fill="#1a1a1a">raw off-axis</text>
+  <text x="95" y="330" font-size="12" text-anchor="middle" fill="#1a1a1a">hologram</text>
+  <text x="95" y="346" font-size="10" text-anchor="middle" fill="#666">900×900, z-scored</text>
+
+  <line x1="156" y1="323" x2="196" y2="323" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <rect x="198" y="262" width="176" height="122" rx="4" fill="#eaf3ea" stroke="#4a7a4a"/>
+  <text x="286" y="286" font-size="12" text-anchor="middle" font-weight="bold" fill="#1a1a1a">HoloQPINet</text>
+  <text x="286" y="304" font-size="10.5" text-anchor="middle" fill="#333">shared MobileNetV2 encoder</text>
+  <text x="286" y="320" font-size="10.5" text-anchor="middle" fill="#333">+ 2 U-Net decoders</text>
+  <text x="286" y="340" font-size="10.5" text-anchor="middle" fill="#666">9.60 M parameters</text>
+  <text x="286" y="356" font-size="10.5" text-anchor="middle" fill="#666">2.22 M encoder / 7.36 M decoders</text>
+  <text x="286" y="374" font-size="10" text-anchor="middle" fill="#666">outputs at stride 2 → bilinear ×2</text>
+
+  <line x1="376" y1="300" x2="416" y2="282" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="376" y1="346" x2="416" y2="364" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="376" y1="323" x2="416" y2="323" stroke="#bbb" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#a)"/>
+
+  <rect x="418" y="250" width="122" height="52" rx="4" fill="#eef2f7" stroke="#4a6fa5"/>
+  <text x="479" y="270" font-size="11.5" text-anchor="middle" fill="#1a1a1a">phase  φ̂</text>
+  <text x="479" y="288" font-size="10" text-anchor="middle" fill="#666">unbounded, radians</text>
+
+  <rect x="418" y="306" width="122" height="36" rx="4" fill="#f4f4f4" stroke="#bbb" stroke-dasharray="4 3"/>
+  <text x="479" y="322" font-size="11" text-anchor="middle" fill="#888">amplitude Â</text>
+  <text x="479" y="336" font-size="9" text-anchor="middle" fill="#b3261e">NOT YET SUPERVISED</text>
+
+  <rect x="418" y="348" width="122" height="52" rx="4" fill="#eef2f7" stroke="#4a6fa5"/>
+  <text x="479" y="368" font-size="11.5" text-anchor="middle" fill="#1a1a1a">segmentation M̂</text>
+  <text x="479" y="386" font-size="10" text-anchor="middle" fill="#666">2-class logits</text>
+
+  <line x1="542" y1="276" x2="586" y2="310" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="542" y1="374" x2="586" y2="340" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <rect x="588" y="292" width="164" height="66" rx="4" fill="#f7eef2" stroke="#a54a6f"/>
+  <text x="670" y="314" font-size="11.5" text-anchor="middle" fill="#1a1a1a">per-cell measurement</text>
+  <text x="670" y="330" font-size="10" text-anchor="middle" fill="#666">A · C · Φ · m  per cell i</text>
+  <text x="670" y="348" font-size="10" text-anchor="middle" fill="#666">watershed instances</text>
+
+  <line x1="754" y1="325" x2="792" y2="325" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="794" y="292" width="150" height="66" rx="4" fill="#fff" stroke="#888"/>
+  <text x="869" y="314" font-size="11.5" text-anchor="middle" fill="#1a1a1a">evaluation</text>
+  <text x="869" y="330" font-size="10" text-anchor="middle" fill="#666">measurement error FIRST</text>
+  <text x="869" y="346" font-size="10" text-anchor="middle" fill="#666">then Dice / PSNR</text>
+
+  <!-- feedback loop -->
+  <path d="M 670 358 L 670 420 L 286 420 L 286 386" fill="none" stroke="#b3261e" stroke-width="1.8" marker-end="url(#ared)"/>
+  <rect x="392" y="404" width="322" height="30" rx="4" fill="#fdeeee" stroke="#b3261e"/>
+  <text x="553" y="424" font-size="11.5" text-anchor="middle" font-weight="bold" fill="#b3261e">L_cIPP : per-cell integrated-phase preservation</text>
+
+  <text x="36" y="252" font-size="10" fill="#b3261e">φ is PREDICTED — the boundary AND the phase are both learned</text>
+</svg>

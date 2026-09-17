@@ -3,13 +3,33 @@
 # Does raw-hologram consistency improve the reconstruction without hurting
 # segmentation?
 #
-# NOTE ON SCOPE. The forward-model residual was measured as correctly signed
-# against gross corruption (worse in 91-100% of fields) but blind near the
-# truth (+0.0002 margin for a 10% phase rescaling). It therefore cannot refine
-# a phase estimate that is already close, and this experiment does NOT ask it
-# to. Its role is to supervise AMPLITUDE, which has no other supervision in
-# this dataset at all. Read the result as 'can the hologram constrain the
-# amplitude head', not as 'does physics consistency improve phase'.
+# THIS ARM IS A DIAGNOSTIC, AND THE MEASUREMENT SAYS SO. From
+# scripts/amplitude_sensitivity.py, off-axis, z = 33.77 um, border 64 px, crops
+# and augmentation disabled so both columns are the same pixels:
+#
+#                                    per_field surface   global surface
+#   residual on the reference phase        0.44-0.51          0.87
+#   phase x 0.9  (mild, a 10% bias)         -0.0005          -0.0027
+#   phase x 0.5  (coarse, wrecked)          +0.053           +0.0016
+#
+# A degraded phase must score WORSE, so both mild figures have the wrong sign.
+# Near the truth -- the regime training is in once it has nearly converged, and
+# the only regime in which a refinement term does anything -- minimising this
+# residual moves the reconstruction AWAY from the truth. An earlier reading of
+# this term as 'blind near the truth (+0.0002)' was too kind: it is not blind,
+# it is inverted, and a coarse-only discrimination test passes it anyway.
+#
+# The global surface also collapses the coarse discrimination by a factor of
+# about 35 and doubles the residual floor. Since the per-field surface is fitted
+# from the delivered reference phase and cannot be reproduced at inference, the
+# only deployable configuration is the one in which this term barely
+# discriminates at all.
+#
+# So this arm is not a loss ablation. Its weight is kept at 0.02 -- low enough
+# that the phase cannot be dragged by a wrong-signed gradient -- and the result
+# to report is what the term DOES to the amplitude and the phase, measured,
+# alongside the numbers above. D0 is the arm that asks whether the amplitude
+# head can be supervised; this one asks what the hologram adds to it.
 #
 # Requires model.amplitude.enabled and a calibrated distance.
 #
@@ -24,6 +44,7 @@ experiment_name: v2_forward_amplitude
 
 data:
   modality: off_axis
+  provide_amplitude: true             # same target as D0, so D1 - D0 is the forward model
 
 model:
   classifier_enabled: false
@@ -33,7 +54,8 @@ model:
 loss:
   weights:
     classification: 0.0
-    cell_integrated_phase: 0.1
-    boundary_gradient_alignment: 0.05
+    cell_integrated_phase: 1.0
+    amplitude: 0.1                    # same as D0
+    boundary_gradient_alignment: 0.0  # off, so D1 - D0 is ONE term
     projected_area_consistency: 0.0
     forward_model: 0.02

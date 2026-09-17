@@ -47,9 +47,15 @@ class SegmentationMetrics:
         them; watershed dominates the cost of an evaluation pass.
         """
         from ..data.masks import split_instances
+        from .phase import _as_batch
 
+        # _as_batch, not np.atleast_3d. atleast_3d APPENDS the new axis, so a
+        # single (H, W) map becomes (H, W, 1) and iterating it yields ROWS rather
+        # than images -- every row scored as its own image. holoqpi/metrics/
+        # phase.py already carries the fix and the explanation; this is the same
+        # bug in the other metric family.
         for index, (predicted, actual) in enumerate(
-            zip(np.atleast_3d(prediction), np.atleast_3d(target))
+            zip(_as_batch(prediction), _as_batch(target))
         ):
             for class_index in range(self.num_classes):
                 predicted_class = predicted == class_index
@@ -126,7 +132,12 @@ def aggregated_jaccard(prediction: np.ndarray, target: np.ndarray) -> tuple[floa
     target_ids = np.unique(target[target > 0])
 
     if target_ids.size == 0 and predicted_ids.size == 0:
-        return 1.0, 1.0
+        # Nothing to score, so no counts -- matching boundary_counts. Returning
+        # (1.0, 1.0) credited a perfect intersection for a field that has no
+        # cells on either side, which inflates seg_aji by however many empty
+        # fields the split holds. An all-empty split still reports 1.0 overall
+        # via the epsilons in compute(), as before.
+        return 0.0, 0.0
     if target_ids.size == 0:
         return 0.0, float((prediction > 0).sum())
     if predicted_ids.size == 0:
@@ -185,7 +196,11 @@ def boundary_counts(prediction: np.ndarray, target: np.ndarray,
     target_contour = contour(target)
 
     if not predicted_contour.any() and not target_contour.any():
-        return 1.0, 0.0, 0.0
+        # Nothing to score: a field with no cells on either side contributes no
+        # counts at all. Returning a true positive of 1.0 credited the model for
+        # a boundary neither side has, which inflates seg_boundary_f1 by however
+        # many empty fields the split holds.
+        return 0.0, 0.0, 0.0
 
     predicted_zone = binary_dilation(predicted_contour, iterations=tolerance)
     target_zone = binary_dilation(target_contour, iterations=tolerance)

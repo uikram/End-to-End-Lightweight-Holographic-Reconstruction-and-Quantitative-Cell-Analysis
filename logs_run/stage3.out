@@ -1,0 +1,22 @@
+HoloQPI v2 study, started Wed Sep 16 19:17:35 KST 2026
+log directory logs/v2_20260916_191735
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   extra seeds: none
+
+########## stage 3: amplitude reference
+
+=== amplitude_reference  19:17:35
+    python scripts/prepare_amplitude.py --config config/base.yaml
+    OK   -> logs/v2_20260916_191735/amplitude_reference.log
+
+########## done Wed Sep 16 19:17:37 KST 2026
+summary  logs/v2_20260916_191735/SUMMARY.txt
+logs     logs/v2_20260916_191735/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260916_191735/error_propagation.log     the label-free headline result
+  2. logs/v2_20260916_191735/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260916_191735/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260916_191735/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0

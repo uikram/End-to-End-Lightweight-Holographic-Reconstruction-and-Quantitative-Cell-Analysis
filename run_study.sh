@@ -59,12 +59,24 @@ ONLY_STAGE=""
 if [ "$1" = "--stage" ]; then ONLY_STAGE="$2"; fi
 
 EXTRA=""
-TRAIN_FLAG=""
 if [ -n "${QUICK}" ]; then
   EXTRA="--set training.epochs=2 data.eval_size=192 data.train_crop=192 data.num_workers=0 deploy.benchmark.warmup_runs=2 deploy.benchmark.timed_runs=3 deploy.benchmark.input_size=192"
 fi
-# NO_TRAIN=1 reuses existing checkpoints and only re-evaluates.
-if [ -n "${NO_TRAIN}" ]; then TRAIN_FLAG="--no-train"; fi
+# TRAINING IS EXPLICIT NOW, AND IT HAS TO BE.
+#
+# Every arm in this script is trained by `main.py compare`; there is no
+# `main.py train` step anywhere in it. `compare` used to train by default, so an
+# empty flag meant "train" -- and when that default was inverted (training is
+# now opt-in, because the common use of `compare` is to pair two arms that are
+# already trained), this script silently stopped training anything and would
+# have written a full set of metrics, comparison tables, a seed aggregate and
+# every figure from RANDOMLY INITIALISED weights, with only a per-arm warning to
+# say so. `main.py evaluate` refuses that case outright; `compare` only warns.
+#
+# So the flag is set explicitly in both directions rather than left to a
+# default. NO_TRAIN=1 still reuses existing checkpoints and only re-evaluates.
+TRAIN_FLAG="--train"
+if [ -n "${NO_TRAIN}" ]; then TRAIN_FLAG=""; fi
 
 declare -a STEP_NAME
 declare -a STEP_CODE

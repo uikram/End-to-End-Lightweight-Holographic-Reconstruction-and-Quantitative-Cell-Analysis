@@ -1,0 +1,168 @@
+HoloQPI v2 study, started Wed Sep 16 19:17:37 KST 2026
+log directory logs/v2_20260916_191737
+GPU 2   arms: A B B1 B2 C D0   extra seeds: none
+
+########## stage 6: training arms
+
+=== train_A  19:17:37
+    python main.py train --config config/v2/a_baseline.yaml
+    OK   -> logs/v2_20260916_191737/train_A.log
+
+=== evaluate_A  20:51:09
+    python main.py evaluate --config config/v2/a_baseline.yaml
+    OK   -> logs/v2_20260916_191737/evaluate_A.log
+
+=== evaluate_A_membrane  20:52:15
+    python main.py evaluate --config config/v2/a_baseline.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260916_191737/evaluate_A_membrane.log
+
+=== train_B  20:53:19
+    python main.py train --config config/v2/b_cell_ipp.yaml
+    OK   -> logs/v2_20260916_191737/train_B.log
+
+=== evaluate_B  22:22:56
+    python main.py evaluate --config config/v2/b_cell_ipp.yaml
+    OK   -> logs/v2_20260916_191737/evaluate_B.log
+
+=== evaluate_B_membrane  22:24:00
+    python main.py evaluate --config config/v2/b_cell_ipp.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260916_191737/evaluate_B_membrane.log
+
+=== train_B1  22:25:06
+    python main.py train --config config/v2/b1_image_volume.yaml
+    OK   -> logs/v2_20260916_191737/train_B1.log
+
+=== evaluate_B1  23:53:30
+    python main.py evaluate --config config/v2/b1_image_volume.yaml
+    OK   -> logs/v2_20260916_191737/evaluate_B1.log
+
+=== evaluate_B1_membrane  23:54:30
+    python main.py evaluate --config config/v2/b1_image_volume.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260916_191737/evaluate_B1_membrane.log
+
+=== train_B2  23:55:31
+    python main.py train --config config/v2/b2_cell_area.yaml
+    OK   -> logs/v2_20260916_191737/train_B2.log
+
+=== evaluate_B2  01:27:09
+    python main.py evaluate --config config/v2/b2_cell_area.yaml
+    OK   -> logs/v2_20260916_191737/evaluate_B2.log
+
+=== evaluate_B2_membrane  01:28:12
+    python main.py evaluate --config config/v2/b2_cell_area.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260916_191737/evaluate_B2_membrane.log
+
+=== train_C  01:29:13
+    python main.py train --config config/v2/c_cell_ipp_bga.yaml
+    OK   -> logs/v2_20260916_191737/train_C.log
+
+=== evaluate_C  02:57:42
+    python main.py evaluate --config config/v2/c_cell_ipp_bga.yaml
+    OK   -> logs/v2_20260916_191737/evaluate_C.log
+
+=== evaluate_C_membrane  02:58:42
+    python main.py evaluate --config config/v2/c_cell_ipp_bga.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260916_191737/evaluate_C_membrane.log
+
+=== train_D0  02:59:43
+    python main.py train --config config/v2/d0_amplitude.yaml
+    OK   -> logs/v2_20260916_191737/train_D0.log
+
+=== evaluate_D0  04:31:43
+    python main.py evaluate --config config/v2/d0_amplitude.yaml
+    OK   -> logs/v2_20260916_191737/evaluate_D0.log
+
+=== evaluate_D0_membrane  04:32:49
+    python main.py evaluate --config config/v2/d0_amplitude.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260916_191737/evaluate_D0_membrane.log
+
+=== compare_modalities  04:33:58
+    python main.py compare --config config/v2/a_baseline.yaml --modalities off_axis gabor
+    OK   -> logs/v2_20260916_191737/compare_modalities.log
+
+########## done Thu Sep 17 04:35:54 KST 2026
+summary  logs/v2_20260916_191737/SUMMARY.txt
+logs     logs/v2_20260916_191737/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260916_191737/error_propagation.log     the label-free headline result
+  2. logs/v2_20260916_191737/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260916_191737/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260916_191737/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Thu Sep 17 04:35:54 KST 2026
+log directory logs/v2_20260917_043554
+GPU 2   arms: A B   extra seeds: 1337 2024
+
+########## stage 6: training arms
+
+=== evaluate_A  04:35:54
+    python main.py evaluate --config config/v2/a_baseline.yaml
+    OK   -> logs/v2_20260917_043554/evaluate_A.log
+
+=== evaluate_A_membrane  04:37:03
+    python main.py evaluate --config config/v2/a_baseline.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260917_043554/evaluate_A_membrane.log
+
+=== evaluate_B  04:38:12
+    python main.py evaluate --config config/v2/b_cell_ipp.yaml
+    OK   -> logs/v2_20260917_043554/evaluate_B.log
+
+=== evaluate_B_membrane  04:39:20
+    python main.py evaluate --config config/v2/b_cell_ipp.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260917_043554/evaluate_B_membrane.log
+
+=== train_A_seed1337  04:40:23
+    python main.py train --config config/v2/a_baseline.yaml --set project.seed=1337 experiment_name=v2_A_seed1337
+    OK   -> logs/v2_20260917_043554/train_A_seed1337.log
+
+=== evaluate_A_seed1337  06:07:58
+    python main.py evaluate --config config/v2/a_baseline.yaml --set project.seed=1337 experiment_name=v2_A_seed1337
+    OK   -> logs/v2_20260917_043554/evaluate_A_seed1337.log
+
+=== train_B_seed1337  06:08:58
+    python main.py train --config config/v2/b_cell_ipp.yaml --set project.seed=1337 experiment_name=v2_B_seed1337
+    OK   -> logs/v2_20260917_043554/train_B_seed1337.log
+
+=== evaluate_B_seed1337  07:39:49
+    python main.py evaluate --config config/v2/b_cell_ipp.yaml --set project.seed=1337 experiment_name=v2_B_seed1337
+    OK   -> logs/v2_20260917_043554/evaluate_B_seed1337.log
+
+=== train_A_seed2024  07:40:49
+    python main.py train --config config/v2/a_baseline.yaml --set project.seed=2024 experiment_name=v2_A_seed2024
+    OK   -> logs/v2_20260917_043554/train_A_seed2024.log
+
+=== evaluate_A_seed2024  09:09:24
+    python main.py evaluate --config config/v2/a_baseline.yaml --set project.seed=2024 experiment_name=v2_A_seed2024
+    OK   -> logs/v2_20260917_043554/evaluate_A_seed2024.log
+
+=== train_B_seed2024  09:10:24
+    python main.py train --config config/v2/b_cell_ipp.yaml --set project.seed=2024 experiment_name=v2_B_seed2024
+    OK   -> logs/v2_20260917_043554/train_B_seed2024.log
+
+=== evaluate_B_seed2024  10:43:51
+    python main.py evaluate --config config/v2/b_cell_ipp.yaml --set project.seed=2024 experiment_name=v2_B_seed2024
+    OK   -> logs/v2_20260917_043554/evaluate_B_seed2024.log
+
+=== aggregate_seeds  10:44:52
+    python scripts/aggregate_seeds.py --config config/base.yaml
+    OK   -> logs/v2_20260917_043554/aggregate_seeds.log
+
+=== compare_modalities  10:44:54
+    python main.py compare --config config/v2/a_baseline.yaml --modalities off_axis gabor
+    OK   -> logs/v2_20260917_043554/compare_modalities.log
+
+########## done Thu Sep 17 10:46:44 KST 2026
+summary  logs/v2_20260917_043554/SUMMARY.txt
+logs     logs/v2_20260917_043554/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260917_043554/error_propagation.log     the label-free headline result
+  2. logs/v2_20260917_043554/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260917_043554/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260917_043554/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0

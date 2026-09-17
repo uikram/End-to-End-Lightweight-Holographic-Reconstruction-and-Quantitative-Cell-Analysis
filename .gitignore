@@ -14,3 +14,7 @@ data/prepare_report.json
 *.pdf
 *.jpg
 *.sh
+*.npy
+*.md
+*.zip
+*.pth
