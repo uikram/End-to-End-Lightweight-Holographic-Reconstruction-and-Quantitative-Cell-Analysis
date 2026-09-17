@@ -33,9 +33,17 @@ The **condition classifier** is disabled throughout the v2 study
 between seeds, which is outside the question this study asks. The head remains in
 the code and can be re-enabled.
 
-Everything numeric — wavelength, refraction increment, pixel pitches, loss
-weights, thresholds, schedules — lives in `config/*.yaml`. The Python sources
-contain no hard-coded physical or hyper-parameter values.
+Every experiment-level constant — wavelength, refraction increment, pixel
+pitches, loss weights, thresholds, schedules — lives in `config/*.yaml`. The
+Python sources contain no hard-coded physical or hyper-parameter values; what
+remains in code is algorithmic constants and numerical safeguards (stability
+limits, epsilons, tensor shapes), each documented at its definition.
+
+Current values: λ = 0.666 µm, α = 0.2 mL/g, isotropic pixel pitch 0.284871 µm.
+Two of these were corrected on 2026-09-10 and **absolute** areas and masses from
+before that date are not comparable; see
+[`docs/documentation.md` §3](docs/documentation.md). Relative results are
+invariant to both, which the self-test proves.
 
 ---
 

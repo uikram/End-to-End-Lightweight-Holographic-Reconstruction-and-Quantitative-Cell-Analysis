@@ -1,5 +1,23 @@
 # What this study actually shows
 
+> **HISTORICAL DOCUMENT — superseded by the 17 September 2026 final study.**
+>
+> This file records the project as it stood on an earlier assessment stage and is kept for provenance:
+> it shows what was known, planned or open at that point. **Do not read it as the
+> current state of the system.** Recommendations in it may already be
+> implemented, and any constant, result or gap it names may have changed.
+>
+> Current truth, in order: `runs/RESULTS.md` for results, `README.md` for how to
+> run it, `docs/documentation.md` for the method and the physical constants,
+> `docs/RUNBOOK.md` for operations. Change records:
+> `docs/code_audit_2026-09-16.md`, then `docs/gap_closure_2026-09-17.md`.
+> 
+> Specifically: the missing conventional baseline this assessment names as the
+> largest weakness now exists (`scripts/conventional_baseline.py`), runs through
+> the same evaluator as the network, and is reported in RESULTS.md and figure 14.
+
+---
+
 Assessment of the completed run: 4 experiments x 2 modalities, 800 fields prepared,
 113 test fields, 3045 reference cells, full-dataset label audit, 12 figures.
 

@@ -1,5 +1,22 @@
 # HoloQPI v2 — current state, decisions, and what to run next
 
+> **HISTORICAL DOCUMENT — superseded by the 17 September 2026 final study.**
+>
+> This file records the project as it stood on an earlier v2 planning stage and is kept for provenance:
+> it shows what was known, planned or open at that point. **Do not read it as the
+> current state of the system.** Recommendations in it may already be
+> implemented, and any constant, result or gap it names may have changed.
+>
+> Current truth, in order: `runs/RESULTS.md` for results, `README.md` for how to
+> run it, `docs/documentation.md` for the method and the physical constants,
+> `docs/RUNBOOK.md` for operations. Change records:
+> `docs/code_audit_2026-09-16.md`, then `docs/gap_closure_2026-09-17.md`.
+> 
+> This is a state-and-plan record, valuable as a reasoning trail. The plan in it
+> has since been executed.
+
+---
+
 *Written after independently verifying the joint Claude/GPT/Gemini operating brief
 against the actual repository. Every claim below that was checked against code or
 data is marked **[verified]** with the measurement. Every claim still resting on

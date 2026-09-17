@@ -1,5 +1,22 @@
 # HoloQPI — Second Full Verification
 
+> **HISTORICAL DOCUMENT — superseded by the 17 September 2026 final study.**
+>
+> This file records the project as it stood on an earlier verification round and is kept for provenance:
+> it shows what was known, planned or open at that point. **Do not read it as the
+> current state of the system.** Recommendations in it may already be
+> implemented, and any constant, result or gap it names may have changed.
+>
+> Current truth, in order: `runs/RESULTS.md` for results, `README.md` for how to
+> run it, `docs/documentation.md` for the method and the physical constants,
+> `docs/RUNBOOK.md` for operations. Change records:
+> `docs/code_audit_2026-09-16.md`, then `docs/gap_closure_2026-09-17.md`.
+> 
+> This is a verification record for an earlier round. The later rounds are in the
+> two change records named above.
+
+---
+
 Date: 2026-09-02. Covers the framework at
 `C:\Users\iivs\Desktop\lightweight_qpi_segmentation` after the fixes described
 below were applied.

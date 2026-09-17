@@ -1,3 +1,22 @@
+> **HISTORICAL DOCUMENT — superseded by the 17 September 2026 final study.**
+>
+> This file records the project as it stood on 9 September 2026 and is kept for provenance:
+> it shows what was known, planned or open at that point. **Do not read it as the
+> current state of the system.** Recommendations in it may already be
+> implemented, and any constant, result or gap it names may have changed.
+>
+> Current truth, in order: `runs/RESULTS.md` for results, `README.md` for how to
+> run it, `docs/documentation.md` for the method and the physical constants,
+> `docs/RUNBOOK.md` for operations. Change records:
+> `docs/code_audit_2026-09-16.md`, then `docs/gap_closure_2026-09-17.md`.
+> 
+> Specifically: this describes a stage at which the amplitude head was unused, the
+> study was off-axis only, and most run artefacts were smoke tests. All three have
+> changed — the amplitude output is now trained and scored (Table 3c), arm G covers
+> in-line Gabor, and every reported number comes from the full 800-field run.
+
+---
+
 ---
 title: "HoloQPI — Complete Project Documentation"
 subtitle: "A physics-aware lightweight end-to-end framework for quantitative holographic cell reconstruction and analysis"

@@ -1,8 +1,25 @@
 # The v2 experiment matrix
 
+The matrix has two parts, and conflating them is the mistake this file exists to
+prevent:
+
+* **The core ablation** — A, B, B', B'', C, D0, D1, D2, the W sweep and the K
+  pair. All off-axis, each differing from its comparator by exactly one term, so
+  a difference is attributable to that term.
+* **The modality comparison** — arm **G**, which applies arm A's configuration
+  unchanged to in-line Gabor holograms. It is not part of the per-cell-loss
+  ablation and must never be placed in a single-modality table: two acquisition
+  geometries cannot share a column. Its numbers live in
+  `runs/v2_baseline_modality_comparison.json` and figures 5, 13 and 14.
+
+Both parts were trained in the completed study, and `run_v2.sh`'s default arm
+list contains D2 and G for that reason.
+
 Every arm extends `config/base.yaml` and shares:
 
-* off-axis only (the in-line arm is deferred to study 2)
+* **the angular-spectrum front end OFF** (`model.frontend.kind: none`) — the
+  network is fed the raw hologram. The front end is implemented and can be
+  enabled, but no arm of this study used it.
 * no drug-condition head (unstable at +/-9.5 points, outside the question)
 * `phase_mask_contrast` and `dry_mass_consistency` permanently off; see
   `config/base.yaml` for the measurement behind each
@@ -18,8 +35,16 @@ Every arm extends `config/base.yaml` and shares:
 | C   | `c_cell_ipp_bga.yaml`     | does boundary-gradient alignment help on THIS morphology |
 | D0  | `d0_amplitude.yaml`       | can the amplitude head be supervised at all |
 | D1  | `d_forward_amplitude.yaml`| what the forward-model term does (DIAGNOSTIC) |
+| D2  | `d2_learned_z.yaml`       | is the propagation distance recoverable when z is free |
 | W   | `w_ipp_*.yaml`            | the weight sweep for B |
 | K   | `k_compact_*.yaml`        | what the compact decoder costs |
+| L   | `l_lora.yaml`             | what LoRA adaptation of the encoder costs (DEFINED, NOT TRAINED) |
+
+Outside the ablation, one modality arm:
+
+| arm | file | the question it answers alone |
+|---|---|---|
+| G   | `g_baseline_gabor.yaml`   | arm A's configuration on in-line Gabor holograms |
 
 ## Why B' exists, and why it is not optional
 

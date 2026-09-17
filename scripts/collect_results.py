@@ -9,11 +9,18 @@ also where a difference that is not real gets promoted to a finding because
 nobody computed the spread it has to clear.
 
 So this does the whole last mile: it reads every run, assembles the three
-tables, applies the significance rule, folds in the two label-free analyses,
+tables, applies the resolution criterion, folds in the two label-free analyses,
 and writes both a machine-readable CSV and a paper-ready Markdown document.
 
-THE SIGNIFICANCE RULE, APPLIED RATHER THAN DESCRIBED
-----------------------------------------------------
+THE RESOLUTION CRITERION, APPLIED RATHER THAN DESCRIBED
+-------------------------------------------------------
+This is NOT a test of statistical significance. With three seeds per arm there
+is no null distribution, no p-value and no multiple-comparison correction. It
+answers a narrower and more answerable question: is this difference larger than
+the spread the same configuration produces when only the seed changes? A
+difference that fails it is not shown to be zero -- it is not separable from
+seed noise at this replication level. The document says so in those words.
+
 A difference between two arms counts ONLY if it exceeds
 `evaluation.seed_replication.resolve_factor` times the pooled between-seed
 standard deviation of the same metric. That rule exists because the v1
@@ -27,7 +34,7 @@ document, `scripts/aggregate_seeds.py` and figure 19 cannot disagree about the
 verdict. They previously used two different formulas, sqrt(v_a + v_b) and
 sqrt(0.5 (v_a + v_b)), which differ by sqrt(2) for equal n.
 
-This script refuses to mark anything significant when fewer than two seeds
+This script refuses to mark anything resolved when fewer than two seeds
 exist for EITHER arm, and says why in the verdict column rather than implying a
 null result. Run `SEEDS="1337 2024" bash run_v2.sh` to make the column mean
 something.
@@ -761,7 +768,8 @@ def main() -> int:
                  "any Dice or recall here is a statement about the world.")
     lines.append("- **The forward-model term is a diagnostic, not a loss.** A 10% phase "
                  "error lowers its residual, so its gradient points the wrong way near "
-                 "the truth. See `docs/v2_code_changes.md` Part 4.")
+                 "the truth. Measured in `runs/z_calibration.json` and figure 16; see "
+                 "`docs/documentation.md` section 6.2a.")
     lines.append("- **The amplitude reference is a reconstruction, not a measurement.** "
                  "Any amplitude result is agreement with one algorithm's output.")
     lines.append("")

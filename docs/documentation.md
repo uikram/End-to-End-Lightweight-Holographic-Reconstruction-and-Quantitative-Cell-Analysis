@@ -135,11 +135,32 @@ Default constants (`config/base.yaml`, section `optics`):
 | Parameter | Value | Note |
 |---|---|---|
 | `wavelength_um` | 0.666 | as in the previous study's system |
-| `refraction_increment_ml_per_g` | 0.185 | adherent cancer cells; 0.20 is haemoglobin-specific |
+| `refraction_increment_ml_per_g` | 0.2 | confirmed with the acquisition group; range `[0.173, 0.215]` is recorded in the config |
 | `pixel_pitch_x_um` | 0.284871 | decoded from the phase headers |
-| `pixel_pitch_y_um` | 0.211994 | decoded from the phase headers |
+| `pixel_pitch_y_um` | 0.284871 | **isotropic**; see the correction below |
 
-These give 0.060391 µm² per pixel and 0.034601 pg per rad·pixel.
+These give **0.0811515 µm² per pixel**, **0.529986 pg per rad·µm²** and
+**0.0430091 pg per rad·pixel**.
+
+> **Two constants were corrected on 2026-09-10, and this table is the corrected
+> one.** Earlier versions of this document and of `config/base.yaml` carried
+> `refraction_increment_ml_per_g: 0.185` and an **anisotropic** pitch of
+> 0.284871 × 0.211994 µm. Both were wrong: the y pitch had been read from a
+> header field that does not mean what it was taken to mean, and α was a
+> literature value for a different cell type than the one the acquisition group
+> confirmed.
+>
+> The magnitudes are large. The pitch correction raises every absolute area by
+> 34.4% and every absolute mass with it; the α correction lowers absolute mass by
+> a further factor of 0.185/0.2. **Any absolute area or picogram figure written
+> before 2026-09-10 is not comparable with one written after.**
+>
+> **No relative result changes.** α and dx·dy are fixed scalar multipliers that
+> appear identically in the predicted and the reference quantity, so they cancel
+> from every MAPE, correlation, relative bias and limit of agreement in
+> `runs/RESULTS.md`. `scripts/selftest.py` proves this rather than asserting it:
+> it recomputes a MAPE at both ends of the α range and requires the two to agree
+> to 1e-12. The reported study ran on the corrected values above.
 
 `prepare` re-reads the pitch from the headers and warns if it disagrees with the
 configuration beyond `header_pitch_tolerance_um`. Every area, volume and mass
@@ -151,11 +172,15 @@ measurement chain.
 > a literature value for non-erythrocyte cells. All *relative* comparisons, and
 > every agreement statistic, are invariant to both.
 
-**Sanity check on the delivered data.** Running the measurement chain over the
-phase-derived masks gives a median equivalent diameter of 18.2 µm and a median
-dry mass of 149 pg (IQR 61–240), both within the expected range for adherent
-cancer lines. This is an independent confirmation that the header decoding, the
-pixel pitch and the calibration constants are mutually consistent.
+**Sanity check on the delivered data.** Over the 1 889 reference cells of the
+test split (`runs/v2_baseline_off_axis/per_cell_test.csv`, computed with the
+corrected constants above), the measurement chain gives a median projected area
+of 411 µm², a median equivalent diameter of **22.9 µm** and a median dry mass of
+**212 pg** (IQR 137–304) — all within the expected range for adherent cancer
+lines. This is an independent confirmation that the header decoding, the pixel
+pitch and the calibration constants are mutually consistent. (The figures quoted
+here before 2026-09-10 — 18.2 µm and 149 pg — were computed with the superseded
+constants.)
 
 ---
 
@@ -1103,9 +1128,13 @@ remain valid but were trained under weaker augmentation than configured.
 values respectively. Confirm both with the acquisition group. Relative
 comparisons are invariant to them.
 
-**The pixel pitch is anisotropic** (0.285 × 0.212 µm) and was decoded from an
-undocumented header field. `prepare` cross-checks it and warns on disagreement,
-but the interpretation should be confirmed.
+**The pixel pitch was decoded from an undocumented header field.** It is
+**isotropic at 0.284871 µm** in both axes. An earlier reading of the headers took
+a second field to be an anisotropic y pitch of 0.211994 µm; that was corrected on
+2026-09-10 (§3), and the correction changes every absolute area by 34.4%.
+`prepare` re-reads the pitch from the headers on every run and warns on
+disagreement beyond `header_pitch_tolerance_um`, but the header interpretation
+itself rests on the acquisition group's confirmation rather than on documentation.
 
 **The amplitude reference is a reconstruction, not a measurement.** The
 amplitude target is the modulus of a classical off-axis reconstruction (§7.2),

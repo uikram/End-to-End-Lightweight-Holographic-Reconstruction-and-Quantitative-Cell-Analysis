@@ -1,5 +1,23 @@
 # Research plan — end-to-end off-axis vs in-line Gabor study
 
+> **HISTORICAL DOCUMENT — superseded by the 17 September 2026 final study.**
+>
+> This file records the project as it stood on an earlier planning stage and is kept for provenance:
+> it shows what was known, planned or open at that point. **Do not read it as the
+> current state of the system.** Recommendations in it may already be
+> implemented, and any constant, result or gap it names may have changed.
+>
+> Current truth, in order: `runs/RESULTS.md` for results, `README.md` for how to
+> run it, `docs/documentation.md` for the method and the physical constants,
+> `docs/RUNBOOK.md` for operations. Change records:
+> `docs/code_audit_2026-09-16.md`, then `docs/gap_closure_2026-09-17.md`.
+> 
+> Specifically: the forward-model consistency term this plan proposes adding was
+> implemented, trained (arms D1 and D2) and measured to be anti-discriminative
+> near the truth. It is reported as a diagnostic, not used as a loss.
+
+---
+
 Written after reading the old manuscript (`lightweightsegmentationui.docx`), the
 professor's four reference papers, and the repository including every resolved
 config and the completed `runs/` outputs.
