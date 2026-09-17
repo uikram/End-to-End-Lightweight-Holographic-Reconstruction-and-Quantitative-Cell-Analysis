@@ -31,6 +31,13 @@ network must not merely produce a *visually plausible* phase image but a
 inside a boundary the same network predicts, reproduces the dry mass a
 conventional pipeline would report.
 
+The network's outputs are the **quantitative phase**, the **transmitted
+amplitude** and the **cell segmentation**, and the per-cell projected area,
+circularity, optical volume and dry mass derived from the first and the third.
+The amplitude completes the complex field, which is what makes the
+physics-aware forward-model term (§5a, §6.2a) expressible at all; it is optional
+and, when off, the specimen is treated as purely refractive (A = 1).
+
 The second contribution is the comparison of two acquisition geometries —
 off-axis and in-line Gabor — through this single pipeline, under identical data,
 splits, architecture, objective and schedule.
@@ -218,6 +225,7 @@ hologram (B,1,H,W)
  shared encoder  (MobileNetV2 / MobileNetV3-L / ResNet18)
       │  five feature maps at strides 2,4,8,16,32
       ├──────────────► phase decoder (U-Net)        ──► phase head       ──► (B,1,H,W) radians
+      │                                             └──► amplitude head   ──► (B,1,H,W) transmittance
       ├──────────────► segmentation decoder (U-Net) ──► segmentation head ──► (B,2,H,W) logits
       └──────────────► global average pool          ──► classifier        ──► (B,5) logits
 ```
@@ -235,6 +243,21 @@ axis, preserving the spatial-frequency response rather than discarding it.
 
 **Phase head.** Deliberately unbounded and unnormalised — it emits radians
 directly. Any squashing activation would destroy the quantity being measured.
+
+**Amplitude head.** Built only when `model.amplitude.enabled` is set, and it
+shares the phase trunk rather than owning a decoder, because amplitude and phase
+are two components of one field. Its output is bounded to 1 ± `model.amplitude.
+deviation` (0.3), which keeps the predicted transmittance physical without
+squashing it towards a constant. With the head off the model emits no amplitude at
+all and the forward model uses A = 1; the evaluator then reports no amplitude
+metric, rather than scoring the unity field the dataloader substitutes and
+recording a perfect agreement for an arm that never predicted one.
+
+**Classifier is disabled throughout the v2 study**
+(`model.classifier_enabled: false`). Its accuracy moved ±9.5 points between
+seeds, which is wider than any effect the study is testing, and the drug label is
+a property of the dish rather than of a cell. The head and its metrics remain in
+the code.
 
 **Classifier.** The drug label is a property of the dish, not of an individual
 cell, so it is predicted once per field of view and attributed to every cell
@@ -761,11 +784,13 @@ is how they get tuned.
 | Family | Metrics |
 |---|---|
 | **Phase** | MAE and RMSE in radians, bias, PSNR, SSIM, Pearson r, **plus MAE and bias restricted to the inside of reference cells and to background separately** |
+| **Amplitude** | MAE, RMSE, bias and Pearson r against the reconstruction reference; the same MAE inside reference cells; **the same MAE for the thin-phase assumption A = 1 and the ratio between them**; the mean and standard deviation of the prediction itself. Produced only for an arm whose amplitude head is on (§7.2) |
 | **Segmentation** | Dice, IoU, Aggregated Jaccard Index, Boundary F1 (2 px tolerance) |
 | **Detection** | recall, precision and F1 of cell instances at `match_iou_threshold`; counts of reference, detected, matched, missed and false-positive cells |
-| **Classification** | accuracy, macro F1, balanced accuracy, per-class F1, confusion matrix |
-| **Measurement** | per-cell MAPE for area, optical volume and dry mass; per-cell and per-image Pearson r; Bland-Altman relative bias and limits of agreement |
-| **Efficiency** | parameters, GMACs, latency p50/p99, FPS, peak VRAM, under PyTorch and ONNX Runtime |
+| **Classification** | accuracy, macro F1, balanced accuracy, per-class F1, confusion matrix. Not produced while the condition head is disabled |
+| **Measurement** | per-cell MAPE for area, circularity, optical volume and dry mass; per-cell and per-image Pearson r; Bland-Altman relative bias and limits of agreement; field-total bias; bootstrap confidence intervals over fields; **coverage-adjusted MAPE** |
+| **Forward model** | the hologram data-fidelity residual, the same residual from the reference phase as its floor, their ratio, and the propagation distance it was scored at. Reported for **every** arm, including those that never optimised it (§6.2a) |
+| **Efficiency** | parameters, GMACs, latency mean/p50/p99, **p99/p50 and a stability flag**, FPS, weights and peak activation memory, under PyTorch and ONNX Runtime |
 
 Phase errors are reported in **radians**, not as normalised image-quality scores,
 because the downstream measurement inherits them in physical units.
@@ -799,6 +824,36 @@ reported alongside Dice for that reason.
 
 Predicted and reference cells are paired by greedy best IoU above
 `match_iou_threshold`; only matched pairs enter the per-cell error statistics.
+
+### 7.2 The amplitude metric, and what it can and cannot claim
+
+`holoqpi/metrics/amplitude.py`
+
+The framework's stated output is phase **and amplitude** and segmentation, but
+the predicted amplitude is easy to leave unmeasured: it enters the forward-model
+residual, where it is entangled with the phase, the propagation distance and the
+aberration surface, so an amplitude head that had collapsed to a constant would
+leave no trace in any table. This metric family exists to close that gap.
+
+**The comparator is A = 1, not zero.** The honest baseline for a transmittance
+prediction is the thin-phase-object assumption the rest of the study runs on, so
+`amplitude_unity_mae` is the same error computed for A = 1 everywhere and
+`amplitude_mae_over_unity` is the ratio. Below 1.0 the head is closer to the
+reference than that assumption; at or above 1.0 no amplitude claim survives. A
+collapsed head scores **exactly 1.000** by construction, with
+`amplitude_pred_sd` at zero — which is the point, and is pinned by six checks in
+`scripts/selftest.py`.
+
+**What it is agreement with.** The reference is the modulus of a classical
+off-axis reconstruction written by `scripts/prepare_amplitude.py`, normalised so
+the mask background reads 1. It is not a measured transmittance: it carries the
+sideband filter's lost high frequencies, residual twin-image structure and any
+illumination vignetting. Every number in this family is therefore agreement with
+one reconstruction algorithm's output, and the caveat must travel with it into
+any write-up. The in-cell split is reported for the same reason it is for the
+phase — the specimen is about a fifth of the field, so a head that predicts the
+background modulus perfectly and the cells not at all still scores well
+field-wide.
 
 ### 7.1 Checkpoint selection
 
@@ -927,9 +982,13 @@ differentiable and correctly signed.
 ## 10a. Figures
 
 `scripts/make_figures.py` builds the figure set. Every figure answers a question
-the paper has to answer; none restates a table. Nine of the twelve are built from
-files earlier steps already wrote, so they regenerate in seconds; figures 1 and 9
-need a forward pass and are skipped automatically when no checkpoint exists.
+the paper has to answer; none restates a table. Most are built from files earlier
+steps already wrote, so they regenerate in seconds; figures 1 and 9 need a forward
+pass and are skipped automatically when no checkpoint exists.
+
+**Twenty figures are registered and eighteen build on the current study.**
+Figure 7 needs the v1 ablation result set and figure 11 needs the condition head,
+which is disabled — both skip with their reason printed rather than failing.
 
 ```
 python scripts/make_figures.py --config config/base.yaml          # all
@@ -940,6 +999,15 @@ python scripts/make_figures.py --config config/base.yaml --list   # what each on
 Output is `figures/fig<NN>_<name>.png` (for reading) and `.pdf` (for the paper).
 A figure whose inputs are missing prints its reason and is skipped; the rest still
 build.
+
+`figures/_manifest.json` records, for each figure, the config, experiment name,
+modalities and split that produced it. The filenames carry none of that, and one
+figure built from two different configs overwrites itself, so the manifest is the
+only record of which is which. It is **merged** across invocations — stage 9
+calls this script three times, from `config/base.yaml`, from one arm's config and
+from the modality pair — and a figure this run skipped or failed has its entry
+**removed**, because the file on disk is then from an earlier run and the
+manifest must not vouch for it.
 
 | # | Figure | Tier | What it shows and why it earns its place | Reads |
 |---|---|---|---|---|
@@ -955,6 +1023,14 @@ build.
 | 10 | Label audit | Important | Per-image Otsu threshold by condition, and the head-redundancy bars from §4.1. The two properties of the silver-standard labels a reviewer will probe, answered pre-emptively. | `label_audit_*` |
 | 11 | Confusion matrices | Important | Row-normalised condition confusion for both arms. An accuracy number cannot explain why the arm that reconstructs phase better classifies worse; whether the gap is one collapsed class or diffuse confusion decides whether the effect is biological or an acquisition artefact. | `confusion_<split>.json` |
 | 12 | Convergence | Important | Validation trajectories with each metric's own best epoch marked. The heads converge at different times — segmentation and phase plateau while condition accuracy is still climbing — so this is the evidence that the reported numbers were read at a defensible point. | `history.json` |
+| 13 | Forward-model consistency | **Essential** | The hologram data-fidelity residual per arm against its own reference-phase floor, for both geometries. Reading the level alone is meaningless — what the residual can reach is set by acquisition-chain mismatch, not by the network — so this plots the ratio and makes the anti-discriminative result (§6.2a) visible rather than asserted. | `*_modality_comparison.json` |
+| 14 | Learned vs classical | **Essential** | The network and the textbook reconstruction on the same holograms, scored by the same evaluator, for both geometries. This is the study's primary claim and its clearest single panel: the in-line arm is where the classical route fails outright. | `conventional_baseline_<split>.json` |
+| 15 | Recall by cell size | Important | Detection recall binned by reference cell area, with the size distribution of missed cells. Detection recall is the binding constraint on every measurement number, and this says *which* cells are lost — the answer is the small ones, near the area filter. | `unmatched_<split>.csv` |
+| 16 | Forward-model diagnostics | **Essential** | The residual's response to a scaled, noised, mirrored and zeroed phase, and its z scan for both geometries. This is the measurement behind the claim that the term is a diagnostic and not a loss: a 10% phase error *lowers* it. | `amplitude_sensitivity_*`, `z_calibration.json` |
+| 17 | Error propagation | **Essential** | Area and dry-mass error against a boundary moved a known number of pixels, and the ratio between them. No model is involved. It converts a segmentation error into a measurement error and shows why integrated quantities are intrinsically more robust than areal ones. | `error_propagation_summary.csv` |
+| 18 | Synthetic floor | **Essential** | The measurement chain against exact analytic ground truth. Every other number in the study is read against this floor: it separates pipeline error from model error, and it is what licenses the statement that the reported error is reconstruction and segmentation rather than calibration arithmetic. | `synthetic_validation_*.csv` |
+| 19 | v2 ablation | **Essential** | The v2 arms on the primary metric with per-bar between-seed bands and the significance rule applied. The bands are the figure's whole purpose: without them a reader ranks bars that are inside seed noise. | `runs/*/metrics_<split>.json` |
+| 20 | Membrane labels | **Essential** | The phase-derived silver labels against the independently acquired membrane labels on the same fields. This is the only panel in the set that addresses the circularity caveat (§4, §11) with data rather than with a disclaimer. | `membrane_registration.csv`, checkpoint |
 
 Colour is consistent across the set: off-axis blue, Gabor red. Modalities appear
 in the order given by `--modalities`, so panels line up between figures.
@@ -1030,6 +1106,27 @@ comparisons are invariant to them.
 **The pixel pitch is anisotropic** (0.285 × 0.212 µm) and was decoded from an
 undocumented header field. `prepare` cross-checks it and warns on disagreement,
 but the interpretation should be confirmed.
+
+**The amplitude reference is a reconstruction, not a measurement.** The
+amplitude target is the modulus of a classical off-axis reconstruction (§7.2),
+so it carries that algorithm's sideband-filter losses, residual twin-image
+structure and any illumination vignetting. Every amplitude number is agreement
+with that output. The comparison against the thin-phase assumption A = 1 is
+therefore the defensible claim, and the comparison against a physical
+transmittance is not available from this data.
+
+**The forward-model residual is anti-discriminative near the truth** on this
+data (§6.2a): perturbing the reference phase by 10% lowers it, and every trained
+arm scores below its own reference-phase floor. It is reported as a consistency
+diagnostic and as a measure of acquisition-chain mismatch, and it is not used as
+a training signal in any configuration the study recommends.
+
+**The propagation distance is not identifiable off-axis.** An off-axis carrier
+records the phase at any reconstruction distance, so the residual is nearly flat
+in z and `calibrate_z.py` correctly refuses to return a value; in-line it is
+identifiable, with per-field agreement. An arm that makes z a free parameter and
+settles near its initialisation is therefore exhibiting a weak gradient, not
+recovering a distance, and must not be reported as a measurement of one.
 
 **The reference phase is itself a reconstruction**, not a ground truth. The
 network is trained to reproduce the lab's numerical reconstruction, so it

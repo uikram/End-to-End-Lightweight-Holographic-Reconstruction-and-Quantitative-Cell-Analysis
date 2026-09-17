@@ -1,9 +1,0 @@
-06:18:54 | INFO    | scripts.prepare_data | scanning /sda/usama/QPI_Extended/data
-06:18:54 | INFO    | holoqpi.data.metadata | discovered 800 complete samples across 2 modalities
-06:18:54 | INFO    | scripts.prepare_data | cell lines: {'NCI': 250, 'SNU': 300, 'T24': 250}
-06:18:54 | INFO    | scripts.prepare_data | conditions: {'control': 200, 'blebbistatin': 150, 'fccp': 150, 'staurosporine': 150, 'rotenone': 150}
-06:18:54 | INFO    | scripts.prepare_data | calibration: dx=0.284871 dy=0.211994 um -> 0.060391 um^2/px; 1 rad*px = 0.034601 pg
-06:18:54 | INFO    | holoqpi.data.masks | masks written=0 skipped=800 mean foreground=n/a
-06:18:54 | INFO    | holoqpi.data.splits | splits: train=560 val=127 test=113 (stratified by cell_line+condition, seed=42)
-06:18:54 | INFO    | scripts.prepare_data | preparation complete: {'train': 560, 'val': 127, 'test': 113}
-06:18:54 | INFO    | scripts.prepare_data | manifest -> data/manifest.csv

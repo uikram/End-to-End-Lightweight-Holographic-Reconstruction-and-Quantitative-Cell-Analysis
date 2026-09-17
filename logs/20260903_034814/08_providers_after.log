@@ -1,4 +1,0 @@
-=== providers visible after the install attempt ===
-onnxruntime: 1.28.0
-providers  : ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider']
-CUDA usable: True
