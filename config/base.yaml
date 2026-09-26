@@ -345,6 +345,9 @@ mask_generation:
   # 25.1% of all cells, 34 px costs 35.2% -- and the illumination fall-off they
   # would target (measurable out to ~34 px) never reaches these masks anyway.
   # See holoqpi/data/masks.py for the stage-by-stage measurement.
+  # CORRECTION (audit, 2026-09-26): closing leaves a 2-px empty rim, so edge
+  # objects stop "touching" and buffer 0 removes nothing; 1456 of the 3186
+  # test reference instances lie within 4 px of the edge. See masks.py.
   border_buffer_px: 0
   watershed_min_distance_px: 15
   overwrite_existing: false
@@ -665,7 +668,21 @@ evaluation:
   # differences can be compared against the spread between identical runs
   # instead of being read off a single number. scripts/aggregate_seeds.py.
   seed_replication:
-    seeds: [1337, 2024]                 # in addition to project.seed
+    # In addition to project.seed (42). Only the seeds that already have
+    # trained models: nothing is retrained. Arms A, B and B' have three
+    # trained models each (42, 1337, 2024); every other arm has one (42).
+    # To train more seeds later, add them here and empty reduced_arms.
+    seeds: [1337, 2024]
+    # Arms that exist at only the first `reduced_runs` seeds.
+    reduced_arms: [B2, C, D0, D1, D2, G, W01, W03, W30, KA, KB]
+    reduced_runs: 1
+    # A category with fewer complete runs than this is reported but flagged.
+    min_runs: 3
+    # Arms whose checkpoints are timed by `main.py benchmark --seed` (stage 12).
+    # One per architecture in the efficiency table, plus the arm it is compared to.
+    hardware_arms: [A, B, D0, KA, KB]
+    # Confidence level of the between-run interval (Student t, df = n - 1).
+    ci_level: 0.95
     # A difference must exceed this multiple of the pooled between-seed spread
     # before it is called resolved. 2.0 is deliberately conservative: with 113
     # test fields and five classes the standard error on accuracy alone is about

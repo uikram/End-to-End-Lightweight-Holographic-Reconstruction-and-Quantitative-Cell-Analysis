@@ -43,6 +43,7 @@ arm to determine z and apply it to both**.
 from __future__ import annotations
 
 import argparse
+import time
 import json
 import math
 import sys
@@ -56,7 +57,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from holoqpi.config import load_config, parse_overrides
 from holoqpi.data import build_dataloaders
 from holoqpi.physics import estimate_carrier, form_hologram, propagate
-from holoqpi.utils import get_logger, resolve_device
+from holoqpi.utils import analysis_fingerprint, get_logger, resolve_device
 
 LOGGER = get_logger(__name__)
 
@@ -960,6 +961,14 @@ def main() -> int:
     kept = sorted(set(existing) - set(payload))
     existing.update(payload)
     destination.write_text(json.dumps(existing, indent=2))
+
+    # Provenance per modality, merged the same way as the result itself.
+    sidecar = destination.with_suffix(".provenance.json")
+    provenance = json.loads(sidecar.read_text()) if sidecar.is_file() else {}
+    for modality in payload:
+        provenance[modality] = {"script": "calibrate_z.py", "created_at": time.time(),
+                                **analysis_fingerprint(cfg)}
+    sidecar.write_text(json.dumps(provenance, indent=2))
     print(f"\ncurves and estimates -> {destination}")
     if replaced:
         print(f"  updated: {', '.join(replaced)}")
@@ -991,8 +1000,7 @@ def main() -> int:
         print("diagnostic and a legitimate negative result about physics-consistency")
         print("losses under a non-invertible acquisition pipeline. It is not trained")
         print("by default. To test it anyway:")
-        print("    python main.py compare --config config/ablation/physics_forward_only.yaml \\")
-        print("        --set loss.weights.forward_model=0.05")
+        print("    python main.py train --config config/v2/d_forward_amplitude.yaml")
         print("and check that the phase metrics do not degrade against the base run.")
         return 0
 

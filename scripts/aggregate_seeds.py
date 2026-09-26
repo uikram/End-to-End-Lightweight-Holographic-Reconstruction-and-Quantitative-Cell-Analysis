@@ -87,6 +87,12 @@ _ARM_CODE_TO_EXPERIMENT = {
     "v2_KA": "v2_compact_baseline",
     "v2_KB": "v2_compact_cell_ipp",
     "v2_L": "v2_lora",
+    "v2_W01": "v2_ipp_w01",
+    "v2_W03": "v2_ipp_w03",
+    "v2_W30": "v2_ipp_w30",
+    # G is arm A's objective on in-line holograms, so its seed replicates pool
+    # with v2_baseline under the gabor modality.
+    "v2_G": "v2_baseline",
 }
 
 
@@ -126,7 +132,7 @@ def study_experiments() -> set[str]:
 
 def group_runs(
     output_root: Path, modality: str, split: str, default_seed: int,
-    keep: set[str] | None = None,
+    keep: set[str] | None = None, seeds: set[int] | None = None,
 ) -> dict[str, dict[int, dict]]:
     """``{experiment: {seed: metrics}}`` from the run directories on disk.
 
@@ -144,6 +150,12 @@ def group_runs(
         experiment = _ARM_CODE_TO_EXPERIMENT.get(stem, stem)
         if keep is not None and experiment not in keep:
             continue
+        # Only the seeds the study declares. A directory from any other seed --
+        # a smoke test, an abandoned trial -- is not a replicate of this study.
+        if seeds is not None and (default_seed if seed is None else seed) not in seeds:
+            LOGGER.info("ignoring %s: seed %s is not in the planned seed list",
+                        directory, seed)
+            continue
         try:
             grouped[experiment][default_seed if seed is None else seed] = json.loads(
                 path.read_text()
@@ -153,7 +165,7 @@ def group_runs(
     return grouped
 
 
-#: The significance rule, from holoqpi.utils so that this script, the figures
+#: The resolution rule (not a significance test), from holoqpi.utils so that this script, the figures
 #: and the results tables cannot disagree about it. See
 #: ``pooled_between_seed_sd`` for what the three previous implementations were.
 pooled_sd = pooled_between_seed_sd
@@ -218,8 +230,10 @@ def main() -> int:
     absent_baseline: list[str] = []
 
     for modality in modalities:
+        planned = {int(cfg.project.seed), *(int(s) for s in settings.seeds)}
         grouped = group_runs(
-            output_root, modality, args.split, int(cfg.project.seed), keep=keep
+            output_root, modality, args.split, int(cfg.project.seed), keep=keep,
+            seeds=None if args.all_runs else planned,
         )
         print(f"\n{'=' * 74}\n {modality}\n{'=' * 74}")
         if not grouped:
@@ -237,7 +251,7 @@ def main() -> int:
             print(f"\n  {len(single)} arm(s) have a single run, so no spread can be")
             print("  estimated for them and every comparison involving one is")
             print(f"  unresolvable by construction: {', '.join(single)}")
-            print("  Fill this in with:  SEEDS=\"1337 2024\" bash run_v2.sh --stage 6")
+            print("  Fill this in with:  bash run_v2.sh --stage 11   (see BENCHMARKING.md)")
 
         # Raw per-seed values, kept as arrays so the pooled SD can be computed
         # from the two populations rather than from two summary numbers.
@@ -337,7 +351,7 @@ def main() -> int:
         print(f" NO COMPARISON IS RESOLVABLE: all {len(rows)} of them lack seed")
         print(" replication on one or both arms. This is NOT the same statement as")
         print(" 'no difference exists' -- the yardstick does not exist yet.")
-        print(' Run:  SEEDS="1337 2024" bash run_v2.sh --stage 6')
+        print(' Run:  bash run_v2.sh --stage 11   (see BENCHMARKING.md)')
     elif not resolved:
         comparable = len(rows) - len(unresolvable)
         print(f" NOTHING IS RESOLVED among the {comparable} comparison(s) that had a")

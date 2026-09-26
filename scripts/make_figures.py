@@ -1852,7 +1852,7 @@ def figure_synthetic_floor(cfg, args, out_dir: Path) -> None:
 
 
 # ===========================================================================
-# FIGURE 19 -- the v2 ablation, with the significance rule drawn  [ESSENTIAL]
+# FIGURE 19 -- the v2 ablation, with the resolution rule drawn  [ESSENTIAL]
 # ===========================================================================
 def figure_v2_ablation(cfg, args, out_dir: Path) -> None:
     """What each term is worth, against the noise it has to clear.
@@ -1968,7 +1968,7 @@ def figure_v2_ablation(cfg, args, out_dir: Path) -> None:
             deltas.append(float(value) - float(reference))
             a = seed_spread(root, code, modality, args.split, key)
             b = seed_spread(root, comparator, modality, args.split, key)
-            # THE SHARED IMPLEMENTATION of the project's significance rule.
+            # THE SHARED IMPLEMENTATION of the project's resolution rule.
             # This used to compute sqrt(0.5 (v_a + v_b)) while
             # scripts/aggregate_seeds.py computed sqrt(v_a + v_b) for the same
             # rule -- a factor of sqrt(2) apart, so one document could call a
@@ -2039,7 +2039,7 @@ def figure_v2_ablation(cfg, args, out_dir: Path) -> None:
         caption = ("Shaded band: +/- 2x the pooled between-seed SD. A bar inside it "
                    "is seed noise, not a difference. Grey bars are inside the band.")
     else:
-        caption = ("NO SEED REPLICATION: the significance band cannot be computed, so "
+        caption = ("NO SEED REPLICATION: the resolution band cannot be computed, so "
                    "NO bar here can be called a difference. Run "
                    'SEEDS="1337 2024" bash run_v2.sh.')
     fig.suptitle("HoloQPI v2 ablation: each arm against its own comparator, "

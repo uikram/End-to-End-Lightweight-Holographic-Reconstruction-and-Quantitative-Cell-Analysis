@@ -48,6 +48,7 @@ is exactly the quantity a Bland-Altman plot of the final result is about.
 from __future__ import annotations
 
 import argparse
+import time
 import csv
 import sys
 from pathlib import Path
@@ -61,7 +62,7 @@ from holoqpi.config import load_config, parse_overrides
 from holoqpi.data import io as data_io
 from holoqpi.data.masks import split_instances
 from holoqpi.metrics.segmentation import SegmentationMetrics
-from holoqpi.utils import get_logger, write_csv
+from holoqpi.utils import analysis_fingerprint, get_logger, write_csv, write_json
 
 LOGGER = get_logger(__name__)
 
@@ -256,6 +257,10 @@ def main() -> int:
               f"{ratio:>11.3f}")
 
     write_csv(summary, Path(cfg.paths.output_root) / "error_propagation_summary.csv")
+    write_json({"script": "error_propagation.py", "max_shift": args.max_shift,
+                "limit": args.limit, "created_at": time.time(),
+                **analysis_fingerprint(cfg)},
+               Path(cfg.paths.output_root) / "error_propagation_summary.provenance.json")
 
     # The exchange rate at one pixel, which is the number to quote.
     one_out = next((s for s in summary if s["shift_px"] == 1), None)

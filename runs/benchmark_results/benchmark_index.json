@@ -1,0 +1,428 @@
+{
+  "generated_at": "2026-09-21 20:40:46",
+  "config": "config/base.yaml",
+  "overrides": {},
+  "seeds": [
+    42,
+    1337,
+    2024
+  ],
+  "seeds_by_arm": {
+    "A": [
+      42,
+      1337,
+      2024
+    ],
+    "B": [
+      42,
+      1337,
+      2024
+    ],
+    "B1": [
+      42,
+      1337,
+      2024
+    ],
+    "B2": [
+      42
+    ],
+    "C": [
+      42
+    ],
+    "D0": [
+      42
+    ],
+    "D1": [
+      42
+    ],
+    "D2": [
+      42
+    ],
+    "G": [
+      42
+    ],
+    "W01": [
+      42
+    ],
+    "W03": [
+      42
+    ],
+    "W30": [
+      42
+    ],
+    "KA": [
+      42
+    ],
+    "KB": [
+      42
+    ]
+  },
+  "hardware_arms": [
+    "A",
+    "B",
+    "D0",
+    "KA",
+    "KB"
+  ],
+  "hardware_device": "cuda",
+  "ci_level": 0.95,
+  "aliases": {
+    "W10": "B"
+  },
+  "benchmarks": {
+    "arm_A": {
+      "file": "results_arm_A.json",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        1337,
+        2024
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_A_membrane": {
+      "file": "results_arm_A_membrane.json",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        1337,
+        2024
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_B": {
+      "file": "results_arm_B.json",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        1337,
+        2024
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_B_membrane": {
+      "file": "results_arm_B_membrane.json",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        1337,
+        2024
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_B1": {
+      "file": "results_arm_B1.json",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        1337,
+        2024
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_B1_membrane": {
+      "file": "results_arm_B1_membrane.json",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        1337,
+        2024
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_B2": {
+      "file": "results_arm_B2.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_B2_membrane": {
+      "file": "results_arm_B2_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_C": {
+      "file": "results_arm_C.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_C_membrane": {
+      "file": "results_arm_C_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_D0": {
+      "file": "results_arm_D0.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_D0_membrane": {
+      "file": "results_arm_D0_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_D1": {
+      "file": "results_arm_D1.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_D1_membrane": {
+      "file": "results_arm_D1_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_D2": {
+      "file": "results_arm_D2.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_D2_membrane": {
+      "file": "results_arm_D2_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_G": {
+      "file": "results_arm_G.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_G_membrane": {
+      "file": "results_arm_G_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_W01": {
+      "file": "results_arm_W01.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_W01_membrane": {
+      "file": "results_arm_W01_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_W03": {
+      "file": "results_arm_W03.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_W03_membrane": {
+      "file": "results_arm_W03_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_W30": {
+      "file": "results_arm_W30.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_W30_membrane": {
+      "file": "results_arm_W30_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_KA": {
+      "file": "results_arm_KA.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_KA_membrane": {
+      "file": "results_arm_KA_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_KB": {
+      "file": "results_arm_KB.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_KB_membrane": {
+      "file": "results_arm_KB_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "hardware_arm_A": {
+      "file": "results_hardware_arm_A.json",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        1337,
+        2024
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "hardware_arm_B": {
+      "file": "results_hardware_arm_B.json",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        1337,
+        2024
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "hardware_arm_D0": {
+      "file": "results_hardware_arm_D0.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "hardware_arm_KA": {
+      "file": "results_hardware_arm_KA.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "hardware_arm_KB": {
+      "file": "results_hardware_arm_KB.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "synthetic_validation": {
+      "file": "results_synthetic_validation.json",
+      "n_runs": 3,
+      "seeds": [
+        42,
+        1337,
+        2024
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "conventional_off_axis": {
+      "file": "results_conventional_off_axis.json",
+      "n_runs": 1,
+      "seeds": [],
+      "complete": true,
+      "replication": "deterministic"
+    },
+    "conventional_gabor": {
+      "file": "results_conventional_gabor.json",
+      "n_runs": 1,
+      "seeds": [],
+      "complete": true,
+      "replication": "deterministic"
+    },
+    "error_propagation": {
+      "file": "results_error_propagation.json",
+      "n_runs": 1,
+      "seeds": [],
+      "complete": true,
+      "replication": "deterministic"
+    },
+    "z_calibration": {
+      "file": "results_z_calibration.json",
+      "n_runs": 1,
+      "seeds": [],
+      "complete": true,
+      "replication": "deterministic"
+    }
+  },
+  "not_written": {},
+  "ignored_directories": []
+}

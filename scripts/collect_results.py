@@ -36,7 +36,7 @@ sqrt(0.5 (v_a + v_b)), which differ by sqrt(2) for equal n.
 
 This script refuses to mark anything resolved when fewer than two seeds
 exist for EITHER arm, and says why in the verdict column rather than implying a
-null result. Run `SEEDS="1337 2024" bash run_v2.sh` to make the column mean
+null result. Run `bash run_v2.sh --stage 11` (BENCHMARKING.md) to make the column mean
 something.
 
 WHAT IT WILL NOT DO
@@ -96,6 +96,9 @@ ARMS = [
     # LoRA at all is a write-up decision -- see config/v2/l_lora.yaml.
     ("L",   "config/v2/l_lora.yaml",              "L  + LoRA encoder",        "A"),
 ]
+
+# W10 is arm B (same objective, same seeds); its replicates are arm B's.
+SEED_CODE = {"W10": "B"}
 
 # The metrics that go in the headline table, and which direction is better.
 HEADLINE = [
@@ -204,15 +207,20 @@ def experiment_name(config_path: Path) -> str | None:
         return None
 
 
-def seed_spread(root: Path, code: str, modality: str, split: str, key: str) -> list[float]:
-    """Values of one metric across the seed-replication runs of one arm.
+def seed_spread(root: Path, code: str, modality: str, split: str, key: str,
+                primary: str | None = None, seeds: list[int] | None = None) -> list[float]:
+    """Values of one metric across every planned seed of one arm.
 
-    run_v2.sh names those `v2_<code>_seed<N>`, so they are found by pattern
-    rather than by being listed anywhere.
+    The seed-``project.seed`` run lives in the arm's own directory (``primary``,
+    e.g. ``v2_baseline``); every other seed in ``v2_<code>_seed<N>``. The primary
+    run IS one of the seeds, so it is included -- it used to be left out, which
+    computed the spread from two runs while the text said three. Only seeds in
+    the plan are read, so a stray smoke-test directory cannot enter the spread.
     """
     values = []
-    for directory in sorted(root.glob(f"v2_{code}_seed*_{modality}")):
-        path = directory / f"metrics_{split}.json"
+    for seed in seeds or []:
+        name = primary if seed == seeds[0] and primary else f"v2_{code}_seed{seed}"
+        path = root / f"{name}_{modality}" / f"metrics_{split}.json"
         if path.is_file():
             value = json.loads(path.read_text()).get(key)
             if value is not None and np.isfinite(value):
@@ -269,6 +277,16 @@ def main() -> int:
             continue
         found[code] = metrics
 
+    # Every planned seed, primary first -- the same list stage 11 of run_v2.sh
+    # trains and collect_benchmark_results.py collects.
+    replication = cfg.evaluation.seed_replication
+    planned_seeds = [int(cfg.project.seed)] + [
+        int(s) for s in replication.seeds if int(s) != int(cfg.project.seed)
+    ]
+    experiment_of = {code: experiment_name(Path(config_path))
+                     for code, config_path, _, _ in ARMS}
+    experiment_of["W10"] = experiment_of.get("B")
+
     # The sweep's w = 1.0 row is arm B. Alias it rather than reporting a gap.
     aliased = False
     if "W10" not in found and "B" in found:
@@ -312,7 +330,7 @@ def main() -> int:
     lines.append("## Table 1 — Ablation")
     lines.append("")
     lines.append("Each arm differs from its comparator by **one term**. The "
-                 "significance column applies the project's rule: a difference "
+                 "verdict column applies the project's resolution rule: a difference "
                  "counts only if it exceeds "
                  f"**{float(cfg.evaluation.seed_replication.resolve_factor):g}x the "
                  "pooled between-seed SD** of the same metric.")
@@ -354,11 +372,20 @@ def main() -> int:
         reference = found[comparator].get(primary)
         if value is None or reference is None:
             continue
-        delta = float(value) - float(reference)
         comparisons += 1
 
-        spread_a = seed_spread(root, code, modality, args.split, primary)
-        spread_b = seed_spread(root, comparator, modality, args.split, primary)
+        spread_a = seed_spread(root, SEED_CODE.get(code, code), modality, args.split,
+                               primary, experiment_of.get(code), planned_seeds)
+        spread_b = seed_spread(root, SEED_CODE.get(comparator, comparator), modality,
+                               args.split, primary, experiment_of.get(comparator),
+                               planned_seeds)
+        # The difference of MEANS once both arms are replicated, so the delta and
+        # the spread it is judged against describe the same runs; a single-run
+        # difference otherwise.
+        if len(spread_a) > 1 and len(spread_b) > 1:
+            delta = float(np.mean(spread_a) - np.mean(spread_b))
+        else:
+            delta = float(value) - float(reference)
         # The yardstick is how much the SAME configuration moves when only the
         # seed changes. Computed by holoqpi.utils.pooled_between_seed_sd, which
         # is the single implementation this project's figures, tables and
@@ -789,7 +816,7 @@ def main() -> int:
         print("     QUICK run that is expected and means nothing.")
     elif not any_resolved and found:
         print("\n  -> no arm-to-arm difference is resolved at the 2x-seed-spread rule.")
-        print("     Run SEEDS=\"1337 2024\" bash run_v2.sh to fill that column, and")
+        print("     Run bash run_v2.sh --stage 11 (BENCHMARKING.md) to fill that column, and")
         print("     report an unresolved difference as unresolved rather than as a result.")
     return 0
 

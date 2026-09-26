@@ -1,22 +1,22 @@
 # HoloQPI v2, weight sweep arm: cell_integrated_phase = 0.1
 #
 # WHY A SWEEP AND NOT A CHOSEN NUMBER. The per-cell term's gradient into the
-# segmentation decoder is 0.25-0.29 times the segmentation loss's gradient on
-# the same parameters, measured at WEIGHT 1.0 over several batches by
-# scripts/check_gradient_path.py. The objective adds w * term, so the ratio the
-# optimiser actually sees is w * 0.27:
+# segmentation decoder is 0.302 times the segmentation loss's gradient on the
+# same parameters (median over 30 batches, range 0.18-0.67), measured at
+# WEIGHT 1.0 by scripts/check_gradient_path.py
+# (runs/gradient_path_b_cell_ipp_512.csv). The objective adds w * term, so the
+# ratio the optimiser actually sees is w * 0.302:
 #
-#   w = 0.1  ->  0.027   (segmentation ahead 37 : 1)
-#   w = 0.3  ->  0.081   (12 : 1)
-#   w = 1.0  ->  0.27    (3.7 : 1)
-#   w = 3.0  ->  0.81    (1.2 : 1)
+#   w = 0.1  ->  0.030   (segmentation ahead 33 : 1)
+#   w = 0.3  ->  0.091   (11 : 1)
+#   w = 1.0  ->  0.302   (3.3 : 1)
+#   w = 3.0  ->  0.906   (1.1 : 1)
 #
 # At 0.1 the term is swamped, so a null result at that weight is a statement
 # about the weight and not about the hypothesis. Reporting the sweep makes the
 # distinction visible instead of leaving a single number to be argued about.
 #
-# The gradient ratio was misread once in this project as if 0.299 were already
-# the effective ratio at any weight. It is not. It is the ratio at w = 1.0.
+# The ratio is measured at w = 1.0; it is not the effective ratio at any weight.
 extends: ../base.yaml
 
 experiment_name: v2_ipp_w01

@@ -7,8 +7,15 @@
 #   QUICK=1 bash run_v2.sh             tiny settings, to prove the plumbing
 #   NO_TRAIN=1 bash run_v2.sh          reuse checkpoints, re-evaluate only
 #   ARMS="A B B1" bash run_v2.sh       train only these arms
-#   SEEDS="1337 2024" bash run_v2.sh   replicate the main arms over more seeds
 #   CLEAN=1 bash run_v2.sh             archive runs/ and figures/ first
+#
+# Seed replication and repeated benchmarking (stages 11-14) are documented in
+# BENCHMARKING.md; in short:
+#   CUDA_VISIBLE_DEVICES=2 ARMS="A B B1 B2 C D0 D1 D2" nohup bash run_v2.sh --stage 11 > seeds_gpu2.out 2>&1 &
+#   CUDA_VISIBLE_DEVICES=3 ARMS="G W01 W03 W30 KA KB" nohup bash run_v2.sh --stage 11 > seeds_gpu3.out 2>&1 &
+#   CUDA_VISIBLE_DEVICES=2 bash run_v2.sh --stage 12     (only when both GPUs are idle)
+#   bash run_v2.sh --stage 13
+#   bash run_v2.sh --stage 14
 #
 # Run it under nohup so a dropped connection does not kill it:
 #
@@ -32,7 +39,8 @@
 # already clear:
 #
 #   PASS 1, about 10-12 h.  The main hypothesis and its control.
-#       ARMS="A B B1" SEEDS="1337 2024" bash run_v2.sh
+#       ARMS="A B B1" bash run_v2.sh --stage 6
+#       ARMS="A B B1" bash run_v2.sh --stage 11     (the other seeds)
 #     Three arms, three seeds each = 9 runs. This is the ONLY pass that can
 #     answer the paper's central question, because A vs B says a
 #     measurement-aware loss helps and B vs B' says the PER-CELL part is what
@@ -72,6 +80,10 @@
 #   8  ONNX export + benchmark      the efficiency claim
 #   9  figures                      reads everything above
 #  10  collect results              the tables, assembled from the run files
+#  11  seed replication             every arm at every seed: train if missing, evaluate
+#  12  repeated hardware benchmark  every hardware arm at every seed, own file each
+#  13  repeated synthetic floor     the label-free ground-truth check at every seed
+#  14  collect benchmark results    runs/benchmark_results/results_*.json
 #
 # STAGE 4 IS NOT OPTIONAL AND IS NOT COSMETIC. It measures the gradient ratio
 # that sets the per-cell loss weight and it measures whether the forward-model
@@ -89,13 +101,16 @@
 
 cd "$(dirname "$0")" || exit 1
 
-STAMP="$(date +%Y%m%d_%H%M%S)"
-LOGDIR="logs/v2_${STAMP}"
-mkdir -p "${LOGDIR}"
-SUMMARY="${LOGDIR}/SUMMARY.txt"
-
 : "${CUDA_VISIBLE_DEVICES:=0}"
 export CUDA_VISIBLE_DEVICES
+
+# The GPU is part of the name because the seed stages are run as two
+# concurrent invocations, one per GPU, and started in the same second they
+# would otherwise write one shared SUMMARY.txt.
+STAMP="$(date +%Y%m%d_%H%M%S)"
+LOGDIR="logs/v2_${STAMP}_gpu${CUDA_VISIBLE_DEVICES//,/-}"
+mkdir -p "${LOGDIR}"
+SUMMARY="${LOGDIR}/SUMMARY.txt"
 : "${PYTHON:=python}"
 : "${SEEDS:=}"
 # D2 and G are part of the study now -- D2 is the learned-distance arm and G is
@@ -117,7 +132,8 @@ GRAD_BATCHES=30
 Z_STEPS=41
 if [ -n "${QUICK}" ]; then
   QUICK_OVERRIDES="training.epochs=2 data.train_crop=192 data.batch_size=2 \
-evaluation.phase_n_images=2 evaluation.measurement.field_bootstrap_resamples=50"
+evaluation.phase_n_images=2 evaluation.measurement.field_bootstrap_resamples=50 \
+deploy.benchmark.warmup_runs=2 deploy.benchmark.timed_runs=20"
   # The diagnostics need shrinking too, or QUICK is not quick: a 30-batch
   # gradient measurement and a 41-point z sweep dominate the wall clock on a
   # machine without a GPU, and neither is meaningful at QUICK's crop size
@@ -219,7 +235,7 @@ config_for() {
 
 note "HoloQPI v2 study, started $(date)"
 note "log directory ${LOGDIR}"
-note "GPU ${CUDA_VISIBLE_DEVICES}   arms: ${ARMS}   extra seeds: ${SEEDS:-none}"
+note "GPU ${CUDA_VISIBLE_DEVICES}   arms: ${ARMS}   seeds (stages 11-14): ${SEEDS:-from config}"
 
 if [ -n "${CLEAN}" ]; then
   ARCHIVE="archive/pre_v2_${STAMP}"
@@ -382,27 +398,9 @@ if want 6; then
     fi
   done
 
-  # Replication. A difference between arms counts only if it exceeds the spread
-  # between seeds of the SAME arm, and the v1 round resolved 0 of 54 comparisons
-  # by that rule. Without this the ablation table has no error bars and every
-  # difference in it is unfalsifiable.
-  for seed in ${SEEDS}; do
-    for arm in A B B1; do
-      armed "${arm}" || continue
-      cfg="$(config_for "${arm}")"
-      # shellcheck disable=SC2086
-      step "train_${arm}_seed${seed}" "${PYTHON}" main.py train --config "${cfg}" \
-        --set "project.seed=${seed}" "experiment_name=v2_${arm}_seed${seed}" \
-        ${QUICK_OVERRIDES}
-      # shellcheck disable=SC2086
-      step "evaluate_${arm}_seed${seed}" "${PYTHON}" main.py evaluate --config "${cfg}" \
-        --set "project.seed=${seed}" "experiment_name=v2_${arm}_seed${seed}" \
-        ${QUICK_OVERRIDES}
-    done
-  done
-  if [ -n "${SEEDS}" ]; then
-    step aggregate_seeds "${PYTHON}" scripts/aggregate_seeds.py --config config/base.yaml
-  fi
+  # Seed replication used to live here, for arms A, B and B' only. It is now
+  # stage 11, which covers every arm, reads its seed list from config, never
+  # retrains a finished run, and writes provenance for every evaluation.
 
   # PAIR THE TWO ACQUISITION GEOMETRIES, once both arms exist.
   #
@@ -542,6 +540,174 @@ if want 10; then
   if [ -f runs/RESULTS.md ]; then
     note "    -> runs/RESULTS.md is the document to read and to paste from"
   fi
+fi
+
+# ==========================================================================
+# 11-14  SEED REPLICATION AND REPEATED BENCHMARKING.  See BENCHMARKING.md.
+#
+# The seed list is project.seed + evaluation.seed_replication.seeds in
+# config/base.yaml, unless SEEDS="..." is given (see BENCHMARKING.md).
+# Which (arm, seed) runs exist, and whether each is finished, is decided by
+# scripts/collect_benchmark_results.py -- the same code that later collects
+# them -- so the driver and the collector cannot disagree about "done".
+#
+# Nothing here ever retrains a finished run. A run that is missing or was
+# killed part-way is trained; a finished run is only (re-)evaluated when its
+# metrics file cannot be tied to its checkpoint. A run trained under
+# different settings, or with a different seed, is reported and left alone:
+# set FORCE_RETRAIN=1 to overwrite it.
+# ==========================================================================
+: "${SYN_FIELDS:=12}"
+REP_ROOT="runs"
+REP_OVERRIDES=""
+if [ -n "${QUICK}" ]; then
+  # QUICK replicates go to their own root so they can never be mistaken for, or
+  # block, the real ones.
+  REP_ROOT="runs_quick"
+  REP_OVERRIDES="${QUICK_OVERRIDES} paths.output_root=${REP_ROOT}"
+fi
+SEEDS_ARG=""
+[ -n "${SEEDS}" ] && SEEDS_ARG="--seeds ${SEEDS}"
+
+# HW_DEVICE=cpu only for a CPU-only plumbing test; the paper's timings are cuda.
+: "${HW_DEVICE:=cuda}"
+collector() {
+  # shellcheck disable=SC2086
+  "${PYTHON}" scripts/collect_benchmark_results.py "$@" ${SEEDS_ARG} \
+    --hardware-device "${HW_DEVICE}" ${REP_OVERRIDES:+--set ${REP_OVERRIDES}}
+}
+seed_list() {
+  if [ -n "${SEEDS}" ]; then echo "${SEEDS}"; else collector seeds; fi
+}
+
+# --------------------------------------------------------------------------
+# 11  train (if needed) and evaluate every arm at every seed
+# --------------------------------------------------------------------------
+if want 11; then
+  note ""
+  note "########## stage 11: seed replication, seeds $(seed_list | tr '\n' ' ')"
+  for seed in $(seed_list); do
+    for arm in ${ARMS}; do
+      [ "${arm}" = "W10" ] && continue          # W10 is arm B; reported once
+      cfg="$(config_for "${arm}")"
+      if [ -z "${cfg}" ]; then note "    unknown arm ${arm}, skipped"; continue; fi
+
+      code=0
+      info="$(collector status --arm "${arm}" --seed "${seed}" 2>"${LOGDIR}/.status")" || code=$?
+      name="$(echo "${info}" | awk '{print $2}')"
+      why="$(cat "${LOGDIR}/.status" 2>/dev/null)"
+      train=""
+      case "${code}" in
+        20) continue ;;                           # not planned for this arm
+        0)  if [ -z "${REEVALUATE}" ]; then
+              note "    ${arm} seed ${seed}: done (trained and evaluated)"; continue
+            fi ;;
+        1)  ;;                                    # trained; evaluate only
+        10|11) train=1 ;;                         # missing, or killed part-way
+        12) if [ -n "${FORCE_RETRAIN}" ]; then train=1; else
+              note "    ${arm} seed ${seed}: FAILED -- left untouched:${why}"
+              note "      (FORCE_RETRAIN=1 retrains it and overwrites the directory)"
+              continue
+            fi ;;
+        *)  note "    ${arm} seed ${seed}: FAILED -- status exit ${code}:${why}"; continue ;;
+      esac
+
+      if [ -n "${train}" ]; then
+        # shellcheck disable=SC2086
+        step "train_${arm}_seed${seed}" "${PYTHON}" main.py train --config "${cfg}" \
+          --seed "${seed}" --set "experiment_name=${name}" ${REP_OVERRIDES} || continue
+      fi
+      # shellcheck disable=SC2086
+      step "evaluate_${arm}_seed${seed}" "${PYTHON}" main.py evaluate --config "${cfg}" \
+        --seed "${seed}" --set "experiment_name=${name}" ${REP_OVERRIDES}
+      if [ -d data/membrane_mask ]; then
+        # shellcheck disable=SC2086
+        step "evaluate_${arm}_seed${seed}_membrane" "${PYTHON}" main.py evaluate \
+          --config "${cfg}" --seed "${seed}" --tag membrane \
+          --set "experiment_name=${name}" paths.manual_mask_dir=membrane_mask ${REP_OVERRIDES}
+      fi
+    done
+  done
+  # shellcheck disable=SC2086
+  step plan_after_stage11 collector plan --arms ${ARMS}
+  sed 's/^/    /' "${LOGDIR}/plan_after_stage11.log" | tee -a "${SUMMARY}"
+fi
+
+# --------------------------------------------------------------------------
+# 12  repeated hardware benchmark
+#
+# RUN THIS ONLY WHEN NOTHING ELSE IS USING THE GPU -- including the other GPU's
+# stage-11 run, which shares the CPU and PCIe bus. Each seed is a separate
+# process timing that seed's checkpoint; its rows go to
+# <run dir>/hardware_benchmark_cuda.json, never to the shared files at the top
+# of runs/ that collect_results.py reads for Table 4.
+# --------------------------------------------------------------------------
+if want 12; then
+  note ""
+  note "########## stage 12: repeated hardware benchmark"
+  for seed in $(seed_list); do
+    for arm in $(collector seeds --hardware); do
+      armed "${arm}" || continue
+      cfg="$(config_for "${arm}")"
+      code=0
+      info="$(collector status --arm "${arm}" --seed "${seed}" --hardware 2>"${LOGDIR}/.status")" \
+        || code=$?
+      name="$(echo "${info}" | awk '{print $2}')"
+      modality="$(echo "${info}" | awk '{print $4}')"
+      why="$(cat "${LOGDIR}/.status" 2>/dev/null)"
+      case "${code}" in
+        20) continue ;;
+        0)  if [ -z "${REBENCH}" ]; then
+              note "    ${arm} seed ${seed}: already benchmarked"; continue
+            fi ;;
+        1)  ;;
+        10) note "    ${arm} seed ${seed}: FAILED -- not trained yet (run stage 11 first)"
+            continue ;;
+        *)  note "    ${arm} seed ${seed}: FAILED -- status exit ${code}:${why}"; continue ;;
+      esac
+      # shellcheck disable=SC2086
+      step "benchmark_${arm}_seed${seed}" "${PYTHON}" main.py benchmark --config "${cfg}" \
+        --seed "${seed}" --modalities "${modality}" \
+        --set "experiment_name=${name}" ${REP_OVERRIDES}
+    done
+  done
+fi
+
+# --------------------------------------------------------------------------
+# 13  repeated synthetic ground-truth check (CPU; no model involved)
+# --------------------------------------------------------------------------
+if want 13; then
+  note ""
+  note "########## stage 13: synthetic ground truth at every seed"
+  for seed in $(seed_list); do
+    out="${REP_ROOT}/synthetic_validation_seeds/seed${seed}"
+    if [ -f "${out}/synthetic_validation_summary.json" ] && [ -z "${REEVALUATE}" ]; then
+      note "    seed ${seed}: already done"; continue
+    fi
+    # REP_OVERRIDES first: the per-seed output root must win over its
+    # paths.output_root (later --set items override earlier ones).
+    # shellcheck disable=SC2086
+    step "synthetic_seed${seed}" "${PYTHON}" scripts/synthetic_validation.py \
+      --config config/base.yaml --fields "${SYN_FIELDS}" \
+      --set ${REP_OVERRIDES} "project.seed=${seed}" "paths.output_root=${out}"
+  done
+fi
+
+# --------------------------------------------------------------------------
+# 14  collect: one JSON per benchmark, plus the existing tables
+# --------------------------------------------------------------------------
+if want 14; then
+  note ""
+  note "########## stage 14: collect benchmark results"
+  # shellcheck disable=SC2086
+  step collect_benchmark_results collector collect --arms ${ARMS}
+  grep -E "wrote results_|NOT COMPLETE|^  [A-Za-z0-9_]+$|^    - |all benchmarks complete|ignored" \
+    "${LOGDIR}/collect_benchmark_results.log" 2>/dev/null | sed 's/^/    /' | tee -a "${SUMMARY}"
+  if [ -z "${QUICK}" ]; then
+    step aggregate_seeds "${PYTHON}" scripts/aggregate_seeds.py --config config/base.yaml
+    step collect_results "${PYTHON}" scripts/collect_results.py --config config/base.yaml --split test
+  fi
+  note "    -> ${REP_ROOT}/benchmark_results/"
 fi
 
 note ""

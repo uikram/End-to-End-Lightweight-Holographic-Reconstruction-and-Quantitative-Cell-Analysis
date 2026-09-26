@@ -77,7 +77,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from holoqpi.analysis.cells import calibration_from_config, match_cells, measure_cells
 from holoqpi.config import load_config, parse_overrides
 from holoqpi.data.masks import split_instances
-from holoqpi.utils import get_logger, write_csv
+from holoqpi.utils import analysis_fingerprint, get_logger, write_csv, write_json
 
 LOGGER = get_logger(__name__)
 
@@ -277,6 +277,35 @@ def main() -> int:
     if total_error.size:
         print(f"  field-summed mass  mean {total_error.mean():+.4%}   "
               f"median {np.median(total_error):+.4%}")
+
+    # The numbers printed above, as a file, so that repeated runs at different
+    # seeds (run_v2.sh stage 13) can be aggregated without re-deriving them.
+    write_json({
+        "seed": int(cfg.project.seed),
+        "fields": len(field_rows),
+        "cells_per_field": args.cells_per_field,
+        "cells_placed": int(placed),
+        "cells_measured": int(found),
+        "cells_paired": len(rows),
+        "area_relative_error_mean": float(area_error.mean()),
+        "area_relative_error_median": float(np.median(area_error)),
+        "area_abs_relative_error_mean": float(np.abs(area_error).mean()),
+        "area_abs_relative_error_p95": float(np.percentile(np.abs(area_error), 95)),
+        "mass_relative_error_mean": float(mass_error.mean()),
+        "mass_relative_error_median": float(np.median(mass_error)),
+        "mass_abs_relative_error_mean": float(np.abs(mass_error).mean()),
+        "mass_abs_relative_error_p95": float(np.percentile(np.abs(mass_error), 95)),
+        "field_total_mass_error_mean": (
+            float(total_error.mean()) if total_error.size else None
+        ),
+        "field_total_mass_error_median": (
+            float(np.median(total_error)) if total_error.size else None
+        ),
+        "field_total_mass_abs_error_mean": (
+            float(np.abs(total_error).mean()) if total_error.size else None
+        ),
+        **analysis_fingerprint(cfg),
+    }, Path(cfg.paths.output_root) / "synthetic_validation_summary.json")
 
     # THE GAP BETWEEN THE TWO IS THE AREA FILTER, and it is easy to miss.
     # Per-cell errors are computed over cells that were MEASURED, so a cell

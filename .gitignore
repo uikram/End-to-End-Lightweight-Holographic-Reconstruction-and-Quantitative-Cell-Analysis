@@ -1,16 +1,33 @@
+# --- Python / notebooks ---------------------------------------------------
 __pycache__/
 *.py[cod]
-runs/
-data/mask/
-data/splits.json
-data/manifest.csv
-data/prepare_report.json
-*.onnx
-*.pt
+.ipynb_checkpoints/
 .DS_Store
-*.TIF
-*.bin
-*.npy
-*.png
+
+# --- not distributed: data, weights, checkpoints, run outputs -------------
+# The dataset is not public. Only the split and the manifest are shared, so
+# that the train/val/test split is exactly the study's.
+data/*
+!data/splits.json
+!data/manifest.csv
+
+weights/
+*.pt
 *.pth
-*.pdf
+*.onnx
+
+# Run outputs stay local, except the collected results behind every table.
+runs/*
+!runs/benchmark_results/
+
+logs/
+logs_run/
+figures/
+test_outputs/
+test/test_outputs/
+*.out
+
+# --- local working files, not part of the repository ----------------------
+Claude outputs/
+paper/
+test/HoloQPI_Evaluation.EXAMPLE_RUN.ipynb

@@ -1,0 +1,306 @@
+{
+  "benchmark": "synthetic_validation",
+  "kind": "measurement_chain_floor",
+  "replication": "independent_runs",
+  "unit_of_replication": "one set of synthetic fields per seed (scripts/synthetic_validation.py)",
+  "warnings": [],
+  "n_runs": 3,
+  "seeds": [
+    42,
+    1337,
+    2024
+  ],
+  "seeds_planned": [
+    42,
+    1337,
+    2024
+  ],
+  "seeds_missing": [],
+  "complete": true,
+  "runs": [
+    {
+      "seed": 42,
+      "file": "runs/synthetic_validation_seeds/seed42/synthetic_validation_summary.json",
+      "metrics": {
+        "fields": 12.0,
+        "cells_per_field": 12.0,
+        "cells_placed": 144.0,
+        "cells_measured": 134.0,
+        "cells_paired": 134.0,
+        "area_relative_error_mean": 0.00039503825944805495,
+        "area_relative_error_median": 0.0003301674270896444,
+        "area_abs_relative_error_mean": 0.0024491073670030923,
+        "area_abs_relative_error_p95": 0.006787158134255753,
+        "mass_relative_error_mean": 7.374358028871334e-05,
+        "mass_relative_error_median": 8.393987555651813e-05,
+        "mass_abs_relative_error_mean": 0.0004056798813673954,
+        "mass_abs_relative_error_p95": 0.0013459823469190201,
+        "field_total_mass_error_mean": -0.01665454777521474,
+        "field_total_mass_error_median": -0.02015199139651741,
+        "field_total_mass_abs_error_mean": 0.016707938636281137
+      },
+      "non_numeric": {}
+    },
+    {
+      "seed": 1337,
+      "file": "runs/synthetic_validation_seeds/seed1337/synthetic_validation_summary.json",
+      "metrics": {
+        "fields": 12.0,
+        "cells_per_field": 12.0,
+        "cells_placed": 144.0,
+        "cells_measured": 127.0,
+        "cells_paired": 127.0,
+        "area_relative_error_mean": 0.00016473688048741113,
+        "area_relative_error_median": 0.00030574603200415803,
+        "area_abs_relative_error_mean": 0.0021060601184421527,
+        "area_abs_relative_error_p95": 0.0063855256741068836,
+        "mass_relative_error_mean": -7.068080663756673e-06,
+        "mass_relative_error_median": 6.488411694185087e-06,
+        "mass_abs_relative_error_mean": 0.00033276908480564467,
+        "mass_abs_relative_error_p95": 0.0009117253096051922,
+        "field_total_mass_error_mean": -0.034374735702969665,
+        "field_total_mass_error_median": -0.025836663247952908,
+        "field_total_mass_abs_error_mean": 0.034392803934172635
+      },
+      "non_numeric": {}
+    },
+    {
+      "seed": 2024,
+      "file": "runs/synthetic_validation_seeds/seed2024/synthetic_validation_summary.json",
+      "metrics": {
+        "fields": 12.0,
+        "cells_per_field": 12.0,
+        "cells_placed": 144.0,
+        "cells_measured": 131.0,
+        "cells_paired": 131.0,
+        "area_relative_error_mean": -0.0002889441323682005,
+        "area_relative_error_median": -0.0002155977850248286,
+        "area_abs_relative_error_mean": 0.002163886397975118,
+        "area_abs_relative_error_p95": 0.006077617603126865,
+        "mass_relative_error_mean": -0.00012088701281918721,
+        "mass_relative_error_median": -6.178387384840245e-05,
+        "mass_abs_relative_error_mean": 0.0003540201824597702,
+        "mass_abs_relative_error_p95": 0.0012383933169013296,
+        "field_total_mass_error_mean": -0.02673315393549346,
+        "field_total_mass_error_median": -0.029208701135368498,
+        "field_total_mass_abs_error_mean": 0.026745227481832484
+      },
+      "non_numeric": {}
+    }
+  ],
+  "statistics": {
+    "area_abs_relative_error_mean": {
+      "mean": 0.002239684627806788,
+      "std": 0.0001836556081923956,
+      "n": 3,
+      "sem": 0.00010603361482806405,
+      "ci95": [
+        0.001783458805521615,
+        0.002695910450091961
+      ],
+      "min": 0.0021060601184421527,
+      "max": 0.0024491073670030923,
+      "n_missing": 0
+    },
+    "area_abs_relative_error_p95": {
+      "mean": 0.0064167671371631665,
+      "std": 0.00035580045403159485,
+      "n": 3,
+      "sem": 0.00020542148791293237,
+      "ci95": [
+        0.005532909811445392,
+        0.007300624462880941
+      ],
+      "min": 0.006077617603126865,
+      "max": 0.006787158134255753,
+      "n_missing": 0
+    },
+    "area_relative_error_mean": {
+      "mean": 9.027700252242186e-05,
+      "std": 0.0003480175040836197,
+      "n": 3,
+      "sem": 0.00020092799966537952,
+      "ci95": [
+        -0.0007742464037209223,
+        0.000954800408765766
+      ],
+      "min": -0.0002889441323682005,
+      "max": 0.00039503825944805495,
+      "n_missing": 0
+    },
+    "area_relative_error_median": {
+      "mean": 0.00014010522468965793,
+      "std": 0.0003082897573297537,
+      "n": 3,
+      "sem": 0.00017799117438273773,
+      "ci95": [
+        -0.0006257289876395411,
+        0.0009059394370188569
+      ],
+      "min": -0.0002155977850248286,
+      "max": 0.0003301674270896444,
+      "n_missing": 0
+    },
+    "cells_measured": {
+      "mean": 130.66666666666666,
+      "std": 3.5118845842842465,
+      "n": 3,
+      "sem": 2.0275875100994067,
+      "ci95": [
+        121.94266173153153,
+        139.39067160180178
+      ],
+      "min": 127.0,
+      "max": 134.0,
+      "n_missing": 0
+    },
+    "cells_paired": {
+      "mean": 130.66666666666666,
+      "std": 3.5118845842842465,
+      "n": 3,
+      "sem": 2.0275875100994067,
+      "ci95": [
+        121.94266173153153,
+        139.39067160180178
+      ],
+      "min": 127.0,
+      "max": 134.0,
+      "n_missing": 0
+    },
+    "cells_per_field": {
+      "mean": 12.0,
+      "std": 0.0,
+      "n": 3,
+      "sem": 0.0,
+      "ci95": [
+        12.0,
+        12.0
+      ],
+      "min": 12.0,
+      "max": 12.0,
+      "n_missing": 0,
+      "constant_across_runs": true
+    },
+    "cells_placed": {
+      "mean": 144.0,
+      "std": 0.0,
+      "n": 3,
+      "sem": 0.0,
+      "ci95": [
+        144.0,
+        144.0
+      ],
+      "min": 144.0,
+      "max": 144.0,
+      "n_missing": 0,
+      "constant_across_runs": true
+    },
+    "field_total_mass_abs_error_mean": {
+      "mean": 0.02594865668409542,
+      "std": 0.008869301490421741,
+      "n": 3,
+      "sem": 0.005120693603018941,
+      "ci95": [
+        0.003916090374855366,
+        0.04798122299333547
+      ],
+      "min": 0.016707938636281137,
+      "max": 0.034392803934172635,
+      "n_missing": 0
+    },
+    "field_total_mass_error_mean": {
+      "mean": -0.025920812471225952,
+      "std": 0.008887980031461821,
+      "n": 3,
+      "sem": 0.005131477663716502,
+      "ci95": [
+        -0.047999778848664146,
+        -0.003841846093787755
+      ],
+      "min": -0.034374735702969665,
+      "max": -0.01665454777521474,
+      "n_missing": 0
+    },
+    "field_total_mass_error_median": {
+      "mean": -0.02506578525994627,
+      "std": 0.004577301331324485,
+      "n": 3,
+      "sem": 0.002642706155802224,
+      "ci95": [
+        -0.036436432115134414,
+        -0.013695138404758124
+      ],
+      "min": -0.029208701135368498,
+      "max": -0.02015199139651741,
+      "n_missing": 0
+    },
+    "fields": {
+      "mean": 12.0,
+      "std": 0.0,
+      "n": 3,
+      "sem": 0.0,
+      "ci95": [
+        12.0,
+        12.0
+      ],
+      "min": 12.0,
+      "max": 12.0,
+      "n_missing": 0,
+      "constant_across_runs": true
+    },
+    "mass_abs_relative_error_mean": {
+      "mean": 0.0003641563828776034,
+      "std": 3.7497373014654135e-05,
+      "n": 3,
+      "sem": 2.1649118403914375e-05,
+      "ci95": [
+        0.0002710077444803319,
+        0.0004573050212748749
+      ],
+      "min": 0.00033276908480564467,
+      "max": 0.0004056798813673954,
+      "n_missing": 0
+    },
+    "mass_abs_relative_error_p95": {
+      "mean": 0.0011653669911418473,
+      "std": 0.00022615133606634593,
+      "n": 3,
+      "sem": 0.00013056853475549836,
+      "ci95": [
+        0.0006035759286567149,
+        0.00172715805362698
+      ],
+      "min": 0.0009117253096051922,
+      "max": 0.0013459823469190201,
+      "n_missing": 0
+    },
+    "mass_relative_error_mean": {
+      "mean": -1.807050439807685e-05,
+      "std": 9.778065728663024e-05,
+      "n": 3,
+      "sem": 5.6453688805974514e-05,
+      "ci95": [
+        -0.0002609711226435297,
+        0.00022483011384737603
+      ],
+      "min": -0.00012088701281918721,
+      "max": 7.374358028871334e-05,
+      "n_missing": 0
+    },
+    "mass_relative_error_median": {
+      "mean": 9.54813780076692e-06,
+      "std": 7.291004202469299e-05,
+      "n": 3,
+      "sem": 4.209463238958343e-05,
+      "ci95": [
+        -0.00017157044715807433,
+        0.0001906667227596082
+      ],
+      "min": -6.178387384840245e-05,
+      "max": 8.393987555651813e-05,
+      "n_missing": 0
+    }
+  },
+  "generated_at": "2026-09-21 20:40:46",
+  "ci_level": 0.95
+}

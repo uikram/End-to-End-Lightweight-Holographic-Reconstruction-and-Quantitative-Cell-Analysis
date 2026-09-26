@@ -5,7 +5,7 @@
 # clean: no measurement coupling of any kind.
 #
 # Shared across all four v2 experiments:
-#   * off-axis only (the in-line arm is deferred to study 2)
+#   * off-axis only (the in-line arm is g_baseline_gabor.yaml)
 #   * no drug-condition head (unstable at +/-9.5 points, outside the question)
 #   * phase_mask_contrast and dry_mass_consistency permanently off; see
 #     config/base.yaml for the measurements behind each

@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
+import os
 import random
 from pathlib import Path
 from typing import Any, Mapping
@@ -35,15 +37,90 @@ def add_file_logging(logger: logging.Logger, path: str | Path) -> None:
 
 
 def seed_everything(seed: int, deterministic: bool = False) -> None:
+    """Seed every random stream a run draws from.
+
+    Python ``random``, NumPy's global generator, and the PyTorch CPU and CUDA
+    generators. Everything else in a run derives from these: DataLoader
+    shuffling and the per-worker seeds (``holoqpi.data.dataset._seed_worker``)
+    are drawn from torch's generator, the crop offsets and flips from a
+    ``random.Random`` seeded with ``project.seed``, and the decoder
+    initialisation from torch's generator when the model is built.
+
+    ``deterministic=False`` (the study's setting) leaves cuDNN free to pick the
+    fastest kernel, so two runs with the SAME seed agree closely but not
+    bit-for-bit. ``deterministic=True`` additionally requests deterministic
+    algorithms everywhere PyTorch offers one; it is slower and is not what the
+    reported runs used, so replicates must not mix the two settings.
+    """
+    os.environ["PYTHONHASHSEED"] = str(seed)
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     if deterministic:
+        # cuBLAS needs a fixed workspace to be deterministic; set before any
+        # CUDA work, and only if the user has not chosen one already.
+        os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
+        # warn_only: an op with no deterministic implementation warns instead
+        # of aborting a multi-hour run.
+        torch.use_deterministic_algorithms(True, warn_only=True)
     else:
         torch.backends.cudnn.benchmark = True
+
+
+def determinism_state() -> dict:
+    """What a run's reproducibility settings actually were, for provenance."""
+    return {
+        "cudnn_deterministic": bool(torch.backends.cudnn.deterministic),
+        "cudnn_benchmark": bool(torch.backends.cudnn.benchmark),
+        "deterministic_algorithms": bool(torch.are_deterministic_algorithms_enabled()),
+        "cublas_workspace_config": os.environ.get("CUBLAS_WORKSPACE_CONFIG"),
+        "torch_version": torch.__version__,
+        "cuda_version": torch.version.cuda,
+    }
+
+
+#: Config settings that decide what an analysis or an evaluation measures:
+#: calibration, label generation, the measurement chain, the forward model and
+#: the dataset layout. Two outputs with different fingerprints were produced
+#: under different measurement rules and must not be compared or pooled.
+ANALYSIS_SECTIONS = (
+    "optics", "mask_generation", "labels", "formats",
+    "evaluation.measurement", "evaluation.segmentation", "evaluation.phase",
+    "evaluation.conventional_baseline", "evaluation.forward_model",
+    "loss.forward_model", "data.phase_size", "data.align", "data.eval_size",
+    "paths.mask_dir", "paths.manual_mask_dir", "paths.splits_file",
+)
+
+
+def analysis_fingerprint(cfg) -> dict:
+    """Digest of the measurement-defining config, plus the split file's hash."""
+    data = cfg.to_dict() if hasattr(cfg, "to_dict") else dict(cfg)
+    selected = {}
+    for dotted in ANALYSIS_SECTIONS:
+        node = data
+        for part in dotted.split("."):
+            node = node.get(part) if isinstance(node, dict) else None
+        selected[dotted] = node
+    digest = hashlib.sha256(
+        json.dumps(selected, sort_keys=True, default=str).encode()
+    ).hexdigest()
+    splits = Path(data["paths"]["data_root"]) / data["paths"]["splits_file"]
+    return {
+        "config_digest": digest,
+        "splits_sha256": file_sha256(splits) if splits.is_file() else None,
+    }
+
+
+def file_sha256(path: str | Path, chunk: int = 1 << 20) -> str:
+    """SHA-256 of a file, used to tie a result file to the checkpoint it scored."""
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for block in iter(lambda: handle.read(chunk), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def resolve_device(requested: str | None = None) -> torch.device:
@@ -77,7 +154,7 @@ def count_parameters(model: torch.nn.Module) -> dict:
 def run_name(experiment_name: str, modality: str) -> str:
     """Identifier for one arm of the comparison.
 
-    off_axis.yaml is already named after its modality, so avoid "off_axis_off_axis".
+    An experiment name that already ends in its modality is not suffixed twice.
     """
     if experiment_name.endswith(modality):
         return experiment_name
@@ -91,7 +168,7 @@ def run_directory(output_root: str | Path, experiment_name: str, modality: str) 
 
 
 def pooled_between_seed_sd(values_a, values_b) -> tuple[float, str | None]:
-    """The project's significance yardstick, in one place.
+    """The project's resolution criterion (not a significance test), in one place.
 
     Returns ``(pooled_sd, reason_it_cannot_be_used)``, where the reason is
     ``None`` when the value is usable.

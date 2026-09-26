@@ -16,8 +16,9 @@
 # magnitudes, so equal weights are not a fair comparison. Set this weight from
 # `python scripts/check_gradient_path.py --config config/v2/b1_image_volume.yaml`
 # so both arms present the same gradient magnitude to the segmentation decoder,
-# and record both measured ratios in the paper. Until that is run the value
-# below is B's weight and the comparison is NOT yet matched.
+# and record both measured ratios in the paper. That measurement was never
+# made: the reported B' run uses B's weight, so the comparison is NOT matched
+# (the manuscript states this).
 extends: ../base.yaml
 
 experiment_name: v2_image_volume
@@ -31,7 +32,7 @@ model:
 loss:
   weights:
     classification: 0.0
-    phase_volume: 1.0                 # the image-level term, matched to B by gradient
+    phase_volume: 1.0                 # the image-level term, at B's weight (not gradient-matched)
     cell_integrated_phase: 0.0        # off: that is the whole point of this arm
     boundary_gradient_alignment: 0.0
     projected_area_consistency: 0.0

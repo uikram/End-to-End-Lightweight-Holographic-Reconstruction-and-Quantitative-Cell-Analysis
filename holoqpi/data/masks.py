@@ -79,6 +79,16 @@ def build_mask(phase: np.ndarray, cfg: Config, pixel_area_um2: float) -> np.ndar
     # at an array edge it is NOT extensive: a 12-px blob touching the top row
     # reduces to 4 px, and a 1-px rim vanishes entirely. That border convention,
     # not the area filter, is what removes them.
+    #
+    # CORRECTION (audit, 2026-09-26). Closing does not remove edge objects; it
+    # clears a 2-px rim at the array border (binary_closing_px = 2), so an
+    # object that reached the edge now stops 2 px short of it and no longer
+    # "touches" -- and clear_border(buffer_size=0) therefore keeps it. On the
+    # stored test masks, 1456 of the 3186 reference instances (45.7%, in 112 of
+    # 113 fields) lie within 4 px of the field edge: truncated cells and the
+    # edge-illumination artefact above. The seed-42 End-to-End Neural Baseline
+    # detects 21% of these and 91% of the interior instances. Changing this
+    # step changes the labels, so it needs regenerated masks and re-evaluation.
     if cfg.border_buffer_px is not None:
         from skimage.segmentation import clear_border
 

@@ -662,7 +662,7 @@ def main() -> int:
                   "     diagnostic rather than a deployable constraint on this instrument.")
 
     print(f"\n  surfaces -> {destination}")
-    print(f"  per-image quality -> {Path(cfg.paths.output_root) / 'aberration_fit.csv'}")
+    print(f"  per-image quality -> {Path(cfg.paths.output_root) / f'aberration_fit_order{order}.csv'}")
 
     print("\n  -> ", end="")
     if np.median(quality) > 0.85:

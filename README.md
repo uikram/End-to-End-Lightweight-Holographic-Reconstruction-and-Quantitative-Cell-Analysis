@@ -1,370 +1,382 @@
-# HoloQPI — End-to-End Lightweight Holographic Analysis
+# HoloQPI — Measurement-Oriented End-to-End Holographic Quantitative Phase Analysis
 
-A single lightweight network that takes a **raw hologram** and directly produces a
-**quantitative phase image**, a **transmitted-amplitude map** and a **cell
-segmentation map**, from which projected area, circularity, optical volume and dry
-mass are computed per cell. No classical reconstruction step appears anywhere in
-the inference path.
+One lightweight network takes a **raw digital hologram** (off-axis or in-line
+Gabor) and returns the **quantitative phase**, the **cell segmentation** and,
+optionally, the **transmitted amplitude**. Per-cell **projected area,
+circularity, optical volume and dry mass** are computed from those outputs, with
+no classical reconstruction step in the inference path. The framework is
+evaluated on the measurand: the primary metric is the per-cell dry-mass error,
+always reported with detection recall.
 
-The study compares two imaging configurations on identical data, splits and
-schedules:
+![Framework overview](assets/figure_1_overview.png)
 
-| | input |
+*(a) A raw hologram, off-axis or in-line, is the only input. (b) A shared
+MobileNetV2 encoder feeds a phase decoder and a segmentation decoder. (c) The
+network predicts quantitative phase, the cell segmentation and, optionally,
+transmitted amplitude. (d) Dry mass and the other per-cell quantities are
+computed from the predicted fields. (e) Measurement-aware and physics-based
+objectives are tested as variants of the baseline. (f) Evaluation is on the
+per-cell measurement.*
+
+> **Status.** The code, configurations and collected results in this
+> repository are the ones behind the manuscript *"Measurement-Oriented
+> End-to-End Holographic Quantitative Phase Analysis: Joint Reconstruction,
+> Segmentation and Per-Cell Measurement from a Single Raw Hologram"* (in
+> preparation). Model weights, checkpoints and the dataset are not distributed
+> here.
+
+---
+
+## Contents
+
+- [What is implemented, and what is not](#what-is-implemented-and-what-is-not)
+- [Results](#results)
+- [Experimental configurations](#experimental-configurations)
+- [Install](#install)
+- [Data](#data)
+- [Reproduce the study](#reproduce-the-study)
+- [Regenerate the manuscript tables and figures](#regenerate-the-manuscript-tables-and-figures)
+- [Repository layout](#repository-layout)
+- [Limitations](#limitations)
+- [Further documentation](#further-documentation)
+
+---
+
+## What is implemented, and what is not
+
+| | Status |
 |---|---|
-| **Off-axis** | `data/off_axis_hologram/<stem>_holo.tif` |
-| **In-line Gabor** | `data/in_line_gabor_hologram/<stem>_gabor.tif` |
+| Raw hologram → phase + segmentation (+ amplitude) network | implemented, trained, reported |
+| Per-cell area, circularity, optical volume, dry mass | implemented, reported |
+| Measurement-aware objective terms (per-cell and image-level integrated-phase preservation, per-cell area, boundary–gradient alignment) | implemented, trained, reported |
+| Physics-based forward-model term (angular-spectrum hologram formation, fixed or learnable z) | implemented, trained, reported as a diagnostic |
+| Classical Pipeline (angular-spectrum reconstruction + the same measurement chain) | implemented, reported |
+| ONNX export, GPU latency / memory profiling | implemented, reported (workstation GPU only) |
+| Angular-spectrum demodulation front end | implemented, **not enabled** in any reported configuration |
+| LoRA adaptation of the encoder | implemented and tested, **never trained**; no LoRA result is claimed |
+| Shared backbone with swappable per-geometry adapters | **not implemented** |
+| Embedded-hardware deployment | **not demonstrated** |
 
-```
-                        ┌──────────────► phase decoder ──► quantitative phase (rad)
-raw hologram ──► shared ├──────────────► amplitude head ──► transmitted amplitude
-                encoder ├──────────────► segmentation decoder ──► cell map
-                        └──────────────► classifier ──► drug condition (disabled)
-                                                │
-                                                ▼
-                        projected area · circularity · optical volume · dry mass
-```
+Every experiment-level constant (wavelength, refraction increment, pixel pitch,
+loss weights, thresholds, schedules) lives in `config/*.yaml`. Current values:
+λ = 0.666 µm, α = 0.2 mL/g, isotropic pixel pitch 0.284871 µm, supplied
+propagation distance z = 33.77 µm.
 
-The **amplitude head** is off by default (`model.amplitude.enabled`) and switched
-on in arms D0, D1 and D2; with it off the specimen is treated as purely
-refractive (A = 1), the standard thin-phase-object assumption.
+---
 
-The **condition classifier** is disabled throughout the v2 study
-(`model.classifier_enabled: false`). It was unstable at ±9.5 accuracy points
-between seeds, which is outside the question this study asks. The head remains in
-the code and can be re-enabled.
+## Results
 
-Every experiment-level constant — wavelength, refraction increment, pixel
-pitches, loss weights, thresholds, schedules — lives in `config/*.yaml`. The
-Python sources contain no hard-coded physical or hyper-parameter values; what
-remains in code is algorithmic constants and numerical safeguards (stability
-limits, epsilons, tensor shapes), each documented at its definition.
+Test split: 113 fields, 3186 reference cells. The End-to-End Neural Baseline,
++IPP (per-cell) and +IPP (image) are mean ± SD over three training seeds (42,
+1337, 2024); every other configuration is one run at seed 42. Per-cell errors
+are over IoU-matched cells (IoU ≥ 0.5). Source of every number:
+`runs/benchmark_results/`.
 
-Current values: λ = 0.666 µm, α = 0.2 mL/g, isotropic pixel pitch 0.284871 µm.
-Two of these were corrected on 2026-09-10 and **absolute** areas and masses from
-before that date are not comparable; see
-[`docs/documentation.md` §3](docs/documentation.md). Relative results are
-invariant to both, which the self-test proves.
+### Neural against classical, in both geometries
+
+![Neural vs classical](assets/figure_2.png)
+
+| Quantity | Classical, off-axis | **End-to-End Neural Baseline** (off-axis, n = 3) | Classical, in-line | **In-Line Neural Configuration** (n = 1) |
+|---|---:|---:|---:|---:|
+| Phase MAE [rad] ↓ | 0.2114 | **0.1593 ± 0.0008** | 0.3855 | **0.1752** |
+| Phase MAE inside cells [rad] ↓ | 0.3655 | **0.2756 ± 0.0068** | 1.0168 | **0.3587** |
+| Phase Pearson r ↑ | 0.7580 | **0.8701 ± 0.0011** | −0.1359 | **0.8098** |
+| Dice ↑ | 0.7885 | **0.8312 ± 0.0014** | 0.1627 | **0.7758** |
+| Boundary F1 ↑ | 0.2463 | **0.4574 ± 0.0018** | 0.0952 | **0.3545** |
+| Detection recall ↑ | 0.5763 | **0.5920 ± 0.0011** | 0.0364 | **0.5508** |
+| Projected-area MAPE ↓ | 0.1567 | **0.1546 ± 0.0010** | 0.4906 | **0.1661** |
+| **Dry-mass MAPE** ↓ | 0.2245 | **0.1763 ± 0.0024** | 0.6695 | **0.2308** |
+| Cells matched (of 3186) | 1836 | 1886 ± 4 | 116 | 1755 |
+
+At the supplied distance and with the algorithm tested (angular-spectrum
+back-propagation + 20 Gerchberg–Saxton iterations), the classical in-line
+reconstruction has a negative in-cell phase contrast (−0.067 rad), so its
+downstream numbers are scored on a phase map that does not carry the specimen.
+
+### Objective ablations and model capacity
+
+![Ablation](assets/figure_4.png)
+
+| Configuration | n | Dry-mass MAPE (matched) ↓ | cov.-adjusted ↓ | Area MAPE ↓ | Recall ↑ | Precision ↑ | Dice ↑ | Phase MAE [rad] ↓ |
+|---|:-:|---:|---:|---:|---:|---:|---:|---:|
+| **End-to-End Neural Baseline** | 3 | **0.1763** | **0.5124** | 0.1546 | 0.5920 | 0.8550 | 0.8312 | 0.1593 |
+| +IPP (per-cell) | 3 | 0.1915 | 0.5179 | 0.1630 | 0.5964 | 0.7995 | 0.8245 | 0.1697 |
+| +IPP (image) | 3 | 0.1935 | 0.5291 | 0.1643 | 0.5839 | 0.8526 | 0.8242 | 0.1666 |
+| +Area | 1 | 0.1917 | 0.5124 | 0.1852 | 0.6033 | 0.7995 | 0.8273 | 0.1682 |
+| +BGA | 1 | 0.1978 | 0.5211 | 0.1648 | 0.5970 | 0.8015 | 0.8269 | 0.1677 |
+| +IPP (per-cell), w = 0.1 | 1 | 0.1853 | 0.5136 | 0.1596 | 0.5970 | 0.8514 | 0.8322 | 0.1583 |
+| +IPP (per-cell), w = 0.3 | 1 | 0.1828 | 0.5152 | 0.1575 | 0.5932 | 0.8396 | 0.8319 | 0.1610 |
+| +IPP (per-cell), w = 3.0 | 1 | 0.2102 | 0.5329 | 0.1927 | 0.5913 | 0.7252 | 0.8101 | 0.1851 |
+| +Amplitude | 1 | 0.2015 | 0.5258 | 0.1644 | 0.5938 | 0.8237 | 0.8265 | 0.1708 |
+| +Fwd (fixed z) | 1 | 0.1980 | 0.5182 | 0.1699 | 0.6008 | 0.8073 | 0.8276 | 0.1677 |
+| +Fwd (free z) | 1 | 0.1934 | 0.5220 | 0.1625 | 0.5926 | 0.8252 | 0.8262 | 0.1679 |
+| Compact Baseline | 1 | 0.1783 | 0.5136 | 0.1533 | 0.5920 | 0.8577 | 0.8321 | 0.1599 |
+| Compact +IPP | 1 | 0.1836 | 0.5129 | 0.1685 | 0.5967 | 0.8062 | 0.8279 | 0.1702 |
+
+A difference is called **resolved** only when it exceeds twice the pooled
+between-seed SD of the same metric: a resolution criterion, not a significance
+test. +IPP (per-cell) vs the baseline is +0.0152 (2×SD 0.0070) and +IPP (image)
+vs the baseline is +0.0172 (2×SD 0.0052): both resolved, both worse. Every other
+comparison has one run per configuration and is not resolvable.
+
+**Main findings**
+
+- The End-to-End Neural Baseline improves every reconstruction, segmentation and
+  measurement metric over the Classical Pipeline off-axis, and the In-Line
+  Neural Configuration recovers usable phase where the tested classical in-line
+  reconstruction does not.
+- No measurement-aware objective, no weight between 0.1 and 3.0, and neither the
+  amplitude output nor the forward-model term brought the dry-mass error below
+  the baseline.
+- The amplitude output agrees with a reconstruction-derived reference better than
+  the thin-phase assumption A = 1 (MAE 0.0637 against 0.1469, +Fwd (fixed z)).
+- The forward-model residual is below the reference-phase residual for 12 of 13
+  configurations, including ones that never optimised it, and barely
+  distinguishes the reference phase from a 10 % rescaled one: it is reported as
+  a diagnostic, not a useful loss. The propagation distance is not identifiable
+  from an off-axis hologram (per-field IQR 156.4 µm) but is from an in-line one
+  (IQR 6.0 µm, minimum near 50.5 µm on four validation fields).
+- Detection recall (0.5920) is the weakest number (see [Limitations](#limitations)).
+
+### Error budget without a trained model
+
+| | Area error | Dry-mass error | Dice |
+|---|---:|---:|---:|
+| Reference boundary moved outwards by 1 px (0.285 µm) | +6.9 % | +4.8 % | 0.974 |
+| Reference boundary moved outwards by 5 px | +32.6 % | +14.2 % | 0.881 |
+
+Median ratio of mass error to area error: 0.710 (dry mass is 1.41× more robust
+to a boundary error than area). The measurement chain's own floor on analytic
+fields is 0.036 ± 0.004 % per cell for dry mass and 0.224 ± 0.018 % for area
+(three synthetic seeds).
+
+### Inference cost (NVIDIA RTX A5000, 900 × 900, batch 1)
+
+| Configuration | Parameters | GMAC | PyTorch FP32 [ms] | ONNX FP16 [ms] | ONNX FP16 FPS | Weights FP32 → FP16 [MB] |
+|---|---:|---:|---:|---:|---:|---:|
+| End-to-End Neural Baseline (n = 3) | 9 598 099 | 45.85 | 12.32 ± 0.11 | 8.42 ± 0.06 | 118.8 ± 0.9 | 36.77 → 18.38 |
+| +Amplitude | 9 607 412 | 47.87 | 12.94 | 9.20 | 108.6 | 36.81 → 18.40 |
+| Compact Baseline | 3 360 403 | 24.03 | 11.73 | 7.98 | 125.3 | 12.97 → 6.48 |
+
+The compact decoder removes 65 % of the parameters and changes the dry-mass
+MAPE by +0.0019, within the baseline's between-seed spread. These are
+workstation-GPU figures, not an edge-deployment claim.
+
+---
+
+## Experimental configurations
+
+Each configuration is one file in `config/v2/` and differs from its comparator by
+exactly one objective term, one output or one capacity choice. Code and result
+files use the short arm codes.
+
+| Manuscript name | Config file | Arm code | Run directory (seed 42) | Comparator | Seeds |
+|---|---|:-:|---|---|:-:|
+| End-to-End Neural Baseline | `a_baseline.yaml` | A | `v2_baseline_off_axis` | — | 3 |
+| In-Line Neural Configuration | `g_baseline_gabor.yaml` | G | `v2_baseline_gabor` | baseline, other geometry | 1 |
+| +IPP (per-cell) | `b_cell_ipp.yaml` | B | `v2_cell_ipp_off_axis` | baseline | 3 |
+| +IPP (image) | `b1_image_volume.yaml` | B1 (B′) | `v2_image_volume_off_axis` | baseline | 3 |
+| +Area | `b2_cell_area.yaml` | B2 (B″) | `v2_cell_ipp_area_off_axis` | +IPP (per-cell) | 1 |
+| +BGA | `c_cell_ipp_bga.yaml` | C | `v2_cell_ipp_bga_off_axis` | +IPP (per-cell) | 1 |
+| +IPP (per-cell), w = 0.1 / 0.3 / 3.0 | `w_ipp_01/03/30.yaml` | W01 / W03 / W30 | `v2_ipp_w01/w03/w30_off_axis` | baseline | 1 |
+| +Amplitude | `d0_amplitude.yaml` | D0 | `v2_amplitude_off_axis` | +IPP (per-cell) | 1 |
+| +Fwd (fixed z) | `d_forward_amplitude.yaml` | D1 | `v2_forward_amplitude_off_axis` | +Amplitude | 1 |
+| +Fwd (free z) | `d2_learned_z.yaml` | D2 | `v2_learned_z_off_axis` | +Fwd (fixed z) | 1 |
+| Compact Baseline | `k_compact_a.yaml` | KA | `v2_compact_baseline_off_axis` | baseline | 1 |
+| Compact +IPP | `k_compact_b.yaml` | KB | `v2_compact_cell_ipp_off_axis` | +IPP (per-cell) | 1 |
+| Classical Pipeline | `scripts/conventional_baseline.py` | — | `conventional_off_axis`, `conventional_gabor` | — | deterministic |
+| LoRA (not trained) | `l_lora.yaml` | L | — | — | 0 |
+
+`w_ipp_10.yaml` is +IPP (per-cell) itself (same objective, same seed) and is
+reported once. Other seeds live in `runs/v2_<ARM>_seed<N>_off_axis/`.
+`config/v2/_shared.md` explains the question each configuration answers.
 
 ---
 
 ## Install
 
-**Python 3.10 or newer is required.** The sources use PEP 604 annotations and
-PyTorch 2.x; on an older interpreter they fail to parse, which appears as a
-`SyntaxError` on the first function definition rather than a useful message.
+**Python ≥ 3.10** (the sources use PEP 604 annotations).
 
 ```bash
 conda env create -f environment.yml
 conda activate qpi_extended
-python -V                      # expect 3.11.x
 ```
 
-Or into an existing Python >= 3.10 environment:
+or, in an existing environment:
 
 ```bash
 pip install -r requirements.txt
-```
-
-Confirm the GPU is visible before training:
-
-```bash
 python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
-If pip resolves a CUDA build the driver cannot run, install torch first from
-<https://pytorch.org/get-started/locally/> and then `pip install -r requirements.txt`.
+If pip resolves a CUDA build your driver cannot run, install PyTorch first from
+<https://pytorch.org/get-started/locally/>. The encoder is initialised from the
+ImageNet MobileNetV2 weights (`mobilenet_v2-b0353104.pth`): they are downloaded
+automatically, or can be placed in `weights/` for an offline machine.
 
-## Data layout
+---
+
+## Data
+
+The dataset is **not distributed with this repository**. It consists of 800
+matched fields — one off-axis hologram, one in-line Gabor hologram and one
+reconstructed quantitative phase map per field — of three cancer cell lines
+(NCI, SNU, T24) under a control and four drug conditions (blebbistatin, FCCP,
+staurosporine, rotenone). Expected layout:
 
 ```
 data/
-├── off_axis_hologram/      <stem>_holo.tif    1024 x 1024, 8-bit, LZW
-├── in_line_gabor_hologram/ <stem>_gabor.tif   1024 x 1024, 8-bit, LZW
-├── phase/                  <stem>_phase.bin   900 x 900 float32 + 23-byte header
-└── mask/                   <stem>_mask.png    written by `prepare`
+├── off_axis_hologram/      <stem>_holo.tif     1024 x 1024, 8-bit, LZW
+├── in_line_gabor_hologram/ <stem>_gabor.tif    1024 x 1024, 8-bit, LZW
+├── phase/                  <stem>_phase.bin    900 x 900 float32 + 23-byte header
+├── membrane/               <stem>_membrane.tif fluorescence, independent check only
+├── splits.json             included: the train / val / test split used for every run
+└── manifest.csv            included: every stem with its cell line, condition and split
 ```
 
-Stems encode the labels, e.g. `NCI_01`, `NCI_Blebbistatin_5uM_07`,
-`SNU_staurosporine_23`, `T24_rotenone_500nM_50`. Parsing is case-insensitive and
-the concentration token is optional, since the delivered data is inconsistent
-about both.
+Stems encode the labels (`NCI_01`, `NCI_Blebbistatin_5uM_07`,
+`SNU_staurosporine_23`, `T24_rotenone_500nM_50`). Holograms are **centre-cropped**
+1024 → 900 to the phase grid and never resampled.
 
-Holograms are **centre-cropped** 1024 → 900 to reach the phase sampling grid; the
-reconstruction crops the camera frame rather than resampling it.
+`data/splits.json` (560 / 127 / 113 fields, stratified by cell line × condition,
+seed 42) is included so the split is identical to the study's. Its SHA-256,
+`11d124828ce9c48fed26d540bf2f0c3adc3f34a1befc02899e1216f33e4120bf`, is recorded
+in every evaluation's provenance file; `python main.py prepare` regenerates the
+same split deterministically.
 
-## Run
+**Segmentation labels.** No manual annotations exist for this dataset. `prepare`
+derives *silver-standard* masks from the reference phase (Gaussian σ = 4 px,
+Otsu threshold, closing 2 px, hole filling, edge-object removal, 30–6000 µm² area
+filter; watershed instances with minimum peak distance 15 px). Set
+`paths.manual_mask_dir` to use manual annotations instead; nothing else changes.
+
+---
+
+## Reproduce the study
+
+All commands run from the repository root. The study used two GPUs; set
+`CUDA_VISIBLE_DEVICES` to the ones you have.
 
 ```bash
-# 1. masks, stratified splits, manifest, calibration report
-python main.py prepare   --config config/base.yaml
+# 1. masks, split, manifest, calibration report
+python main.py prepare --config config/base.yaml
 
-# 2. verify the measurement chain, the loss terms and the metrics
-#    143 checks; it is the gate on everything below and must end
-#    with "All checks passed."
+# 2. self-test: 143 checks of the measurement chain, the loss terms and the
+#    metrics; must end with "All checks passed."
 python scripts/selftest.py --config config/base.yaml
 
-# 3. train one arm
-python main.py train     --config config/off_axis.yaml
-python main.py train     --config config/gabor.yaml
-
-# 4. the central comparison: both arms, one table
-python main.py compare   --config config/base.yaml
-
-# 5. efficiency and deployment
-python main.py benchmark --config config/base.yaml
-python main.py export    --config config/off_axis.yaml --precision fp16
+# 3. the whole study in dependency order (logs in logs/v2_<timestamp>_gpu<N>/)
+nohup bash run_v2.sh > v2.out 2>&1 &
 ```
 
-Any configuration key can be overridden inline:
+`run_v2.sh` stages: 0 self-test · 1 prepare · 2 aberration surfaces · 3 amplitude
+reference · 4 pre-flight diagnostics (gradient ratio, forward-model sensitivity,
+z scan) · 5 label-free analyses (boundary-error propagation, synthetic floor) ·
+6 train every configuration · 7 Classical Pipeline · 8 ONNX export and benchmark ·
+9 diagnostic figures · 10 collect results · 11 extra seeds (train if missing,
+evaluate) · 12 repeated hardware benchmark · 13 repeated synthetic floor ·
+14 collect benchmark results. Useful switches:
 
 ```bash
-python main.py train --config config/gabor.yaml --set training.epochs=100 data.batch_size=8
+bash run_v2.sh --stage 6                      # one stage
+ARMS="A B B1" bash run_v2.sh --stage 6        # only these configurations
+CUDA_VISIBLE_DEVICES=2 ARMS="A B B1 B2 C D0 D1 D2" bash run_v2.sh --stage 11
+CUDA_VISIBLE_DEVICES=3 ARMS="G W01 W03 W30 KA KB"  bash run_v2.sh --stage 11
+CUDA_VISIBLE_DEVICES=2 bash run_v2.sh --stage 12   # only when the GPU is otherwise idle
+bash run_v2.sh --stage 13 && bash run_v2.sh --stage 14
+QUICK=1 bash run_v2.sh                        # tiny settings, plumbing check only
 ```
 
-## Outputs
+One configuration by hand:
+
+```bash
+python main.py train     --config config/v2/a_baseline.yaml                 # seed 42
+python main.py evaluate  --config config/v2/a_baseline.yaml
+python main.py train     --config config/v2/a_baseline.yaml --seed 1337 --set experiment_name=v2_A_seed1337
+python main.py benchmark --config config/v2/a_baseline.yaml --modalities off_axis
+python main.py export    --config config/v2/k_compact_a.yaml --precision fp16
+```
+
+Any key can be overridden inline with `--set section.key=value`.
+
+**What to expect.** Evaluation uses `cudnn.benchmark`, so re-evaluating a
+checkpoint can move a metric by up to about 0.002. Retraining at the same seed
+reproduces a result closely but not bit-for-bit; the three seeds are replicates
+of the training procedure. `scripts/collect_benchmark_results.py` (stage 14)
+refuses any metrics file whose checkpoint hash, seed, measurement settings or
+split hash do not match, so stale results cannot enter the tables. The
+procedure, seeds and statistics are in [`BENCHMARKING.md`](BENCHMARKING.md).
+
+### Outputs
 
 ```
 runs/<experiment>_<modality>/
-├── best_model.pt            checkpoint selected on the composite metric
-├── last_model.pt            final epoch; nothing reads it, kept for restarts
-├── resolved_config.yaml     the exact configuration this run used
-├── history.json             per-epoch losses, validation metrics, and the
-│                            learned propagation distance when z is free
-├── metrics_test.json        every metric family, including the amplitude rows
-│                            for an arm whose amplitude head is on
-├── confusion_test.json      condition confusion matrix, when that head is on
-├── per_cell_test.csv        one row per matched cell, predicted vs reference
-├── unmatched_test.csv       missed reference cells and false positives, with
-│                            their areas and masses — the input to figure 15
-└── <experiment>_<modality>_fp32.onnx
+├── best_model.pt                    checkpoint selected on the validation composite
+├── resolved_config.yaml             the exact configuration of the run
+├── history.json                     per-epoch losses, validation metrics, learned z
+├── metrics_test.json                every metric family
+├── metrics_test.provenance.json     checkpoint SHA-256, seed, config digest, split hash
+├── metrics_test_membrane.json       the same checkpoint scored against membrane labels
+├── per_cell_test.csv                one row per matched cell
+└── unmatched_test.csv               missed reference cells and false positives
 
-runs/RESULTS.md                               every table, assembled — read this first
-runs/results_table.csv                        the same tables, machine-readable
-runs/seed_aggregate.json                      the significance verdicts
-runs/z_calibration.json                       is the propagation distance identifiable?
-runs/<experiment>_modality_comparison.csv     off-axis vs Gabor, side by side
-runs/<experiment>_hardware_benchmark_*.csv    params, GMACs, latency, FPS, VRAM
-runs/error_propagation_summary.csv            boundary error -> measurement error
-runs/synthetic_validation_fields.csv          the pipeline's own floor
-```
-
-**`runs/RESULTS.md` is the document to read and to paste from.** It is assembled
-by `scripts/collect_results.py` from the files above; every number in it is read
-from a file and none is typed. It carries Table 1 (the ablation), Table 2 (the
-differences with the significance rule applied), Table 3 (measurement quality),
-Table 3b (the physics-aware forward model and the learned-z trajectory),
-**Table 3c (the amplitude output)**, Table 4 (efficiency), and the two results
-that need no trained model.
-
-## Ablations
-
-Each is a config file, so the command stays a one-liner:
-
-```bash
-python main.py compare --config config/ablation/no_physics.yaml
-python main.py compare --config config/ablation/no_measurement.yaml
-python main.py compare --config config/ablation/classification_only.yaml
-```
-
-`no_physics` removes every physics and measurement term; `no_measurement` keeps
-the previous study's three terms and drops only the two this study adds;
-`classification_only` trains the condition head alone, as a control for the
-off-axis / Gabor classification gap.
-
-## Running the whole study
-
-For the **v2 study** (the current one), use `run_v2.sh`:
-
-```bash
-CLEAN=1 nohup bash run_v2.sh > v2.out 2>&1 &   # everything, in dependency order
-bash run_v2.sh --stage 5                       # one stage
-ARMS="A B B1" bash run_v2.sh                   # only these arms
-SEEDS="1337 2024" bash run_v2.sh               # replicate the main arms
-NO_TRAIN=1 bash run_v2.sh                      # reuse checkpoints, re-evaluate only
-QUICK=1 bash run_v2.sh                         # tiny settings, plumbing only
-```
-
-Ten stages under `logs/v2_<timestamp>/`. Two of them produce results that need
-no trained model at all — stage 5's boundary-error propagation and synthetic
-ground-truth validation — so those survive any training failure. Stage 4 sets
-the per-cell loss weight from a measured gradient ratio and decides whether the
-forward-model term is usable; read it before stage 6. `config/v2/_shared.md`
-describes the thirteen arms and the one question each answers.
-
-`CLEAN=1` matters when an earlier result set is present: results written under a
-different objective are not comparable with what follows, and the driver below
-archives rather than overwrites them.
-
-### The two drivers that run it end to end
-
-`run_v2.sh` runs one stage or one arm at a time. For a full unattended run, the
-two drivers below sequence every stage in dependency order, use GPU 2 and GPU 3
-only, and are safe to re-run: each records the phase it finished in
-`.run_state/` or `.finish_state/`, so an interrupted run picks up where it
-stopped.
-
-```bash
-nohup bash RUN_ON_SERVER.sh   > run.out 2>&1 &     # the whole study, ~38 h
-bash RUN_ON_SERVER.sh --status                     # where it is
-
-nohup bash FINISH_ON_SERVER.sh > finish_gaps.out 2>&1 &   # scoring only, ~1 h
-bash FINISH_ON_SERVER.sh --status
-```
-
-`RUN_ON_SERVER.sh` archives any existing `runs/` and `figures/` to
-`*_before_audit_<timestamp>`, gates on the self-test, regenerates the masks with
-provenance, then runs stages 1, 2, 3 and 5, trains on both GPUs in parallel, and
-finishes with the classical baseline, the benchmark, the figures and the tables.
-`FINISH_ON_SERVER.sh` re-scores and rebuilds the reporting without retraining
-anything.
-
-**Delete `.run_state/` and `.finish_state/` before reusing a folder.** The
-drivers read them as "already done" and will skip every phase while appearing to
-succeed.
-
-For the **v1 study** (already reported), `run_study.sh` is unchanged:
-
-```bash
-bash run_study.sh                 # everything, in dependency order
-bash run_study.sh --stage 5       # one stage
-NO_TRAIN=1 bash run_study.sh      # reuse checkpoints, re-evaluate only
-QUICK=1 bash run_study.sh         # tiny settings, to prove the plumbing works
-```
-
-Eleven stages, each logged separately under `logs/study_<timestamp>/`, continuing
-past failures. Three logs to read first: `02_calibrate_z.log` (is z
-identifiable? gates the physics ablation), `07_conventional_baseline.log` (is the
-classical reconstruction valid?), and `03_audit_labels.log` (does the label
-threshold drift with condition?).
-
-## Diagnostics
-
-```bash
-python scripts/selftest.py --config config/base.yaml       # measurement chain and losses
-python scripts/diagnose_bias.py --config config/base.yaml  # boundary error or phase error?
-python scripts/audit_labels.py --config config/base.yaml   # are the silver labels sound?
-python scripts/calibrate_z.py --config config/base.yaml    # recover the propagation distance
-python scripts/conventional_baseline.py --config config/base.yaml   # the classical floor
-python scripts/estimate_aberration.py --config config/base.yaml     # the removed surface
-python scripts/prepare_amplitude.py --config config/base.yaml       # the amplitude reference
-python scripts/check_gradient_path.py --config config/v2/b_cell_ipp.yaml --batches 30
-python scripts/amplitude_sensitivity.py --config config/base.yaml --split test
-python scripts/error_propagation.py --config config/base.yaml       # boundary -> measurement
-python scripts/synthetic_validation.py --config config/base.yaml    # the pipeline's own floor
-```
-
-The last four were added on 2026-09-10 and each answers a question that was
-previously settled by argument instead of measurement:
-
-* `check_gradient_path.py` — the per-cell term's gradient into the segmentation
-  decoder, as a median over batches, plus its **cosine** with the segmentation
-  gradient. It prints the weight arithmetic explicitly (`effective = w x ratio`)
-  because the ratio is measured at weight 1.0 and was once read as if it were
-  the effective ratio at any weight.
-* `amplitude_sensitivity.py` — whether the forward-model residual responds to
-  the amplitude, and whether it responds to the phase *in the right direction*
-  at both a mild (x0.9) and a coarse (x0.5) degradation. On this data the mild
-  response has the wrong sign, which a coarse-only test does not reveal.
-* `error_propagation.py` — the exchange rate between a segmentation error and a
-  measurement error. No model involved: reference masks, reference phase, and a
-  boundary moved a known number of pixels.
-* `synthetic_validation.py` — the measurement chain against exact analytic
-  ground truth (spherical caps, closed-form area and integrated phase), which
-  is the only way to separate pipeline error from model error.
-
-`calibrate_z` recovers the sample-to-sensor distance the forward-model loss
-needs, by matching each hologram against its reference phase in both directions.
-It reports whether z is identifiable and **refuses to return a number when it is
-not**, rather than handing back a confident-looking guess. It also reports how
-sensitive each geometry's hologram is to phase at that distance, which is what
-decides whether the forward-model term can teach that arm anything at all.
-
-`conventional_baseline` runs the textbook reconstruction for both geometries
-through the same evaluator as the network. Check `reconstruction_valid` in its
-output before quoting any number from it.
-
-`audit_labels` answers the two questions the phase-derived masks raise: whether
-the per-image Otsu level drifts with drug condition (which would confound the
-classification result), and how much of the segmentation head is already implied
-by the phase head (which explains why the physics terms are inert). Add
-`--skip-redundancy` to run the threshold half alone — it needs no checkpoint and
-no GPU.
-
-## Figures
-
-```bash
-python scripts/make_figures.py --config config/base.yaml           # all twenty
-python scripts/make_figures.py --config config/base.yaml --list    # what each one shows
-python scripts/make_figures.py --config config/base.yaml --only 2 4 5
-```
-
-Writes `figures/fig<NN>_<name>.png` and `.pdf`. Twenty figures are registered and
-**eighteen build** on the current study: figure 7 needs the v1 ablation results
-and figure 11 needs the condition head, which is disabled. Most read files the
-earlier steps already produced, so they regenerate in seconds; a figure whose
-inputs are missing prints its reason and is skipped without stopping the rest.
-
-`figures/_manifest.json` records, per figure, which config, experiment, modality
-and split produced it — the filenames carry none of that, and stage 9 builds the
-set from three different configs. It is **merged** across invocations, and a
-figure that was skipped has its entry removed, so the manifest never vouches for
-a file left over from an earlier run.
-
-What each figure is for is tabulated in
-[`docs/documentation.md` §10a](docs/documentation.md).
-
-## Segmentation labels
-
-The delivered dataset has no manual cell annotations. `prepare` derives binary
-masks from the ground-truth phase (smoothing → Otsu → morphological cleanup →
-area filtering). These are **silver-standard** labels and must be described as
-such in any write-up.
-
-When manual annotations arrive, point `paths.manual_mask_dir` at them; nothing
-else changes.
-
-## The amplitude reference
-
-`scripts/prepare_amplitude.py` writes the amplitude target as the modulus of a
-classical off-axis reconstruction, normalised so the mask background reads 1. It
-is **not a measurement**: it carries the sideband filter's lost high frequencies,
-residual twin-image structure and any illumination vignetting. Every amplitude
-number the framework reports is therefore agreement with one reconstruction
-algorithm's output and must be described in those words.
-
-Because of that, the amplitude metric is reported against two comparators: the
-reference itself, and the thin-phase-object assumption A = 1 that the rest of the
-study runs on (`amplitude_mae_over_unity`). Below 1.0 the head is closer to the
-reference than that assumption; a head that has collapsed to a constant scores
-exactly 1.000 with zero predicted spread, which is the failure this comparator
-exists to expose.
-
-## Moving files between machines
-
-Two whole-folder copies between a workstation and the compute server have
-damaged this project's source tree, once leaving 16 of 39 modules in place and
-producing `ModuleNotFoundError: No module named 'holoqpi.analysis'`. The rules
-that follow:
-
-* Off the server: `tar -czf` the named result files and move one archive.
-* Onto the server: extract into an empty folder first, then copy.
-* Never whole-folder paste in either direction.
-* `data/` and `weights/` are multi-gigabyte inputs, not clutter. Replace only
-  code, `runs/` and `figures/`.
-* Verify before running anything:
-
-```bash
-find holoqpi -name "*.py" | wc -l      # must be 39
-python -c "import holoqpi.analysis.cells, holoqpi.deploy.benchmark, holoqpi.metrics.amplitude"
+runs/benchmark_results/              every benchmark pooled over seeds (included here)
+runs/RESULTS.md                      per-run tables, assembled by scripts/collect_results.py
 ```
 
 ---
 
-Mathematical formulation, parameter reference and experimental protocol:
-**[`docs/documentation.md`](docs/documentation.md)**.
+## Where the manuscript numbers come from
 
-Results: **`runs/RESULTS.md`**. Operational runbook:
-[`docs/RUNBOOK.md`](docs/RUNBOOK.md). Change records, most recent first:
-[`docs/gap_closure_2026-09-17.md`](docs/gap_closure_2026-09-17.md),
-[`docs/code_audit_2026-09-16.md`](docs/code_audit_2026-09-16.md),
-[`docs/v2_code_changes.md`](docs/v2_code_changes.md).
+`runs/benchmark_results/` (included) is the single source of every manuscript
+table and of Figures 2 and 4–9. `BENCHMARKING.md` §5–7 explain each file and §12 shows
+how to read a number from it.
+
+---
+
+## Repository layout
+
+```
+holoqpi/        the package: data, models, losses, metrics, physics, engine, deploy
+scripts/        self-test, data preparation, diagnostics, baselines, collectors
+config/         base.yaml and one YAML per configuration (config/v2/)
+main.py         prepare | train | evaluate | compare | benchmark | export
+run_v2.sh       the whole study, staged
+test/           evaluation notebook for trained checkpoints and new holograms
+docs/           documentation.md: formulation, parameters, protocol
+runs/benchmark_results/   collected results (JSON / CSV) behind every table
+data/splits.json, data/manifest.csv   the split used by every run
+assets/         figures used in this README
+```
+
+---
+
+## Limitations
+
+- **Segmentation labels are derived from the reconstruction target.** Every
+  reference mask is a threshold of the smoothed reference phase, so segmentation
+  scores measure agreement with that procedure, not with a human annotator, and
+  the two supervised heads are not independent. Against provisional masks from an
+  independent membrane-stain channel, the baseline's Dice falls from 0.831 to
+  0.496.
+- **Objects at the field edge remain in the reference labels.** The binary closing
+  leaves a 2-px empty rim, so the edge-object removal step removes nothing, and
+  about 46 % of test reference instances lie within 4 px of the field edge. Most
+  cells the network misses are among these; see `docs/documentation.md` §4.2.
+- **Detection recall is 0.59.** Every per-cell error is conditional on detection
+  and matching; read it with the coverage-adjusted column.
+- **The amplitude reference is the modulus of a classical reconstruction**, not a
+  measured transmittance.
+- **One dataset, one instrument.** Absolute picograms depend on α and λ; every
+  relative result is invariant to both.
+- **Timings are from a workstation GPU**; no embedded deployment is shown.
+
+---
+
+## Further documentation
+
+- [`docs/documentation.md`](docs/documentation.md) — mathematical formulation,
+  labels, architecture, objective, metrics, protocol, configuration reference.
+- [`BENCHMARKING.md`](BENCHMARKING.md) — seeds, repeated runs, statistics, result files.
+- [`config/v2/_shared.md`](config/v2/_shared.md) — the configuration matrix.
+- [`test/README.md`](test/README.md) — the evaluation notebook.

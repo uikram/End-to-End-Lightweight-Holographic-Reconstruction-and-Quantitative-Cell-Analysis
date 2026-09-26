@@ -50,6 +50,7 @@ baseline to be a fair opponent rather than a strawman.
 from __future__ import annotations
 
 import argparse
+import time
 import sys
 from pathlib import Path
 
@@ -69,7 +70,13 @@ from holoqpi.physics import (
     resolve_conjugate,
     unwrap_phase_2d,
 )
-from holoqpi.utils import get_logger, resolve_device, write_csv, write_json
+from holoqpi.utils import (
+    analysis_fingerprint,
+    get_logger,
+    resolve_device,
+    write_csv,
+    write_json,
+)
 
 LOGGER = get_logger(__name__)
 
@@ -310,6 +317,12 @@ def main() -> int:
         destination = output_root / f"conventional_{modality}"
         destination.mkdir(parents=True, exist_ok=True)
         write_json(metrics, destination / f"metrics_{args.split}.json")
+        # Which measurement rules and which split produced these numbers, so a
+        # result left over from older settings is refused rather than reported.
+        write_json({"script": "conventional_baseline.py", "modality": modality,
+                    "split": args.split, "created_at": time.time(),
+                    **analysis_fingerprint(modality_cfg)},
+                   destination / f"metrics_{args.split}.provenance.json")
         if cfg.evaluation.save_per_cell_csv:
             save_per_cell(evaluation["per_cell"], destination / f"per_cell_{args.split}.csv")
             save_per_cell(evaluation["unmatched"], destination / f"unmatched_{args.split}.csv")
