@@ -21,8 +21,8 @@ per-cell measurement.*
 > **Status.** The code, configurations and collected results in this
 > repository are the ones behind the manuscript *"Measurement-Oriented
 > End-to-End Holographic Quantitative Phase Analysis: Joint Reconstruction,
-> Segmentation and Per-Cell Measurement from a Single Raw Hologram"* (in
-> preparation). Model weights, checkpoints and the dataset are not distributed
+> Segmentation and Per-Cell Measurement from a Single Raw Hologram"*.
+> Model weights, checkpoints and the dataset are not distributed
 > here.
 
 ---
