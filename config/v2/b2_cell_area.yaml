@@ -1,0 +1,41 @@
+# HoloQPI v2, experiment B'': per-cell mass AND per-cell area
+#
+# Dry mass is a phase integral over a segmented domain, m = k * sum(phi) * dA,
+# so it is a product of a phase and an area. cell_integrated_phase constrains
+# the product. A boundary pulled inwards while the phase inside is scaled up
+# leaves the product unchanged, so the mass term alone cannot pin the
+# morphology -- and projected area and circularity are reported outputs in
+# their own right, not intermediates.
+#
+# cell_projected_area constrains the area directly, per cell, over the same
+# reference instance domains and with the same relative-error form, so the two
+# are directly comparable.
+#
+# WHY THIS IS A SEPARATE ARM AND NOT PART OF B. B tests one hypothesis. Adding
+# the area term to it would make a positive result unattributable between the
+# two constraints, and a negative one unattributable between "the constraint
+# does not help" and "the two constraints interfere". B'' = B + area is the
+# only way to read either.
+#
+# NOTE WHAT THE AREA TERM CANNOT DO. It sums the predicted foreground inside
+# each REFERENCE cell, so it pushes confidence up within known cells and cannot
+# see false-positive area outside them. Suppressing that is the segmentation
+# loss's job, and the detection precision metric is where it shows.
+extends: ../base.yaml
+
+experiment_name: v2_cell_ipp_area
+
+data:
+  modality: off_axis
+
+model:
+  classifier_enabled: false
+
+loss:
+  weights:
+    classification: 0.0
+    cell_integrated_phase: 1.0        # same as B, so the arms differ by one term
+    cell_projected_area: 1.0          # set from check_gradient_path.py on this config
+    boundary_gradient_alignment: 0.0
+    projected_area_consistency: 0.0
+    forward_model: 0.0

@@ -2,25 +2,35 @@
 """Command-line entry point.
 
     python main.py prepare   --config config/base.yaml
-    python main.py train     --config config/off_axis.yaml
-    python main.py evaluate  --config config/off_axis.yaml
-    python main.py compare   --config config/base.yaml
-    python main.py benchmark --config config/base.yaml
-    python main.py export    --config config/off_axis.yaml
+    python main.py train     --config config/v2/a_baseline.yaml
+    python main.py evaluate  --config config/v2/a_baseline.yaml
+    python main.py compare   --config config/v2/a_baseline.yaml --modalities off_axis gabor
+    python main.py benchmark --config config/v2/a_baseline.yaml --modalities off_axis
+    python main.py export    --config config/v2/a_baseline.yaml
 
 Any configuration value can be overridden inline, for example:
 
-    python main.py train --config config/gabor.yaml --set training.epochs=5 data.batch_size=2
+    python main.py train --config config/v2/a_baseline.yaml --set training.epochs=5 data.batch_size=2
 """
 
 from __future__ import annotations
 
 import argparse
+import socket
 import sys
+import time
 from pathlib import Path
 
 from holoqpi.config import load_config, parse_overrides, save_config
-from holoqpi.utils import add_file_logging, get_logger, resolve_device, seed_everything
+from holoqpi.utils import (
+    add_file_logging,
+    analysis_fingerprint,
+    determinism_state,
+    file_sha256,
+    get_logger,
+    resolve_device,
+    seed_everything,
+)
 
 LOGGER = get_logger("holoqpi")
 
@@ -31,6 +41,15 @@ def _add_common(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--set", nargs="*", default=[], metavar="KEY=VALUE",
         help="dotted configuration overrides, e.g. training.epochs=5",
+    )
+    parser.add_argument(
+        "--seed", type=int, default=None,
+        help="random seed for this run; shorthand for --set project.seed=N. "
+             "Seeds Python, NumPy, PyTorch (CPU and CUDA) and, through them, the "
+             "DataLoader shuffle, worker streams, augmentation and model "
+             "initialisation. A replicate also needs its own "
+             "experiment_name, or it would share the primary run's directory; "
+             "see BENCHMARKING.md.",
     )
 
 
@@ -47,18 +66,55 @@ def build_parser() -> argparse.ArgumentParser:
 
     train = subparsers.add_parser("train", help="train one modality")
     _add_common(train)
+    train.add_argument(
+        "--init-from", default=None,
+        help="checkpoint to initialise weights from before fine-tuning. Every "
+             "experiment condition must start from the SAME pretrained "
+             "checkpoint, or a difference between conditions could be "
+             "pretraining noise rather than the effect of the loss under test.",
+    )
 
     evaluate = subparsers.add_parser("evaluate", help="evaluate a trained checkpoint")
     _add_common(evaluate)
     evaluate.add_argument("--checkpoint", default=None, help="defaults to the run's best_model.pt")
     evaluate.add_argument("--split", default="test", choices=["train", "val", "test"])
+    evaluate.add_argument(
+        "--tag", default=None,
+        help="suffix for the output files, so a second label source (e.g. "
+             "paths.manual_mask_dir=membrane_mask) does not overwrite the first",
+    )
+    evaluate.add_argument(
+        "--allow-untrained", action="store_true",
+        help="evaluate even when no checkpoint is found (scores random weights)",
+    )
 
     compare = subparsers.add_parser("compare", help="run the off-axis / Gabor comparison")
     _add_common(compare)
+    compare.add_argument("--init-from", default=None,
+                         help="see `train --init-from`; applies to every arm")
     compare.add_argument("--modalities", nargs="+", default=["off_axis", "gabor"])
+    # TRAINING IS OPT-IN HERE, AND IT DID NOT USED TO BE.
+    #
+    # `compare` exists for two jobs: training a matched pair of arms, and pairing
+    # two arms that are ALREADY trained so that the modality-comparison JSON and
+    # figures 5, 13 and 14 can be written. The second is overwhelmingly the
+    # common one -- run_v2.sh trains the arms in stage 6 and then needs the
+    # pairing -- and with training on by default the documented invocation
+    # `python main.py compare --config config/v2/a_baseline.yaml` silently
+    # retrained both arms for 60 epochs each and overwrote the two checkpoints
+    # the study was about to report. A default that can destroy a day of GPU time
+    # and two results is the wrong default.
+    compare.add_argument(
+        "--train", action="store_true",
+        help="train each arm before evaluating it. Off by default: without it, "
+             "compare scores the checkpoints already in the run directories and "
+             "writes only the comparison table.",
+    )
     compare.add_argument(
         "--no-train", action="store_true",
-        help="evaluate existing checkpoints instead of training first",
+        help="force evaluation of existing checkpoints. This is already the "
+             "default; the flag is kept so older scripts and notes keep "
+             "working, and it overrides --train if both are given.",
     )
 
     benchmark = subparsers.add_parser("benchmark", help="profile latency, memory and size")
@@ -83,7 +139,55 @@ def _load(args) -> "object":
     overrides = parse_overrides(args.set)
     if getattr(args, "device", None) and args.device != "auto":
         overrides.setdefault("device", args.device)
+    if getattr(args, "seed", None) is not None:
+        overrides.setdefault("project", {})["seed"] = int(args.seed)
     return load_config(args.config, overrides)
+
+
+def _refuse_foreign_seed(run_dir: Path, seed: int) -> None:
+    """Stop a run from writing into a directory trained with a different seed.
+
+    A replicate launched without its own experiment_name resolves to the
+    primary run's directory and would overwrite the primary checkpoint with a
+    different seed's -- after which every file in that directory describes a
+    mixture. Retraining the SAME seed in place is still allowed.
+    """
+    import yaml
+
+    resolved = run_dir / "resolved_config.yaml"
+    if not resolved.is_file():
+        return
+    try:
+        previous = yaml.safe_load(resolved.read_text())["project"]["seed"]
+    except Exception:
+        return
+    if previous is not None and int(previous) != int(seed):
+        raise SystemExit(
+            f"{run_dir} holds a run trained with seed {previous}; this run uses seed "
+            f"{seed}. Give the replicate its own directory with "
+            f"--set experiment_name=<name>_seed{seed}, or delete {run_dir} first."
+        )
+
+
+def _checkpoint_record(checkpoint: Path) -> dict:
+    """Identity of a checkpoint, and the seed and epoch it was trained to."""
+    import torch
+
+    record = {
+        "checkpoint": str(checkpoint.resolve()),
+        "checkpoint_sha256": file_sha256(checkpoint),
+        "checkpoint_bytes": checkpoint.stat().st_size,
+        "checkpoint_mtime": checkpoint.stat().st_mtime,
+        "train_seed": None,
+        "checkpoint_epoch": None,
+    }
+    try:
+        payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+        record["checkpoint_epoch"] = payload.get("epoch")
+        record["train_seed"] = (payload.get("config") or {}).get("project", {}).get("seed")
+    except Exception as exc:                      # identity above is still valid
+        LOGGER.warning("could not read the training seed from %s (%s)", checkpoint, exc)
+    return record
 
 
 # ---------------------------------------------------------------------------
@@ -106,6 +210,7 @@ def command_train(args) -> int:
     device = resolve_device(args.device)
 
     run_dir = run_directory(cfg.paths.output_root, cfg.experiment_name, cfg.data.modality)
+    _refuse_foreign_seed(run_dir, cfg.project.seed)
     add_file_logging(LOGGER, run_dir / "train.log")
     save_config(cfg, run_dir / "resolved_config.yaml")
 
@@ -113,13 +218,24 @@ def command_train(args) -> int:
 
     loaders = build_dataloaders(cfg, splits_to_build=("train", "val"))
     model = build_model(cfg)
+
+    initial = getattr(args, "init_from", None)
+    if initial:
+        from holoqpi.engine.trainer import load_checkpoint
+
+        LOGGER.info("initialising weights from %s", initial)
+        load_checkpoint(model, initial, device, strict=False)
+        # Recorded in the run directory so a result can always be traced back to
+        # the checkpoint it started from.
+        (run_dir / "initialised_from.txt").write_text(str(Path(initial).resolve()) + "\n")
+
     Trainer(model, cfg, loaders, device, run_dir).train()
     return 0
 
 
 def command_evaluate(args) -> int:
     from holoqpi.data import build_dataloaders
-    from holoqpi.engine import Evaluator, load_checkpoint, save_per_cell
+    from holoqpi.engine import Evaluator, apply_learned_physics, load_checkpoint, save_per_cell
     from holoqpi.models import build_model
     from holoqpi.utils import run_directory, write_json
 
@@ -130,11 +246,34 @@ def command_evaluate(args) -> int:
     run_dir = run_directory(cfg.paths.output_root, cfg.experiment_name, cfg.data.modality)
     checkpoint = Path(args.checkpoint) if args.checkpoint else run_dir / "best_model.pt"
 
+    # Before anything reads cfg.loss.forward_model: a learned propagation
+    # distance lives in the checkpoint, not in the config, and the forward-model
+    # metric has to be built at the value this run actually trained to.
+    # The measurement rules as CONFIGURED, fingerprinted before a learned
+    # distance replaces the configured one below; otherwise the learned-z arm's
+    # provenance never matches its own config. The learned value is recorded
+    # in the metrics themselves (forward_distance_um).
+    fingerprint = analysis_fingerprint(cfg)
+    cfg = apply_learned_physics(cfg, checkpoint)
+
     model = build_model(cfg)
     if checkpoint.is_file():
         load_checkpoint(model, checkpoint, device)
+    elif args.allow_untrained:
+        LOGGER.warning("checkpoint %s not found; scoring UNTRAINED weights as requested",
+                       checkpoint)
     else:
-        LOGGER.warning("checkpoint %s not found; evaluating untrained weights", checkpoint)
+        # Metrics from random weights look like metrics. Refuse rather than
+        # write a plausible-looking metrics_test.json nobody would question.
+        available = sorted(
+            str(q.parent) for q in Path(cfg.paths.output_root).glob("*/best_model.pt")
+        )
+        raise SystemExit(
+            f"No checkpoint at {checkpoint}.\n"
+            f"Checkpoints found under {cfg.paths.output_root}: "
+            f"{available if available else 'none'}\n"
+            f"Pass --allow-untrained only if scoring random weights is genuinely intended."
+        )
     model.to(device)
 
     loaders = build_dataloaders(cfg, splits_to_build=(args.split,))
@@ -142,10 +281,57 @@ def command_evaluate(args) -> int:
         model, loaders[args.split], collect_per_cell=cfg.evaluation.save_per_cell_csv
     )
 
-    write_json(evaluation["metrics"], run_dir / f"metrics_{args.split}.json")
-    write_json(evaluation["confusion_matrix"], run_dir / f"confusion_{args.split}.json")
+    # A tag keeps a second evaluation of the SAME checkpoint from overwriting the
+    # first. That is not hypothetical: evaluating against the membrane labels
+    # (paths.manual_mask_dir=membrane_mask) reuses the run directory, and without
+    # a tag it silently replaces the Otsu-label metrics with the membrane-label
+    # ones under an identical filename. Two label sources are two results.
+    tag = f"_{args.tag}" if args.tag else ""
+    write_json(evaluation["metrics"], run_dir / f"metrics_{args.split}{tag}.json")
+
+    # WHICH CHECKPOINT PRODUCED THESE NUMBERS. Without this a metrics file can
+    # outlive its checkpoint -- retrained, copied over, or mixed in from another
+    # machine -- and nothing shows it; that is how arm A once carried a
+    # metrics_test.json whose values belonged to a different seed.
+    # collect_benchmark_results.py refuses a metrics file whose recorded
+    # checkpoint hash no longer matches the checkpoint on disk.
+    if checkpoint.is_file():
+        provenance = {
+            "experiment_name": cfg.experiment_name,
+            "modality": cfg.data.modality,
+            "split": args.split,
+            "tag": args.tag,
+            "eval_seed": int(cfg.project.seed),
+            "labels": cfg.paths.manual_mask_dir or cfg.paths.mask_dir,
+            "evaluated_at": time.time(),
+            "host": socket.gethostname(),
+            "device": str(device),
+            **_checkpoint_record(checkpoint),
+            **determinism_state(),
+            **fingerprint,
+        }
+        if provenance["train_seed"] is not None and int(provenance["train_seed"]) != int(
+            cfg.project.seed
+        ):
+            LOGGER.warning(
+                "checkpoint was trained with seed %s but this evaluation runs with seed "
+                "%s. The metrics describe the checkpoint; check the pairing.",
+                provenance["train_seed"], cfg.project.seed,
+            )
+        write_json(provenance, run_dir / f"metrics_{args.split}{tag}.provenance.json")
+    write_json(evaluation["confusion_matrix"], run_dir / f"confusion_{args.split}{tag}.json")
     if cfg.evaluation.save_per_cell_csv:
-        save_per_cell(evaluation["per_cell"], run_dir / f"per_cell_{args.split}.csv")
+        save_per_cell(evaluation["per_cell"], run_dir / f"per_cell_{args.split}{tag}.csv")
+        # The unmatched rows -- missed reference cells and false positives -- are
+        # the input to figure 15 (recall against cell size). This line used to
+        # sit inside the `if args.tag` block below while its filename carried no
+        # tag, so an untagged evaluation wrote no file at all and a tagged one
+        # wrote the membrane result under the Otsu result's name. It belongs
+        # here, beside per_cell, and it carries the same tag.
+        save_per_cell(evaluation["unmatched"], run_dir / f"unmatched_{args.split}{tag}.csv")
+    if args.tag:
+        LOGGER.info("labels from %s -> metrics_%s%s.json",
+                    cfg.paths.manual_mask_dir or cfg.paths.mask_dir, args.split, tag)
 
     for key, value in sorted(evaluation["metrics"].items()):
         LOGGER.info("  %-34s %s", key, f"{value:.4f}" if isinstance(value, float) else value)
@@ -156,7 +342,13 @@ def command_compare(args) -> int:
     from holoqpi.engine import compare_modalities
 
     cfg = _load(args)
-    compare_modalities(cfg, args.modalities, train=not args.no_train)
+    train = bool(args.train) and not bool(args.no_train)
+    if not train:
+        LOGGER.info(
+            "compare: scoring existing checkpoints (pass --train to train each arm first)"
+        )
+    compare_modalities(cfg, args.modalities, train=train,
+                       init_from=getattr(args, 'init_from', None))
     return 0
 
 
@@ -167,9 +359,17 @@ def command_benchmark(args) -> int:
     from holoqpi.utils import run_directory, write_csv, write_json
 
     cfg = _load(args)
+    # Seeds the synthetic input tensors (PyTorch and ONNX) and the MAC-count
+    # probe. Latency does not depend on the input values, so the seed does not
+    # move the timing; what makes repeated benchmark runs independent is that
+    # each is a separate process timing a separately trained checkpoint.
+    seed_everything(cfg.project.seed, cfg.project.deterministic)
     device = resolve_device(args.device)
     output_root = Path(cfg.paths.output_root)
-    onnx_dir = output_root / "onnx"
+    # --seed marks a replicate: its result is written into the run directory of
+    # the checkpoint it profiled, one file per seed, and never to the shared
+    # files at the top of runs/ that collect_results.py globs for Table 4.
+    replicate = args.seed is not None
 
     rows: list[dict] = []
     for modality in args.modalities:
@@ -182,15 +382,39 @@ def command_benchmark(args) -> int:
         checkpoint = Path(args.checkpoint) if args.checkpoint else run_dir / "best_model.pt"
         if checkpoint.is_file():
             load_checkpoint(model, checkpoint, device, strict=False)
+            identity = _checkpoint_record(checkpoint)
+        elif replicate:
+            LOGGER.error(
+                "no checkpoint at %s. A seeded benchmark profiles the checkpoint trained "
+                "with that seed; train it first (bash run_v2.sh --stage 11).", checkpoint,
+            )
+            return 3
         else:
             LOGGER.warning("no checkpoint for %s; profiling the untrained graph", modality)
+            identity = {"checkpoint": None, "checkpoint_sha256": None, "train_seed": None}
 
-        rows.extend(profile_model(model, modality_cfg, device, modality, onnx_dir=onnx_dir))
+        onnx_dir = run_dir if replicate else output_root / "onnx"
+        modality_rows = profile_model(model, modality_cfg, device, modality, onnx_dir=onnx_dir)
+        for row in modality_rows:
+            row.update({
+                "seed": int(cfg.project.seed),
+                "measured_at": time.time(),
+                "host": socket.gethostname(),
+                **identity,
+                **determinism_state(),
+            })
+        if replicate:
+            destination = run_dir / f"hardware_benchmark_{device.type}.csv"
+            write_csv(modality_rows, destination)
+            write_json(modality_rows, destination.with_suffix(".json"))
+            LOGGER.info("benchmark (seed %d) written to %s", cfg.project.seed, destination)
+        rows.extend(modality_rows)
 
-    destination = output_root / f"{cfg.experiment_name}_hardware_benchmark_{device.type}.csv"
-    write_csv(rows, destination)
-    write_json(rows, destination.with_suffix(".json"))
-    LOGGER.info("benchmark written to %s", destination)
+    if not replicate:
+        destination = output_root / f"{cfg.experiment_name}_hardware_benchmark_{device.type}.csv"
+        write_csv(rows, destination)
+        write_json(rows, destination.with_suffix(".json"))
+        LOGGER.info("benchmark written to %s", destination)
     return 0
 
 

@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
+import os
 import random
 from pathlib import Path
 from typing import Any, Mapping
@@ -35,15 +37,90 @@ def add_file_logging(logger: logging.Logger, path: str | Path) -> None:
 
 
 def seed_everything(seed: int, deterministic: bool = False) -> None:
+    """Seed every random stream a run draws from.
+
+    Python ``random``, NumPy's global generator, and the PyTorch CPU and CUDA
+    generators. Everything else in a run derives from these: DataLoader
+    shuffling and the per-worker seeds (``holoqpi.data.dataset._seed_worker``)
+    are drawn from torch's generator, the crop offsets and flips from a
+    ``random.Random`` seeded with ``project.seed``, and the decoder
+    initialisation from torch's generator when the model is built.
+
+    ``deterministic=False`` (the study's setting) leaves cuDNN free to pick the
+    fastest kernel, so two runs with the SAME seed agree closely but not
+    bit-for-bit. ``deterministic=True`` additionally requests deterministic
+    algorithms everywhere PyTorch offers one; it is slower and is not what the
+    reported runs used, so replicates must not mix the two settings.
+    """
+    os.environ["PYTHONHASHSEED"] = str(seed)
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     if deterministic:
+        # cuBLAS needs a fixed workspace to be deterministic; set before any
+        # CUDA work, and only if the user has not chosen one already.
+        os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
+        # warn_only: an op with no deterministic implementation warns instead
+        # of aborting a multi-hour run.
+        torch.use_deterministic_algorithms(True, warn_only=True)
     else:
         torch.backends.cudnn.benchmark = True
+
+
+def determinism_state() -> dict:
+    """What a run's reproducibility settings actually were, for provenance."""
+    return {
+        "cudnn_deterministic": bool(torch.backends.cudnn.deterministic),
+        "cudnn_benchmark": bool(torch.backends.cudnn.benchmark),
+        "deterministic_algorithms": bool(torch.are_deterministic_algorithms_enabled()),
+        "cublas_workspace_config": os.environ.get("CUBLAS_WORKSPACE_CONFIG"),
+        "torch_version": torch.__version__,
+        "cuda_version": torch.version.cuda,
+    }
+
+
+#: Config settings that decide what an analysis or an evaluation measures:
+#: calibration, label generation, the measurement chain, the forward model and
+#: the dataset layout. Two outputs with different fingerprints were produced
+#: under different measurement rules and must not be compared or pooled.
+ANALYSIS_SECTIONS = (
+    "optics", "mask_generation", "labels", "formats",
+    "evaluation.measurement", "evaluation.segmentation", "evaluation.phase",
+    "evaluation.conventional_baseline", "evaluation.forward_model",
+    "loss.forward_model", "data.phase_size", "data.align", "data.eval_size",
+    "paths.mask_dir", "paths.manual_mask_dir", "paths.splits_file",
+)
+
+
+def analysis_fingerprint(cfg) -> dict:
+    """Digest of the measurement-defining config, plus the split file's hash."""
+    data = cfg.to_dict() if hasattr(cfg, "to_dict") else dict(cfg)
+    selected = {}
+    for dotted in ANALYSIS_SECTIONS:
+        node = data
+        for part in dotted.split("."):
+            node = node.get(part) if isinstance(node, dict) else None
+        selected[dotted] = node
+    digest = hashlib.sha256(
+        json.dumps(selected, sort_keys=True, default=str).encode()
+    ).hexdigest()
+    splits = Path(data["paths"]["data_root"]) / data["paths"]["splits_file"]
+    return {
+        "config_digest": digest,
+        "splits_sha256": file_sha256(splits) if splits.is_file() else None,
+    }
+
+
+def file_sha256(path: str | Path, chunk: int = 1 << 20) -> str:
+    """SHA-256 of a file, used to tie a result file to the checkpoint it scored."""
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for block in iter(lambda: handle.read(chunk), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def resolve_device(requested: str | None = None) -> torch.device:
@@ -77,7 +154,7 @@ def count_parameters(model: torch.nn.Module) -> dict:
 def run_name(experiment_name: str, modality: str) -> str:
     """Identifier for one arm of the comparison.
 
-    off_axis.yaml is already named after its modality, so avoid "off_axis_off_axis".
+    An experiment name that already ends in its modality is not suffixed twice.
     """
     if experiment_name.endswith(modality):
         return experiment_name
@@ -88,6 +165,124 @@ def run_directory(output_root: str | Path, experiment_name: str, modality: str) 
     path = Path(output_root) / run_name(experiment_name, modality)
     path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+def pooled_between_seed_sd(values_a, values_b) -> tuple[float, str | None]:
+    """The project's resolution criterion (not a significance test), in one place.
+
+    Returns ``(pooled_sd, reason_it_cannot_be_used)``, where the reason is
+    ``None`` when the value is usable.
+
+    ``sqrt(((n_a - 1) s_a^2 + (n_b - 1) s_b^2) / (n_a + n_b - 2))`` -- the
+    textbook pooled standard deviation of two seed populations. A difference
+    counts as resolved when it exceeds
+    ``evaluation.seed_replication.resolve_factor`` times this.
+
+    WHY IT LIVES HERE. The same rule was implemented three times with two
+    different formulas and one hardcoded constant:
+
+        scripts/aggregate_seeds.py    sqrt(s_a^2 + s_b^2)
+        scripts/collect_results.py    sqrt(0.5 (v_a + v_b))
+        scripts/make_figures.py       sqrt(0.5 (v_a + v_b)) for the band,
+                                      and a flat +/-2% in figure 7's shading
+
+    The first is larger than the second by sqrt(2) for equal n, so the SAME
+    comparison could be called resolved by one document and unresolved by
+    another -- and the flat 2% had no relation to any measurement at all.
+
+    Two cases are refused rather than answered:
+
+    * fewer than two runs on either arm, because a spread of one run is not a
+      spread;
+    * a pooled SD of exactly zero, which means the metric did not move between
+      seeds at all. Calling a large difference "within noise" when the noise is
+      measurably nil inverts the verdict, and zero-variance metrics have already
+      appeared in this project's results.
+    """
+    a = np.asarray([v for v in np.asarray(values_a, dtype=float).ravel()
+                    if np.isfinite(v)], dtype=float)
+    b = np.asarray([v for v in np.asarray(values_b, dtype=float).ravel()
+                    if np.isfinite(v)], dtype=float)
+    if a.size < 2 or b.size < 2:
+        return float("nan"), f"needs 2+ runs per arm (have {a.size} and {b.size})"
+    variance = ((a.size - 1) * a.var(ddof=1) + (b.size - 1) * b.var(ddof=1)) / (
+        a.size + b.size - 2
+    )
+    sd = float(np.sqrt(variance))
+    if not np.isfinite(sd):
+        return float("nan"), "spread is not finite"
+    if sd == 0.0:
+        return 0.0, "between-seed spread is exactly zero -- check the runs differ"
+    return sd, None
+
+
+_PROVENANCE_NAME = "_provenance.json"
+
+
+def provenance_path(directory: str | Path) -> Path:
+    return Path(directory) / _PROVENANCE_NAME
+
+
+def read_provenance(directory: str | Path) -> dict | None:
+    """The parameters a generated directory was produced with, if recorded."""
+    path = provenance_path(directory)
+    if not path.is_file():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def write_provenance(directory: str | Path, parameters: Mapping[str, Any]) -> Path:
+    """Record the parameters a generated directory was produced with."""
+    return write_json(dict(parameters), provenance_path(directory))
+
+
+def assert_provenance(
+    directory: str | Path, parameters: Mapping[str, Any], regenerate_hint: str
+) -> None:
+    """Refuse to reuse a generated directory built with different parameters.
+
+    THE FAILURE THIS PREVENTS, which has already happened in this project.
+
+    Both generators that fill a directory -- the phase-derived masks and the
+    classical amplitude reference -- skip any file that already exists. Neither
+    recorded what produced it, and the only consumer-side check was the array's
+    SHAPE, which a parameter change does not alter. So changing
+    ``mask_generation.smoothing_sigma_px``, ``otsu_scale``,
+    ``border_buffer_px`` or ``model.frontend.sideband_radius_px`` and re-running
+    silently reused every old file, and the run then trained and measured
+    against artefacts from a different configuration. For the masks that is
+    especially bad: they are simultaneously the segmentation target and the
+    reference for every per-cell measurement.
+
+    Raising is the right response rather than warning. A warning in a stage log
+    is exactly what was missed before, and regenerating is one flag away.
+    """
+    stored = read_provenance(directory)
+    if stored is None:
+        return
+    current = dict(parameters)
+    differences = {
+        key: (stored.get(key), current[key])
+        for key in sorted(set(stored) | set(current))
+        if stored.get(key) != current.get(key)
+    }
+    if not differences:
+        return
+    lines = "\n".join(
+        f"    {key}: produced with {was!r}, config now says {now!r}"
+        for key, (was, now) in differences.items()
+    )
+    raise ValueError(
+        f"{directory} was generated with different parameters and would be "
+        f"reused as-is:\n{lines}\n"
+        f"  Existing files are skipped rather than rebuilt, so the run would "
+        f"train and measure against artefacts from another configuration.\n"
+        f"  {regenerate_hint}"
+    )
 
 
 def write_json(payload: Any, destination: str | Path) -> Path:

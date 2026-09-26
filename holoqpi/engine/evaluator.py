@@ -16,7 +16,9 @@ from ..analysis.cells import calibration_from_config, match_cells, measure_cells
 from ..config import Config
 from ..data.masks import split_instances
 from ..metrics import (
+    AmplitudeMetrics,
     ClassificationMetrics,
+    ForwardModelMetrics,
     MeasurementMetrics,
     PhaseMetrics,
     SegmentationMetrics,
@@ -24,6 +26,15 @@ from ..metrics import (
 from ..utils import get_logger, write_csv
 
 LOGGER = get_logger(__name__)
+
+
+def _to_device(value, device):
+    """Move a batch entry to ``device``, passing ``None`` through unchanged.
+
+    The optional keys in this file are fetched with ``batch.get`` and may be
+    absent, so a bare ``.to(device)`` would raise on ``None``.
+    """
+    return value.to(device) if isinstance(value, torch.Tensor) else value
 
 
 class Evaluator:
@@ -48,7 +59,21 @@ class Evaluator:
         )
         self.classification_metrics = ClassificationMetrics(list(cfg.labels.conditions))
         self.measurement_metrics = MeasurementMetrics(
-            report_bland_altman=self.measurement_cfg.report_bland_altman
+            report_bland_altman=self.measurement_cfg.report_bland_altman,
+            report_coverage_adjusted=self.measurement_cfg.report_coverage_adjusted,
+            field_bootstrap_resamples=self.measurement_cfg.field_bootstrap_resamples,
+            bootstrap_seed=cfg.project.seed,
+        )
+        self.forward_metrics = (
+            ForwardModelMetrics(cfg.loss.forward_model, cfg.optics, cfg.data.modality)
+            if evaluation.forward_model.report_residual else None
+        )
+        # Only for an arm whose amplitude head is switched on. With the head off
+        # the model emits no amplitude at all, and scoring the unity field the
+        # dataset substitutes would put a perfect amplitude agreement in the
+        # table for an arm that never predicted one.
+        self.amplitude_metrics = (
+            AmplitudeMetrics() if cfg.model.amplitude.enabled else None
         )
 
     def reset(self) -> None:
@@ -56,17 +81,33 @@ class Evaluator:
         self.segmentation_metrics.reset()
         self.classification_metrics.reset()
         self.measurement_metrics.reset()
+        if self.forward_metrics is not None:
+            self.forward_metrics.reset()
+        if self.amplitude_metrics is not None:
+            self.amplitude_metrics.reset()
 
     @torch.no_grad()
     def run(
         self,
-        model: torch.nn.Module,
+        model: torch.nn.Module | None,
         loader,
         collect_per_cell: bool = False,
         loss_fn=None,
+        predict_fn=None,
     ) -> dict:
-        model.eval()
+        """Score a model, or any predictor, on one dataloader.
+
+        ``predict_fn`` replaces the model call with an arbitrary callable taking
+        the batch and returning the same output dictionary. The conventional
+        reconstruction baseline uses it, which is what makes the classical and
+        the learned pipeline comparable: they are scored by the same code, the
+        same instance labelling and the same measurement chain, so a difference
+        between them is a difference in reconstruction and nothing else.
+        """
+        if model is not None:
+            model.eval()
         self.reset()
+        self._classification_seen = False
 
         per_cell_rows: list[dict] = []
         loss_totals: dict[str, float] = {}
@@ -74,18 +115,60 @@ class Evaluator:
 
         for batch in loader:
             hologram = batch["hologram"].to(self.device, non_blocking=True)
+            raw_hologram = batch.get("hologram_raw")
+            if raw_hologram is not None:
+                raw_hologram = raw_hologram.to(self.device, non_blocking=True)
+            aberration = batch.get("aberration")
+            if aberration is not None:
+                aberration = aberration.to(self.device, non_blocking=True)
             phase_target = batch["phase"].to(self.device, non_blocking=True)
             mask_target = batch["mask"].to(self.device, non_blocking=True)
             condition_target = batch["condition"].to(self.device, non_blocking=True)
 
-            outputs = model(hologram)
+            outputs = predict_fn(batch) if predict_fn is not None else model(hologram)
+
+            # Fetched once, before the loss block, because the amplitude metric
+            # needs it whether or not a loss is being evaluated: the final test
+            # pass of an arm runs with loss_fn set, but a bare `main.py evaluate`
+            # does not, and the amplitude row must appear in both.
+            #
+            # The guard is the dataset flag, not the key. The dataset returns a
+            # field of ones when no reference directory is configured, and
+            # scoring against that would report the thin-phase assumption as a
+            # perfect amplitude agreement.
+            amplitude_reference = None
+            if "amplitude" in batch and getattr(
+                loader.dataset, "provide_amplitude", False
+            ):
+                amplitude_reference = batch["amplitude"].to(
+                    self.device, non_blocking=True
+                )
 
             if loss_fn is not None:
                 moved = {
                     "phase": phase_target,
                     "mask": mask_target,
                     "condition": condition_target,
+                    "hologram": hologram,
+                    "hologram_raw": raw_hologram,
+                    "aberration": aberration,
+                    # Moved to the device like every other key here. These two
+                    # used to be handed over straight off the CPU batch, and
+                    # the asymmetry with Trainer._train_one_epoch -- which does
+                    # move them -- is what made the forward-model term fail in
+                    # validation while training was fine.
+                    "aberration_valid": _to_device(
+                        batch.get("aberration_valid"), self.device
+                    ),
+                    "instances": _to_device(batch.get("instances"), self.device),
                 }
+                # Present only when the dataset actually loaded a reference. The
+                # dataset returns ones when it did not, and passing those would
+                # have the amplitude loss score a field of ones rather than
+                # raise, so an arm configured without the reference would report
+                # a small meaningless amplitude loss instead of failing.
+                if amplitude_reference is not None:
+                    moved["amplitude"] = amplitude_reference
                 _, components = loss_fn(outputs, moved)
                 for key, value in components.items():
                     loss_totals[key] = loss_totals.get(key, 0.0) + value
@@ -95,7 +178,14 @@ class Evaluator:
             phase_reference = phase_target.squeeze(1).float().cpu().numpy()
             mask_prediction = outputs["segmentation"].argmax(dim=1).cpu().numpy()
             mask_reference = mask_target.cpu().numpy()
-            condition_prediction = outputs["condition"].argmax(dim=1).cpu().numpy()
+            # When the condition head is disabled the classification metrics are
+            # simply not produced. Predicting a constant class instead would put
+            # a meaningless accuracy in the results table.
+            has_condition = "condition" in outputs
+            condition_prediction = (
+                outputs["condition"].argmax(dim=1).cpu().numpy() if has_condition
+                else np.zeros(phase_prediction.shape[0], dtype=np.int64)
+            )
             condition_reference = condition_target.cpu().numpy()
 
             # Label instances once per image and thread the result through every
@@ -114,13 +204,32 @@ class Evaluator:
                 for m in mask_reference
             ]
 
-            self.phase_metrics.update(phase_prediction, phase_reference)
+            self.phase_metrics.update(phase_prediction, phase_reference, mask=mask_reference)
+            if (
+                self.amplitude_metrics is not None
+                and amplitude_reference is not None
+                and outputs.get("amplitude") is not None
+            ):
+                self.amplitude_metrics.update(
+                    outputs["amplitude"].squeeze(1).float().cpu().numpy(),
+                    amplitude_reference.squeeze(1).float().cpu().numpy(),
+                    mask=mask_reference,
+                )
+            if self.forward_metrics is not None:
+                self.forward_metrics.update(
+                    outputs["phase"].float(), outputs.get("amplitude"),
+                    raw_hologram if raw_hologram is not None else hologram,
+                    reference_phase=phase_target.float(),
+                    aberration=aberration,
+                )
             self.segmentation_metrics.update(
                 mask_prediction, mask_reference,
                 prediction_instances=predicted_instances,
                 target_instances=reference_instances,
             )
-            self.classification_metrics.update(condition_prediction, condition_reference)
+            if has_condition:
+                self.classification_metrics.update(condition_prediction, condition_reference)
+                self._classification_seen = True
 
             for index in range(phase_prediction.shape[0]):
                 rows = self._measure_pair(
@@ -140,8 +249,16 @@ class Evaluator:
         results = {}
         results.update(self.phase_metrics.compute())
         results.update(self.segmentation_metrics.compute())
-        results.update(self.classification_metrics.compute())
+        # Only when a condition head actually produced predictions. Without
+        # this the table would carry a classification accuracy computed from
+        # placeholder zeros, which reads as a real (and terrible) result.
+        if self._classification_seen:
+            results.update(self.classification_metrics.compute())
         results.update(self.measurement_metrics.compute())
+        if self.forward_metrics is not None:
+            results.update(self.forward_metrics.compute())
+        if self.amplitude_metrics is not None:
+            results.update(self.amplitude_metrics.compute())
 
         if batches:
             for key, value in loss_totals.items():
@@ -149,8 +266,10 @@ class Evaluator:
 
         return {
             "metrics": results,
-            "confusion_matrix": self.classification_metrics.confusion_matrix,
+            "confusion_matrix": (self.classification_metrics.confusion_matrix
+                                 if self._classification_seen else None),
             "per_cell": per_cell_rows,
+            "unmatched": self.measurement_metrics.unmatched_rows() if collect_per_cell else [],
         }
 
     def _measure_pair(
@@ -177,13 +296,19 @@ class Evaluator:
             labels=reference_labels,
         )
 
-        self.measurement_metrics.update_image(predicted_cells, reference_cells)
-
         pairs = match_cells(
             predicted_cells, reference_cells, predicted_labels, reference_labels,
             self.measurement_cfg.match_iou_threshold,
         )
+        # Stamp the field of view onto every record before the metric object
+        # accumulates it, so an unmatched cell can be traced back to its image.
+        for record in predicted_cells:
+            record["stem"] = stem
+        for record in reference_cells:
+            record["stem"] = stem
+
         self.measurement_metrics.update_pairs(pairs)
+        self.measurement_metrics.update_image(pairs, predicted_cells, reference_cells)
 
         if not collect:
             return []
@@ -206,6 +331,7 @@ class Evaluator:
                     "dry_mass_pg_ref": reference["dry_mass_pg"],
                     "mean_phase_pred": predicted["mean_phase_rad"],
                     "mean_phase_ref": reference["mean_phase_rad"],
+                    "match_iou": predicted.get("match_iou", float("nan")),
                 }
             )
         return rows
@@ -214,19 +340,29 @@ class Evaluator:
 def composite_score(metrics: dict, weights: Config) -> float:
     """Single scalar for checkpoint selection.
 
-    Combines region overlap, phase agreement and measurement accuracy so that a
-    model cannot be selected for excelling at one head while failing the
-    quantity the study reports.
+    Combines region overlap, phase agreement, measurement accuracy and detection
+    completeness so that a model cannot be selected for excelling at one head
+    while failing the quantity the study reports.
+
+    Detection F1 carries weight because the measurement terms are computed over
+    IoU-matched cells only: a model that detects a handful of large, easy cells
+    and misses the rest scores an excellent dry-mass MAPE. Without a detection
+    term the selection rule actively prefers that model.
     """
     dice = float(metrics.get("seg_dice", 0.0))
     pearson = float(metrics.get("phase_pearson_r", 0.0))
     mape = metrics.get("dry_mass_mape", None)
-    mass_accuracy = float(np.clip(1.0 - mape, 0.0, 1.0)) if mape is not None and np.isfinite(mape) else 0.0
+    mass_accuracy = (
+        float(np.clip(1.0 - mape, 0.0, 1.0)) if mape is not None and np.isfinite(mape) else 0.0
+    )
+    detection = metrics.get("detection_f1", None)
+    detection = float(detection) if detection is not None and np.isfinite(detection) else 0.0
 
     return (
         weights.seg_dice * dice
         + weights.phase_pearson * max(pearson, 0.0)
         + weights.dry_mass_accuracy * mass_accuracy
+        + float(weights.get("detection_f1", 0.0)) * detection
     )
 
 

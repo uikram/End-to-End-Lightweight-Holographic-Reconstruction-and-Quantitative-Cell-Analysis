@@ -71,8 +71,58 @@ def read_phase_bin(path: str | Path, fmt: Config) -> PhaseRecord:
                        pitch_x_um=pitch_x, pitch_y_um=pitch_y)
 
 
+def read_phase_header(path: str | Path, fmt: Config) -> PhaseRecord:
+    """Decode only the header of a phase file, without loading the pixels.
+
+    ``read_phase_bin`` reads the whole file, which makes a geometry check over
+    the full dataset cost 800 x 3.2 MB. That is why the check used to inspect
+    only the first eight files and then report its conclusions as statements
+    about the dataset -- a size-inconsistent file at index 9 passed `prepare`
+    and surfaced much later as a shape error inside the dataloader.
+
+    ``phase`` is an empty array here: the payload length is validated against
+    the declared geometry from the file size instead of being read.
+    """
+    path = Path(path)
+    header_bytes = int(fmt.header_bytes)
+    with path.open("rb") as handle:
+        header = handle.read(header_bytes)
+    if len(header) < header_bytes:
+        raise ValueError(f"{path.name}: file shorter than its {header_bytes}-byte header")
+
+    order = _BYTE_ORDER[fmt.byte_order]
+    width = struct.unpack_from(f"{order}I", header, fmt.width_offset)[0]
+    height = struct.unpack_from(f"{order}I", header, fmt.height_offset)[0]
+
+    dtype = np.dtype(order + _DTYPES[fmt.dtype])
+    expected = width * height * dtype.itemsize
+    payload = path.stat().st_size - header_bytes
+    if payload != expected:
+        raise ValueError(
+            f"{path.name}: header declares {width}x{height} ({expected} bytes) "
+            f"but the payload holds {payload} bytes"
+        )
+
+    pitch_x = pitch_y = None
+    px_off, py_off = fmt.pitch_x_offset, fmt.pitch_y_offset
+    if px_off is not None and py_off is not None and max(px_off, py_off) + 4 <= header_bytes:
+        pitch_x = float(struct.unpack_from(f"{order}f", header, px_off)[0]) * 1e6
+        pitch_y = float(struct.unpack_from(f"{order}f", header, py_off)[0]) * 1e6
+
+    return PhaseRecord(
+        phase=np.empty((0, 0), dtype=np.float32),
+        width=width, height=height, pitch_x_um=pitch_x, pitch_y_um=pitch_y,
+    )
+
+
 def read_hologram(path: str | Path) -> np.ndarray:
-    """Read one hologram TIFF as float32 in its native intensity units."""
+    """Read one hologram TIFF as float32 in its native intensity units.
+
+    The holograms are LZW-compressed, which ``tifffile`` delegates to the
+    optional ``imagecodecs`` package. That package ships no wheel for every
+    interpreter and compiling it needs a recent toolchain, so Pillow is used as
+    a fallback: it decodes LZW natively and returns byte-identical arrays.
+    """
     array = None
     try:
         import tifffile
@@ -163,3 +213,65 @@ def hologram_path(data_root: Path, cfg: Config, stem: str, modality: str) -> Pat
 def mask_path(data_root: Path, cfg: Config, stem: str) -> Path:
     directory = cfg.paths.manual_mask_dir or cfg.paths.mask_dir
     return data_root / directory / f"{stem}{cfg.formats.mask.suffix}"
+
+
+# ---------------------------------------------------------------------------
+# Aberration surfaces (see scripts/estimate_aberration.py)
+# ---------------------------------------------------------------------------
+_ABERRATION_CACHE: dict = {}
+
+
+def load_aberration(path: str | Path) -> dict | None:
+    """Read the fitted aberration surfaces, or None when they do not exist.
+
+    Cached per path: this is read once per worker and then shared by every
+    sample, rather than re-parsed from JSON eight hundred times an epoch.
+    """
+    path = Path(path)
+    key = str(path.resolve()) if path.exists() else str(path)
+    if key in _ABERRATION_CACHE:
+        return _ABERRATION_CACHE[key]
+    payload = None
+    if path.is_file():
+        import json
+        try:
+            payload = json.loads(path.read_text())
+        except Exception:
+            payload = None
+    _ABERRATION_CACHE[key] = payload
+    return payload
+
+
+def render_aberration(
+    payload: dict | None, stem: str, height: int, width: int
+) -> tuple[np.ndarray, bool]:
+    """Evaluate a stored surface on the full field, in radians.
+
+    Returns (surface, valid). ``valid`` is False when no surface exists for this
+    field or when the fit was rejected as an unwrapping failure; the caller uses
+    it to exclude that field from the forward-model term rather than feeding it
+    a several-hundred-radian phase error. A missing file therefore degrades to
+    the pure-phase assumption rather than to an exception.
+
+    Coordinates are normalised to the same [-1, 1] grid the fit used, so the
+    coefficients mean the same thing here as they did there.
+    """
+    if not payload or stem not in payload.get("coefficients", {}):
+        return np.zeros((height, width), dtype=np.float32), False
+    if not payload.get("valid", {}).get(stem, True):
+        return np.zeros((height, width), dtype=np.float32), False
+
+    order = int(payload["order"])
+    coefficients = np.asarray(payload["coefficients"][stem], dtype=np.float64)
+    y = np.linspace(-1.0, 1.0, height)[:, None]
+    x = np.linspace(-1.0, 1.0, width)[None, :]
+
+    surface = np.zeros((height, width), dtype=np.float64)
+    index = 0
+    for i in range(order + 1):
+        for j in range(order + 1 - i):
+            if index >= coefficients.size:
+                break
+            surface += coefficients[index] * (x ** i) * (y ** j)
+            index += 1
+    return surface.astype(np.float32), True

@@ -22,6 +22,9 @@ from dataclasses import dataclass, asdict
 import numpy as np
 
 from ..config import Config
+from ..utils import get_logger
+
+LOGGER = get_logger(__name__)
 
 
 @dataclass(frozen=True)
@@ -58,6 +61,20 @@ class Calibration:
 
 def calibration_from_config(cfg: Config) -> Calibration:
     optics = cfg.optics
+    # Circularity is computed on the pixel grid, so anisotropic sampling makes it
+    # the circularity of a stretched cell rather than of the cell. Area, optical
+    # volume and dry mass are unaffected because they use the pixel AREA (dx*dy).
+    if abs(optics.pixel_pitch_x_um - optics.pixel_pitch_y_um) > 1e-6:
+        ratio = optics.pixel_pitch_x_um / max(optics.pixel_pitch_y_um, 1e-12)
+        LOGGER.warning(
+            "pixel pitch is anisotropic (dx=%.6f, dy=%.6f, ratio %.3f). Reported "
+            "circularity is that of an anisotropically stretched cell and carries an "
+            "orientation-dependent bias of roughly %.1f%%. Area, optical volume and dry "
+            "mass are unaffected. Confirm the acquisition geometry before reporting "
+            "circularity.",
+            optics.pixel_pitch_x_um, optics.pixel_pitch_y_um, ratio,
+            100.0 * (1.0 - 2.0 * (ratio ** 0.5) / (1.0 + ratio)),
+        )
     return Calibration(
         wavelength_um=optics.wavelength_um,
         refraction_increment=optics.refraction_increment_ml_per_g,
@@ -135,6 +152,16 @@ def measure_cells(
 
         phase_sum = float(phase_window.sum())
         perimeter_px = _perimeter(window)
+        # C = 4*pi*A / P^2, computed in PIXEL units and therefore valid only for
+        # ISOTROPIC sampling. With dx = dy (confirmed for this instrument at
+        # 0.284871 um) the pixel-domain form is exact.
+        #
+        # If the pitches ever differ, this expression silently reports the
+        # circularity of an anisotropically stretched cell: a physically circular
+        # cell at an aspect ratio of 1.344 would score about 0.978 instead of
+        # 1.000, and the bias would depend on the cell's ORIENTATION, so it is not
+        # even a constant offset. `calibration_from_config` warns in that case
+        # rather than letting it pass unnoticed.
         circularity = (
             4.0 * math.pi * pixel_count / (perimeter_px ** 2) if perimeter_px > 0 else float("nan")
         )
@@ -169,7 +196,20 @@ def match_cells(
     reference_labels: np.ndarray,
     iou_threshold: float,
 ) -> list[tuple[dict, dict]]:
-    """Pair predicted cells with reference cells by greedy best IoU."""
+    """Pair predicted cells with reference cells by greedy best IoU.
+
+    Every record is stamped with ``match_iou`` (NaN when the cell found no
+    partner), so the caller can separate matched from unmatched cells without
+    repeating the overlap computation. Unmatched reference cells are misses and
+    unmatched predicted cells are false positives; both are needed to report
+    detection recall and precision rather than only the accuracy of the cells
+    that happened to pair.
+    """
+    for record in predicted:
+        record["match_iou"] = float("nan")
+    for record in reference:
+        record["match_iou"] = float("nan")
+
     if not predicted or not reference:
         return []
 
@@ -207,11 +247,13 @@ def match_cells(
     used_predicted: set[int] = set()
     pairs: list[tuple[dict, dict]] = []
 
-    for _, reference_label, predicted_label in candidates:
+    for iou, reference_label, predicted_label in candidates:
         if reference_label in used_reference or predicted_label in used_predicted:
             continue
         used_reference.add(reference_label)
         used_predicted.add(predicted_label)
+        predicted_by_label[predicted_label]["match_iou"] = float(iou)
+        reference_by_label[reference_label]["match_iou"] = float(iou)
         pairs.append((predicted_by_label[predicted_label], reference_by_label[reference_label]))
 
     return pairs

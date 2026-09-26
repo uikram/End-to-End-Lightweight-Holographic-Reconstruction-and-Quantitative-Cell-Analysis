@@ -100,6 +100,11 @@ class Trainer:
             parameters["trainable"] / 1e6, parameters["total"] / 1e6,
             100 * parameters["trainable_fraction"],
         )
+        LOGGER.info(
+            "objective: %s",
+            "  ".join(f"{key}={weight:g}" for key, weight in
+                      self.criterion.active_terms.items()) or "none",
+        )
         LOGGER.info("active physics terms: %s", self.criterion.active_physics_terms or "none")
 
     # -- setup ------------------------------------------------------------
@@ -110,21 +115,54 @@ class Trainer:
                 "no trainable parameters. If LoRA is enabled, check that "
                 "model.lora.always_trainable_patterns matches the decoder and head names."
             )
+
+        # The objective can itself hold parameters. With
+        # loss.forward_model.learn_distance the propagation distance z is an
+        # nn.Parameter of the loss, and optimising only model.parameters() would
+        # leave it frozen at its initial value while the configuration and the
+        # logs both claimed it was being learned. It gets its own parameter
+        # group: z is a physical distance in micrometres, not a weight, so
+        # weight decay must not pull it toward zero and it needs a much larger
+        # step to move on the scale it lives on.
+        groups = [{"params": parameters}]
+        self._physics_group: dict | None = None
+        criterion_parameters = [
+            p for p in self.criterion.parameters() if p.requires_grad
+        ]
+        # Kept so the training step can clip them. They are NOT part of
+        # self.model, and torch.nn.utils.clip_grad_norm_(self.model.parameters())
+        # therefore left them unclipped -- which is how z acquired an unbounded
+        # step while every network weight was bounded.
+        self._criterion_parameters = criterion_parameters
+        if criterion_parameters:
+            self._physics_group = {
+                "params": criterion_parameters,
+                "lr": training.learning_rate * training.physics_parameter_lr_scale,
+                "weight_decay": 0.0,
+            }
+            groups.append(self._physics_group)
+            LOGGER.info(
+                "optimising %d parameter(s) of the objective itself (z and similar) "
+                "at %.3g x the base learning rate",
+                sum(p.numel() for p in criterion_parameters),
+                training.physics_parameter_lr_scale,
+            )
+
         name = training.optimizer.lower()
         if name == "adamw":
             return torch.optim.AdamW(
-                parameters,
+                groups,
                 lr=training.learning_rate,
                 weight_decay=training.weight_decay,
                 betas=tuple(training.betas),
             )
         if name == "adam":
             return torch.optim.Adam(
-                parameters, lr=training.learning_rate, betas=tuple(training.betas)
+                groups, lr=training.learning_rate, betas=tuple(training.betas)
             )
         if name == "sgd":
             return torch.optim.SGD(
-                parameters, lr=training.learning_rate,
+                groups, lr=training.learning_rate,
                 momentum=training.betas[0], weight_decay=training.weight_decay,
             )
         raise ValueError(f"unknown optimizer {training.optimizer!r}")
@@ -157,12 +195,17 @@ class Trainer:
     # -- loop -------------------------------------------------------------
     def train(self) -> dict:
         warmup_epochs = self.cfg.training.warmup_epochs
-        base_lr = self.cfg.training.learning_rate
+        # Each group keeps its OWN base rate. Overwriting every group with the
+        # global learning rate would erase the deliberately larger step given to
+        # physical parameters such as the propagation distance, which lives in
+        # micrometres and cannot move at a weight's learning rate.
+        base_lrs = [group["lr"] for group in self.optimizer.param_groups]
 
         for epoch in range(1, self.epochs + 1):
             if epoch <= warmup_epochs and warmup_epochs > 0:
-                for group in self.optimizer.param_groups:
-                    group["lr"] = base_lr * epoch / warmup_epochs
+                scale = epoch / warmup_epochs
+                for group, base in zip(self.optimizer.param_groups, base_lrs):
+                    group["lr"] = base * scale
 
             started = time.time()
             train_summary = self._train_one_epoch(epoch)
@@ -170,6 +213,18 @@ class Trainer:
 
             record = {"epoch": epoch, "learning_rate": self.optimizer.param_groups[0]["lr"]}
             record.update({f"train_{k}": v for k, v in train_summary.items()})
+            # The END-OF-EPOCH value of z, alongside `train_forward_distance_um`
+            # which is its mean over the epoch's steps. The trajectory is the
+            # reportable quantity for the learned-distance arm, and a mean over
+            # steps hides an oscillation that a per-epoch endpoint shows.
+            # Keyed on the group actually existing, not on param_groups[-1].
+            # The group is only appended when the criterion HAS a trainable
+            # parameter, and `learn_distance: true` with `distance_um: null`
+            # gives none -- in which case param_groups[-1] is the MODEL group and
+            # this logged the base learning rate under a physics name.
+            if self._criterion_parameters:
+                record["forward_distance_um"] = self.criterion.forward_model.distance_um
+                record["physics_learning_rate"] = self._physics_group["lr"]
 
             if self.evaluator is not None:
                 validation_started = time.time()
@@ -252,7 +307,27 @@ class Trainer:
                 "phase": batch["phase"].to(self.device, non_blocking=True),
                 "mask": batch["mask"].to(self.device, non_blocking=True),
                 "condition": batch["condition"].to(self.device, non_blocking=True),
+                # The forward-model term compares against the measurement
+                # itself, so the RAW intensity has to reach the loss. The
+                # network gets the normalised version; the physics does not.
+                "hologram": hologram,
+                "hologram_raw": batch["hologram_raw"].to(self.device, non_blocking=True),
+                "aberration": batch["aberration"].to(self.device, non_blocking=True),
+                "aberration_valid": batch["aberration_valid"].to(self.device),
+                "instances": batch["instances"].to(self.device),
             }
+            # Only when the dataset was asked for it. The dataset always
+            # returns an amplitude array -- ones, under the thin-phase-object
+            # assumption, when data.provide_amplitude is false -- so passing it
+            # unconditionally would let the amplitude loss silently train
+            # against a field of ones and report a small, meaningless value
+            # instead of raising. The composite raises a KeyError when the
+            # weight is non-zero and this key is absent, which is the behaviour
+            # that catches a misconfigured arm on the first step.
+            if self.train_loader.dataset.provide_amplitude:
+                targets["amplitude"] = batch["amplitude"].to(
+                    self.device, non_blocking=True
+                )
 
             with torch.autocast(
                 device_type=self.device.type, dtype=self.amp_dtype, enabled=self.use_amp
@@ -271,6 +346,17 @@ class Trainer:
                     if self.scaler.is_enabled():
                         self.scaler.unscale_(self.optimizer)
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.grad_clip)
+                    # The objective's own parameters (the propagation distance z,
+                    # under loss.forward_model.learn_distance) are clipped too,
+                    # and SEPARATELY. Clipping them jointly with the network
+                    # would let one large z gradient scale down every weight
+                    # gradient in the step; leaving them unclipped, which is what
+                    # happened before, gave the one parameter with the largest
+                    # learning rate in the run the only unbounded gradient in it.
+                    if self._criterion_parameters:
+                        torch.nn.utils.clip_grad_norm_(
+                            self._criterion_parameters, self.grad_clip
+                        )
                 if self.scaler.is_enabled():
                     self.scaler.step(self.optimizer)
                     self.scaler.update()
@@ -308,18 +394,91 @@ class Trainer:
 
     def _save_checkpoint(self, filename: str, epoch: int, metrics: dict) -> Path:
         path = self.run_dir / filename
-        torch.save(
-            {
-                "epoch": epoch,
-                "model_state": self.model.state_dict(),
-                "optimizer_state": self.optimizer.state_dict(),
-                "metrics": metrics,
-                "config": self.cfg.to_dict(),
-                "checkpoint_metric": self.checkpoint_metric,
-            },
-            path,
-        )
+        payload = {
+            "epoch": epoch,
+            "model_state": self.model.state_dict(),
+            "optimizer_state": self.optimizer.state_dict(),
+            # THE OBJECTIVE'S OWN LEARNED STATE, which the checkpoint used to
+            # omit entirely. With loss.forward_model.learn_distance the
+            # propagation distance z is a parameter of the loss, not of the
+            # model, so a checkpoint without this carries no record of the one
+            # quantity that arm exists to learn: `main.py evaluate` rebuilt the
+            # forward-model metric from the CONFIGURED distance and reported a
+            # residual at 33.77 um for a run whose z had moved somewhere else
+            # entirely. The learned value is also stored on its own below, so it
+            # can be read without instantiating anything.
+            "loss_state": self.criterion.state_dict(),
+            "metrics": metrics,
+            "config": self.cfg.to_dict(),
+            "checkpoint_metric": self.checkpoint_metric,
+        }
+        if getattr(self.criterion.forward_model, "learn_distance", False):
+            payload["forward_distance_um"] = self.criterion.forward_model.distance_um
+        torch.save(payload, path)
         return path
+
+
+def apply_learned_physics(cfg: Config, checkpoint_path: str | Path) -> Config:
+    """Return ``cfg`` with any learned physical parameter taken from a checkpoint.
+
+    Only the propagation distance exists today. It matters because z is a
+    parameter of the OBJECTIVE, not of the model, so restoring ``model_state``
+    does not restore it: an arm trained with ``learn_distance: true`` would be
+    scored by a forward-model metric rebuilt at the configured 33.77 um while
+    the trained value sat somewhere else entirely, and the residual in
+    ``metrics_test.json`` would describe a distance the run never used.
+
+    ``learn_distance`` is switched off in the returned config as well. At
+    evaluation time there is nothing to learn, and leaving it on would make the
+    metric's internal term allocate an ``nn.Parameter`` that no optimiser
+    touches -- harmless but misleading in a resolved_config.
+    """
+    path = Path(checkpoint_path)
+    if not path.is_file():
+        return cfg
+    try:
+        payload = torch.load(path, map_location="cpu", weights_only=False)
+    except Exception as exc:
+        LOGGER.warning("could not read learned physics from %s (%s)", path, exc)
+        return cfg
+
+    # ONLY FOR A RUN THAT ACTUALLY LEARNED z.
+    #
+    # `_save_checkpoint` writes `forward_distance_um` only when
+    # learn_distance was true, so that key alone is the signal. `loss_state`
+    # is NOT: when learn_distance is false the distance is a persistent
+    # BUFFER, so `forward_model.distance` appears in loss_state for every run
+    # ever saved. Keying on it made this fire on every arm -- logging "carries a
+    # learned propagation distance" untruthfully, and, worse, silently
+    # overwriting an explicit `--set loss.forward_model.distance_um=...` at
+    # evaluation time with whatever the checkpoint was trained at, which makes a
+    # z-sensitivity check on an existing checkpoint impossible.
+    distance = payload.get("forward_distance_um")
+    if distance is None:
+        # Fall back to loss_state only when the checkpoint's own config says the
+        # distance was being learned, for a checkpoint written before
+        # `forward_distance_um` existed.
+        saved = payload.get("config") or {}
+        learned = (
+            saved.get("loss", {}).get("forward_model", {}).get("learn_distance")
+            if isinstance(saved, dict) else None
+        )
+        if learned:
+            tensor = (payload.get("loss_state") or {}).get("forward_model.distance")
+            distance = float(tensor) if tensor is not None else None
+    if distance is None:
+        return cfg
+
+    configured = cfg.loss.forward_model.distance_um
+    LOGGER.info(
+        "checkpoint carries a LEARNED propagation distance: %.4f um "
+        "(configured %.4f um); scoring at the learned value",
+        float(distance), float(configured) if configured is not None else float("nan"),
+    )
+    return cfg.merged(
+        {"loss": {"forward_model": {"distance_um": float(distance),
+                                    "learn_distance": False}}}
+    )
 
 
 def load_checkpoint(model: torch.nn.Module, path: str | Path, device: torch.device,

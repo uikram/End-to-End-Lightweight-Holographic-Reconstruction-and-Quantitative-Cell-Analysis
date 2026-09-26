@@ -1,0 +1,69 @@
+# HoloQPI v2, experiment D2: the forward model with a LEARNED propagation distance
+#
+# WHY THIS ARM EXISTS
+#
+# D1 runs the forward-model consistency term with z held at the value the
+# acquisition group supplied, 33.77 um. That is a defensible choice -- z is
+# supplied independently -- but it means the phrase "z is included in the
+# optimisation" was never
+# true of any run in this study. The machinery for it is implemented and
+# correct (loss.forward_model.learn_distance makes z an nn.Parameter of the
+# objective, and the trainer gives it its own parameter group at
+# training.physics_parameter_lr_scale x the base rate with weight decay off),
+# it had simply never been switched on.
+#
+# This arm switches it on and changes nothing else, so D2 - D1 isolates exactly
+# one thing: what happens when the distance is free.
+#
+# WHAT TO READ AFTERWARDS, AND WHAT WOULD FALSIFY THE SETUP
+#
+# `forward_distance_um` is recorded in components every epoch, so
+# runs/v2_learned_z_off_axis/history.json carries the whole trajectory of z:
+#
+#     python -c "import json; h=json.load(open('runs/v2_learned_z_off_axis/history.json')); \
+#                print([round(e.get('forward_distance_um',float('nan')),3) for e in h])"
+#
+# Three outcomes, and they mean different things:
+#
+#   z stays within a micrometre or two of 33.77   the residual has a real
+#       minimum near the supplied distance, and the forward operator agrees
+#       with the instrument. The strongest possible corroboration.
+#
+#   z drifts steadily and does not settle        the residual is flat in z for
+#       this geometry, which is the PHYSICALLY EXPECTED answer off-axis: an
+#       off-axis carrier records phase at any distance, so z is not identifiable
+#       from an off-axis hologram. calibrate_z.py measured exactly that -- the
+#       off-axis residual is not identifiable (per-field IQR 156.4 um) while the
+#       in-line one has an interior minimum near 50.5 um (IQR 6.0 um, four
+#       fields; runs/z_calibration.json). A drifting z here
+#       is therefore a confirmation of the geometry, not a training failure, and
+#       should be reported as such.
+#
+#   z runs away to the edge of anything sensible  the learning rate scale is
+#       too large for this residual. Lower training.physics_parameter_lr_scale
+#       and say so; do not quietly clamp z.
+#
+# In every case the reportable quantity is the trajectory, not a single number.
+#
+# The term itself remains a DIAGNOSTIC. scripts/amplitude_sensitivity.py
+# measured it as blind near the truth (a 10% phase bias barely changes the
+# residual), and D1 confirmed that on the test split: its residual ratio is
+# 0.9915 against the baseline's 0.9969 while its in-cell phase MAE is 0.3011
+# against 0.2756 rad. Making z free does not repair that, and this arm is not
+# an attempt to. It answers the narrower question of whether the distance is
+# recoverable at all.
+#
+# RESULT (runs/v2_learned_z_off_axis/history.json): z reads 34.12 um after
+# epoch 1 and 33.39 um after 60 (excursion 0.958 um, last-ten-epoch spread
+# 0.026 um); the selected checkpoint (epoch 44) has z = 33.35 um. It settles
+# near its initialisation: a weak gradient, not a measured distance.
+extends: d_forward_amplitude.yaml
+
+experiment_name: v2_learned_z
+
+loss:
+  forward_model:
+    # Initialised at the supplied distance rather than at zero, so the
+    # trajectory is informative: movement away from 33.77 um is the signal.
+    distance_um: 33.77
+    learn_distance: true

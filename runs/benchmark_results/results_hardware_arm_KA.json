@@ -1,0 +1,576 @@
+{
+  "benchmark": "hardware_arm_KA",
+  "kind": "hardware",
+  "arm": "KA",
+  "label": "KA compact baseline",
+  "device_type": "cuda",
+  "replication": "independent_runs",
+  "unit_of_replication": "one benchmark process per seed, timing that seed's checkpoint; metrics are session means",
+  "metric_naming": "<runtime>_<precision>.<field>; architecture fields un-prefixed",
+  "warnings": [
+    "only 1 run(s); the plan's minimum is 3"
+  ],
+  "n_runs": 1,
+  "seeds": [
+    42
+  ],
+  "seeds_planned": [
+    42
+  ],
+  "seeds_missing": [],
+  "complete": true,
+  "runs": [
+    {
+      "seed": 42,
+      "run_dir": "runs/v2_compact_baseline_off_axis",
+      "checkpoint_sha256": "e74a59303f7af63121b2817f1f1642052b3f05c78f35d6846fc7282bed605f15",
+      "file": "hardware_benchmark_cuda.json",
+      "metrics": {
+        "input_size": 900.0,
+        "pytorch_fp32.foreign_gpu_memory_mb": 0.0,
+        "params_total": 3360403.0,
+        "params_trainable": 3360403.0,
+        "params_frozen": 0.0,
+        "params_trainable_fraction": 1.0,
+        "gmacs": 24.034784256,
+        "pytorch_fp32.latency_mean_ms": 11.731774017214775,
+        "pytorch_fp32.latency_p50_ms": 11.663950979709625,
+        "pytorch_fp32.latency_p99_ms": 13.389882706105707,
+        "pytorch_fp32.latency_std_ms": 0.4004021502606887,
+        "pytorch_fp32.latency_p99_over_p50": 1.1479714489025612,
+        "pytorch_fp32.fps": 85.23860061851146,
+        "pytorch_fp32.timed_runs": 500.0,
+        "pytorch_fp32.weights_mb": 12.96847915649414,
+        "pytorch_fp32.peak_activation_mb": 182.73681640625,
+        "pytorch_fp32.peak_allocated_mb": 195.70529556274414,
+        "pytorch_fp32.process_peak_allocated_mb": 198.9775390625,
+        "pytorch_fp32.process_peak_reserved_mb": 316.0,
+        "onnx_fp32.foreign_gpu_memory_mb": 0.0,
+        "onnx_fp32.latency_mean_ms": 13.342501416802406,
+        "onnx_fp32.latency_p50_ms": 13.300184160470963,
+        "onnx_fp32.latency_p99_ms": 14.595472738146782,
+        "onnx_fp32.latency_std_ms": 0.4845973956973619,
+        "onnx_fp32.latency_p99_over_p50": 1.0973887701138383,
+        "onnx_fp32.fps": 74.94846496629826,
+        "onnx_fp32.timed_runs": 500.0,
+        "pytorch_fp16.foreign_gpu_memory_mb": 0.0,
+        "pytorch_fp16.latency_mean_ms": 9.172814086079597,
+        "pytorch_fp16.latency_p50_ms": 9.096486493945122,
+        "pytorch_fp16.latency_p99_ms": 10.573353171348572,
+        "pytorch_fp16.latency_std_ms": 0.4335775818866407,
+        "pytorch_fp16.latency_p99_over_p50": 1.1623557269486955,
+        "pytorch_fp16.fps": 109.01779874919428,
+        "pytorch_fp16.timed_runs": 500.0,
+        "pytorch_fp16.weights_mb": 6.484212875366211,
+        "pytorch_fp16.peak_activation_mb": 92.23681640625,
+        "pytorch_fp16.peak_allocated_mb": 98.72102928161621,
+        "pytorch_fp16.process_peak_allocated_mb": 113.61328125,
+        "pytorch_fp16.process_peak_reserved_mb": 204.0,
+        "onnx_fp16.foreign_gpu_memory_mb": 0.0,
+        "onnx_fp16.latency_mean_ms": 7.98287882655859,
+        "onnx_fp16.latency_p50_ms": 7.9498570412397385,
+        "onnx_fp16.latency_p99_ms": 9.1489727422595,
+        "onnx_fp16.latency_std_ms": 0.48395908622874506,
+        "onnx_fp16.latency_p99_over_p50": 1.1508348759983194,
+        "onnx_fp16.fps": 125.26809209142147,
+        "onnx_fp16.timed_runs": 500.0
+      },
+      "non_numeric": {
+        "gpu_name": "NVIDIA RTX A5000",
+        "torch_version": "2.6.0+cu124",
+        "encoder": "mobilenet_v2",
+        "frontend": "none",
+        "lora": false,
+        "input_size": 900,
+        "pytorch_fp32.providers": null,
+        "onnx_fp32.providers": "CUDAExecutionProvider,CPUExecutionProvider",
+        "pytorch_fp16.providers": null,
+        "onnx_fp16.providers": "CUDAExecutionProvider,CPUExecutionProvider"
+      }
+    }
+  ],
+  "statistics": {
+    "gmacs": {
+      "mean": 24.034784256,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 24.034784256,
+      "max": 24.034784256,
+      "n_missing": 0
+    },
+    "input_size": {
+      "mean": 900.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 900.0,
+      "max": 900.0,
+      "n_missing": 0
+    },
+    "onnx_fp16.foreign_gpu_memory_mb": {
+      "mean": 0.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 0.0,
+      "max": 0.0,
+      "n_missing": 0
+    },
+    "onnx_fp16.fps": {
+      "mean": 125.26809209142147,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 125.26809209142147,
+      "max": 125.26809209142147,
+      "n_missing": 0
+    },
+    "onnx_fp16.latency_mean_ms": {
+      "mean": 7.98287882655859,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 7.98287882655859,
+      "max": 7.98287882655859,
+      "n_missing": 0
+    },
+    "onnx_fp16.latency_p50_ms": {
+      "mean": 7.9498570412397385,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 7.9498570412397385,
+      "max": 7.9498570412397385,
+      "n_missing": 0
+    },
+    "onnx_fp16.latency_p99_ms": {
+      "mean": 9.1489727422595,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 9.1489727422595,
+      "max": 9.1489727422595,
+      "n_missing": 0
+    },
+    "onnx_fp16.latency_p99_over_p50": {
+      "mean": 1.1508348759983194,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 1.1508348759983194,
+      "max": 1.1508348759983194,
+      "n_missing": 0
+    },
+    "onnx_fp16.latency_std_ms": {
+      "mean": 0.48395908622874506,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 0.48395908622874506,
+      "max": 0.48395908622874506,
+      "n_missing": 0
+    },
+    "onnx_fp16.timed_runs": {
+      "mean": 500.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 500.0,
+      "max": 500.0,
+      "n_missing": 0
+    },
+    "onnx_fp32.foreign_gpu_memory_mb": {
+      "mean": 0.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 0.0,
+      "max": 0.0,
+      "n_missing": 0
+    },
+    "onnx_fp32.fps": {
+      "mean": 74.94846496629826,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 74.94846496629826,
+      "max": 74.94846496629826,
+      "n_missing": 0
+    },
+    "onnx_fp32.latency_mean_ms": {
+      "mean": 13.342501416802406,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 13.342501416802406,
+      "max": 13.342501416802406,
+      "n_missing": 0
+    },
+    "onnx_fp32.latency_p50_ms": {
+      "mean": 13.300184160470963,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 13.300184160470963,
+      "max": 13.300184160470963,
+      "n_missing": 0
+    },
+    "onnx_fp32.latency_p99_ms": {
+      "mean": 14.595472738146782,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 14.595472738146782,
+      "max": 14.595472738146782,
+      "n_missing": 0
+    },
+    "onnx_fp32.latency_p99_over_p50": {
+      "mean": 1.0973887701138383,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 1.0973887701138383,
+      "max": 1.0973887701138383,
+      "n_missing": 0
+    },
+    "onnx_fp32.latency_std_ms": {
+      "mean": 0.4845973956973619,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 0.4845973956973619,
+      "max": 0.4845973956973619,
+      "n_missing": 0
+    },
+    "onnx_fp32.timed_runs": {
+      "mean": 500.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 500.0,
+      "max": 500.0,
+      "n_missing": 0
+    },
+    "params_frozen": {
+      "mean": 0.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 0.0,
+      "max": 0.0,
+      "n_missing": 0
+    },
+    "params_total": {
+      "mean": 3360403.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 3360403.0,
+      "max": 3360403.0,
+      "n_missing": 0
+    },
+    "params_trainable": {
+      "mean": 3360403.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 3360403.0,
+      "max": 3360403.0,
+      "n_missing": 0
+    },
+    "params_trainable_fraction": {
+      "mean": 1.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 1.0,
+      "max": 1.0,
+      "n_missing": 0
+    },
+    "pytorch_fp16.foreign_gpu_memory_mb": {
+      "mean": 0.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 0.0,
+      "max": 0.0,
+      "n_missing": 0
+    },
+    "pytorch_fp16.fps": {
+      "mean": 109.01779874919428,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 109.01779874919428,
+      "max": 109.01779874919428,
+      "n_missing": 0
+    },
+    "pytorch_fp16.latency_mean_ms": {
+      "mean": 9.172814086079597,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 9.172814086079597,
+      "max": 9.172814086079597,
+      "n_missing": 0
+    },
+    "pytorch_fp16.latency_p50_ms": {
+      "mean": 9.096486493945122,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 9.096486493945122,
+      "max": 9.096486493945122,
+      "n_missing": 0
+    },
+    "pytorch_fp16.latency_p99_ms": {
+      "mean": 10.573353171348572,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 10.573353171348572,
+      "max": 10.573353171348572,
+      "n_missing": 0
+    },
+    "pytorch_fp16.latency_p99_over_p50": {
+      "mean": 1.1623557269486955,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 1.1623557269486955,
+      "max": 1.1623557269486955,
+      "n_missing": 0
+    },
+    "pytorch_fp16.latency_std_ms": {
+      "mean": 0.4335775818866407,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 0.4335775818866407,
+      "max": 0.4335775818866407,
+      "n_missing": 0
+    },
+    "pytorch_fp16.peak_activation_mb": {
+      "mean": 92.23681640625,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 92.23681640625,
+      "max": 92.23681640625,
+      "n_missing": 0
+    },
+    "pytorch_fp16.peak_allocated_mb": {
+      "mean": 98.72102928161621,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 98.72102928161621,
+      "max": 98.72102928161621,
+      "n_missing": 0
+    },
+    "pytorch_fp16.process_peak_allocated_mb": {
+      "mean": 113.61328125,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 113.61328125,
+      "max": 113.61328125,
+      "n_missing": 0
+    },
+    "pytorch_fp16.process_peak_reserved_mb": {
+      "mean": 204.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 204.0,
+      "max": 204.0,
+      "n_missing": 0
+    },
+    "pytorch_fp16.timed_runs": {
+      "mean": 500.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 500.0,
+      "max": 500.0,
+      "n_missing": 0
+    },
+    "pytorch_fp16.weights_mb": {
+      "mean": 6.484212875366211,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 6.484212875366211,
+      "max": 6.484212875366211,
+      "n_missing": 0
+    },
+    "pytorch_fp32.foreign_gpu_memory_mb": {
+      "mean": 0.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 0.0,
+      "max": 0.0,
+      "n_missing": 0
+    },
+    "pytorch_fp32.fps": {
+      "mean": 85.23860061851146,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 85.23860061851146,
+      "max": 85.23860061851146,
+      "n_missing": 0
+    },
+    "pytorch_fp32.latency_mean_ms": {
+      "mean": 11.731774017214775,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 11.731774017214775,
+      "max": 11.731774017214775,
+      "n_missing": 0
+    },
+    "pytorch_fp32.latency_p50_ms": {
+      "mean": 11.663950979709625,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 11.663950979709625,
+      "max": 11.663950979709625,
+      "n_missing": 0
+    },
+    "pytorch_fp32.latency_p99_ms": {
+      "mean": 13.389882706105707,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 13.389882706105707,
+      "max": 13.389882706105707,
+      "n_missing": 0
+    },
+    "pytorch_fp32.latency_p99_over_p50": {
+      "mean": 1.1479714489025612,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 1.1479714489025612,
+      "max": 1.1479714489025612,
+      "n_missing": 0
+    },
+    "pytorch_fp32.latency_std_ms": {
+      "mean": 0.4004021502606887,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 0.4004021502606887,
+      "max": 0.4004021502606887,
+      "n_missing": 0
+    },
+    "pytorch_fp32.peak_activation_mb": {
+      "mean": 182.73681640625,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 182.73681640625,
+      "max": 182.73681640625,
+      "n_missing": 0
+    },
+    "pytorch_fp32.peak_allocated_mb": {
+      "mean": 195.70529556274414,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 195.70529556274414,
+      "max": 195.70529556274414,
+      "n_missing": 0
+    },
+    "pytorch_fp32.process_peak_allocated_mb": {
+      "mean": 198.9775390625,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 198.9775390625,
+      "max": 198.9775390625,
+      "n_missing": 0
+    },
+    "pytorch_fp32.process_peak_reserved_mb": {
+      "mean": 316.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 316.0,
+      "max": 316.0,
+      "n_missing": 0
+    },
+    "pytorch_fp32.timed_runs": {
+      "mean": 500.0,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 500.0,
+      "max": 500.0,
+      "n_missing": 0
+    },
+    "pytorch_fp32.weights_mb": {
+      "mean": 12.96847915649414,
+      "std": null,
+      "n": 1,
+      "sem": null,
+      "ci95": null,
+      "min": 12.96847915649414,
+      "max": 12.96847915649414,
+      "n_missing": 0
+    }
+  },
+  "generated_at": "2026-09-21 20:40:46",
+  "ci_level": 0.95
+}

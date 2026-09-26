@@ -1,0 +1,48 @@
+# HoloQPI v2, experiment L: arm A's twin with LoRA adaptation of the encoder
+#
+# WHY THIS FILE EXISTS, AND WHY IT IS NOT IN THE DEFAULT ARM LIST
+#
+# The LoRA machinery is implemented and tested (holoqpi/models/lora.py, with the
+# merge path exercised by the ONNX exporter; 35 encoder layers are injected at
+# the default rank 8). But `model.lora.enabled` is FALSE in config/base.yaml
+# and is switched on only in this file, so NO REPORTED ARM USES LoRA.
+#
+# DECISION: this arm was NOT trained. The manuscript reports LoRA as
+# implemented but never trained or evaluated and makes no LoRA claim; it is
+# left out of run_v2.sh's default ARMS. To train it later:
+#
+#       ARMS="L" bash run_v2.sh --stage 6
+#
+# L - A then isolates what low-rank adaptation of a frozen encoder costs or
+# buys, at the same objective, seed and schedule, and pairs naturally with
+# KA/KB, which attack the same cost from the decoder side.
+#
+# WHAT IT CHANGES, AND WHAT IT DELIBERATELY DOES NOT
+#
+# Only the adaptation strategy. The objective, the data, the schedule and the
+# seed are arm A's, so L - A is one variable. The rank, alpha and strategy are
+# base.yaml's defaults; a rank sweep would be a separate set of arms and should
+# only be run if arm L itself turns out to be interesting.
+#
+# WHAT TO CHECK IN THE LOG BEFORE TRUSTING IT
+#
+# Two lines, both of which have been wrong in this project before:
+#
+#   "LoRA: injected N layers (rank=..., strategy=...)"   N must be > 0. A
+#       strategy whose patterns match nothing injects zero layers and the arm is
+#       then arm A with a frozen encoder, which is a different experiment.
+#
+#   "encoder=... weights=local (weights)"                LoRA freezes the
+#       encoder, so if the ImageNet weights failed to load this arm trains a
+#       frozen RANDOM encoder and measures nothing at all. This matters far more
+#       here than in any other arm.
+#
+# The trainer's "trainable X.XXM / Y.YYM parameters" line is the headline number
+# this arm exists to produce.
+extends: a_baseline.yaml
+
+experiment_name: v2_lora
+
+model:
+  lora:
+    enabled: true

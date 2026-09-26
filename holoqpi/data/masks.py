@@ -44,6 +44,58 @@ def build_mask(phase: np.ndarray, cfg: Config, pixel_area_um2: float) -> np.ndar
     if cfg.fill_holes:
         binary = ndimage.binary_fill_holes(binary)
 
+    # TRUNCATED-OBJECT EXCLUSION, made explicit rather than incidental.
+    #
+    # A cell crossing the field of view has a physically incomplete measurement:
+    # its area and its integrated phase are both truncated by the sensor, not by
+    # the specimen. Excluding such objects is standard practice and is justified
+    # on its own terms, independently of any artefact argument.
+    #
+    # MEASURED, so the buffer is chosen rather than guessed:
+    #   buffer 0 (touching the edge)  315 -> 315 cells,  0.0% lost, fg 19.13%
+    #   buffer 4                      315 -> 236 cells, 25.1% lost, fg 14.16%
+    #   buffer 8                      315 -> 232 cells, 26.3% lost, fg 13.87%
+    #   buffer 34                     315 -> 204 cells, 35.2% lost, fg 12.20%
+    #
+    # Buffer 0 costs nothing today because binary_closing has already removed
+    # everything that touches the edge (see the note below). It is kept anyway
+    # so the guarantee is stated in code rather than inherited from a side
+    # effect: change binary_closing_px to 0 and this step becomes load-bearing.
+    #
+    # A larger buffer is NOT justified here. The background phase does deviate
+    # from its plateau out to about 34 px from the edge (median over 13 fields
+    # with cells masked out: -0.50 rad at 2 px against a -0.167 rad plateau,
+    # settling within 3 sd at 34 px), but using that as a buffer would discard a
+    # third of all cells to suppress an artefact that demonstrably never reaches
+    # these masks.
+    #
+    # ON THE MECHANISM, because it has been got wrong twice. Raw Otsu output
+    # carries 4-11 border-touching components per field, the largest 309-1479
+    # um^2, comfortably inside the area window. Measured stage by stage in the
+    # order this function executes, they drop to ZERO immediately after
+    # binary_closing, in 5 of 5 fields tested, before fill_holes and before the
+    # area filter -- which runs last, not first. Closing is extensive on an
+    # infinite domain, but scipy applies border_value=0 to its erosion step, so
+    # at an array edge it is NOT extensive: a 12-px blob touching the top row
+    # reduces to 4 px, and a 1-px rim vanishes entirely. That border convention,
+    # not the area filter, is what removes them.
+    #
+    # CORRECTION (audit, 2026-09-26). Closing does not remove edge objects; it
+    # clears a 2-px rim at the array border (binary_closing_px = 2), so an
+    # object that reached the edge now stops 2 px short of it and no longer
+    # "touches" -- and clear_border(buffer_size=0) therefore keeps it. On the
+    # stored test masks, 1456 of the 3186 reference instances (45.7%, in 112 of
+    # 113 fields) lie within 4 px of the field edge: truncated cells and the
+    # edge-illumination artefact above. The seed-42 End-to-End Neural Baseline
+    # detects 21% of these and 91% of the interior instances. Changing this
+    # step changes the labels, so it needs regenerated masks and re-evaluation.
+    if cfg.border_buffer_px is not None:
+        from skimage.segmentation import clear_border
+
+        labels, count = ndimage.label(binary)
+        if count:
+            binary = clear_border(labels, buffer_size=int(cfg.border_buffer_px)) > 0
+
     min_px = max(int(round(cfg.min_object_area_um2 / pixel_area_um2)), 1)
     max_px = int(round(cfg.max_object_area_um2 / pixel_area_um2))
     binary = filter_by_area(binary, min_px, max_px)
@@ -118,9 +170,37 @@ def generate_masks(
     """Write a mask for every stem; returns coverage statistics."""
     from . import io as data_io
 
+    from ..utils import assert_provenance, read_provenance, write_provenance
+
     mask_cfg = cfg.mask_generation
     destination = data_root / cfg.paths.mask_dir
     destination.mkdir(parents=True, exist_ok=True)
+
+    # EVERY PARAMETER THAT CHANGES A MASK, recorded beside the masks.
+    #
+    # These files are both the segmentation target and the domain for every
+    # per-cell measurement, and existing ones are skipped rather than rebuilt --
+    # so without this, changing a threshold and re-running left the whole study
+    # measuring against masks from the previous configuration, with nothing on
+    # disk to say so. The pixel area is included because it converts the two
+    # area limits into pixel counts.
+    parameters = {
+        "smoothing_sigma_px": mask_cfg.smoothing_sigma_px,
+        "threshold_method": mask_cfg.threshold_method,
+        "fixed_threshold_rad": mask_cfg.fixed_threshold_rad,
+        "otsu_scale": mask_cfg.otsu_scale,
+        "min_object_area_um2": mask_cfg.min_object_area_um2,
+        "max_object_area_um2": mask_cfg.max_object_area_um2,
+        "fill_holes": mask_cfg.fill_holes,
+        "binary_closing_px": mask_cfg.binary_closing_px,
+        "border_buffer_px": mask_cfg.border_buffer_px,
+        "pixel_area_um2": round(float(pixel_area_um2), 9),
+    }
+    if not mask_cfg.overwrite_existing:
+        assert_provenance(
+            destination, parameters,
+            "Regenerate with:  python main.py prepare --config <cfg> --force-masks",
+        )
 
     written = skipped = 0
     coverage: list[float] = []
@@ -143,9 +223,31 @@ def generate_masks(
         if position % 100 == 0:
             LOGGER.info("masks: %d/%d processed", position, len(stems))
 
+    # ONLY WHEN THIS RUN ACTUALLY WROTE SOMETHING.
+    #
+    # Writing it unconditionally would stamp the current configuration onto files
+    # produced by an unknown earlier one: the first run after this guard was
+    # added finds no provenance file, correctly skips the check, skips all 800
+    # existing masks, and would then certify them as matching -- after which the
+    # guard passes forever and blesses exactly the staleness it exists to catch.
+    if written:
+        write_provenance(destination, parameters)
+    elif skipped and read_provenance(destination) is None:
+        # Only when there is genuinely no record. Once a --force-masks run has
+        # written the provenance, a later skip-everything run is fine: the guard
+        # above has already confirmed the parameters match, so repeating the
+        # warning would be telling the user to fix something that is fixed.
+        LOGGER.warning(
+            "every mask already existed, so none was written and no provenance "
+            "was recorded. %s cannot be attributed to a configuration; "
+            "regenerate once with --force-masks so the settings that produced it "
+            "are recorded.", destination,
+        )
+
     stats = {
         "written": written,
         "skipped_existing": skipped,
+        "parameters": parameters,
         "mean_foreground_fraction": float(np.mean(coverage)) if coverage else None,
         "min_foreground_fraction": float(np.min(coverage)) if coverage else None,
         "max_foreground_fraction": float(np.max(coverage)) if coverage else None,

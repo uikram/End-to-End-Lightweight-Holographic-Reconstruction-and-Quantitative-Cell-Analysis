@@ -9,6 +9,8 @@ so the pretrained spatial-frequency response is preserved rather than discarded.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import torch
 import torch.nn as nn
 
@@ -17,22 +19,80 @@ from ..utils import get_logger
 LOGGER = get_logger(__name__)
 
 
+# Where to look for a locally supplied state dict, before touching the network.
+# Set by build_encoder from model.pretrained_dir; a directory, not a file, so
+# one setting covers every backbone.
+_LOCAL_WEIGHT_DIR: Path | None = None
+
+# torchvision's canonical filenames, so a file downloaded once by hand is found
+# without the caller having to name it.
+_LOCAL_WEIGHT_FILES = {
+    "mobilenet_v2": ("mobilenet_v2-b0353104.pth",),
+    "mobilenet_v3_large": ("mobilenet_v3_large-8738ca79.pth",
+                           "mobilenet_v3_large-5c1a4163.pth"),
+    "resnet18": ("resnet18-f37072fd.pth", "resnet18-5c106cde.pth"),
+}
+
+
+def _local_state_dict(name: str):
+    """A state dict from ``model.pretrained_dir``, or None if there isn't one."""
+    if _LOCAL_WEIGHT_DIR is None:
+        return None
+    for filename in _LOCAL_WEIGHT_FILES.get(name, ()):
+        candidate = Path(_LOCAL_WEIGHT_DIR) / filename
+        if candidate.is_file():
+            LOGGER.info("loading pretrained %s from %s", name, candidate)
+            return torch.load(candidate, map_location="cpu", weights_only=True)
+    LOGGER.warning(
+        "model.pretrained_dir is %s but it holds none of %s for %s. Falling back to "
+        "the download cache.",
+        _LOCAL_WEIGHT_DIR, list(_LOCAL_WEIGHT_FILES.get(name, ())), name,
+    )
+    return None
+
+
 def _load_backbone(builder, weights, name: str):
     """Instantiate a torchvision backbone, tolerating an unreachable weight cache.
 
-    ImageNet initialisation is a convenience, not a requirement: on an offline or
-    air-gapped machine the network still trains from scratch, and saying so once
-    is better than failing at import time.
+    THREE ROUTES, IN THIS ORDER, and the order is the point.
+
+    1. A state dict under ``model.pretrained_dir``. On a machine with no
+       outbound network -- or behind a proxy that blocks download.pytorch.org --
+       this is the only route that works, and it is the one to use when the
+       weights have been fetched once and committed alongside the code.
+    2. torchvision's own download cache.
+    3. Random initialisation, with a warning.
+
+    Route 3 is a silent experiment-ruiner if it is not noticed: every arm then
+    trains from scratch and the encoder comparison means something different
+    from what the paper says. So it warns loudly, and ``build_encoder`` repeats
+    the outcome in its own log line, because that line is the one people read.
     """
     if weights is None:
         return builder(weights=None)
+
+    state = _local_state_dict(name)
+    if state is not None:
+        model = builder(weights=None)
+        missing, unexpected = model.load_state_dict(state, strict=False)
+        if missing or unexpected:
+            LOGGER.warning(
+                "%s: loaded local weights with %d missing and %d unexpected keys",
+                name, len(missing), len(unexpected),
+            )
+        return model
+
     try:
         return builder(weights=weights)
     except Exception as exc:
         LOGGER.warning(
-            "could not obtain pretrained weights for %s (%s). Falling back to random "
-            "initialisation; set model.pretrained_encoder=false to silence this.",
+            "could not obtain pretrained weights for %s (%s), and no local copy was "
+            "found. FALLING BACK TO RANDOM INITIALISATION -- every arm will train "
+            "from scratch, which is not what the configuration asked for. Put "
+            "%s under model.pretrained_dir, or set model.pretrained_encoder=false "
+            "to make the choice deliberate.",
             name, type(exc).__name__,
+            _LOCAL_WEIGHT_FILES.get(name, ("the torchvision checkpoint",))[0],
         )
         return builder(weights=None)
 
@@ -146,13 +206,31 @@ _ENCODERS = {
 }
 
 
-def build_encoder(name: str, in_channels: int, pretrained: bool) -> nn.Module:
+def build_encoder(
+    name: str, in_channels: int, pretrained: bool, pretrained_dir=None
+) -> nn.Module:
+    global _LOCAL_WEIGHT_DIR
     if name not in _ENCODERS:
         raise ValueError(f"unknown encoder {name!r}; choose from {sorted(_ENCODERS)}")
+
+    _LOCAL_WEIGHT_DIR = Path(pretrained_dir) if pretrained_dir else None
+    if _LOCAL_WEIGHT_DIR is not None and not _LOCAL_WEIGHT_DIR.is_dir():
+        LOGGER.warning("model.pretrained_dir %s does not exist", _LOCAL_WEIGHT_DIR)
+        _LOCAL_WEIGHT_DIR = None
+
     encoder = _ENCODERS[name](in_channels=in_channels, pretrained=pretrained)
+    # Say where the weights came from, not just whether they were requested.
+    # "pretrained=True" in a log next to a random-initialised encoder is how a
+    # whole study gets run from scratch without anyone noticing.
+    source = "not requested"
+    if pretrained:
+        source = (
+            f"local ({_LOCAL_WEIGHT_DIR})" if _LOCAL_WEIGHT_DIR is not None
+            and _local_state_dict(name) is not None else "download cache or random"
+        )
     LOGGER.info(
-        "encoder=%s in_channels=%d pretrained=%s stages=%s",
-        name, in_channels, pretrained, encoder.out_channels,
+        "encoder=%s in_channels=%d pretrained=%s weights=%s stages=%s",
+        name, in_channels, pretrained, source, encoder.out_channels,
     )
     return encoder
 

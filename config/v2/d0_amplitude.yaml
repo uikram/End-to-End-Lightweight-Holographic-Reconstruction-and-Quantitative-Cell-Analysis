@@ -1,0 +1,49 @@
+# HoloQPI v2, experiment D0: can the amplitude head be supervised at all?
+#
+# The network predicts a complex field, and until now its amplitude was a
+# fixture: unity everywhere, the thin-phase-object assumption. This arm adds
+# the amplitude head and supervises it against the classical-reconstruction
+# reference written by scripts/prepare_amplitude.py.
+#
+# WHY IT IS SEPARATE FROM D1. D1 adds the forward-model term as well, and the
+# forward-model term is measured to be unusable as a loss (see _shared.md). If
+# the two were run together, an amplitude result could not be separated from a
+# forward-model artefact. D0 asks only whether the amplitude head can be
+# trained; D1 measures what the forward-model term does to it.
+#
+# WHAT THE TARGET IS, STATED PLAINLY. The reference is the modulus of a
+# classical off-axis reconstruction, normalised so the mask background reads 1
+# (measured: median 1.0053 over 13 fields). It is NOT a measurement. It carries
+# the sideband filter's lost high frequencies, residual twin-image structure
+# and any illumination vignetting. So this term is a REGULARISER towards a
+# physically plausible modulus, and every reported amplitude number must say so.
+#
+# EVIDENCE THAT THE AMPLITUDE IS WORTH MODELLING AT ALL, from
+# scripts/amplitude_sensitivity.py: swapping unity for this reference lowers
+# the forward-model residual by 0.0215 (per-field surface) or 0.0151 (global),
+# monotonically along a blend between the two, while an INVERTED amplitude
+# raises it. So the direction is physically meaningful rather than a fitting
+# artefact.
+#
+# Requires: python scripts/prepare_amplitude.py --config config/base.yaml
+extends: ../base.yaml
+
+experiment_name: v2_amplitude
+
+data:
+  modality: off_axis
+  provide_amplitude: true             # loads paths.amplitude_dir; fails loudly if absent
+
+model:
+  classifier_enabled: false
+  amplitude:
+    enabled: true
+
+loss:
+  weights:
+    classification: 0.0
+    cell_integrated_phase: 1.0        # same as B, so D0 - B isolates the amplitude
+    amplitude: 0.1                    # mirrors the amplitude weight in OAH-Net's weighted L1
+    boundary_gradient_alignment: 0.0
+    projected_area_consistency: 0.0
+    forward_model: 0.0                # off: that is D1
