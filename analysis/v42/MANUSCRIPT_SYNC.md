@@ -7,7 +7,7 @@ The manuscript was **not** edited. All numbers below are generated from `results
 |---|---|---|
 | Table 3 | none (training-run counts 3/1 verified); optionally add a "Comparator" check against `metadata/configurations.json` | AUDIT §1 |
 | Table 4, "Cells matched" Δ | replace `--` by **+20 ± 9**, labelled descriptive, not a resolution test | `baseline.json::table_4.cells_matched` |
-| Table 5, "Recovered in-cell phase contrast" (neural columns) | stays `N/A` until `scripts/neural_phase_contrast.py` is run on the server; then take the two values from `inline.json` | AUDIT §7.1 |
+| Table 5, "Recovered in-cell phase contrast" | fill the neural columns: in-line neural (1 training run) **+0.887 rad**, off-axis neural (3 training runs) **+0.899 ± 0.036 rad** (classical +0.922 / −0.084 already present). Report as recovered contrast only; reference median is +1.097 rad. | `inline.json::table_5.recovered_in_cell_phase_contrast`; `runs/common_fields/neural_phase_contrast.json` (classical re-check reproduced 0.921582 exactly) |
 | Table 5 header | keep "n = training runs"; do not use n for fields/cells | — |
 | Table 6 | circularity field-total bias/MAPE/r: `--` → **N/A** (circularity is not additive) | `baseline.json::table_6` |
 | Table 7 | header `n` (matched cells/fields) → "N"; group labels `($n=3$)` → "(3 training runs)", classical "(1 deterministic run)" | AUDIT §3 |
@@ -18,13 +18,14 @@ The manuscript was **not** edited. All numbers below are generated from `results
 | §4.8 (main.tex l. 884) | "not a significance test" → e.g. "a separation criterion; no hypothesis test is performed" (word on the avoid list) | style |
 | §4.1 registration paragraph | statistics are author-supplied (archive absent); SNU_01–50 r range −0.13…0.18 vs 0.09…0.18 in `config/base.yaml`: check `hologram_registration.csv` | AUDIT §6 |
 | §3 / gradient ratio | already 0.373 (0.243–0.655); do **not** change to 0.302 / 0.18–0.67 | `runs/gradient_path_b_cell_ipp_512.csv` |
-| Results text paragraphs | numeric values unchanged; if the neural contrast is added, cite the new `inline.json` values | — |
+| Results text paragraphs | numeric values unchanged; add the neural contrast values above where Table 5 is discussed | — |
 
 ## Paragraph-level numeric sources (old concept → value → source)
 * Forward-model z: recording 33.77 µm; in-line grid minimum 33.684 µm; free-z 34.10 → 33.41 µm (checkpoint epoch 44 scored 33.408 µm); off-axis per-field best z −96.24, +96.24, 33.68, 33.68 µm → `forward_model.json`. No 50.5 µm statement.
 * Residual at the reference phase: validation 0.9147 (off-axis), 0.6993 (in-line); test 0.8914 (113 fields); +Fwd ratios 1.0068 vs baseline 1.0039 ± 0.0002 → `amplitude.json`, `forward_model.json`.
 * Common 107-field comparison: in-line neural n = 1, off-axis neural n = 3 (same models re-scored), classical off-axis and in-line deterministic; 3055 reference cells → `inline.json`.
 * Seeds/runs statement: three training runs for baseline, +IPP (per-cell), +IPP (image); one for all others including the In-Line Neural Configuration.
+
 
 ### Table 3 — configurations (training runs, seeds, comparator)
 
@@ -84,7 +85,7 @@ Source for every row: `baseline/baseline.json::table_4.<key>` (neural: `runs/v2_
 | dry_mass_field_total_mape | 0.1356 | 0.1657 ± 0.0145 | 0.1101 | 0.6602 |
 | dry_mass_cell_pearson_r | 0.9029 | 0.9374 ± 0.0010 | 0.8940 | 0.8758 |
 | cells_matched | 1798 | 1813 ± 9.5044 | 1787 | 106 |
-| recovered in-cell phase contrast [rad] | N/A (not yet computed) | N/A (not yet computed) | 0.922 | -0.084 |
+| recovered in-cell phase contrast [rad] | 0.8869 | 0.8992 ± 0.0362 | 0.922 | -0.084 |
 
 ### Table 6 — measurement agreement (baseline, 3 seeds; matched cells vs field totals); circularity field totals are N/A
 

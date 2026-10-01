@@ -996,7 +996,7 @@ FIG_SOURCES = {
     "RESULTS.md": RUNS / "RESULTS.md",                        # figure 7b (learned-z trajectory)
     "error_propagation_summary.csv": RUNS / "error_propagation_summary.csv",   # figure 8a,b
     "synthetic_validation_seeds": RUNS / "synthetic_validation_seeds",         # figure 8c
-    "per_cell_test_A_seed42.csv": RUNS / "v2_baseline_off_axis" / "per_cell_test.csv",   # figure 4 (agreement)
+    "per_cell_test_A.csv": RUNS / "v2_baseline_off_axis" / "per_cell_test.csv",   # figure 4 (agreement)
     "amplitude_sensitivity_off_axis_global.csv": RUNS / "amplitude_sensitivity_off_axis_global.csv",
     "amplitude_sensitivity_off_axis_per_field.csv": RUNS / "amplitude_sensitivity_off_axis_per_field.csv",
     "diagnostics": RUNS / "diagnostics",                      # decomposition tables
@@ -1007,15 +1007,13 @@ for name, src in FIG_SOURCES.items():
         shutil.copytree(src, dst, dirs_exist_ok=True)
     else:
         shutil.copy2(src, dst)
-for s in ("figure_7.py", "make_figure_boundary_sensitivity.py", "mstyle.py"):
-    shutil.copy2(ROOT / "HoloQPI_4.2" / "figure_code" / s, FIG / s)
 write("figures/figure_index.json", {
-    "note": "Figure source data copied from runs/. See analysis/v42/FIGURE_STATUS.md for scripts and status.",
+    "note": "Figure source data copied from runs/ (data/). Scripts: figures/scripts/ (make_all.py regenerates figures 2, 4-9 into figures/regenerated/). The per-figure data lists below are indicative (taken from the script docstrings). See analysis/v42/FIGURE_STATUS.md.",
     "figures": {
         "figure_2": {"data": ["data/benchmark_results/results_arm_A.json", "data/benchmark_results/results_conventional_off_axis.json",
                               "data/benchmark_results/results_conventional_gabor.json"]},
         "figure_3": {"data": "needs checkpoints (not in repository); see FIGURE_STATUS.md"},
-        "figure_4": {"data": ["data/per_cell_test_A_seed42.csv", "data/benchmark_results/results_arm_A.json"]},
+        "figure_4": {"data": ["data/per_cell_test_A.csv", "data/benchmark_results/results_arm_A.json"]},
         "figure_5": {"data": ["data/benchmark_results/results_arm_*.json", "data/benchmark_results/results_comparisons.json"]},
         "figure_6": {"data": ["data/benchmark_results/results_arm_{A,W01,W03,W30,B}.json"]},
         "figure_7": {"data": ["data/benchmark_results/results_arm_*.json", "data/RESULTS.md", "data/z_calibration.json"]},

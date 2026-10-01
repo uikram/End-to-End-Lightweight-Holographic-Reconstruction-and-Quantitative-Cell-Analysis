@@ -62,13 +62,10 @@ import numpy as np
 # Paths
 # --------------------------------------------------------------------------
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent                       # HoloQPI_4.2/
-# HoloQPI_4.2 lives in <repository>/Claude outputs/HoloQPI_4.2/, so the result
-# files are in <repository>/runs. Override with the environment variable
-# HOLOQPI_RUNS if the folder is somewhere else.
-import os as _os
-DATA = Path(_os.environ.get("HOLOQPI_RUNS", HERE.parents[2] / "runs"))
-OUT = ROOT / "manuscript_images"         # figures are written into the manuscript
+ROOT = HERE.parent                       # results_for_manuscript/figures/
+DATA = ROOT / "data"                     # figure source data copied from runs/ by compile_results.py
+OUT = ROOT / "regenerated"               # figures are written here (never over the manuscript files)
+OUT.mkdir(exist_ok=True)
 
 # --------------------------------------------------------------------------
 # Palette — validated, fixed order, never cycled

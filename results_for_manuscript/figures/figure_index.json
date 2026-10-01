@@ -1,5 +1,5 @@
 {
- "note": "Figure source data copied from runs/. See analysis/v42/FIGURE_STATUS.md for scripts and status.",
+ "note": "Figure source data copied from runs/ (data/). Scripts: figures/scripts/ (make_all.py regenerates figures 2, 4-9 into figures/regenerated/). The per-figure data lists below are indicative (taken from the script docstrings). See analysis/v42/FIGURE_STATUS.md.",
  "figures": {
   "figure_2": {
    "data": [
@@ -13,7 +13,7 @@
   },
   "figure_4": {
    "data": [
-    "data/per_cell_test_A_seed42.csv",
+    "data/per_cell_test_A.csv",
     "data/benchmark_results/results_arm_A.json"
    ]
   },

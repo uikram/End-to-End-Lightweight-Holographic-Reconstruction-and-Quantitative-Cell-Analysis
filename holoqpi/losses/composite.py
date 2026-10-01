@@ -4,7 +4,7 @@
       + w_seg   * L_seg
       + w_cls   * L_cls
       + w_fwd   * L_forward_model                       <- reads the raw hologram
-      + w_bga * L_BGA + w_ipp_img * L_IPP^img            <- mask <-> phase (key ``phase_volume`` = L_IPP^img)
+      + w_bga * L_BGA + w_ipp_img * L_IPP^img            <- mask <-> phase (key ``image_integrated_phase``)
       + w_ipp_cell * L_IPP^cell + w_area * L_area        <- measurement-aware (per cell)
       (legacy, weight 0 in all manuscript configurations: L_PMC, L_mass)
 
@@ -63,7 +63,7 @@ _PHYSICS_KEYS = (
     "cell_projected_area",
     "phase_mask_contrast",
     "boundary_gradient_alignment",
-    "phase_volume",
+    "image_integrated_phase",
     "dry_mass_consistency",
     "projected_area_consistency",
 )
@@ -79,6 +79,16 @@ class JointMeasurementLoss(nn.Module):
         physics_cfg = loss_cfg.physics
 
         self.weights = {key: float(weights[key]) for key in weights}
+        # ``phase_volume`` is the deprecated name of ``image_integrated_phase`` (L_IPP^img);
+        # stored resolved configs of earlier runs still use it.
+        legacy_weight = self.weights.pop("phase_volume", 0.0)
+        if legacy_weight:
+            if self.weights.get("image_integrated_phase", 0.0):
+                raise ValueError("set loss.weights.image_integrated_phase or its deprecated alias "
+                                 "phase_volume, not both")
+            LOGGER.warning("loss.weights.phase_volume is a deprecated alias of image_integrated_phase")
+            self.weights["image_integrated_phase"] = legacy_weight
+        self.weights.setdefault("image_integrated_phase", 0.0)
         self.skip_empty_targets = physics_cfg.skip_empty_targets
         self.min_foreground_pixels = physics_cfg.min_foreground_pixels
         self.max_relative_error = physics_cfg.max_relative_error
@@ -99,9 +109,9 @@ class JointMeasurementLoss(nn.Module):
         )
         self.label_smoothing = loss_cfg.classification.label_smoothing
 
-        self.pmc = LegacyPhaseMaskContrast(physics_cfg.pmc_margin, physics_cfg.pmc_collapse_warn_ratio)
+        self.legacy_phase_mask_contrast = LegacyPhaseMaskContrast(physics_cfg.pmc_margin, physics_cfg.pmc_collapse_warn_ratio)
         self.bga = BoundaryGradientAlignment(physics_cfg.bga_epsilon)
-        self.phase_volume = ImageIntegratedPhase(physics_cfg.volume_epsilon)
+        self.image_integrated_phase = ImageIntegratedPhase(physics_cfg.volume_epsilon)
         self.cell_integrated_phase = CellIntegratedPhase(
             physics_cfg.volume_epsilon,
             physics_cfg.cell_min_reference_rad,
@@ -321,14 +331,14 @@ class JointMeasurementLoss(nn.Module):
                 )
 
         if self.weights.get("phase_mask_contrast", 0.0):
-            raw_terms["phase_mask_contrast"] = self.pmc(foreground, phase_pred)
+            raw_terms["phase_mask_contrast"] = self.legacy_phase_mask_contrast(foreground, phase_pred)
 
         if self.weights.get("boundary_gradient_alignment", 0.0):
             reference_phase = phase_pred if self.bga_reference == "pred" else phase_target
             raw_terms["boundary_gradient_alignment"] = self.bga(foreground, reference_phase)
 
-        if self.weights.get("phase_volume", 0.0):
-            raw_terms["phase_volume"] = self.phase_volume(
+        if self.weights.get("image_integrated_phase", 0.0):
+            raw_terms["image_integrated_phase"] = self.image_integrated_phase(
                 foreground, phase_pred, target_foreground, phase_target
             )
 
@@ -391,5 +401,6 @@ def build_loss(cfg: Config) -> JointMeasurementLoss:
     return JointMeasurementLoss(cfg)
 
 
-# Backward-compatible name (older scripts and notebooks).
-JointPhysicsAwareLoss = JointMeasurementLoss
+def __getattr__(name):  # PEP 562: old public names still import, with a warning, but are not exported
+    from ._legacy import resolve
+    return resolve(name, __name__)

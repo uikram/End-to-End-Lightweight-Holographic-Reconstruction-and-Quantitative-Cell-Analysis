@@ -8,7 +8,7 @@ protocol for the end-to-end holographic analysis framework.
 - [3. Physical model and calibration](#3-physical-model-and-calibration)
 - [4. Segmentation labels](#4-segmentation-labels)
 - [5. Network architecture](#5-network-architecture)
-- [6. Joint physics-aware objective](#6-joint-physics-aware-objective)
+- [6. Joint objective](#6-joint-objective)
 - [7. Evaluation metrics](#7-evaluation-metrics)
 - [8. Experimental protocol](#8-experimental-protocol)
 - [9. Configuration reference](#9-configuration-reference)
@@ -35,7 +35,7 @@ The network's outputs are the **quantitative phase**, the **transmitted
 amplitude** and the **cell segmentation**, and the per-cell projected area,
 circularity, optical volume and dry mass derived from the first and the third.
 The amplitude completes the complex field, which is what makes the
-physics-aware forward-model term (§5a, §6.2a) expressible at all; it is optional
+forward-model consistency term (§5a, §6.2a) expressible at all; it is optional
 and, when off, the specimen is treated as purely refractive (A = 1).
 
 The second contribution is the comparison of two acquisition geometries —
@@ -586,7 +586,7 @@ known rather than silent.
 
 ---
 
-## 6. Joint physics-aware objective
+## 6. Joint objective
 
 `holoqpi/losses/composite.py`
 
@@ -599,7 +599,7 @@ L = w_phase · L_phase
 ```
 
 The first three terms supervise each head against its own target. The remaining
-five are the extension of the previous study's physics-aware loss to the
+five are the extension of a previous study's coupling loss to the
 end-to-end setting: **they act on the predicted phase and the predicted mask
 together**, so the network cannot satisfy them by getting either output right in
 isolation. That coupling is what makes the reconstruction measurement-ready.
@@ -794,7 +794,7 @@ contain cells, so an empty patch contributes nothing rather than a spurious zero
 | classification | 0.2 |
 | phase_mask_contrast | 0.1 |
 | boundary_gradient_alignment | 0.05 |
-| phase_volume | 0.1 |
+| image_integrated_phase (formerly phase_volume) | 0.1 |
 | dry_mass_consistency | 0.1 |
 | projected_area_consistency | 0.05 |
 
@@ -927,7 +927,7 @@ Each is a configuration edit; no code change.
 
 | Question | Setting |
 |---|---|
-| Do the physics terms help? | zero `loss.weights.phase_mask_contrast`, `..._alignment`, `phase_volume` |
+| Do the physics terms help? | zero `loss.weights.phase_mask_contrast`, `..._alignment`, `image_integrated_phase` (formerly `phase_volume`) |
 | Do the measurement terms help? | zero `dry_mass_consistency`, `projected_area_consistency` |
 | Hierarchical or additive? | add the terms one at a time, as in the previous study |
 | Is the shared encoder doing work? | `model.share_decoder: true` versus `false` |

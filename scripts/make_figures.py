@@ -688,7 +688,7 @@ def figure_loss_components(cfg, args, out_dir: Path) -> None:
              "no history.json with more than one epoch (a composition plot needs a trajectory)")
         return
 
-    physics = ["phase_mask_contrast", "boundary_gradient_alignment", "phase_volume",
+    physics = ["phase_mask_contrast", "boundary_gradient_alignment", "image_integrated_phase", "phase_volume",
                "dry_mass_consistency", "projected_area_consistency"]
     primary = ["phase", "segmentation", "classification"]
 

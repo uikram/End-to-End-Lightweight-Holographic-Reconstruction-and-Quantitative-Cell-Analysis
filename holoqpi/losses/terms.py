@@ -286,7 +286,7 @@ class BoundaryGradientAlignment(nn.Module):
 
 
 class ImageIntegratedPhase(nn.Module):
-    """Image-level integrated-phase term, L_IPP^img (configuration key ``phase_volume``).
+    """Image-level integrated-phase term, L_IPP^img (configuration key ``image_integrated_phase``; deprecated alias ``phase_volume``).
 
     Conserve the integrated phase enclosed by the predicted boundary.
 
@@ -953,6 +953,6 @@ class ForwardModelConsistency(nn.Module):
         return (value, coefficients) if return_coefficients else value
 
 
-# Backward-compatible names (old configurations, checkpoints and notebooks refer to them).
-PhaseMaskContrast = LegacyPhaseMaskContrast
-PhaseVolumePreservation = ImageIntegratedPhase
+def __getattr__(name):  # PEP 562: old class names resolve with a warning; not part of the public API
+    from ._legacy import resolve
+    return resolve(name, __name__)

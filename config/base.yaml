@@ -490,7 +490,7 @@ model:
 #   L = w_phase * L_phase
 #     + w_seg   * L_seg
 #     + w_cls   * L_cls
-#     + w_bga * L_BGA + w_ipp_img * L_IPP^img (key phase_volume)
+#     + w_bga * L_BGA + w_ipp_img * L_IPP^img (key image_integrated_phase)
 #     + w_ipp_cell * L_IPP^cell (key cell_integrated_phase) + w_area * L_area
 #     (legacy, off: w_pmc * L_PMC (key phase_mask_contrast), w_mass * L_mass)
 # -----------------------------------------------------------------------------
@@ -510,17 +510,17 @@ loss:
     #                         exactly 0.00000 throughout every v1 run. Inert at
     #                         any defensible margin, not a tuning problem.
     #
-    #   dry_mass_consistency  acts on the same per-image ratio as phase_volume
+    #   dry_mass_consistency  acts on the same per-image ratio as image_integrated_phase
     #                         (dry mass is a fixed multiple of the phase
     #                         integral), differing only in penalty shape. Keeping
     #                         both double-weights one constraint.
     #
-    #   phase_volume          superseded by cell_integrated_phase, which is the
+    #   image_integrated_phase superseded by cell_integrated_phase, which is the
     #                         same constraint without the image-level
     #                         cancellation between over- and under-measured cells.
     phase_mask_contrast: 0.0
     boundary_gradient_alignment: 0.0    # ablated in experiment C, not assumed
-    phase_volume: 0.0                   # superseded by cell_integrated_phase
+    image_integrated_phase: 0.0         # L_IPP^img; superseded by cell_integrated_phase (old name phase_volume still accepted)
     cell_integrated_phase: 0.0          # experiment B raises this; A is the baseline
     # Per-cell projected area, the symmetric partner of cell_integrated_phase.
     # Experiment B'' raises this. Projected area is one of the four measurements

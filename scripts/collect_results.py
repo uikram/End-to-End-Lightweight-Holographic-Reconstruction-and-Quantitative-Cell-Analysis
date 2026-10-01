@@ -444,7 +444,7 @@ def main() -> int:
         lines.append(f"| {label} | " + " | ".join(cells) + " |")
     lines.append("")
 
-    # ---- Table 3b: the physics-aware half -------------------------------
+    # ---- Table 3b: the forward-model half -------------------------------
     lines.append("## Table 3b — Forward-model consistency and reconstruction")
     lines.append("")
     lines.append("The forward-model residual asks whether the predicted field could "

@@ -1,7 +1,7 @@
 # AUDIT — HoloQPI 4.2 code / configs / results / manuscript
 
 Branch `bug_fixes/001` (worked on as `claude/admiring-maxwell-xwtq43`). Scope: audit and synchronise; the manuscript (`HoloQPI_4.2/`) was **not edited**.
-Everything below was checked against files in this repository by `analysis/v42/compile_results.py` (510 consistency checks, 0 failed) and `analysis/v42/check_numbers.py` (`check_numbers.csv`).
+Everything below was checked against files in this repository by `analysis/v42/compile_results.py` (510 consistency checks, 0 failed) and `analysis/v42/check_numbers.py` (`check_numbers.csv`: 1938 rows, 585 DIRECT_MATCH, 640 DERIVED_MATCH, 709 ROUNDED_MATCH, 4 non-numeric, **0 NOT_RECOMPUTED, 0 NOT_FOUND, 0 MISMATCH**).
 
 ## 0. What this environment could and could not do
 
@@ -10,7 +10,7 @@ Everything below was checked against files in this repository by `analysis/v42/c
 | GPU / `CUDA_VISIBLE_DEVICES=2,3` | **Not available** in this container (no `nvidia-smi`). No training, evaluation or benchmark was run. |
 | Checkpoints (`best_model.pt`), phase/mask/hologram data | **Not in the repository** (`.gitignore` excludes `*.pt`; `data/` holds only `manifest.csv`, `splits.json`). |
 | Registration archive (`diagnostics/registration_summary.json`, `hologram_registration.csv`, `classical_phase_shift.csv`, `hologram_inventory.csv`) | **Not in the repository.** |
-| Reruns performed | **None.** Nothing in the stored results was found to need recomputation except the neural recovered-contrast quantity (section 7), which needs checkpoints + data. |
+| Reruns performed | **No training or re-evaluation of any experiment.** One post-hoc diagnostic (neural recovered contrast, section 7) was run by the author on the server with the existing checkpoints: `CUDA_VISIBLE_DEVICES=2 python scripts/neural_phase_contrast.py --config config/base.yaml --device cuda --with-classical` (~3 min; output `runs/common_fields/neural_phase_contrast.json`). |
 | Unit tests | `python scripts/selftest.py` passes before and after the code changes (torch CPU build installed here). |
 
 ## 1. Source of truth and seed/replication audit (verified)
@@ -46,7 +46,7 @@ Per run, `compile_results.py` checked: `resolved_config.yaml` seed = directory s
 
 * **Table 3.** Metadata now exported from configs (`metadata/configurations.json`): training runs, seeds, comparator, non-zero loss weights, architecture (encoder, projection channels, amplitude head, parameter count), geometry (modality, wavelength 0.666 µm, pitch 0.284871 µm, z 33.77 µm, trainable z, crop offset [−6, −2]). Seeds column in the manuscript (3/1/…) is correct.
 * **Table 4.** All 14 quantities recomputed. `Cells matched`: classical 1870, neural 1889.67 ± 8.50 over three seeds → descriptive difference **+20 ± 9** (exported as `descriptive_difference_text`; no resolution rule applied). Other rows carry "no resolution test (deterministic comparator)".
-* **Table 5.** In-line neural n=1 (seed 42), off-axis neural n=3 rescored on the same 107 fields, classical off-axis and in-line deterministic. All stored values agree with `common_fields_summary.csv`. Recovered contrast: classical +0.9216 (off-axis) and −0.0836 (in-line) rad are stored; the neural ones are **not computable from stored outputs** (section 7).
+* **Table 5.** In-line neural n=1 (seed 42), off-axis neural n=3 rescored on the same 107 fields, classical off-axis and in-line deterministic. All stored values agree with `common_fields_summary.csv`. Recovered contrast (107 fields): in-line neural +0.8869 rad (1 run), off-axis neural +0.8992 ± 0.0362 rad (3 runs), classical off-axis +0.9216, classical in-line −0.0836, reference +1.0969 rad.
 * **Table 6.** Matched-cell statistics use matched cells; field totals use all predicted and all reference cells. Circularity has no field-total keys in any metrics file; exported as `"N/A"` with the reason. The manuscript currently prints `--` in these cells.
 * **Table 7.** Decomposition recomputed independently from `decomposition_cells.csv` / `decomposition_fields.csv`: geometric means and median |log| agree with `decomposition_summary.csv` and `decomposition_by_config.csv` to 1e-9; domain × phase = total per cell (< 1e-6); field-level `domain = S_domain/S_ref`, `phase = S_pred/S_domain` verified from the stored S values. Edge rule: pixel index < 4 or ≥ size − 4 (strict inequality, `edge_margin_px: 4`), i.e. within 3 px of the border, consistent with the manuscript. The classical pipeline is a single deterministic result. **Wording issue:** Table 7 uses `n` for both training runs and matched cells (header `n` = cells, group rows `n=3`).
 * **Table 8.** Edge/interior recall and MAPE and false positives (all / within 15 px) recomputed; false-positive counts equal `cells_false_positive` in each metrics file for all 10 runs.
@@ -68,12 +68,7 @@ The registration archive is missing, so 734/800 within 1 px, AUC 0.975 / 0.973, 
 
 ## 7. Results that need recomputation / missing outputs
 
-1. **Neural "Recovered in-cell phase contrast" (Table 5, both neural columns)** — missing. Definition (verified in `scripts/conventional_baseline.py predict()`): per field, mean phase inside the reference cell mask minus mean phase outside; median over the scored fields. Not derivable from stored files (needs per-field predicted maps; the stored per-field biases are relative to the reference and the reference contrast is not stored). New script `scripts/neural_phase_contrast.py` computes it with the identical function (unit-checked on synthetic data; includes an optional re-check that reproduces the classical +0.9216). Run on the server:
-   ```
-   CUDA_VISIBLE_DEVICES=2 python scripts/neural_phase_contrast.py --config config/base.yaml --device cuda --with-classical
-   python analysis/v42/compile_results.py && python analysis/v42/check_numbers.py
-   ```
-   Output `runs/common_fields/neural_phase_contrast.json`; `compile_results.py` then fills `inline.json::table_5.recovered_in_cell_phase_contrast`. Until then the field is `N/A (not yet computed)`; no number was invented. Note the table's in-line neural model must be scored on the same 107 fields (script does this via `data.exclude.modalities=[gabor, off_axis]`).
+1. **Neural "Recovered in-cell phase contrast" (Table 5) — RESOLVED.** It was not derivable from stored files; `scripts/neural_phase_contrast.py` computes it with the same per-field function as the classical pipeline (per field: mean phase inside the reference mask minus outside; median over the 107 fields). The `--with-classical` re-check reproduced the stored classical value 0.921582 exactly, which validates the definition. Values: see section 3, Table 5. Stored in `runs/common_fields/neural_phase_contrast.json`; `compile_results.py` reads it.
 2. **In-line neural has one training run.** Table 5/Table 4 comparisons involving it cannot be assessed by the 2× pooled-SD rule (not estimable). If a replicated in-line comparison is wanted, this is the highest-priority extra training (not run here, no GPU):
    ```
    CUDA_VISIBLE_DEVICES=2 python main.py train    --config config/v2/g_baseline_gabor.yaml --seed 1337 --set experiment_name=v2_G_seed1337
@@ -85,11 +80,11 @@ The registration archive is missing, so 734/800 within 1 px, AUC 0.975 / 0.973, 
 
 ## 8. Stale code, stale results, items already correct
 
-**Stale code (fixed or isolated)** — see `CLEANUP.md`: legacy class/term names (`JointPhysicsAwareLoss`, `PhaseMaskContrast`, `PhaseVolumePreservation`) renamed with aliases; "physics-aware" wording removed from generated text; gradient docstring; `scripts/mass_uncertainty.py` and `scripts/null_input_probe.py` moved to `legacy/`; superseded v42 helper scripts moved to `legacy/analysis_v42_old/`.
+**Stale code (fixed or isolated)** — see `CLEANUP.md`: legacy names (`JointPhysicsAwareLoss`, `PhaseMaskContrast`, `PhaseVolumePreservation`, config key `phase_volume`) replaced by current names, old names resolved only through a deprecation shim `holoqpi/losses/_legacy.py`; "physics-aware" wording removed from generated text; gradient docstring; `scripts/mass_uncertainty.py` and `scripts/null_input_probe.py` moved to `legacy/`; superseded v42 helper scripts moved to `legacy/analysis_v42_old/`.
 
-**Stale results (kept, raw, not used by the manuscript):** top-level `runs/v2_*_hardware_benchmark_cuda.{csv,json}` (earlier benchmark stage; `runs/RESULTS.md` Table 4 therefore differs from the collector — the manuscript correctly uses `results_hardware_arm_*.json`); `runs/RESULTS.md` Table 3b heading wording; repo-root `manuscript_images/`, `assets/`, `figures/` (see `FIGURE_STATUS.md`).
+**Stale results (kept, raw, not used by the manuscript):** top-level `runs/v2_*_hardware_benchmark_cuda.{csv,json}` (earlier benchmark stage; `runs/RESULTS.md` Table 4 therefore differs from the collector — the manuscript correctly uses `results_hardware_arm_*.json`); `runs/RESULTS.md` Table 3b heading wording; repo-root v4.1 figure scripts/images and `assets/` (now archived in `legacy/figures_v4.1/`); `figures/` (exploratory `make_figures.py` output, not manuscript).
 
-**Already correct (no change):** every number in `HoloQPI_4.2/table_4…table_11.tex` that is printed (1652 printed-precision lookups, 0 missing; structure issues below), the gradient values in `main.tex`, split counts, the resolution assessments, seeds/n in Table 3.
+**Already correct (no change):** every number printed in `HoloQPI_4.2/table_*.tex` is found, at its printed precision, among the exported values (709 ROUNDED_MATCH lookups; a presence test, not a cell-by-cell comparison, so the structural wording issues below are listed separately), the gradient values in `main.tex`, split counts, the resolution assessments, seeds/n in Table 3.
 
 ## 9. Manuscript issues for the author (details per table in `MANUSCRIPT_SYNC.md`)
 

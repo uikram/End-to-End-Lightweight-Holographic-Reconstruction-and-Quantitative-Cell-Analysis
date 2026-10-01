@@ -72,18 +72,29 @@ def load(path: str):
 
 
 def resolve(obj, key: str):
-    """Look up ``key`` as a dotted path with optional [i] indices; fall back to a top-level key."""
+    """Look up ``key`` as a dotted path (keys may themselves contain dots, e.g. 'scaled_0.9') with optional [i]."""
     if isinstance(obj, dict) and key in obj:
         return obj[key]
-    cur = obj
-    for part in re.findall(r"[^.\[\]]+|\[\d+\]", key):
-        if part.startswith("["):
-            cur = cur[int(part[1:-1])]
-        elif isinstance(cur, dict) and part in cur:
-            cur = cur[part]
-        else:
-            raise KeyError(key)
-    return cur
+    m = re.match(r"^(.*?)\[(\d+)\](.*)$", key)
+    if m:
+        head, idx, rest = m.groups()
+        base = resolve(obj, head) if head else obj
+        base = base[int(idx)]
+        rest = rest.lstrip(".")
+        return resolve(base, rest) if rest else base
+    if isinstance(obj, dict):
+        parts = key.split(".")
+        for i in range(1, len(parts) + 1):
+            head = ".".join(parts[:i])
+            if head in obj:
+                rest = ".".join(parts[i:])
+                if not rest:
+                    return obj[head]
+                try:
+                    return resolve(obj[head], rest)
+                except KeyError:
+                    continue
+    raise KeyError(key)
 
 
 def close(a, b):
@@ -134,8 +145,20 @@ for jf in sorted(RFM.rglob("*.json")):
             continue
         files = [s.strip() for s in str(srcs).split(";")]
         calc = e.get("calculation") or ""
+        # --- collector statistics: recompute from the per-session values
+        if key.startswith("statistics.") and key.endswith(".mean") and len(files) == 1 and files[0].endswith(".json"):
+            name = key[len("statistics."):-len(".mean")]
+            sessions = [float(r["metrics"][name]) for r in load(files[0])["runs"]]
+            ok = close(v, sum(sessions) / len(sessions))
+            note = f"mean of {len(sessions)} benchmark sessions recomputed from runs[*].metrics"
+            if e.get("sd") is not None and len(sessions) >= 2:
+                ok = ok and close(e["sd"], sd(sessions))
+                note += "; SD (ddof=1) recomputed"
+            failures += (not ok)
+            add(loc, v, srcs, key, "mean over benchmark sessions", "DERIVED_MATCH" if ok else "MISMATCH", note)
+            continue
         # --- direct and mean-over-runs entries
-        if all((ROOT / f).exists() and f.endswith(".json") for f in files):
+        if all((ROOT / f).exists() and f.endswith((".json", ".yaml", ".yml")) for f in files):
             try:
                 vals = [float(resolve(load(f), key)) for f in files]
             except (KeyError, IndexError, TypeError, ValueError):
@@ -166,6 +189,54 @@ for jf in sorted(RFM.rglob("*.json")):
             except Exception as exc:  # noqa: BLE001
                 add(loc, v, srcs, key, calc, "derived, not recomputed here", f"lookup failed: {exc}")
                 continue
+        # --- synthetic floor: mean/SD over the three synthetic sets
+        if key.startswith("runs[*].metrics."):
+            name = key[len("runs[*].metrics."):]
+            xs = [float(r["metrics"][name]) for r in load(files[0])["runs"]]
+            ok = close(v, sum(xs) / len(xs)) and (e.get("sd") is None or close(e["sd"], sd(xs)))
+            failures += (not ok)
+            add(loc, v, srcs, key, "mean over 3 synthetic sets", "DERIVED_MATCH" if ok else "MISMATCH", "mean and SD recomputed from runs[*].metrics")
+            continue
+        # --- grid minimum of the pooled forward residual
+        if "argmin" in key:
+            geom = key.split(".")[0]
+            c = load(files[0])[geom]["curve"]
+            rec = c["distances_um"][min(range(len(c["forward_residual"])), key=c["forward_residual"].__getitem__)]
+            ok = close(v, rec)
+            failures += (not ok)
+            add(loc, v, srcs, key, calc, "DERIVED_MATCH" if ok else "MISMATCH", "argmin recomputed from the stored residual curve")
+            continue
+        # --- learned-z trajectory from RESULTS.md
+        if srcs == "runs/RESULTS.md":
+            mm = re.search(r"initial \*\*\+([0-9.]+) um\*\*, final \*\*\+([0-9.]+) um\*\*", load(srcs))
+            rec = float(mm.group(1 if "initial" in key else 2))
+            ok = close(v, rec)
+            failures += (not ok)
+            add(loc, v, srcs, key, "regex on collector text", "DERIVED_MATCH" if ok else "MISMATCH", "parsed from RESULTS.md")
+            continue
+        # --- neural contrast: mean/SD of per-seed medians
+        if srcs.endswith("neural_phase_contrast.json") and "off_axis_neural" in key:
+            nc = load(srcs)["off_axis_neural"]
+            xs = [float(nc[s]["median_contrast_rad"]) for s in ("42", "1337", "2024")]
+            ok = close(v, sum(xs) / 3) and close(e["sd"], sd(xs))
+            failures += (not ok)
+            add(loc, v, srcs, key, calc, "DERIVED_MATCH" if ok else "MISMATCH", "mean and SD of the three per-seed medians recomputed")
+            continue
+        # --- split counts parsed from the training logs
+        if "train_G.log" in srcs or "common_G.log" in srcs or key in ("test", "test_reference_cells"):
+            txt = load("logs/v2_20260930_074055_gpu3/train_G.log"); cg = load("logs/corrected_20260930_054214/common_G.log")
+            pats = {"train_excluded": (txt, r"train split: (\d+) of 560 fields excluded"), "train": (txt, r"train split: (\d+) samples \| modality=gabor"),
+                    "val_excluded": (txt, r"val split: (\d+) of 127 fields excluded"), "val": (txt, r"val split: (\d+) samples \| modality=gabor"),
+                    "test_excluded": (cg, r"test split: (\d+) of 113 fields excluded")}
+            if key in pats:
+                rec = int(re.search(pats[key][1], pats[key][0]).group(1))
+            else:
+                mj = load("runs/v2_baseline_gabor/metrics_test.json")
+                rec = mj["phase_n_images"] if key == "test" else mj["cells_reference"]
+            ok = v == rec
+            failures += (not ok)
+            add(loc, v, srcs, key, "regex on log / stored metric", "DERIVED_MATCH" if ok else "MISMATCH", "parsed from the log or metrics file")
+            continue
         # --- CSV rules
         if srcs.endswith(".csv") and "gradient_path" in srcs:
             col = [float(r["ratio_at_weight_1"]) for r in load(srcs)]
@@ -212,8 +283,12 @@ for jf in sorted(RFM.rglob("*.json")):
             add(loc, v, srcs, key, calc, "yes" if ok else "NO", "win_rate x images recomputed")
             continue
         if "amplitude_mae / amplitude_unity_mae" in key:
-            run = ROOT / "runs"
-            add(loc, v, srcs, key, calc, "derived, checked in compile_results", "ratio of two stored metrics")
+            arm = re.search(r"table_11a\.(\w+)\.", loc).group(1)
+            cm = load("results_for_manuscript/metadata/configurations.json")[arm]
+            mm = load(cm["run_dirs"]["42"] + "/metrics_test.json")
+            ok = close(v, mm["amplitude_mae"] / mm["amplitude_unity_mae"])
+            failures += (not ok)
+            add(loc, v, srcs, key, calc, "DERIVED_MATCH" if ok else "MISMATCH", "ratio recomputed from metrics_test.json")
             continue
         # rounded gradient etc.
         add(loc, v, srcs, key, calc or "", "derived, not recomputed here",
@@ -242,6 +317,41 @@ for i, r in enumerate(ipp["table_10"]):
     add(f"ipp/ipp.json::table_10[{i}] {r['configuration']} vs {r['comparator']} / {r['metric']}", r["delta"],
         "; ".join(r["source_files"]), r["metric"], "delta, 2 x pooled SD, evaluability, assessment recomputed",
         "yes" if ok else "NO", f"{text}; runs {len(xa)} vs {len(xb)}")
+
+
+# ----------------------------------------------------------------------------- part 2b: aggregate tables
+# Decomposition (Table 7): by-config mean/SD against the server's own decomposition_by_config.csv (A, B, B1) and
+# decomposition_summary.csv (classical); Table 8 false positives against the stored metrics files.
+dec = json.loads((RFM / "decomposition" / "decomposition.json").read_text())
+by_cfg = {(r["config"], r["level"], r["group"]): r for r in load("runs/diagnostics/decomposition_by_config.csv")}
+summ = {(r["run"], r["level"], r["group"]): r for r in load("runs/diagnostics/decomposition_summary.csv")}
+for cfgk, bc in dec["by_config"].items():
+    for lvl in ("cell.all", "cell.interior", "cell.edge", "field.all"):
+        level, group = lvl.split(".")
+        for k in ("domain_gm", "phase_gm", "total_gm", "domain_med_abs_log", "phase_med_abs_log", "total_med_abs_log"):
+            x = bc[lvl][k]
+            if cfgk == "classical":
+                ref_m, ref_s = float(summ[("classical", level, group)][k]), None
+            else:
+                row = by_cfg[(cfgk, level, group)]
+                ref_m, ref_s = float(row[f"{k}_mean"]), float(row[f"{k}_sd"])
+            ok = close(x["mean"], ref_m) and (ref_s is None or close(x["sd"], ref_s))
+            failures += (not ok)
+            add(f"decomposition/decomposition.json::by_config.{cfgk}.{lvl}.{k}", x["mean"],
+                "runs/diagnostics/decomposition_by_config.csv" if cfgk != "classical" else "runs/diagnostics/decomposition_summary.csv",
+                f"{cfgk}/{level}/{group}/{k}", "mean and SD over runs, recomputed by compile_results from the per-cell/per-field CSVs",
+                "yes" if ok else "NO", "compared with the server-side aggregate file; derived")
+b8 = json.loads((RFM / "boundary_sensitivity" / "boundary.json").read_text())["table_8"]
+stored_fp = {"A": [f"runs/{d}/metrics_test.json" for d in ("v2_baseline_off_axis", "v2_A_seed1337_off_axis", "v2_A_seed2024_off_axis")],
+             "B": [f"runs/{d}/metrics_test.json" for d in ("v2_cell_ipp_off_axis", "v2_B_seed1337_off_axis", "v2_B_seed2024_off_axis")],
+             "B1": [f"runs/{d}/metrics_test.json" for d in ("v2_image_volume_off_axis", "v2_B1_seed1337_off_axis", "v2_B1_seed2024_off_axis")],
+             "classical": ["runs/conventional_off_axis/metrics_test.json"]}
+for cfgk, files in stored_fp.items():
+    xs = [float(load(f.replace("runs/", "runs/", 1))["cells_false_positive"]) for f in files]
+    ok = close(b8[cfgk]["fp_all"]["mean"], sum(xs) / len(xs))
+    failures += (not ok)
+    add(f"boundary_sensitivity/boundary.json::table_8.{cfgk}.fp_all", b8[cfgk]["fp_all"]["mean"], "; ".join(files),
+        "cells_false_positive", "mean over runs", "yes" if ok else "NO", "false positives from unmatched CSVs equal the stored metric; derived")
 
 # banned words in manuscript-facing JSON text
 BANNED = ["significant", "significance", "preregistered", "physics-aware", "securely paired", "strictly paired",
@@ -293,13 +403,32 @@ for tex in sorted(ms.glob("table_*.tex"), key=lambda p: int(re.search(r"\d+", p.
                 "yes (rounded)" if ok else "not found in JSON",
                 "" if ok else "may be a derived quantity not exported as a number, or a stale value; see MANUSCRIPT_SYNC.md")
 
+def norm(r):
+    m, notes, calc = r["match"], r["notes"], r["calculation"]
+    if m == "yes":
+        return "DIRECT_MATCH" if (notes == "direct" or calc in ("", "source[key]")) else "DERIVED_MATCH"
+    if m == "yes (rounded)":
+        return "ROUNDED_MATCH"
+    if m == "NO":
+        return "MISMATCH"
+    if m.startswith("derived"):
+        return "NOT_RECOMPUTED"
+    if m == "not found in JSON":
+        return "NOT_FOUND"
+    if m == "n/a":
+        return "NON_NUMERIC"
+    return m
+
+
+for r in ROWS:
+    r["match"] = norm(r)
 with open(OUTCSV, "w", newline="") as fh:
     w = csv.DictWriter(fh, fieldnames=["location", "value", "source_file", "source_key", "calculation", "match", "notes"])
     w.writeheader()
     w.writerows(ROWS)
-n_yes = sum(r["match"].startswith("yes") for r in ROWS)
-n_no = sum(r["match"] == "NO" for r in ROWS)
-n_der = sum(r["match"].startswith("derived") for r in ROWS)
-print(f"{len(ROWS)} rows: {n_yes} match, {n_no} mismatch, {n_der} derived-not-recomputed, "
-      f"{sum(r['match'] == 'not found in JSON' for r in ROWS)} table numbers not found in JSON -> {OUTCSV.name}")
-sys.exit(1 if n_no else 0)
+from collections import Counter
+cnt = Counter(r["match"] for r in ROWS)
+n_no = cnt["MISMATCH"]
+print(f"{len(ROWS)} rows: " + ", ".join(f"{k} {cnt[k]}" for k in ("DIRECT_MATCH", "DERIVED_MATCH", "ROUNDED_MATCH", "NOT_RECOMPUTED", "MISMATCH", "NOT_FOUND", "NON_NUMERIC")) + f" -> {OUTCSV.name}")
+print(f"unresolved numeric claims (NOT_RECOMPUTED + NOT_FOUND + MISMATCH): {cnt['NOT_RECOMPUTED'] + cnt['NOT_FOUND'] + cnt['MISMATCH']}")
+sys.exit(1 if (n_no or cnt["NOT_FOUND"]) else 0)

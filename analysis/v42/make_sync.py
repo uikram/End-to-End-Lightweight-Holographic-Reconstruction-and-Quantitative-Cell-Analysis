@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Write the numeric part of analysis/v42/MANUSCRIPT_SYNC.md from results_for_manuscript/ (no hand-typed numbers).
 
-python analysis/v42/make_sync.py  -> analysis/v42/MANUSCRIPT_SYNC.md (numeric part)
+python analysis/v42/make_sync.py  -> regenerates the tables of analysis/v42/MANUSCRIPT_SYNC.md
 
 """
 import json
@@ -137,5 +137,7 @@ for k, v in a["table_11c"].items():
                  fmt(s5["margin"], 4), f"{s5['fields_favouring_reference_phase']['value']}/{s5['of']}"])
 table("Table 11c — phase-scale probes; 'Fields favouring reference phase' = fields where the scaled phase gives the HIGHER residual",
       ["Geometry and fields", "Residual (reference phase)", "Margin 0.9×", "Fields favouring reference 0.9×", "Margin 0.5×", "Fields favouring reference 0.5×"], rows)
-Path(ROOT / "analysis/v42/MANUSCRIPT_SYNC.md (numeric part)").write_text("\n".join(out) + "\n")
-print("written analysis/v42/MANUSCRIPT_SYNC.md (numeric part)")
+ms = ROOT / "analysis/v42/MANUSCRIPT_SYNC.md"
+head = ms.read_text().split("\n### Table 3")[0]      # the written change list is kept; the tables are regenerated
+ms.write_text(head + "\n" + "\n".join(out) + "\n")
+print("regenerated the tables in analysis/v42/MANUSCRIPT_SYNC.md")
