@@ -1,0 +1,2241 @@
+{
+ "definitions": {
+  "domain_factor": "S(Omega_pred, phi_ref) / S(Omega_ref, phi_ref)",
+  "phase_factor": "S(Omega_pred, phi_pred) / S(Omega_pred, phi_ref)",
+  "total": "domain factor x phase factor",
+  "matched_cell_level": "predicted and reference instances paired (IoU matching); edge/interior by the reference instance",
+  "field_level": "whole predicted foreground vs whole reference foreground; missed and spurious cells enter the domain factor",
+  "edge_rule": "reference instance with any pixel at index < edge_margin_px or >= size - edge_margin_px (config/diagnostics.yaml edge_margin_px = 4, i.e. within 3 px of the border; strict inequality in decompose_mass_error._edge_labels)",
+  "summary_statistic": "geometric mean (exact: domain x phase = total) and median absolute log ratio (spread)"
+ },
+ "n_definitions": {
+  "training_runs": "number of trained models (3 for the baseline and IPP configurations)",
+  "N_matched_cells": "matched instance pairs per run",
+  "N_fields": "fields"
+ },
+ "field_set": "113 off-axis test fields; 3186 reference cells; 1452 edge / 1734 interior reference cells",
+ "per_run": {
+  "A_s1337": {
+   "cell.all": {
+    "n_matched": 1887,
+    "n_reference": 3186,
+    "recall": 0.5922787193973634,
+    "domain_gm": 0.9988662645692519,
+    "phase_gm": 0.9476892659630829,
+    "total_gm": 0.946614837064921,
+    "domain_med_abs_log": 0.041555640468175975,
+    "phase_med_abs_log": 0.0894038791003644,
+    "total_med_abs_log": 0.12264575237876707,
+    "mape": 0.1695850839852964
+   },
+   "cell.interior": {
+    "n_matched": 1581,
+    "n_reference": 1734,
+    "recall": 0.9117647058823529,
+    "domain_gm": 1.0028740331959187,
+    "phase_gm": 0.9769229505898609,
+    "total_gm": 0.9797306595797111,
+    "domain_med_abs_log": 0.03729649500668364,
+    "phase_med_abs_log": 0.07931996041487673,
+    "total_med_abs_log": 0.10751523240005895,
+    "mape": 0.14450274289035686
+   },
+   "cell.edge": {
+    "n_matched": 306,
+    "n_reference": 1452,
+    "recall": 0.21074380165289255,
+    "domain_gm": 0.9784131949254357,
+    "phase_gm": 0.810018893260991,
+    "total_gm": 0.7925331733054516,
+    "domain_med_abs_log": 0.08291387996736627,
+    "phase_med_abs_log": 0.2515202947657282,
+    "total_med_abs_log": 0.2960531030431466,
+    "mape": 0.2991771796424864
+   },
+   "field.all": {
+    "n_fields": 113,
+    "domain_gm": 0.895297396524479,
+    "phase_gm": 0.9568543718335194,
+    "total_gm": 0.8566692279556157,
+    "domain_med_abs_log": 0.10358228267057758,
+    "phase_med_abs_log": 0.05732741048470945,
+    "total_med_abs_log": 0.15905523420804274
+   }
+  },
+  "A_s2024": {
+   "cell.all": {
+    "n_matched": 1882,
+    "n_reference": 3186,
+    "recall": 0.5907093534212178,
+    "domain_gm": 1.0023380887595355,
+    "phase_gm": 0.9176143265151322,
+    "total_gm": 0.9197597902575463,
+    "domain_med_abs_log": 0.042830358306011285,
+    "phase_med_abs_log": 0.10880498234655775,
+    "total_med_abs_log": 0.13760931561528567,
+    "mape": 0.1784203855036525
+   },
+   "cell.interior": {
+    "n_matched": 1578,
+    "n_reference": 1734,
+    "recall": 0.9100346020761245,
+    "domain_gm": 1.0067737201688096,
+    "phase_gm": 0.9461399362756542,
+    "total_gm": 0.9525488234445207,
+    "domain_med_abs_log": 0.039294648515560214,
+    "phase_med_abs_log": 0.09542760071738639,
+    "total_med_abs_log": 0.11955332033889884,
+    "mape": 0.15181563292424569
+   },
+   "cell.edge": {
+    "n_matched": 304,
+    "n_reference": 1452,
+    "recall": 0.209366391184573,
+    "domain_gm": 0.9796257333369144,
+    "phase_gm": 0.7827943084898211,
+    "total_gm": 0.766845448506304,
+    "domain_med_abs_log": 0.07675210216054763,
+    "phase_med_abs_log": 0.28551697018012606,
+    "total_med_abs_log": 0.32593800767269443,
+    "mape": 0.31652005514281045
+   },
+   "field.all": {
+    "n_fields": 113,
+    "domain_gm": 0.8981709172664526,
+    "phase_gm": 0.9169466265559194,
+    "total_gm": 0.8235747926581095,
+    "domain_med_abs_log": 0.10577875818627046,
+    "phase_med_abs_log": 0.07981992261766324,
+    "total_med_abs_log": 0.1920147161376053
+   }
+  },
+  "A_s42": {
+   "cell.all": {
+    "n_matched": 1897,
+    "n_reference": 3186,
+    "recall": 0.5954174513496547,
+    "domain_gm": 1.003507261913123,
+    "phase_gm": 0.9221715030716918,
+    "total_gm": 0.9254058000617824,
+    "domain_med_abs_log": 0.04116408214893462,
+    "phase_med_abs_log": 0.10795259154963538,
+    "total_med_abs_log": 0.13571916422576932,
+    "mape": 0.17511540619812532
+   },
+   "cell.interior": {
+    "n_matched": 1584,
+    "n_reference": 1734,
+    "recall": 0.9134948096885813,
+    "domain_gm": 1.0068930148106363,
+    "phase_gm": 0.9487960991244264,
+    "total_gm": 0.9553361646879652,
+    "domain_med_abs_log": 0.037906911726809094,
+    "phase_med_abs_log": 0.09421138032170348,
+    "total_med_abs_log": 0.1213282157020811,
+    "mape": 0.15037755265378164
+   },
+   "cell.edge": {
+    "n_matched": 313,
+    "n_reference": 1452,
+    "recall": 0.21556473829201103,
+    "domain_gm": 0.9865467745565194,
+    "phase_gm": 0.798464060336286,
+    "total_gm": 0.7877221433240652,
+    "domain_med_abs_log": 0.06709361303128208,
+    "phase_med_abs_log": 0.26351623296036514,
+    "total_med_abs_log": 0.2879956038802861,
+    "mape": 0.3003063327611919
+   },
+   "field.all": {
+    "n_fields": 113,
+    "domain_gm": 0.8985273457322146,
+    "phase_gm": 0.9262726580122622,
+    "total_gm": 0.8322813128280813,
+    "domain_med_abs_log": 0.10560839759828816,
+    "phase_med_abs_log": 0.08306362562258672,
+    "total_med_abs_log": 0.185232560031663
+   }
+  },
+  "B1_s1337": {
+   "cell.all": {
+    "n_matched": 1871,
+    "n_reference": 3186,
+    "recall": 0.5872567482736974,
+    "domain_gm": 1.0001429894847702,
+    "phase_gm": 0.9411945923633628,
+    "total_gm": 0.9413291732931933,
+    "domain_med_abs_log": 0.04483513518779021,
+    "phase_med_abs_log": 0.11317089018589664,
+    "total_med_abs_log": 0.14220882725680842,
+    "mape": 0.1866728561216746
+   },
+   "cell.interior": {
+    "n_matched": 1569,
+    "n_reference": 1734,
+    "recall": 0.9048442906574394,
+    "domain_gm": 1.0040936477498013,
+    "phase_gm": 0.9649032432202395,
+    "total_gm": 0.968853217210624,
+    "domain_med_abs_log": 0.04125258890656721,
+    "phase_med_abs_log": 0.10380985550060534,
+    "total_med_abs_log": 0.12895890215570802,
+    "mape": 0.16512939710384786
+   },
+   "cell.edge": {
+    "n_matched": 302,
+    "n_reference": 1452,
+    "recall": 0.20798898071625344,
+    "domain_gm": 0.9798666685046371,
+    "phase_gm": 0.8270788717818364,
+    "total_gm": 0.8104270186834418,
+    "domain_med_abs_log": 0.07100435540169382,
+    "phase_med_abs_log": 0.234074476475655,
+    "total_med_abs_log": 0.3022309199863933,
+    "mape": 0.29859897267455465
+   },
+   "field.all": {
+    "n_fields": 113,
+    "domain_gm": 0.8944331869032652,
+    "phase_gm": 0.9287819026921715,
+    "total_gm": 0.8307333571630373,
+    "domain_med_abs_log": 0.10706088816639264,
+    "phase_med_abs_log": 0.07886353423380925,
+    "total_med_abs_log": 0.17646269267574485
+   }
+  },
+  "B1_s2024": {
+   "cell.all": {
+    "n_matched": 1880,
+    "n_reference": 3186,
+    "recall": 0.5900816070307596,
+    "domain_gm": 1.0021988872070267,
+    "phase_gm": 0.9234081393944737,
+    "total_gm": 0.9254386097390527,
+    "domain_med_abs_log": 0.04445258654936653,
+    "phase_med_abs_log": 0.12230859311652387,
+    "total_med_abs_log": 0.1496393651298618,
+    "mape": 0.1892123578310413
+   },
+   "cell.interior": {
+    "n_matched": 1578,
+    "n_reference": 1734,
+    "recall": 0.9100346020761245,
+    "domain_gm": 1.0070917826804457,
+    "phase_gm": 0.944940460075141,
+    "total_gm": 0.9516417724639542,
+    "domain_med_abs_log": 0.04132842312303893,
+    "phase_med_abs_log": 0.11226859516687049,
+    "total_med_abs_log": 0.13498707365059623,
+    "mape": 0.16640803187184366
+   },
+   "cell.edge": {
+    "n_matched": 302,
+    "n_reference": 1452,
+    "recall": 0.20798898071625344,
+    "domain_gm": 0.9770166826768198,
+    "phase_gm": 0.8186266719474778,
+    "total_gm": 0.79981191537689,
+    "domain_med_abs_log": 0.07794000555054614,
+    "phase_med_abs_log": 0.2460173295103687,
+    "total_med_abs_log": 0.3002661505268549,
+    "mape": 0.3083687365185054
+   },
+   "field.all": {
+    "n_fields": 113,
+    "domain_gm": 0.8963786226246822,
+    "phase_gm": 0.9119454650062154,
+    "total_gm": 0.8174484198310966,
+    "domain_med_abs_log": 0.10869756665830992,
+    "phase_med_abs_log": 0.09923478355316338,
+    "total_med_abs_log": 0.19540433562654372
+   }
+  },
+  "B1_s42": {
+   "cell.all": {
+    "n_matched": 1874,
+    "n_reference": 3186,
+    "recall": 0.5881983678593848,
+    "domain_gm": 0.9987821861057938,
+    "phase_gm": 0.9494020248270764,
+    "total_gm": 0.9482458298500545,
+    "domain_med_abs_log": 0.04371020883117159,
+    "phase_med_abs_log": 0.11717193239980012,
+    "total_med_abs_log": 0.14191967658232352,
+    "mape": 0.18943438223921474
+   },
+   "cell.interior": {
+    "n_matched": 1573,
+    "n_reference": 1734,
+    "recall": 0.9071510957324106,
+    "domain_gm": 1.00215208583183,
+    "phase_gm": 0.9679981152418273,
+    "total_gm": 0.9700813302708774,
+    "domain_med_abs_log": 0.04112372627800113,
+    "phase_med_abs_log": 0.10610043351215759,
+    "total_med_abs_log": 0.1289689547266444,
+    "mape": 0.17020481637177493
+   },
+   "cell.edge": {
+    "n_matched": 301,
+    "n_reference": 1452,
+    "recall": 0.20730027548209368,
+    "domain_gm": 0.981354857197816,
+    "phase_gm": 0.8578773191174152,
+    "total_gm": 0.8418820739957162,
+    "domain_med_abs_log": 0.07244616636841882,
+    "phase_med_abs_log": 0.21496423976521092,
+    "total_med_abs_log": 0.28839185543116186,
+    "mape": 0.28992643243683186
+   },
+   "field.all": {
+    "n_fields": 113,
+    "domain_gm": 0.8915396979865009,
+    "phase_gm": 0.9343530313708057,
+    "total_gm": 0.8330128194010996,
+    "domain_med_abs_log": 0.11387781405028566,
+    "phase_med_abs_log": 0.0792237344784393,
+    "total_med_abs_log": 0.1714058434947428
+   }
+  },
+  "B_s1337": {
+   "cell.all": {
+    "n_matched": 1906,
+    "n_reference": 3186,
+    "recall": 0.5982423101067169,
+    "domain_gm": 1.0068241849106634,
+    "phase_gm": 0.9369732359776997,
+    "total_gm": 0.9433673145963541,
+    "domain_med_abs_log": 0.04412738097712168,
+    "phase_med_abs_log": 0.10686189544283559,
+    "total_med_abs_log": 0.13505506444714113,
+    "mape": 0.18357087950318388
+   },
+   "cell.interior": {
+    "n_matched": 1589,
+    "n_reference": 1734,
+    "recall": 0.9163783160322952,
+    "domain_gm": 1.009314370154151,
+    "phase_gm": 0.9645667416058523,
+    "total_gm": 0.9735510732755525,
+    "domain_med_abs_log": 0.03977290529309839,
+    "phase_med_abs_log": 0.09270856677759201,
+    "total_med_abs_log": 0.12055216536205329,
+    "mape": 0.15996524370302714
+   },
+   "cell.edge": {
+    "n_matched": 317,
+    "n_reference": 1452,
+    "recall": 0.21831955922865015,
+    "domain_gm": 0.994434115666166,
+    "phase_gm": 0.8101074814663177,
+    "total_gm": 0.8055985169265028,
+    "domain_med_abs_log": 0.08123584036029734,
+    "phase_med_abs_log": 0.2539065329821753,
+    "total_med_abs_log": 0.303634778484074,
+    "mape": 0.30189692141627394
+   },
+   "field.all": {
+    "n_fields": 113,
+    "domain_gm": 0.9095994003119942,
+    "phase_gm": 0.9481042794520397,
+    "total_gm": 0.8623950840228106,
+    "domain_med_abs_log": 0.09499243177879396,
+    "phase_med_abs_log": 0.06314854182940187,
+    "total_med_abs_log": 0.16159517608716584
+   }
+  },
+  "B_s2024": {
+   "cell.all": {
+    "n_matched": 1925,
+    "n_reference": 3186,
+    "recall": 0.6042059008160703,
+    "domain_gm": 1.016510410488877,
+    "phase_gm": 0.9086945625561238,
+    "total_gm": 0.9236974827929358,
+    "domain_med_abs_log": 0.042833422174250936,
+    "phase_med_abs_log": 0.13423058614444155,
+    "total_med_abs_log": 0.1561684460795377,
+    "mape": 0.19391365095056348
+   },
+   "cell.interior": {
+    "n_matched": 1597,
+    "n_reference": 1734,
+    "recall": 0.9209919261822376,
+    "domain_gm": 1.0186284054799122,
+    "phase_gm": 0.9293469684933072,
+    "total_gm": 0.9466592206539276,
+    "domain_med_abs_log": 0.03963347883191405,
+    "phase_med_abs_log": 0.11798988083559772,
+    "total_med_abs_log": 0.13834345319151406,
+    "mape": 0.16670950034037657
+   },
+   "cell.edge": {
+    "n_matched": 328,
+    "n_reference": 1452,
+    "recall": 0.22589531680440772,
+    "domain_gm": 1.0062608515242524,
+    "phase_gm": 0.8145123046481617,
+    "total_gm": 0.8196118452522406,
+    "domain_med_abs_log": 0.08340527636172224,
+    "phase_med_abs_log": 0.26122947921432454,
+    "total_med_abs_log": 0.31881853373520896,
+    "mape": 0.32636800620809064
+   },
+   "field.all": {
+    "n_fields": 113,
+    "domain_gm": 0.9143937456631848,
+    "phase_gm": 0.9148244832156563,
+    "total_gm": 0.8365097858319512,
+    "domain_med_abs_log": 0.09176378411761965,
+    "phase_med_abs_log": 0.09882255434575563,
+    "total_med_abs_log": 0.1860442318082861
+   }
+  },
+  "B_s42": {
+   "cell.all": {
+    "n_matched": 1909,
+    "n_reference": 3186,
+    "recall": 0.5991839296924043,
+    "domain_gm": 1.0061921189893712,
+    "phase_gm": 0.9332792958355487,
+    "total_gm": 0.9390582722856786,
+    "domain_med_abs_log": 0.043052649596387105,
+    "phase_med_abs_log": 0.1140205751516037,
+    "total_med_abs_log": 0.14431623063718105,
+    "mape": 0.18746392961409855
+   },
+   "cell.interior": {
+    "n_matched": 1595,
+    "n_reference": 1734,
+    "recall": 0.919838523644752,
+    "domain_gm": 1.009399595462922,
+    "phase_gm": 0.9544960664038455,
+    "total_gm": 0.963467943298992,
+    "domain_med_abs_log": 0.03888161878445286,
+    "phase_med_abs_log": 0.10223948456498297,
+    "total_med_abs_log": 0.13009958362065063,
+    "mape": 0.16186939361663166
+   },
+   "cell.edge": {
+    "n_matched": 314,
+    "n_reference": 1452,
+    "recall": 0.2162534435261708,
+    "domain_gm": 0.9900560628659136,
+    "phase_gm": 0.832572004800986,
+    "total_gm": 0.8242929611256451,
+    "domain_med_abs_log": 0.07882565194898361,
+    "phase_med_abs_log": 0.24474556314912593,
+    "total_med_abs_log": 0.29626173562250546,
+    "mape": 0.3174743911298923
+   },
+   "field.all": {
+    "n_fields": 113,
+    "domain_gm": 0.9035005810373161,
+    "phase_gm": 0.9253889292116381,
+    "total_gm": 0.8360894352282148,
+    "domain_med_abs_log": 0.10012226285214504,
+    "phase_med_abs_log": 0.08111183228087405,
+    "total_med_abs_log": 0.18154496975187623
+   }
+  },
+  "classical": {
+   "cell.all": {
+    "n_matched": 1870,
+    "n_reference": 3186,
+    "recall": 0.5869428750784683,
+    "domain_gm": 0.9662455277898905,
+    "phase_gm": 1.0139681948294723,
+    "total_gm": 0.9797422335751661,
+    "domain_med_abs_log": 0.04609889650252811,
+    "phase_med_abs_log": 0.11881896465601834,
+    "total_med_abs_log": 0.16876922060946423,
+    "mape": 0.2203393989020348
+   },
+   "cell.interior": {
+    "n_matched": 1543,
+    "n_reference": 1734,
+    "recall": 0.8898500576701269,
+    "domain_gm": 0.9765354358245665,
+    "phase_gm": 1.0276817714420743,
+    "total_gm": 1.0035676665641484,
+    "domain_med_abs_log": 0.04134567735132822,
+    "phase_med_abs_log": 0.10574568314113189,
+    "total_med_abs_log": 0.15205932404066108,
+    "mape": 0.19882659067734276
+   },
+   "cell.edge": {
+    "n_matched": 327,
+    "n_reference": 1452,
+    "recall": 0.22520661157024793,
+    "domain_gm": 0.919134944396114,
+    "phase_gm": 0.9516871162264908,
+    "total_gm": 0.8747288846553336,
+    "domain_med_abs_log": 0.09527907095286225,
+    "phase_med_abs_log": 0.2117473476067923,
+    "total_med_abs_log": 0.30848318462164465,
+    "mape": 0.3218509068246654
+   },
+   "field.all": {
+    "n_fields": 113,
+    "domain_gm": 0.8574976924137089,
+    "phase_gm": 1.0548154567153607,
+    "total_gm": 0.9045018200557342,
+    "domain_med_abs_log": 0.1408215785753944,
+    "phase_med_abs_log": 0.061265858347949065,
+    "total_med_abs_log": 0.09524458168613122
+   }
+  }
+ },
+ "by_config": {
+  "A": {
+   "training_runs": 3,
+   "note": null,
+   "cell.all": {
+    "n_matched": {
+     "mean": 1888.6666666666667,
+     "sd": 7.637626158259733,
+     "n_runs": 3
+    },
+    "n_reference": {
+     "mean": 3186.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "recall": {
+     "mean": 0.5928018413894119,
+     "sd": 0.0023972461262585726,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 1.0015705384139701,
+     "sd": 0.0024138277146862866,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.9291583651833023,
+     "sd": 0.016209184967926945,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.9305934757947499,
+     "sd": 0.014159179686316102,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.041850026974373955,
+     "sd": 0.0008712729877507606,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.10205381766551917,
+     "sd": 0.01096345528537021,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.1319914107399407,
+     "sd": 0.008148568323432859,
+     "n_runs": 3
+    },
+    "mape": {
+     "mean": 0.17437362522902475,
+     "sd": 0.00446411441213778,
+     "n_runs": 3
+    }
+   },
+   "cell.interior": {
+    "n_matched": {
+     "mean": 1581.0,
+     "sd": 3.0,
+     "n_runs": 3
+    },
+    "n_reference": {
+     "mean": 1734.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "recall": {
+     "mean": 0.9117647058823529,
+     "sd": 0.0017301038062284002,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 1.0055135893917884,
+     "sd": 0.0022867007863419542,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.9572863286633139,
+     "sd": 0.01705759334678873,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.962538549237399,
+     "sd": 0.014953889504691627,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.038166018416350984,
+     "sd": 0.0010239660974285037,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.08965298048465553,
+     "sd": 0.008969296284244237,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.11613225614701296,
+     "sd": 0.007515143849537318,
+     "n_runs": 3
+    },
+    "mape": {
+     "mean": 0.14889864282279475,
+     "sd": 0.0038742703671891462,
+     "n_runs": 3
+    }
+   },
+   "cell.edge": {
+    "n_matched": {
+     "mean": 307.6666666666667,
+     "sd": 4.725815626252609,
+     "n_runs": 3
+    },
+    "n_reference": {
+     "mean": 1452.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "recall": {
+     "mean": 0.21189164370982552,
+     "sd": 0.0032546939574742547,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 0.9815285676062898,
+     "sd": 0.0043879793864975295,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.7970924206956994,
+     "sd": 0.013664023948616849,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.7823669217119402,
+     "sd": 0.013655533685118765,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.075586531719732,
+     "sd": 0.007974279109839144,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.2668511659687398,
+     "sd": 0.0172419493803845,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.3033289048653757,
+     "sd": 0.019990234378410996,
+     "n_runs": 3
+    },
+    "mape": {
+     "mean": 0.30533452251549625,
+     "sd": 0.009703393829423984,
+     "n_runs": 3
+    }
+   },
+   "field.all": {
+    "n_fields": {
+     "mean": 113.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 0.8973318865077154,
+     "sd": 0.001770910057489712,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.9333578854672337,
+     "sd": 0.020875999840773186,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.8375084444806022,
+     "sd": 0.017155249660083523,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.10498981281837873,
+     "sd": 0.0012219294252170517,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.07340365290831981,
+     "sd": 0.014016582327481061,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.17876750345910367,
+     "sd": 0.017404872295741915,
+     "n_runs": 3
+    }
+   }
+  },
+  "B": {
+   "training_runs": 3,
+   "note": null,
+   "cell.all": {
+    "n_matched": {
+     "mean": 1913.3333333333333,
+     "sd": 10.214368964029708,
+     "n_runs": 3
+    },
+    "n_reference": {
+     "mean": 3186.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "recall": {
+     "mean": 0.6005440468717305,
+     "sd": 0.0032060166239892066,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 1.009842238129637,
+     "sd": 0.005783447829073189,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.9263156981231241,
+     "sd": 0.015371714687906471,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.9353743565583228,
+     "sd": 0.01033943891651698,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.04333781758258657,
+     "sd": 0.00069251204404434,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.11837101891296027,
+     "sd": 0.014193522408852147,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.1451799137212866,
+     "sd": 0.010583155594676513,
+     "n_runs": 3
+    },
+    "mape": {
+     "mean": 0.18831615335594865,
+     "sd": 0.0052237863932986794,
+     "n_runs": 3
+    }
+   },
+   "cell.interior": {
+    "n_matched": {
+     "mean": 1593.6666666666667,
+     "sd": 4.163331998932265,
+     "n_runs": 3
+    },
+    "n_reference": {
+     "mean": 1734.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "recall": {
+     "mean": 0.9190695886197616,
+     "sd": 0.002400998845981706,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 1.0124474570323283,
+     "sd": 0.005353027986297126,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.9494699255010017,
+     "sd": 0.018139864216862776,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.9612260790761574,
+     "sd": 0.01358537451640614,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.0394293343031551,
+     "sd": 0.0004794310707391075,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.10431264405939089,
+     "sd": 0.012767525321761442,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.129665067391406,
+     "sd": 0.008903599492496696,
+     "n_runs": 3
+    },
+    "mape": {
+     "mean": 0.16284804588667845,
+     "sd": 0.00347700583790979,
+     "n_runs": 3
+    }
+   },
+   "cell.edge": {
+    "n_matched": {
+     "mean": 319.6666666666667,
+     "sd": 7.371114795831994,
+     "n_runs": 3
+    },
+    "n_reference": {
+     "mean": 1452.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "recall": {
+     "mean": 0.2201561065197429,
+     "sd": 0.005076525341482094,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 0.9969170100187773,
+     "sd": 0.00838286151263564,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.8190639303051551,
+     "sd": 0.01190385123623926,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.8165011077681296,
+     "sd": 0.009727696374270851,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.08115558955700107,
+     "sd": 0.0022908666665718835,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.25329385844854196,
+     "sd": 0.008259019298575974,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.3062383492805962,
+     "sd": 0.011501574715824494,
+     "n_runs": 3
+    },
+    "mape": {
+     "mean": 0.3152464395847523,
+     "sd": 0.012386739836925995,
+     "n_runs": 3
+    }
+   },
+   "field.all": {
+    "n_fields": {
+     "mean": 113.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 0.9091645756708316,
+     "sd": 0.005459584530254162,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.9294392306264446,
+     "sd": 0.017005584834015177,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.8449981016943257,
+     "sd": 0.015067694556923165,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.09562615958285288,
+     "sd": 0.004215121574297269,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.08102764281867718,
+     "sd": 0.017837155270765567,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.1763947925491094,
+     "sd": 0.013012775466000149,
+     "n_runs": 3
+    }
+   }
+  },
+  "B1": {
+   "training_runs": 3,
+   "note": null,
+   "cell.all": {
+    "n_matched": {
+     "mean": 1875.0,
+     "sd": 4.58257569495584,
+     "n_runs": 3
+    },
+    "n_reference": {
+     "mean": 3186.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "recall": {
+     "mean": 0.5885122410546139,
+     "sd": 0.0014383476757551437,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 1.000374687599197,
+     "sd": 0.0017200943625170853,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.9380015855283043,
+     "sd": 0.013287851197893708,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.9383378709607668,
+     "sd": 0.011694154075045624,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.044332643522776105,
+     "sd": 0.000571974277546258,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.11755047190074021,
+     "sd": 0.004580597431277642,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.14458928965633125,
+     "sd": 0.004375882624614716,
+     "n_runs": 3
+    },
+    "mape": {
+     "mean": 0.1884398653973102,
+     "sd": 0.0015342962701489192,
+     "n_runs": 3
+    }
+   },
+   "cell.interior": {
+    "n_matched": {
+     "mean": 1573.3333333333333,
+     "sd": 4.509249752822894,
+     "n_runs": 3
+    },
+    "n_reference": {
+     "mean": 1734.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "recall": {
+     "mean": 0.9073433294886581,
+     "sd": 0.0026004900535310646,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 1.0044458387540256,
+     "sd": 0.002488610077261701,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.9592806061790693,
+     "sd": 0.012514967076225519,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.9635254399818186,
+     "sd": 0.010309860846711224,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.04123491276920242,
+     "sd": 0.00010348687823203236,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.10739296139321114,
+     "sd": 0.004374990334605031,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.1309716435109829,
+     "sd": 0.0034774681404913027,
+     "n_runs": 3
+    },
+    "mape": {
+     "mean": 0.16724741511582217,
+     "sd": 0.0026397714596182783,
+     "n_runs": 3
+    }
+   },
+   "cell.edge": {
+    "n_matched": {
+     "mean": 301.6666666666667,
+     "sd": 0.5773502691896257,
+     "n_runs": 3
+    },
+    "n_reference": {
+     "mean": 1452.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "recall": {
+     "mean": 0.20775941230486686,
+     "sd": 0.000397624152334441,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 0.9794127361264243,
+     "sd": 0.002204422939602904,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.8345276209489098,
+     "sd": 0.020658320936857617,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.8173736693520159,
+     "sd": 0.02187844894380545,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.0737968424402196,
+     "sd": 0.003659788946786439,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.23168534858374487,
+     "sd": 0.015663797264492824,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.29696297531480337,
+     "sd": 0.007487533091886779,
+     "n_runs": 3
+    },
+    "mape": {
+     "mean": 0.29896471387663065,
+     "sd": 0.00922659037404392,
+     "n_runs": 3
+    }
+   },
+   "field.all": {
+    "n_fields": {
+     "mean": 113.0,
+     "sd": 0.0,
+     "n_runs": 3
+    },
+    "domain_gm": {
+     "mean": 0.8941171691714827,
+     "sd": 0.002434891849466849,
+     "n_runs": 3
+    },
+    "phase_gm": {
+     "mean": 0.9250267996897309,
+     "sd": 0.011666205746303449,
+     "n_runs": 3
+    },
+    "total_gm": {
+     "mean": 0.8270648654650778,
+     "sd": 0.008405712759616253,
+     "n_runs": 3
+    },
+    "domain_med_abs_log": {
+     "mean": 0.10987875629166273,
+     "sd": 0.0035586551306747575,
+     "n_runs": 3
+    },
+    "phase_med_abs_log": {
+     "mean": 0.08577401742180397,
+     "sd": 0.011658756566908077,
+     "n_runs": 3
+    },
+    "total_med_abs_log": {
+     "mean": 0.18109095726567712,
+     "sd": 0.012650989328342795,
+     "n_runs": 3
+    }
+   }
+  },
+  "classical": {
+   "training_runs": 1,
+   "note": "classical: deterministic, single run (not repeated)",
+   "cell.all": {
+    "n_matched": {
+     "mean": 1870.0,
+     "sd": null,
+     "n_runs": 1
+    },
+    "n_reference": {
+     "mean": 3186.0,
+     "sd": null,
+     "n_runs": 1
+    },
+    "recall": {
+     "mean": 0.5869428750784683,
+     "sd": null,
+     "n_runs": 1
+    },
+    "domain_gm": {
+     "mean": 0.9662455277898905,
+     "sd": null,
+     "n_runs": 1
+    },
+    "phase_gm": {
+     "mean": 1.0139681948294723,
+     "sd": null,
+     "n_runs": 1
+    },
+    "total_gm": {
+     "mean": 0.9797422335751661,
+     "sd": null,
+     "n_runs": 1
+    },
+    "domain_med_abs_log": {
+     "mean": 0.04609889650252811,
+     "sd": null,
+     "n_runs": 1
+    },
+    "phase_med_abs_log": {
+     "mean": 0.11881896465601834,
+     "sd": null,
+     "n_runs": 1
+    },
+    "total_med_abs_log": {
+     "mean": 0.16876922060946423,
+     "sd": null,
+     "n_runs": 1
+    },
+    "mape": {
+     "mean": 0.2203393989020348,
+     "sd": null,
+     "n_runs": 1
+    }
+   },
+   "cell.interior": {
+    "n_matched": {
+     "mean": 1543.0,
+     "sd": null,
+     "n_runs": 1
+    },
+    "n_reference": {
+     "mean": 1734.0,
+     "sd": null,
+     "n_runs": 1
+    },
+    "recall": {
+     "mean": 0.8898500576701269,
+     "sd": null,
+     "n_runs": 1
+    },
+    "domain_gm": {
+     "mean": 0.9765354358245665,
+     "sd": null,
+     "n_runs": 1
+    },
+    "phase_gm": {
+     "mean": 1.0276817714420743,
+     "sd": null,
+     "n_runs": 1
+    },
+    "total_gm": {
+     "mean": 1.0035676665641484,
+     "sd": null,
+     "n_runs": 1
+    },
+    "domain_med_abs_log": {
+     "mean": 0.04134567735132822,
+     "sd": null,
+     "n_runs": 1
+    },
+    "phase_med_abs_log": {
+     "mean": 0.10574568314113189,
+     "sd": null,
+     "n_runs": 1
+    },
+    "total_med_abs_log": {
+     "mean": 0.15205932404066108,
+     "sd": null,
+     "n_runs": 1
+    },
+    "mape": {
+     "mean": 0.19882659067734276,
+     "sd": null,
+     "n_runs": 1
+    }
+   },
+   "cell.edge": {
+    "n_matched": {
+     "mean": 327.0,
+     "sd": null,
+     "n_runs": 1
+    },
+    "n_reference": {
+     "mean": 1452.0,
+     "sd": null,
+     "n_runs": 1
+    },
+    "recall": {
+     "mean": 0.22520661157024793,
+     "sd": null,
+     "n_runs": 1
+    },
+    "domain_gm": {
+     "mean": 0.919134944396114,
+     "sd": null,
+     "n_runs": 1
+    },
+    "phase_gm": {
+     "mean": 0.9516871162264908,
+     "sd": null,
+     "n_runs": 1
+    },
+    "total_gm": {
+     "mean": 0.8747288846553336,
+     "sd": null,
+     "n_runs": 1
+    },
+    "domain_med_abs_log": {
+     "mean": 0.09527907095286225,
+     "sd": null,
+     "n_runs": 1
+    },
+    "phase_med_abs_log": {
+     "mean": 0.2117473476067923,
+     "sd": null,
+     "n_runs": 1
+    },
+    "total_med_abs_log": {
+     "mean": 0.30848318462164465,
+     "sd": null,
+     "n_runs": 1
+    },
+    "mape": {
+     "mean": 0.3218509068246654,
+     "sd": null,
+     "n_runs": 1
+    }
+   },
+   "field.all": {
+    "n_fields": {
+     "mean": 113.0,
+     "sd": null,
+     "n_runs": 1
+    },
+    "domain_gm": {
+     "mean": 0.8574976924137089,
+     "sd": null,
+     "n_runs": 1
+    },
+    "phase_gm": {
+     "mean": 1.0548154567153607,
+     "sd": null,
+     "n_runs": 1
+    },
+    "total_gm": {
+     "mean": 0.9045018200557342,
+     "sd": null,
+     "n_runs": 1
+    },
+    "domain_med_abs_log": {
+     "mean": 0.1408215785753944,
+     "sd": null,
+     "n_runs": 1
+    },
+    "phase_med_abs_log": {
+     "mean": 0.061265858347949065,
+     "sd": null,
+     "n_runs": 1
+    },
+    "total_med_abs_log": {
+     "mean": 0.09524458168613122,
+     "sd": null,
+     "n_runs": 1
+    }
+   }
+  }
+ },
+ "comparisons": [
+  {
+   "delta": 0.00827169971566688,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.005783447829073189,
+   "sd_comparator": 0.0024138277146862866,
+   "pooled_sd": 0.004431412473907106,
+   "two_x_pooled_sd": 0.008862824947814213,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "domain_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.0028426670601782167,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.015371714687906471,
+   "sd_comparator": 0.016209184967926945,
+   "pooled_sd": 0.01579600091432747,
+   "two_x_pooled_sd": 0.03159200182865494,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "phase_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.004780880763572859,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.01033943891651698,
+   "sd_comparator": 0.014159179686316102,
+   "pooled_sd": 0.012397305483405906,
+   "two_x_pooled_sd": 0.024794610966811813,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "total_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.001487790608212615,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.00069251204404434,
+   "sd_comparator": 0.0008712729877507606,
+   "pooled_sd": 0.0007869846092302589,
+   "two_x_pooled_sd": 0.0015739692184605178,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "domain_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.0163172012474411,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.014193522408852147,
+   "sd_comparator": 0.01096345528537021,
+   "pooled_sd": 0.012681747319768283,
+   "two_x_pooled_sd": 0.025363494639536566,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "phase_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.013188502981345912,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.010583155594676513,
+   "sd_comparator": 0.008148568323432859,
+   "pooled_sd": 0.009444637316032473,
+   "two_x_pooled_sd": 0.018889274632064947,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "total_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.0077422054823185205,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.0032060166239892066,
+   "sd_comparator": 0.0023972461262585726,
+   "pooled_sd": 0.002830665256009343,
+   "two_x_pooled_sd": 0.005661330512018686,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "recall",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.006933867640539937,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.005353027986297126,
+   "sd_comparator": 0.0022867007863419542,
+   "pooled_sd": 0.004116060562500094,
+   "two_x_pooled_sd": 0.008232121125000188,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "domain_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.007816403162312135,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.018139864216862776,
+   "sd_comparator": 0.01705759334678873,
+   "pooled_sd": 0.017607046381926606,
+   "two_x_pooled_sd": 0.03521409276385321,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "phase_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.0013124701612415857,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.01358537451640614,
+   "sd_comparator": 0.014953889504691627,
+   "pooled_sd": 0.014286028350621871,
+   "two_x_pooled_sd": 0.028572056701243742,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "total_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.0012633158868041172,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.0004794310707391075,
+   "sd_comparator": 0.0010239660974285037,
+   "pooled_sd": 0.0007994875609642114,
+   "two_x_pooled_sd": 0.0015989751219284227,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "domain_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.01465966357473536,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.012767525321761442,
+   "sd_comparator": 0.008969296284244237,
+   "pooled_sd": 0.011033086120310516,
+   "two_x_pooled_sd": 0.022066172240621032,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "phase_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.013532811244393053,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.008903599492496696,
+   "sd_comparator": 0.007515143849537318,
+   "pooled_sd": 0.008238673163866436,
+   "two_x_pooled_sd": 0.016477346327732872,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "total_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.007304882737408702,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.002400998845981706,
+   "sd_comparator": 0.0017301038062284002,
+   "pooled_sd": 0.0020926125583503844,
+   "two_x_pooled_sd": 0.004185225116700769,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "recall",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.01538844241248749,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.00838286151263564,
+   "sd_comparator": 0.0043879793864975295,
+   "pooled_sd": 0.006690542961387929,
+   "two_x_pooled_sd": 0.013381085922775858,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "domain_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.02197150960945571,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.01190385123623926,
+   "sd_comparator": 0.013664023948616849,
+   "pooled_sd": 0.012814195736036066,
+   "two_x_pooled_sd": 0.025628391472072132,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "phase_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.03413418605618934,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.009727696374270851,
+   "sd_comparator": 0.013655533685118765,
+   "pooled_sd": 0.011855413889346411,
+   "two_x_pooled_sd": 0.023710827778692822,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "total_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.005569057837269076,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.0022908666665718835,
+   "sd_comparator": 0.007974279109839144,
+   "pooled_sd": 0.005866736631451388,
+   "two_x_pooled_sd": 0.011733473262902775,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "domain_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.013557307520197848,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.008259019298575974,
+   "sd_comparator": 0.0172419493803845,
+   "pooled_sd": 0.013518435897136766,
+   "two_x_pooled_sd": 0.027036871794273533,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "phase_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.0029094444152204524,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.011501574715824494,
+   "sd_comparator": 0.019990234378410996,
+   "pooled_sd": 0.016307907459994646,
+   "two_x_pooled_sd": 0.03261581491998929,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "total_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.008264462809917383,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.005076525341482094,
+   "sd_comparator": 0.0032546939574742547,
+   "pooled_sd": 0.004264043990130104,
+   "two_x_pooled_sd": 0.008528087980260208,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "recall",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.011832689163116195,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.005459584530254162,
+   "sd_comparator": 0.001770910057489712,
+   "pooled_sd": 0.004058521016005016,
+   "two_x_pooled_sd": 0.008117042032010031,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "domain_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.003918654840789126,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.017005584834015177,
+   "sd_comparator": 0.020875999840773186,
+   "pooled_sd": 0.019039397113601694,
+   "two_x_pooled_sd": 0.03807879422720339,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "phase_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.007489657213723411,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.015067694556923165,
+   "sd_comparator": 0.017155249660083523,
+   "pooled_sd": 0.01614524713593025,
+   "two_x_pooled_sd": 0.0322904942718605,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "total_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.009363653235525848,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.004215121574297269,
+   "sd_comparator": 0.0012219294252170517,
+   "pooled_sd": 0.0031032532450895435,
+   "two_x_pooled_sd": 0.006206506490179087,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "domain_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.0076239899103573705,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.017837155270765567,
+   "sd_comparator": 0.014016582327481061,
+   "pooled_sd": 0.016041020670400842,
+   "two_x_pooled_sd": 0.032082041340801684,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "phase_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.0023727109099942745,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.013012775466000149,
+   "sd_comparator": 0.017404872295741915,
+   "pooled_sd": 0.015366553044837672,
+   "two_x_pooled_sd": 0.030733106089675343,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "total_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.0011958508147731362,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.0017200943625170853,
+   "sd_comparator": 0.0024138277146862866,
+   "pooled_sd": 0.0020958636468232706,
+   "two_x_pooled_sd": 0.004191727293646541,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "domain_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.008843220345001956,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.013287851197893708,
+   "sd_comparator": 0.016209184967926945,
+   "pooled_sd": 0.014820672501304286,
+   "two_x_pooled_sd": 0.029641345002608573,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "phase_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.007744395166016882,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.011694154075045624,
+   "sd_comparator": 0.014159179686316102,
+   "pooled_sd": 0.012985291851173248,
+   "two_x_pooled_sd": 0.025970583702346495,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "total_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.00248261654840215,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.000571974277546258,
+   "sd_comparator": 0.0008712729877507606,
+   "pooled_sd": 0.000736977337968645,
+   "two_x_pooled_sd": 0.00147395467593729,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "domain_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.015496654235221036,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.004580597431277642,
+   "sd_comparator": 0.01096345528537021,
+   "pooled_sd": 0.008401762452656565,
+   "two_x_pooled_sd": 0.01680352490531313,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "phase_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.012597878916390554,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.004375882624614716,
+   "sd_comparator": 0.008148568323432859,
+   "pooled_sd": 0.006540164923993063,
+   "two_x_pooled_sd": 0.013080329847986126,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "total_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.004289600334798083,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.0014383476757551437,
+   "sd_comparator": 0.0023972461262585726,
+   "pooled_sd": 0.001976819797833373,
+   "two_x_pooled_sd": 0.003953639595666746,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "all",
+   "metric": "recall",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.0010677506377627655,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.002488610077261701,
+   "sd_comparator": 0.0022867007863419542,
+   "pooled_sd": 0.0023897887566587763,
+   "two_x_pooled_sd": 0.004779577513317553,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "domain_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.001994277515755427,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.012514967076225519,
+   "sd_comparator": 0.01705759334678873,
+   "pooled_sd": 0.01495971075427964,
+   "two_x_pooled_sd": 0.02991942150855928,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "phase_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.0009868907444195996,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.010309860846711224,
+   "sd_comparator": 0.014953889504691627,
+   "pooled_sd": 0.012843520584268853,
+   "two_x_pooled_sd": 0.025687041168537705,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "total_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.003068894352851438,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.00010348687823203236,
+   "sd_comparator": 0.0010239660974285037,
+   "pooled_sd": 0.0007277417476856647,
+   "two_x_pooled_sd": 0.0014554834953713295,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "domain_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.017739980908555608,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.004374990334605031,
+   "sd_comparator": 0.008969296284244237,
+   "pooled_sd": 0.0070565152966051495,
+   "two_x_pooled_sd": 0.014113030593210299,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "phase_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.014839387363969933,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.0034774681404913027,
+   "sd_comparator": 0.007515143849537318,
+   "pooled_sd": 0.005855346776552633,
+   "two_x_pooled_sd": 0.011710693553105266,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "total_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.004421376393694776,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.0026004900535310646,
+   "sd_comparator": 0.0017301038062284002,
+   "pooled_sd": 0.002208597711087286,
+   "two_x_pooled_sd": 0.004417195422174572,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "interior",
+   "metric": "recall",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.002115831479865493,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.002204422939602904,
+   "sd_comparator": 0.0043879793864975295,
+   "pooled_sd": 0.0034723078487494986,
+   "two_x_pooled_sd": 0.006944615697498997,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "domain_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.03743520025321034,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.020658320936857617,
+   "sd_comparator": 0.013664023948616849,
+   "pooled_sd": 0.01751387698938451,
+   "two_x_pooled_sd": 0.03502775397876902,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "phase_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.03500674764007572,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.02187844894380545,
+   "sd_comparator": 0.013655533685118765,
+   "pooled_sd": 0.018236503617910356,
+   "two_x_pooled_sd": 0.03647300723582071,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "total_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.0017896892795123964,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.003659788946786439,
+   "sd_comparator": 0.007974279109839144,
+   "pooled_sd": 0.00620415918786088,
+   "two_x_pooled_sd": 0.01240831837572176,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "domain_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.03516581738499494,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.015663797264492824,
+   "sd_comparator": 0.0172419493803845,
+   "pooled_sd": 0.016471784408176218,
+   "two_x_pooled_sd": 0.032943568816352437,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "phase_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.006365929550572358,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.007487533091886779,
+   "sd_comparator": 0.019990234378410996,
+   "pooled_sd": 0.015094247617981898,
+   "two_x_pooled_sd": 0.030188495235963796,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "total_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.004132231404958664,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.000397624152334441,
+   "sd_comparator": 0.0032546939574742547,
+   "pooled_sd": 0.0023185273044908387,
+   "two_x_pooled_sd": 0.004637054608981677,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "cell",
+   "group": "edge",
+   "metric": "recall",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.0032147173362327974,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.002434891849466849,
+   "sd_comparator": 0.001770910057489712,
+   "pooled_sd": 0.0021289458365959324,
+   "two_x_pooled_sd": 0.004257891673191865,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "domain_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.008331085777502856,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.011666205746303449,
+   "sd_comparator": 0.020875999840773186,
+   "pooled_sd": 0.016910170399304758,
+   "two_x_pooled_sd": 0.033820340798609516,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "phase_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.010443579015524396,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.008405712759616253,
+   "sd_comparator": 0.017155249660083523,
+   "pooled_sd": 0.01350848988408718,
+   "two_x_pooled_sd": 0.02701697976817436,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "total_gm",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.004888943473284002,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.0035586551306747575,
+   "sd_comparator": 0.0012219294252170517,
+   "pooled_sd": 0.0026605580109526883,
+   "two_x_pooled_sd": 0.005321116021905377,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "domain_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.012370364513484167,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.011658756566908077,
+   "sd_comparator": 0.014016582327481061,
+   "pooled_sd": 0.012891686949920026,
+   "two_x_pooled_sd": 0.02578337389984005,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "phase_med_abs_log",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.00232345380657345,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.012650989328342795,
+   "sd_comparator": 0.017404872295741915,
+   "pooled_sd": 0.015214747954155004,
+   "two_x_pooled_sd": 0.030429495908310008,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "level": "field",
+   "group": "all",
+   "metric": "total_med_abs_log",
+   "derivation": "derived"
+  }
+ ],
+ "matched_count_reconciliation": {
+  "A_s1337": {
+   "decomposition_recount": 1887,
+   "stored_evaluation_cells_matched": 1890
+  },
+  "A_s2024": {
+   "decomposition_recount": 1882,
+   "stored_evaluation_cells_matched": 1881
+  },
+  "A_s42": {
+   "decomposition_recount": 1897,
+   "stored_evaluation_cells_matched": 1898
+  },
+  "B1_s1337": {
+   "decomposition_recount": 1871,
+   "stored_evaluation_cells_matched": 1873
+  },
+  "B1_s2024": {
+   "decomposition_recount": 1880,
+   "stored_evaluation_cells_matched": 1881
+  },
+  "B1_s42": {
+   "decomposition_recount": 1874,
+   "stored_evaluation_cells_matched": 1875
+  },
+  "B_s1337": {
+   "decomposition_recount": 1906,
+   "stored_evaluation_cells_matched": 1906
+  },
+  "B_s2024": {
+   "decomposition_recount": 1925,
+   "stored_evaluation_cells_matched": 1926
+  },
+  "B_s42": {
+   "decomposition_recount": 1909,
+   "stored_evaluation_cells_matched": 1909
+  },
+  "classical": {
+   "decomposition_recount": 1870,
+   "stored_evaluation_cells_matched": 1870
+  }
+ }
+}

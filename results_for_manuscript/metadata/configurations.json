@@ -1,0 +1,885 @@
+{
+ "A": {
+  "label": "End-to-End Neural Baseline",
+  "arm": "A",
+  "training_runs": 3,
+  "seeds": [
+   42,
+   1337,
+   2024
+  ],
+  "run_dirs": {
+   "42": "runs/v2_baseline_off_axis",
+   "1337": "runs/v2_A_seed1337_off_axis",
+   "2024": "runs/v2_A_seed2024_off_axis"
+  },
+  "comparator": null,
+  "comparator_arm": null,
+  "change_relative_to_comparator": "off-axis; reconstruction + segmentation losses only",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": 9598099.0,
+   "params_source": "runs/benchmark_results/results_hardware_arm_A.json"
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "1d1d56d70215b210a5c18e9d33292d2b82789b26766ab8941f1f5861e5b590fd",
+    "checkpoint_epoch": 50,
+    "epochs_completed": 60,
+    "wall_hours": 1.405,
+    "source": "runs/benchmark_results/results_arm_A.json"
+   },
+   "1337": {
+    "checkpoint_sha256": "6669063336b2634913f5c6c237ea7266907715659e8241fa2c716f28de3292af",
+    "checkpoint_epoch": 50,
+    "epochs_completed": 60,
+    "wall_hours": 1.371,
+    "source": "runs/benchmark_results/results_arm_A.json"
+   },
+   "2024": {
+    "checkpoint_sha256": "a4ec31e8c0242bc74c84d213d33e1f15af3e4652ebbb40d49d46f676e02d4f59",
+    "checkpoint_epoch": 32,
+    "epochs_completed": 60,
+    "wall_hours": 1.377,
+    "source": "runs/benchmark_results/results_arm_A.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_baseline_off_axis/resolved_config.yaml",
+   "runs/v2_A_seed1337_off_axis/resolved_config.yaml",
+   "runs/v2_A_seed2024_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "G": {
+  "label": "In-Line Neural Configuration",
+  "arm": "G",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_baseline_gabor"
+  },
+  "comparator": "End-to-End Neural Baseline",
+  "comparator_arm": "A",
+  "change_relative_to_comparator": "baseline objective on in-line Gabor holograms; SNU_01-SNU_50 excluded",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": null,
+   "params_source": null
+  },
+  "geometry": {
+   "modality": "gabor",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "b9a0b5205685eaae57cc0c760a19764134b1a59ec7ff81ae2636ad6324dd2275",
+    "checkpoint_epoch": 52,
+    "epochs_completed": 60,
+    "wall_hours": 1.272,
+    "source": "runs/benchmark_results/results_arm_G.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_baseline_gabor/resolved_config.yaml"
+  ],
+  "field_set": "107 fields (in-line common set)"
+ },
+ "B": {
+  "label": "+IPP (per-cell)",
+  "arm": "B",
+  "training_runs": 3,
+  "seeds": [
+   42,
+   1337,
+   2024
+  ],
+  "run_dirs": {
+   "42": "runs/v2_cell_ipp_off_axis",
+   "1337": "runs/v2_B_seed1337_off_axis",
+   "2024": "runs/v2_B_seed2024_off_axis"
+  },
+  "comparator": "End-to-End Neural Baseline",
+  "comparator_arm": "A",
+  "change_relative_to_comparator": "+ L_IPP^cell, w=1.0",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "cell_integrated_phase": 1.0
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": 9598099.0,
+   "params_source": "runs/benchmark_results/results_hardware_arm_B.json"
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "574a121fa3f26ab610c4f5262ff3f5114b7f6b59bf570f79458fa317a5c7bd27",
+    "checkpoint_epoch": 51,
+    "epochs_completed": 60,
+    "wall_hours": 1.376,
+    "source": "runs/benchmark_results/results_arm_B.json"
+   },
+   "1337": {
+    "checkpoint_sha256": "2f62fa5ebbab5e82e34811e4cdcce99c01f5c38454d1b4122888945adacb1f48",
+    "checkpoint_epoch": 43,
+    "epochs_completed": 60,
+    "wall_hours": 1.388,
+    "source": "runs/benchmark_results/results_arm_B.json"
+   },
+   "2024": {
+    "checkpoint_sha256": "eb027025686c9cd410a999a42b37e154da9ad4d6cb333a7d908a7929c61a22d4",
+    "checkpoint_epoch": 59,
+    "epochs_completed": 60,
+    "wall_hours": 1.385,
+    "source": "runs/benchmark_results/results_arm_B.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_cell_ipp_off_axis/resolved_config.yaml",
+   "runs/v2_B_seed1337_off_axis/resolved_config.yaml",
+   "runs/v2_B_seed2024_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "B1": {
+  "label": "+IPP (image)",
+  "arm": "B1",
+  "training_runs": 3,
+  "seeds": [
+   42,
+   1337,
+   2024
+  ],
+  "run_dirs": {
+   "42": "runs/v2_image_volume_off_axis",
+   "1337": "runs/v2_B1_seed1337_off_axis",
+   "2024": "runs/v2_B1_seed2024_off_axis"
+  },
+  "comparator": "End-to-End Neural Baseline",
+  "comparator_arm": "A",
+  "change_relative_to_comparator": "+ L_IPP^img, w=1.0",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "phase_volume": 1.0
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": null,
+   "params_source": null
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "ebac0b16e00194f8acdd4aabfb57b0278e122f66354538d24d3fbcc4dc88a367",
+    "checkpoint_epoch": 55,
+    "epochs_completed": 60,
+    "wall_hours": 1.362,
+    "source": "runs/benchmark_results/results_arm_B1.json"
+   },
+   "1337": {
+    "checkpoint_sha256": "59fe1e4f0f72894c4b273b8bd9d49723e54a2f690e48fc7e4d3e69366d325079",
+    "checkpoint_epoch": 60,
+    "epochs_completed": 60,
+    "wall_hours": 1.353,
+    "source": "runs/benchmark_results/results_arm_B1.json"
+   },
+   "2024": {
+    "checkpoint_sha256": "b4468639614045dab6746a97f7fc6278e44379feae6a13f656ce731db97d85d8",
+    "checkpoint_epoch": 56,
+    "epochs_completed": 60,
+    "wall_hours": 1.388,
+    "source": "runs/benchmark_results/results_arm_B1.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_image_volume_off_axis/resolved_config.yaml",
+   "runs/v2_B1_seed1337_off_axis/resolved_config.yaml",
+   "runs/v2_B1_seed2024_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "B2": {
+  "label": "+Area",
+  "arm": "B2",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_cell_ipp_area_off_axis"
+  },
+  "comparator": "+IPP (per-cell)",
+  "comparator_arm": "B",
+  "change_relative_to_comparator": "+ L_area (per-cell), w=1.0",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "cell_integrated_phase": 1.0,
+   "cell_projected_area": 1.0
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": null,
+   "params_source": null
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "de5c9153f9e225532cac012b5f01486f4e3db77a6f239bbf54b14bc4c773ce97",
+    "checkpoint_epoch": 47,
+    "epochs_completed": 60,
+    "wall_hours": 1.42,
+    "source": "runs/benchmark_results/results_arm_B2.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_cell_ipp_area_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "C": {
+  "label": "+BGA",
+  "arm": "C",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_cell_ipp_bga_off_axis"
+  },
+  "comparator": "+IPP (per-cell)",
+  "comparator_arm": "B",
+  "change_relative_to_comparator": "+ L_BGA, w=0.05",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "boundary_gradient_alignment": 0.05,
+   "cell_integrated_phase": 1.0
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": null,
+   "params_source": null
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "439f958524b7f6f42e3cc11a7ea19c179bd199fd3681fd59accb9c34d5399bc0",
+    "checkpoint_epoch": 52,
+    "epochs_completed": 60,
+    "wall_hours": 1.382,
+    "source": "runs/benchmark_results/results_arm_C.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_cell_ipp_bga_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "W01": {
+  "label": "+IPP (per-cell), w=0.1",
+  "arm": "W01",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_ipp_w01_off_axis"
+  },
+  "comparator": "End-to-End Neural Baseline",
+  "comparator_arm": "A",
+  "change_relative_to_comparator": "L_IPP^cell weight 0.1",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "cell_integrated_phase": 0.1
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": null,
+   "params_source": null
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "02e63ec7269d0e979f645dab0d85bbf0510255c638b45b633c765fdd71bf870f",
+    "checkpoint_epoch": 45,
+    "epochs_completed": 60,
+    "wall_hours": 1.376,
+    "source": "runs/benchmark_results/results_arm_W01.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_ipp_w01_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "W03": {
+  "label": "+IPP (per-cell), w=0.3",
+  "arm": "W03",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_ipp_w03_off_axis"
+  },
+  "comparator": "End-to-End Neural Baseline",
+  "comparator_arm": "A",
+  "change_relative_to_comparator": "L_IPP^cell weight 0.3",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "cell_integrated_phase": 0.3
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": null,
+   "params_source": null
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "b4c5e8a81a07cd15ad7dccae975734139c59ddd8fb20a5f25b37d6a36ea8ff5c",
+    "checkpoint_epoch": 52,
+    "epochs_completed": 60,
+    "wall_hours": 1.392,
+    "source": "runs/benchmark_results/results_arm_W03.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_ipp_w03_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "W30": {
+  "label": "+IPP (per-cell), w=3.0",
+  "arm": "W30",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_ipp_w30_off_axis"
+  },
+  "comparator": "End-to-End Neural Baseline",
+  "comparator_arm": "A",
+  "change_relative_to_comparator": "L_IPP^cell weight 3.0",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "cell_integrated_phase": 3.0
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": null,
+   "params_source": null
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "fa1f3794057c4c6c9df87db659df7f2a317910220da114aadb52c9f8bf876a6c",
+    "checkpoint_epoch": 47,
+    "epochs_completed": 60,
+    "wall_hours": 1.442,
+    "source": "runs/benchmark_results/results_arm_W30.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_ipp_w30_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "D0": {
+  "label": "+Amplitude",
+  "arm": "D0",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_amplitude_off_axis"
+  },
+  "comparator": "+IPP (per-cell)",
+  "comparator_arm": "B",
+  "change_relative_to_comparator": "+ amplitude head, + L_amp, w=0.1",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "cell_integrated_phase": 1.0,
+   "amplitude": 0.1
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": true,
+   "params_total": 9607412.0,
+   "params_source": "runs/benchmark_results/results_hardware_arm_D0.json"
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "5605189b3c8856aabe2c128f5a68fe206d2ce1b3955d961e92af16808486c75e",
+    "checkpoint_epoch": 44,
+    "epochs_completed": 60,
+    "wall_hours": 1.441,
+    "source": "runs/benchmark_results/results_arm_D0.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_amplitude_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "D1": {
+  "label": "+Fwd (fixed z)",
+  "arm": "D1",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_forward_amplitude_off_axis"
+  },
+  "comparator": "+Amplitude",
+  "comparator_arm": "D0",
+  "change_relative_to_comparator": "+ L_fwd, w=0.02, z fixed",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "cell_integrated_phase": 1.0,
+   "amplitude": 0.1,
+   "forward_model": 0.02
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": true,
+   "params_total": null,
+   "params_source": null
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "867a0ac2dfa500c4ca4356b9b7edf18cd5904f80488e504b3f2fd55200bddea9",
+    "checkpoint_epoch": 50,
+    "epochs_completed": 60,
+    "wall_hours": 1.437,
+    "source": "runs/benchmark_results/results_arm_D1.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_forward_amplitude_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "D2": {
+  "label": "+Fwd (free z)",
+  "arm": "D2",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_learned_z_off_axis"
+  },
+  "comparator": "+Fwd (fixed z)",
+  "comparator_arm": "D1",
+  "change_relative_to_comparator": "z becomes a trainable parameter",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "cell_integrated_phase": 1.0,
+   "amplitude": 0.1,
+   "forward_model": 0.02
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": null,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": true,
+   "params_total": null,
+   "params_source": null
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": true,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "2b624e351e357adc0f577ddb6782da2e7980c89bdc70f8b5b3dc166d5da0b18b",
+    "checkpoint_epoch": 44,
+    "epochs_completed": 60,
+    "wall_hours": 1.471,
+    "source": "runs/benchmark_results/results_arm_D2.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_learned_z_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "KA": {
+  "label": "Compact Baseline",
+  "arm": "KA",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_compact_baseline_off_axis"
+  },
+  "comparator": "End-to-End Neural Baseline",
+  "comparator_arm": "A",
+  "change_relative_to_comparator": "shared 1x1 projection to 256 channels before the decoders",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": 256,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": 3360403.0,
+   "params_source": "runs/benchmark_results/results_hardware_arm_KA.json"
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "0550ef191728278a7be4d2b3efacd257769ce85f9b46dc7196a06a35c2793993",
+    "checkpoint_epoch": 60,
+    "epochs_completed": 60,
+    "wall_hours": 1.402,
+    "source": "runs/benchmark_results/results_arm_KA.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_compact_baseline_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "KB": {
+  "label": "Compact +IPP",
+  "arm": "KB",
+  "training_runs": 1,
+  "seeds": [
+   42
+  ],
+  "run_dirs": {
+   "42": "runs/v2_compact_cell_ipp_off_axis"
+  },
+  "comparator": "+IPP (per-cell)",
+  "comparator_arm": "B",
+  "change_relative_to_comparator": "compact decoder with L_IPP^cell",
+  "loss_weights_nonzero": {
+   "phase": 1.0,
+   "segmentation": 1.0,
+   "cell_integrated_phase": 1.0
+  },
+  "architecture": {
+   "encoder": "mobilenet_v2",
+   "decoder_projection_channels": 256,
+   "decoder_channels": [
+    256,
+    128,
+    64,
+    32
+   ],
+   "amplitude_head": false,
+   "params_total": 3360403.0,
+   "params_source": "runs/benchmark_results/results_hardware_arm_KB.json"
+  },
+  "geometry": {
+   "modality": "off_axis",
+   "wavelength_um": 0.666,
+   "pixel_pitch_um": 0.284871,
+   "refraction_increment_ml_per_g": 0.2,
+   "propagation_distance_um": 33.77,
+   "z_trainable": false,
+   "crop_offset_px": [
+    -6,
+    -2
+   ]
+  },
+  "epochs_max": 60,
+  "checkpoints": {
+   "42": {
+    "checkpoint_sha256": "92d9799e0f695300ceb4406a3adf065de9a12a55719b5bb19ff06d2dccba6af1",
+    "checkpoint_epoch": 52,
+    "epochs_completed": 60,
+    "wall_hours": 1.317,
+    "source": "runs/benchmark_results/results_arm_KB.json"
+   }
+  },
+  "source_file": [
+   "runs/v2_compact_cell_ipp_off_axis/resolved_config.yaml"
+  ],
+  "field_set": "113 test fields (off-axis)"
+ },
+ "W10_repeat_note": {
+  "description": "A separate seed-42 training of the configuration of +IPP (per-cell); not counted as a seed of +IPP (per-cell) and not used for the w=1.0 sweep point.",
+  "run_dir": "runs/v2_ipp_w10_off_axis",
+  "dry_mass_mape": 0.18721310126191695,
+  "same_loss_weights_as_B": true,
+  "B_seed42_dry_mass_mape": 0.18753635108105524
+ }
+}

@@ -753,7 +753,7 @@ class Collector:
                  if info["comparator"]]
         out = {"rule": f"resolved when |difference of means| > {self.plan.resolve_factor:g} x "
                        f"the pooled between-seed SD (holoqpi.utils.pooled_between_seed_sd); "
-                       f"a resolution criterion, not a significance test",
+                       f"a resolution criterion (no hypothesis test is performed)",
                "resolve_factor": self.plan.resolve_factor,
                "comparisons": {}}
         for code, comparator in pairs:

@@ -1,9 +1,11 @@
-"""Joint physics-aware objective for hologram reconstruction and cell analysis."""
+"""Joint objective (measurement-aware terms, forward-model consistency) for hologram reconstruction and cell analysis."""
 
-from .composite import JointPhysicsAwareLoss, build_loss
+from .composite import JointMeasurementLoss, JointPhysicsAwareLoss, build_loss
 from .terms import (
     BoundaryGradientAlignment,
     DryMassConsistency,
+    ImageIntegratedPhase,
+    LegacyPhaseMaskContrast,
     PhaseMaskContrast,
     PhaseReconstructionLoss,
     PhaseVolumePreservation,
@@ -14,13 +16,16 @@ from .terms import (
 )
 
 __all__ = [
-    "JointPhysicsAwareLoss",
+    "JointMeasurementLoss",
+    "JointPhysicsAwareLoss",  # backward-compatible alias
     "build_loss",
     "PhaseReconstructionLoss",
     "SegmentationLoss",
-    "PhaseMaskContrast",
+    "LegacyPhaseMaskContrast",
+    "PhaseMaskContrast",  # backward-compatible alias
+    "ImageIntegratedPhase",
     "BoundaryGradientAlignment",
-    "PhaseVolumePreservation",
+    "PhaseVolumePreservation",  # backward-compatible alias
     "DryMassConsistency",
     "ProjectedAreaConsistency",
     "spatial_gradient",

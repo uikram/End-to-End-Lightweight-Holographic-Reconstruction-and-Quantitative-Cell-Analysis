@@ -1524,7 +1524,7 @@ def figure_conventional_baseline(cfg, args, out_dir: Path) -> None:
         ax.set_xlabel("% advantage of the network over classical reconstruction")
         title = f"{LABEL.get(modality, modality)}   (learned vs classical)"
         if not valid:
-            title += "\nCLASSICAL RECONSTRUCTION FAILED - not a valid baseline"
+            title += "\nCLASSICAL RECONSTRUCTION INVALID - not used as a baseline"
             ax.set_facecolor("#00000008")
         ax.set_title(title, fontsize=9.5)
 

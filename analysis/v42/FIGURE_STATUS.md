@@ -1,0 +1,19 @@
+# FIGURE_STATUS
+
+Manuscript figures are the PNGs in `HoloQPI_4.2/manuscript_images/` (not modified). "Regenerated" = rebuilt here from the repository result files into a scratch directory (not overwriting the manuscript files); "verified" = the plotted data were checked against stored results.
+
+| Fig. | Manuscript file | Source script | Source data | Status | Issues |
+|---|---|---|---|---|---|
+| 1 | `figure_1_overview.png` | `HoloQPI_4.2/figure_code/fig1/build_fig1.js`, panels from `manuscript_images/make_fig1_panels.py` | `fig1_panels.json` (crop offset [−6, −2]) | Not regenerated | Panels need checkpoints and data (not in repo). Offset in `fig1_panels.json` equals `config/base.yaml`. |
+| 2 | `figure_2.png` | `manuscript_images/figure_2.py` (repo copy is a v4.1 snapshot) | `runs/benchmark_results/results_arm_A.json`, `results_conventional_*.json` | Regenerated here (runs, same data); verified data | Output size differs by 1 px from the manuscript PNG, i.e. the authoring script in `paper/manuscript_images/` (outside the repo) differs slightly from the repo copy. Not pixel-identical; no numeric difference found. |
+| 3 | `figure_3.png` | `manuscript_images/figure_3.py` | checkpoints, data | Identical to the repo PNG (same md5); not regenerated | Needs checkpoints. Field MAE labels were verified against `fig1_panels.json` (0.2959 rad NCI_08). |
+| 4 (agreement) | `figure_4.png` | `manuscript_images/figure_6.py` (v4.1 name) | `data/per_cell_test_A_seed42.csv` (seed 42; n = 1898) | Regenerated here; verified (prints n = 1898, per-field n = 113) | 1-px size difference as above. The repo-root `manuscript_images/figure_4.png` is the **old ablation figure** (v4.1 numbering) and must not be used. |
+| 5 (ablation) | `figure_5.png` | `manuscript_images/figure_4.py` | `results_arm_*.json` | Regenerated here; verified (replicated arms A, B, B1 only) | 489,975 differing pixels vs manuscript PNG (layout/size drift from the older script). |
+| 6 (weight sweep) | `figure_6.png` | `manuscript_images/figure_5.py` | `results_arm_{A,W01,W03,B,W30}.json` | Regenerated here; verified | w = 1.0 point is the three-seed +IPP (per-cell) (not the separate `w10` repeat). Pixel drift as above. |
+| 7 (forward model) | `figure_7.png` | `HoloQPI_4.2/figure_code/figure_7.py` (+ `mstyle.py`, `HOLOQPI_RUNS=<repo>/runs`) | `results_arm_*.json`, `RESULTS.md`, `z_calibration.json` | **Regenerated here and compared visually: identical content** (differences are font rendering only) | Repo-root `manuscript_images/figure_7.py/.png` is stale (title "physics-aware terms", "ground-truth", "negative result"); do not use. |
+| 8 (boundary displacement) | `figure_8.png` | `HoloQPI_4.2/figure_code/make_figure_boundary_sensitivity.py --root <repo> --out <dir>` | `runs/error_propagation_summary.csv`, `runs/synthetic_validation_seeds/` | Regenerated here; verified | 3-px size difference (matplotlib/font version). |
+| 9 (efficiency) | `figure_9.png` | `manuscript_images/figure_9.py` | `results_hardware_arm_*.json`, `results_arm_{A,KA,B,KB}.json` | Regenerated here; verified (compact − baseline = −0.0002, worst p99/p50 1.20) | 5-px size difference. |
+
+Stale, not used by the manuscript (kept; not deleted): `figures/fig01…fig20` (outputs of `scripts/make_figures.py`, exploratory set), repo-root `assets/`, repo-root `manuscript_images/*.png` and `FIGURE_MANUAL.md` (v4.1 numbering/paths: `DATA = ../data`; the scripts only run after copying results into `data/`, which is how they were run here).
+
+**Not possible here:** bit-exact regeneration of figures 2, 4, 5, 6, 9 (the authoring versions of those scripts are outside the repo — `HoloQPI_4.2/figure_code/README.md` cites `paper/manuscript_images/`). Figure data for them are in `results_for_manuscript/figures/data/` and the scripts for 7 and 8 in `results_for_manuscript/figures/`. No figure pixels were edited.

@@ -92,7 +92,7 @@ optics:
   # analysed with.
   refraction_increment_ml_per_g: 0.2
   # Literature range for alpha, propagated onto ABSOLUTE dry mass by
-  # scripts/mass_uncertainty.py. Zhao, Brown & Schuck (Biophys. J. 2011) give a
+  # legacy/scripts/mass_uncertainty.py. Zhao, Brown & Schuck (Biophys. J. 2011) give a
   # protein mean of 0.190 mL/g (SD 0.003) spanning 0.173-0.215; Barer & Joseph
   # (1954) recommend 0.18 for whole protoplasm; Schuermann et al. (2016) use 0.2.
   #
@@ -485,20 +485,21 @@ model:
     always_trainable_patterns: [decoder, head, classifier, final]
 
 # -----------------------------------------------------------------------------
-# Joint physics-aware objective
+# Joint objective: supervised terms, measurement-aware terms, forward-model consistency
 #
 #   L = w_phase * L_phase
 #     + w_seg   * L_seg
 #     + w_cls   * L_cls
-#     + w_pmc   * L_PMC + w_bga * L_BGA + w_pv * L_PV
-#     + w_mass  * L_mass + w_area * L_area
+#     + w_bga * L_BGA + w_ipp_img * L_IPP^img (key phase_volume)
+#     + w_ipp_cell * L_IPP^cell (key cell_integrated_phase) + w_area * L_area
+#     (legacy, off: w_pmc * L_PMC (key phase_mask_contrast), w_mass * L_mass)
 # -----------------------------------------------------------------------------
 loss:
   weights:
     phase: 1.0
     segmentation: 1.0
     classification: 0.2
-    # --- physics-aware terms -------------------------------------------------
+    # --- measurement-aware terms and forward-model consistency -------------------------------------------------
     # v2 defaults. Three terms from v1 are now OFF by default, each for a
     # measured reason rather than for simplification; see docs/documentation.md.
     #

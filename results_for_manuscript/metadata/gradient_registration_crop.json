@@ -1,0 +1,309 @@
+{
+ "gradient_path": {
+  "median": {
+   "value": 0.3734543885703245,
+   "units": "1",
+   "source_file": "runs/gradient_path_b_cell_ipp_512.csv",
+   "source_key": "ratio_at_weight_1",
+   "field_set": "30 training batches (512x512 crops)",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "derived",
+   "derived_from": [
+    "ratio_at_weight_1"
+   ],
+   "calculation": "median over rows"
+  },
+  "min": {
+   "value": 0.2430508267730263,
+   "units": "1",
+   "source_file": "runs/gradient_path_b_cell_ipp_512.csv",
+   "source_key": "ratio_at_weight_1",
+   "field_set": "30 batches",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "derived",
+   "derived_from": [
+    "ratio_at_weight_1"
+   ],
+   "calculation": "min over rows"
+  },
+  "max": {
+   "value": 0.6552427302095863,
+   "units": "1",
+   "source_file": "runs/gradient_path_b_cell_ipp_512.csv",
+   "source_key": "ratio_at_weight_1",
+   "field_set": "30 batches",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "derived",
+   "derived_from": [
+    "ratio_at_weight_1"
+   ],
+   "calculation": "max over rows"
+  },
+  "batches": {
+   "value": 30,
+   "units": "batches",
+   "source_file": "runs/gradient_path_b_cell_ipp_512.csv",
+   "source_key": "rows",
+   "field_set": "",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "config": "config/v2/b_cell_ipp.yaml",
+  "train_crop": "512",
+  "note": "Source of truth is the CSV. A previously quoted median 0.302 (range 0.18-0.67) is NOT supported by it."
+ },
+ "registration": {
+  "verified": false,
+  "reason": "The diagnostics archive (registration_summary.json, hologram_registration.csv, classical_phase_shift.csv, hologram_inventory.csv) is not present in this repository, so these values cannot be re-derived or checked here. They are carried over as author-supplied.",
+  "values": {
+   "fields_total": {
+    "value": 800,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "correctly_paired_fields": {
+    "value": 750,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "mismatched_fields_SNU_01_to_SNU_50": {
+    "value": 50,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "matched_pairs_within_1px": {
+    "value": 734,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "control_pairs_within_1px": {
+    "value": 3,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "auc_correlation": {
+    "value": 0.975,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "auc_registration_error": {
+    "value": 0.973,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "lowpass_only_auc": {
+    "value": 0.506,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "paired_max_shift_px": {
+    "value": 4.7,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "snu_r_min": {
+    "value": -0.13,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "snu_r_max": {
+    "value": 0.18,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "paired_r_min": {
+    "value": 0.47,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   },
+   "control_r_max": {
+    "value": 0.25,
+    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
+    "verified": false
+   }
+  },
+  "flag": "SNU_01-50 correlation range: -0.13 to 0.18 here vs 0.09-0.18 in config/base.yaml comments.",
+  "split_from_train_G_log": {
+   "train_excluded": 39,
+   "train": 521,
+   "val_excluded": 5,
+   "val": 122,
+   "test": 107,
+   "test_reference_cells": 3055,
+   "test_excluded": 6
+  },
+  "config_base_yaml_mentions_0.09_to_0.18": true
+ },
+ "crop": {
+  "configured_offset_px": {
+   "value": [
+    -6,
+    -2
+   ],
+   "units": "px",
+   "source_file": "runs/v2_baseline_off_axis/resolved_config.yaml",
+   "source_key": "data.crop_offset_px",
+   "field_set": "",
+   "n_runs": 1,
+   "seeds": null,
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "test_confirmation": {
+   "source_file": "runs/diagnostics/crop_offset_test_dy-6_dx-2.json",
+   "content": {
+    "split": "test",
+    "fields": 113,
+    "current_offset": [
+     -6,
+     -2
+    ],
+    "residual_dy": {
+     "n": 113,
+     "median": -0.10000000149011612,
+     "p25": -0.5,
+     "p75": 0.20000000298023224,
+     "p05": -1.8799999713897704,
+     "p95": 1.6400000333786002,
+     "mean": -0.03982300812427977
+    },
+    "residual_dx": {
+     "n": 113,
+     "median": 0.0,
+     "p25": -0.20000000298023224,
+     "p75": 0.20000000298023224,
+     "p05": -3.0600000381469723,
+     "p95": 2.1200000524520766,
+     "mean": 0.024778763343275122
+    },
+    "tolerance_px": 0.5,
+    "aligned": true,
+    "estimate": [
+     -6,
+     -2
+    ],
+    "recommended_offset": [
+     -6,
+     -2
+    ],
+    "candidates": {
+     "-6,-2": {
+      "median_dy": -0.10000000149011612,
+      "median_dx": 0.0
+     }
+    },
+    "by_group": {
+     "NCI": {
+      "n": 7,
+      "dy": 0.0,
+      "dx": 0.0
+     },
+     "NCI_Blebbistatin_5uM": {
+      "n": 7,
+      "dy": -0.10000000149011612,
+      "dx": 0.0
+     },
+     "NCI_FCCP_10uM": {
+      "n": 7,
+      "dy": 0.10000000149011612,
+      "dx": -0.10000000149011612
+     },
+     "NCI_Staurosporine_100nM": {
+      "n": 7,
+      "dy": 0.20000000298023224,
+      "dx": -0.30000001192092896
+     },
+     "NCI_rotenone_500nM": {
+      "n": 7,
+      "dy": -0.30000001192092896,
+      "dx": 0.0
+     },
+     "SNU": {
+      "n": 15,
+      "dy": 0.10000000149011612,
+      "dx": 0.10000000149011612
+     },
+     "SNU_FCCP_10uM": {
+      "n": 7,
+      "dy": -0.20000000298023224,
+      "dx": 0.10000000149011612
+     },
+     "SNU_Rotenone_500nM": {
+      "n": 7,
+      "dy": 0.0,
+      "dx": 0.0
+     },
+     "SNU_blebbistatin": {
+      "n": 7,
+      "dy": -0.10000000149011612,
+      "dx": 0.10000000149011612
+     },
+     "SNU_staurosporine": {
+      "n": 7,
+      "dy": 0.0,
+      "dx": 0.0
+     },
+     "T24": {
+      "n": 7,
+      "dy": -0.30000001192092896,
+      "dx": 0.10000000149011612
+     },
+     "T24_Blebbistatin_5uM": {
+      "n": 7,
+      "dy": -0.10000000149011612,
+      "dx": 0.20000000298023224
+     },
+     "T24_FCCP_10uM": {
+      "n": 7,
+      "dy": -1.600000023841858,
+      "dx": 0.0
+     },
+     "T24_Staurosporine_100nM": {
+      "n": 7,
+      "dy": 0.0,
+      "dx": 1.100000023841858
+     },
+     "T24_rotenone_500nM": {
+      "n": 7,
+      "dy": -0.10000000149011612,
+      "dx": 0.10000000149011612
+     }
+    }
+   }
+  }
+ },
+ "label_audit_thresholds": {
+  "n_images": 800,
+  "level_mean_rad": 0.4057699005689587,
+  "level_sd_rad": 0.15063307214128951,
+  "level_min_rad": 0.06384450948173448,
+  "level_max_rad": 1.0656524017910276,
+  "level_cv": 0.37122781145194905,
+  "between_condition_sd_unweighted": 0.04548836717739774,
+  "within_condition_sd_unweighted": 0.1456714727410994,
+  "within_condition_sd_pooled": 0.1455264234415923,
+  "threshold_method": "otsu",
+  "smoothing_sigma_px": 4.0,
+  "otsu_scale": 1.0,
+  "labels_read_from": "mask",
+  "anova_F": 15.264768250544718,
+  "anova_p": 4.935563822941241e-12,
+  "kruskal_H": 56.09539372659219,
+  "kruskal_p": 1.9149248096647148e-11
+ }
+}

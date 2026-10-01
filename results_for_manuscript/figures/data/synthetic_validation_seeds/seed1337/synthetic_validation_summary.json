@@ -1,0 +1,21 @@
+{
+  "seed": 1337,
+  "fields": 12,
+  "cells_per_field": 12,
+  "cells_placed": 144,
+  "cells_measured": 127,
+  "cells_paired": 127,
+  "area_relative_error_mean": 0.00016473688048741113,
+  "area_relative_error_median": 0.00030574603200415803,
+  "area_abs_relative_error_mean": 0.0021060601184421527,
+  "area_abs_relative_error_p95": 0.0063855256741068836,
+  "mass_relative_error_mean": -7.068080663756673e-06,
+  "mass_relative_error_median": 6.488411694185087e-06,
+  "mass_abs_relative_error_mean": 0.00033276908480564467,
+  "mass_abs_relative_error_p95": 0.0009117253096051922,
+  "field_total_mass_error_mean": -0.034374735702969665,
+  "field_total_mass_error_median": -0.025836663247952908,
+  "field_total_mass_abs_error_mean": 0.034392803934172635,
+  "config_digest": "b023c4d640230c8889b3f1f05a2c449f2a10e9644973aad3d9ca15bc5d8cd814",
+  "splits_sha256": "11d124828ce9c48fed26d540bf2f0c3adc3f34a1befc02899e1216f33e4120bf"
+}

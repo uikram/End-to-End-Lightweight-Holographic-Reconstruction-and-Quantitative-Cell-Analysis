@@ -1,0 +1,43 @@
+{
+ "generated_by": "analysis/v42/compile_results.py",
+ "design": {
+  "three_seed_configurations": [
+   "End-to-End Neural Baseline",
+   "+IPP (per-cell)",
+   "+IPP (image)"
+  ],
+  "single_run_configurations": [
+   "In-Line Neural Configuration",
+   "+Area",
+   "+BGA",
+   "+IPP (per-cell), w=0.1",
+   "+IPP (per-cell), w=0.3",
+   "+IPP (per-cell), w=3.0",
+   "+Amplitude",
+   "+Fwd (fixed z)",
+   "+Fwd (free z)",
+   "Compact Baseline",
+   "Compact +IPP"
+  ],
+  "deterministic": [
+   "Classical Off-Axis",
+   "Classical In-Line"
+  ]
+ },
+ "files": {
+  "baseline": "baseline/baseline.json",
+  "classical": "classical/classical.json",
+  "inline": "inline/inline.json",
+  "ipp": "ipp/ipp.json",
+  "amplitude": "amplitude/amplitude.json",
+  "forward_model": "forward_model/forward_model.json",
+  "decomposition": "decomposition/decomposition.json",
+  "boundary": "boundary_sensitivity/boundary.json",
+  "benchmarking": "benchmarking/benchmarking.json",
+  "configurations": "metadata/configurations.json"
+ },
+ "consistency_checks": {
+  "n": 510,
+  "failed": []
+ }
+}

@@ -1,26 +1,27 @@
-"""The joint physics-aware objective.
+"""The joint objective: supervised terms, measurement-aware terms and forward-model consistency.
 
     L = w_phase * L_phase
       + w_seg   * L_seg
       + w_cls   * L_cls
       + w_fwd   * L_forward_model                       <- reads the raw hologram
-      + w_pmc   * L_PMC + w_bga * L_BGA + w_pv * L_PV    <- mask <-> phase
-      + w_mass  * L_mass + w_area * L_area               <- measurement
+      + w_bga * L_BGA + w_ipp_img * L_IPP^img            <- mask <-> phase (key ``phase_volume`` = L_IPP^img)
+      + w_ipp_cell * L_IPP^cell + w_area * L_area        <- measurement-aware (per cell)
+      (legacy, weight 0 in all manuscript configurations: L_PMC, L_mass)
 
 The first three terms supervise each head against its own target.
 
-The physics group splits into two families that behave very differently, and
+The non-supervised terms split into two families that behave very differently, and
 keeping them separate is the point of the ablation.
 
 L_forward_model propagates the predicted field to the sensor and compares it
 with the hologram that was actually recorded. It is the only term that reads the
 measurement, so it is the only one that introduces information the supervised
 losses have not already consumed. This is what the reference literature means by
-physics consistency (Huang et al., Nat. Mach. Intell. 2023; Galande et al.,
+forward-model consistency (Huang et al., Nat. Mach. Intell. 2023; Galande et al.,
 J. Biomed. Opt.; Lee et al., APL Mach. Learn. 4, 026106).
 
-The remaining five couple the predicted mask to the predicted phase. They are
-the previous study's physics-aware loss carried into the end-to-end setting,
+The remaining terms couple the predicted mask to the predicted phase. They are
+a previous study's coupling loss carried into the end-to-end setting,
 where its information source has changed: in that study the phase was a measured
 input and only the boundary was learned, so the coupling supplied the mask head
 with knowledge of the optical field. Here both operands are network outputs and
@@ -49,10 +50,10 @@ from .terms import (
     CellProjectedArea,
     DryMassConsistency,
     ForwardModelConsistency,
-    PhaseMaskContrast,
+    LegacyPhaseMaskContrast,
     PhaseReconstructionLoss,
     ProjectedAreaConsistency,
-    PhaseVolumePreservation,
+    ImageIntegratedPhase,
     SegmentationLoss,
 )
 
@@ -68,8 +69,8 @@ _PHYSICS_KEYS = (
 )
 
 
-class JointPhysicsAwareLoss(nn.Module):
-    """Combines reconstruction, segmentation, classification and physics."""
+class JointMeasurementLoss(nn.Module):
+    """Combines reconstruction, segmentation, classification, measurement-aware and forward-model terms."""
 
     def __init__(self, cfg: Config):
         super().__init__()
@@ -98,9 +99,9 @@ class JointPhysicsAwareLoss(nn.Module):
         )
         self.label_smoothing = loss_cfg.classification.label_smoothing
 
-        self.pmc = PhaseMaskContrast(physics_cfg.pmc_margin, physics_cfg.pmc_collapse_warn_ratio)
+        self.pmc = LegacyPhaseMaskContrast(physics_cfg.pmc_margin, physics_cfg.pmc_collapse_warn_ratio)
         self.bga = BoundaryGradientAlignment(physics_cfg.bga_epsilon)
-        self.phase_volume = PhaseVolumePreservation(physics_cfg.volume_epsilon)
+        self.phase_volume = ImageIntegratedPhase(physics_cfg.volume_epsilon)
         self.cell_integrated_phase = CellIntegratedPhase(
             physics_cfg.volume_epsilon,
             physics_cfg.cell_min_reference_rad,
@@ -386,5 +387,9 @@ class JointPhysicsAwareLoss(nn.Module):
         return loss, components
 
 
-def build_loss(cfg: Config) -> JointPhysicsAwareLoss:
-    return JointPhysicsAwareLoss(cfg)
+def build_loss(cfg: Config) -> JointMeasurementLoss:
+    return JointMeasurementLoss(cfg)
+
+
+# Backward-compatible name (older scripts and notebooks).
+JointPhysicsAwareLoss = JointMeasurementLoss

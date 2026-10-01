@@ -1,0 +1,731 @@
+{
+ "description": "Edge/interior stratification and false positives near the field boundary (Table 8) and the boundary-displacement / synthetic analyses (Table 12).",
+ "field_set": "113 off-axis test fields",
+ "edge_definition": "reference instance with any pixel at index < edge_margin_px or >= size - edge_margin_px (config/diagnostics.yaml edge_margin_px = 4, i.e. within 3 px of the border; strict inequality in decompose_mass_error._edge_labels)",
+ "false_positive_boundary_margin_px": 15,
+ "table_8": {
+  "A": {
+   "label": "End-to-End Neural Baseline",
+   "training_runs": 3,
+   "edge_recall": {
+    "mean": 0.21189164370982552,
+    "sd": 0.0032546939574742547,
+    "n_runs": 3,
+    "per_run": {
+     "A_s42": 0.21556473829201103,
+     "A_s1337": 0.21074380165289255,
+     "A_s2024": 0.209366391184573
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "interior_recall": {
+    "mean": 0.9117647058823529,
+    "sd": 0.0017301038062284002,
+    "n_runs": 3,
+    "per_run": {
+     "A_s42": 0.9134948096885813,
+     "A_s1337": 0.9117647058823529,
+     "A_s2024": 0.9100346020761245
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "edge_mape": {
+    "mean": 0.30533452251549625,
+    "sd": 0.009703393829423984,
+    "n_runs": 3,
+    "per_run": {
+     "A_s42": 0.3003063327611919,
+     "A_s1337": 0.2991771796424864,
+     "A_s2024": 0.31652005514281045
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "interior_mape": {
+    "mean": 0.14889864282279475,
+    "sd": 0.0038742703671891462,
+    "n_runs": 3,
+    "per_run": {
+     "A_s42": 0.15037755265378164,
+     "A_s1337": 0.14450274289035686,
+     "A_s2024": 0.15181563292424569
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "fp_all": {
+    "mean": 337.0,
+    "sd": 32.046840717924134,
+    "n_runs": 3,
+    "per_run": {
+     "A_s42": 306,
+     "A_s1337": 370,
+     "A_s2024": 335
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "fp_near_boundary": {
+    "mean": 136.0,
+    "sd": 16.09347693943108,
+    "n_runs": 3,
+    "per_run": {
+     "A_s42": 121,
+     "A_s1337": 153,
+     "A_s2024": 134
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   }
+  },
+  "B": {
+   "label": "+IPP (per-cell)",
+   "training_runs": 3,
+   "edge_recall": {
+    "mean": 0.2201561065197429,
+    "sd": 0.005076525341482094,
+    "n_runs": 3,
+    "per_run": {
+     "B_s42": 0.2162534435261708,
+     "B_s1337": 0.21831955922865015,
+     "B_s2024": 0.22589531680440772
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "interior_recall": {
+    "mean": 0.9190695886197616,
+    "sd": 0.002400998845981706,
+    "n_runs": 3,
+    "per_run": {
+     "B_s42": 0.919838523644752,
+     "B_s1337": 0.9163783160322952,
+     "B_s2024": 0.9209919261822376
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "edge_mape": {
+    "mean": 0.3152464395847523,
+    "sd": 0.012386739836925995,
+    "n_runs": 3,
+    "per_run": {
+     "B_s42": 0.3174743911298923,
+     "B_s1337": 0.30189692141627394,
+     "B_s2024": 0.32636800620809064
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "interior_mape": {
+    "mean": 0.16284804588667845,
+    "sd": 0.00347700583790979,
+    "n_runs": 3,
+    "per_run": {
+     "B_s42": 0.16186939361663166,
+     "B_s1337": 0.15996524370302714,
+     "B_s2024": 0.16670950034037657
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "fp_all": {
+    "mean": 456.0,
+    "sd": 39.736632972611055,
+    "n_runs": 3,
+    "per_run": {
+     "B_s42": 419,
+     "B_s1337": 498,
+     "B_s2024": 451
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "fp_near_boundary": {
+    "mean": 203.33333333333334,
+    "sd": 22.368132093076824,
+    "n_runs": 3,
+    "per_run": {
+     "B_s42": 179,
+     "B_s1337": 223,
+     "B_s2024": 208
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   }
+  },
+  "B1": {
+   "label": "+IPP (image)",
+   "training_runs": 3,
+   "edge_recall": {
+    "mean": 0.20775941230486686,
+    "sd": 0.000397624152334441,
+    "n_runs": 3,
+    "per_run": {
+     "B1_s42": 0.20730027548209368,
+     "B1_s1337": 0.20798898071625344,
+     "B1_s2024": 0.20798898071625344
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "interior_recall": {
+    "mean": 0.9073433294886581,
+    "sd": 0.0026004900535310646,
+    "n_runs": 3,
+    "per_run": {
+     "B1_s42": 0.9071510957324106,
+     "B1_s1337": 0.9048442906574394,
+     "B1_s2024": 0.9100346020761245
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "edge_mape": {
+    "mean": 0.29896471387663065,
+    "sd": 0.00922659037404392,
+    "n_runs": 3,
+    "per_run": {
+     "B1_s42": 0.28992643243683186,
+     "B1_s1337": 0.29859897267455465,
+     "B1_s2024": 0.3083687365185054
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "interior_mape": {
+    "mean": 0.16724741511582217,
+    "sd": 0.0026397714596182783,
+    "n_runs": 3,
+    "per_run": {
+     "B1_s42": 0.17020481637177493,
+     "B1_s1337": 0.16512939710384786,
+     "B1_s2024": 0.16640803187184366
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "fp_all": {
+    "mean": 341.6666666666667,
+    "sd": 27.061657993059725,
+    "n_runs": 3,
+    "per_run": {
+     "B1_s42": 320,
+     "B1_s1337": 333,
+     "B1_s2024": 372
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "fp_near_boundary": {
+    "mean": 136.33333333333334,
+    "sd": 13.650396819628847,
+    "n_runs": 3,
+    "per_run": {
+     "B1_s42": 127,
+     "B1_s1337": 130,
+     "B1_s2024": 152
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   }
+  },
+  "classical": {
+   "label": "Classical pipeline",
+   "training_runs": 1,
+   "edge_recall": {
+    "mean": 0.22520661157024793,
+    "sd": null,
+    "n_runs": 1,
+    "per_run": {
+     "classical": 0.22520661157024793
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "interior_recall": {
+    "mean": 0.8898500576701269,
+    "sd": null,
+    "n_runs": 1,
+    "per_run": {
+     "classical": 0.8898500576701269
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "edge_mape": {
+    "mean": 0.3218509068246654,
+    "sd": null,
+    "n_runs": 1,
+    "per_run": {
+     "classical": 0.3218509068246654
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "interior_mape": {
+    "mean": 0.19882659067734276,
+    "sd": null,
+    "n_runs": 1,
+    "per_run": {
+     "classical": 0.19882659067734276
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "fp_all": {
+    "mean": 494.0,
+    "sd": null,
+    "n_runs": 1,
+    "per_run": {
+     "classical": 494
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   },
+   "fp_near_boundary": {
+    "mean": 137.0,
+    "sd": null,
+    "n_runs": 1,
+    "per_run": {
+     "classical": 137
+    },
+    "derivation": "derived",
+    "source_file": "runs/diagnostics/decomposition_cells.csv; runs/diagnostics/decomposition_fields.csv; runs/*/unmatched_test.csv"
+   }
+  }
+ },
+ "table_8_comparisons": [
+  {
+   "delta": 0.008264462809917383,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.005076525341482094,
+   "sd_comparator": 0.0032546939574742547,
+   "pooled_sd": 0.004264043990130104,
+   "two_x_pooled_sd": 0.008528087980260208,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "edge_recall",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.007304882737408702,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.002400998845981706,
+   "sd_comparator": 0.0017301038062284002,
+   "pooled_sd": 0.0020926125583503844,
+   "two_x_pooled_sd": 0.004185225116700769,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "interior_recall",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.009911917069256038,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.012386739836925995,
+   "sd_comparator": 0.009703393829423984,
+   "pooled_sd": 0.011126256684001875,
+   "two_x_pooled_sd": 0.02225251336800375,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "edge_mape",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.013949403063883703,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.00347700583790979,
+   "sd_comparator": 0.0038742703671891462,
+   "pooled_sd": 0.0036810012547497644,
+   "two_x_pooled_sd": 0.007362002509499529,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "interior_mape",
+   "derivation": "derived"
+  },
+  {
+   "delta": 119.0,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 39.736632972611055,
+   "sd_comparator": 32.046840717924134,
+   "pooled_sd": 36.09709129556009,
+   "two_x_pooled_sd": 72.19418259112018,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "fp_all",
+   "derivation": "derived"
+  },
+  {
+   "delta": 67.33333333333334,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 22.368132093076824,
+   "sd_comparator": 16.09347693943108,
+   "pooled_sd": 19.485036994233976,
+   "two_x_pooled_sd": 38.97007398846795,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (per-cell)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "fp_near_boundary",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.004132231404958664,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.000397624152334441,
+   "sd_comparator": 0.0032546939574742547,
+   "pooled_sd": 0.0023185273044908387,
+   "two_x_pooled_sd": 0.004637054608981677,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "edge_recall",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.004421376393694776,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.0026004900535310646,
+   "sd_comparator": 0.0017301038062284002,
+   "pooled_sd": 0.002208597711087286,
+   "two_x_pooled_sd": 0.004417195422174572,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "interior_recall",
+   "derivation": "derived"
+  },
+  {
+   "delta": -0.006369808638865604,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.00922659037404392,
+   "sd_comparator": 0.009703393829423984,
+   "pooled_sd": 0.00946799402564512,
+   "two_x_pooled_sd": 0.01893598805129024,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "edge_mape",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.01834877229302742,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 0.0026397714596182783,
+   "sd_comparator": 0.0038742703671891462,
+   "pooled_sd": 0.003314993532202977,
+   "two_x_pooled_sd": 0.006629987064405954,
+   "criterion_evaluable": true,
+   "assessment": "Exceeds 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "interior_mape",
+   "derivation": "derived"
+  },
+  {
+   "delta": 4.666666666666686,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 27.061657993059725,
+   "sd_comparator": 32.046840717924134,
+   "pooled_sd": 29.659175084055637,
+   "two_x_pooled_sd": 59.31835016811127,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "fp_all",
+   "derivation": "derived"
+  },
+  {
+   "delta": 0.3333333333333428,
+   "n_runs_config": 3,
+   "n_runs_comparator": 3,
+   "sd_config": 13.650396819628847,
+   "sd_comparator": 16.09347693943108,
+   "pooled_sd": 14.922019523732928,
+   "two_x_pooled_sd": 29.844039047465856,
+   "criterion_evaluable": true,
+   "assessment": "Within 2x pooled SD",
+   "configuration": "+IPP (image)",
+   "comparator": "End-to-End Neural Baseline",
+   "metric": "fp_near_boundary",
+   "derivation": "derived"
+  }
+ ],
+ "subgroup_note": "Subgroup changes are descriptive; no causal mechanism is inferred from them.",
+ "reference_cells": {
+  "edge": 1452,
+  "interior": 1734
+ },
+ "table_12_boundary_displacement": {
+  "source_file": "runs/error_propagation_summary.csv",
+  "rows": [
+   {
+    "shift_px": -5.0,
+    "shift_um": -1.4243549999999998,
+    "dice": 0.8452103960352562,
+    "area_relative_error": 0.2749296485557031,
+    "mass_relative_error": 0.19717449155188593,
+    "area_signed": -0.2747799676870978,
+    "mass_signed": -0.19655980716249694,
+    "mass_over_area": 0.7171816229632166
+   },
+   {
+    "shift_px": -4.0,
+    "shift_um": -1.139484,
+    "dice": 0.8831230751018861,
+    "area_relative_error": 0.22769974255900022,
+    "mass_relative_error": 0.16588735572184188,
+    "area_signed": -0.22692835766909697,
+    "mass_signed": -0.16510335687323985,
+    "mass_over_area": 0.7285355435957865
+   },
+   {
+    "shift_px": -3.0,
+    "shift_um": -0.854613,
+    "dice": 0.912697320148082,
+    "area_relative_error": 0.18281144596211973,
+    "mass_relative_error": 0.1340024536060962,
+    "area_signed": -0.18178732561856914,
+    "mass_signed": -0.13324399711042412,
+    "mass_over_area": 0.7330091007204372
+   },
+   {
+    "shift_px": -2.0,
+    "shift_um": -0.569742,
+    "dice": 0.9453273311016057,
+    "area_relative_error": 0.1250126704132194,
+    "mass_relative_error": 0.09335083938175608,
+    "area_signed": -0.1229159332250047,
+    "mass_signed": -0.09019988711767979,
+    "mass_over_area": 0.7467310239289532
+   },
+   {
+    "shift_px": -1.0,
+    "shift_um": -0.284871,
+    "dice": 0.9731140163852733,
+    "area_relative_error": 0.0663801579205224,
+    "mass_relative_error": 0.04880939741459316,
+    "area_signed": -0.06493370751992965,
+    "mass_signed": -0.047382372505801684,
+    "mass_over_area": 0.7353010137913971
+   },
+   {
+    "shift_px": 0.0,
+    "shift_um": 0.0,
+    "dice": 1.0,
+    "area_relative_error": 0.0,
+    "mass_relative_error": 0.0,
+    "area_signed": 0.0,
+    "mass_signed": 0.0,
+    "mass_over_area": null
+   },
+   {
+    "shift_px": 1.0,
+    "shift_um": 0.284871,
+    "dice": 0.974142315349982,
+    "area_relative_error": 0.07066985341157613,
+    "mass_relative_error": 0.04970528619469915,
+    "area_signed": 0.0693330230803015,
+    "mass_signed": 0.04841446253047908,
+    "mass_over_area": 0.7033449737785523
+   },
+   {
+    "shift_px": 2.0,
+    "shift_um": 0.569742,
+    "dice": 0.949263356906423,
+    "area_relative_error": 0.162055143886403,
+    "mass_relative_error": 0.10983606278731381,
+    "area_signed": 0.15031516987992694,
+    "mass_signed": 0.09641633655173652,
+    "mass_over_area": 0.6777696785996896
+   },
+   {
+    "shift_px": 3.0,
+    "shift_um": 0.854613,
+    "dice": 0.9254896571394577,
+    "area_relative_error": 0.21646294808030186,
+    "mass_relative_error": 0.12443948154568041,
+    "area_signed": 0.21376228039795436,
+    "mass_signed": 0.11935275620727853,
+    "mass_over_area": 0.574876590424689
+   },
+   {
+    "shift_px": 4.0,
+    "shift_um": 1.139484,
+    "dice": 0.9056162613310194,
+    "area_relative_error": 0.2653678830798094,
+    "mass_relative_error": 0.13758941801373353,
+    "area_signed": 0.2635982139567308,
+    "mass_signed": 0.1317044704170723,
+    "mass_over_area": 0.5184855696058498
+   },
+   {
+    "shift_px": 5.0,
+    "shift_um": 1.4243549999999998,
+    "dice": 0.8807908209288444,
+    "area_relative_error": 0.3277080272544789,
+    "mass_relative_error": 0.1474280218835696,
+    "area_signed": 0.3262471225788862,
+    "mass_signed": 0.14162771254555173,
+    "mass_over_area": 0.44987613858199943
+   }
+  ],
+  "derivation": "direct; see scripts/error_propagation.py"
+ },
+ "table_12_synthetic_floor": {
+  "mass_abs_relative_error_mean": {
+   "value": 0.0003641563828776034,
+   "units": "fraction",
+   "source_file": "runs/benchmark_results/results_synthetic_validation.json",
+   "source_key": "runs[*].metrics.mass_abs_relative_error_mean",
+   "field_set": "3 synthetic sets",
+   "n_runs": 3,
+   "seeds": [
+    42,
+    1337,
+    2024
+   ],
+   "derivation": "derived",
+   "derived_from": [
+    "runs[0].metrics.mass_abs_relative_error_mean",
+    "runs[1].metrics.mass_abs_relative_error_mean",
+    "runs[2].metrics.mass_abs_relative_error_mean"
+   ],
+   "calculation": "mean over 3 synthetic sets",
+   "sd": 3.7497373014654135e-05
+  },
+  "area_abs_relative_error_mean": {
+   "value": 0.002239684627806788,
+   "units": "fraction",
+   "source_file": "runs/benchmark_results/results_synthetic_validation.json",
+   "source_key": "runs[*].metrics.area_abs_relative_error_mean",
+   "field_set": "3 synthetic sets",
+   "n_runs": 3,
+   "seeds": [
+    42,
+    1337,
+    2024
+   ],
+   "derivation": "derived",
+   "derived_from": [
+    "runs[0].metrics.area_abs_relative_error_mean",
+    "runs[1].metrics.area_abs_relative_error_mean",
+    "runs[2].metrics.area_abs_relative_error_mean"
+   ],
+   "calculation": "mean over 3 synthetic sets",
+   "sd": 0.0001836556081923956
+  },
+  "field_total_mass_error_mean": {
+   "value": -0.025920812471225952,
+   "units": "fraction",
+   "source_file": "runs/benchmark_results/results_synthetic_validation.json",
+   "source_key": "runs[*].metrics.field_total_mass_error_mean",
+   "field_set": "3 synthetic sets",
+   "n_runs": 3,
+   "seeds": [
+    42,
+    1337,
+    2024
+   ],
+   "derivation": "derived",
+   "derived_from": [
+    "runs[0].metrics.field_total_mass_error_mean",
+    "runs[1].metrics.field_total_mass_error_mean",
+    "runs[2].metrics.field_total_mass_error_mean"
+   ],
+   "calculation": "mean over 3 synthetic sets",
+   "sd": 0.008887980031461821
+  },
+  "field_total_mass_abs_error_mean": {
+   "value": 0.02594865668409542,
+   "units": "fraction",
+   "source_file": "runs/benchmark_results/results_synthetic_validation.json",
+   "source_key": "runs[*].metrics.field_total_mass_abs_error_mean",
+   "field_set": "3 synthetic sets",
+   "n_runs": 3,
+   "seeds": [
+    42,
+    1337,
+    2024
+   ],
+   "derivation": "derived",
+   "derived_from": [
+    "runs[0].metrics.field_total_mass_abs_error_mean",
+    "runs[1].metrics.field_total_mass_abs_error_mean",
+    "runs[2].metrics.field_total_mass_abs_error_mean"
+   ],
+   "calculation": "mean over 3 synthetic sets",
+   "sd": 0.008869301490421741
+  },
+  "cells_measured": {
+   "value": 130.66666666666666,
+   "units": "cells",
+   "source_file": "runs/benchmark_results/results_synthetic_validation.json",
+   "source_key": "runs[*].metrics.cells_measured",
+   "field_set": "3 synthetic sets",
+   "n_runs": 3,
+   "seeds": [
+    42,
+    1337,
+    2024
+   ],
+   "derivation": "derived",
+   "derived_from": [
+    "runs[0].metrics.cells_measured",
+    "runs[1].metrics.cells_measured",
+    "runs[2].metrics.cells_measured"
+   ],
+   "calculation": "mean over 3 synthetic sets",
+   "sd": 3.511884584284246
+  },
+  "cells_placed": {
+   "value": 144.0,
+   "units": "cells",
+   "source_file": "runs/benchmark_results/results_synthetic_validation.json",
+   "source_key": "runs[*].metrics.cells_placed",
+   "field_set": "3 synthetic sets",
+   "n_runs": 3,
+   "seeds": [
+    42,
+    1337,
+    2024
+   ],
+   "derivation": "derived",
+   "derived_from": [
+    "runs[0].metrics.cells_placed",
+    "runs[1].metrics.cells_placed",
+    "runs[2].metrics.cells_placed"
+   ],
+   "calculation": "mean over 3 synthetic sets",
+   "sd": 0.0
+  }
+ }
+}

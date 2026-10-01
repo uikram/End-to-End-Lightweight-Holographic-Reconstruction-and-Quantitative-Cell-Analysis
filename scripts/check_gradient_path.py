@@ -47,7 +47,7 @@ The ratio printed here is measured at WEIGHT 1.0. The composite objective adds
 
     effective ratio  =  w  *  (the ratio printed here)
 
-which means a printed ratio of 0.299 and a weight of 0.3 give 0.090, an 11:1
+which means a printed ratio of 0.373 and a weight of 0.3 give 0.112, an 8.9:1
 advantage to the segmentation loss -- not the near-parity the bare ratio might
 suggest. The table at the end does this arithmetic explicitly for a set of
 candidate weights and states the weight that reaches parity, so the mistake
@@ -56,8 +56,9 @@ cannot be repeated by reading the wrong line.
 RUN IT AT THE CROP SIZE YOU WILL TRAIN AT
 -----------------------------------------
 The ratio is not a property of the term alone. Measured here: median 0.54 on
-256 px crops with about 7 cells, and 0.25 to 0.29 on 512 px crops with about 20
--- roughly a factor of two, in the direction the formulation predicts, because
+256 px crops with about 7 cells (earlier measurement, not stored), and median 0.373
+(range 0.243-0.655, 30 batches) on 512 px crops with about 20 cells
+(runs/gradient_path_b_cell_ipp_512.csv) -- roughly a factor of 1.4, in the direction the formulation predicts, because
 the per-cell mean divides by the number of cells while the segmentation loss is
 a per-pixel mean that does not. A weight chosen from one crop size is the wrong
 weight at another, so run this with the config the experiment will actually
@@ -186,7 +187,7 @@ def main() -> int:
         foreground = 1.0 - torch.softmax(seg_logits, dim=1)[:, 0:1]
         target_foreground = (mask_target > 0).to(phase_pred.dtype).unsqueeze(1)
 
-        # REDUCED EXACTLY AS JointPhysicsAwareLoss REDUCES IT.
+        # REDUCED EXACTLY AS JointMeasurementLoss REDUCES IT.
         #
         # The objective gates crops whose reference foreground is below
         # loss.physics.min_foreground_pixels and then divides by the number of
@@ -344,8 +345,9 @@ def main() -> int:
     # than the segmentation loss fell through to the final message and was
     # reported as "CONNECTED, comparable in scale" -- and that band is exactly
     # where this project's own measurements landed: the docstring quotes ratios
-    # of 0.25 to 0.54 and works through 0.299 x 0.3 = 0.090 as "an 11:1 advantage
-    # to the segmentation loss", i.e. not comparable. The verdict contradicted
+    # of 0.373 (512 px crops) to 0.54 (256 px crops) and works through
+    # 0.373 x 0.3 = 0.112 as "an 8.9:1 advantage to the segmentation loss",
+    # i.e. not comparable. The verdict contradicted
     # the worked example beside it.
     #
     # 0.1 is the order-of-magnitude reading, and either way the effective-ratio

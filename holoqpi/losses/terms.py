@@ -216,10 +216,14 @@ class SegmentationLoss(nn.Module):
 
 
 # ---------------------------------------------------------------------------
-# Physics-aware coupling terms
+# Mask-phase coupling terms and measurement-aware terms
 # ---------------------------------------------------------------------------
-class PhaseMaskContrast(nn.Module):
-    """The segmented interior must carry more optical path than its surround."""
+class LegacyPhaseMaskContrast(nn.Module):
+    """The segmented interior must carry more optical path than its surround.
+
+    Legacy term: weight 0 in every configuration used by the manuscript. Kept so that
+    older configurations (``loss.weights.phase_mask_contrast``) still load.
+    """
 
     def __init__(self, margin: float, collapse_warn_ratio: float):
         super().__init__()
@@ -248,7 +252,7 @@ class PhaseMaskContrast(nn.Module):
                 # the epoch it belongs to rather than only on a terminal nobody
                 # is watching by the time it fires.
                 LOGGER.warning(
-                    "PhaseMaskContrast: foreground fraction %.1f%% exceeds %.0f%%; "
+                    "LegacyPhaseMaskContrast: foreground fraction %.1f%% exceeds %.0f%%; "
                     "the mask may be collapsing to all-cell (%d/3)",
                     100.0 * ratio, 100.0 * self.collapse_warn_ratio,
                     self._warnings_emitted,
@@ -281,8 +285,10 @@ class BoundaryGradientAlignment(nn.Module):
         return (mask_gradient - phase_gradient).abs().mean(dim=[1, 2, 3])
 
 
-class PhaseVolumePreservation(nn.Module):
-    """Conserve the phase integral enclosed by the predicted boundary.
+class ImageIntegratedPhase(nn.Module):
+    """Image-level integrated-phase term, L_IPP^img (configuration key ``phase_volume``).
+
+    Conserve the integrated phase enclosed by the predicted boundary.
 
     Formulated as a relative error, both because dry mass inherits exactly this
     relative error and because an absolute integral over a full field of view
@@ -331,7 +337,7 @@ class DryMassConsistency(nn.Module):
         target_foreground: torch.Tensor,
         target_phase: torch.Tensor,
     ) -> torch.Tensor:
-        # float32, for the same overflow reason as PhaseVolumePreservation.
+        # float32, for the same overflow reason as ImageIntegratedPhase.
         dtype = _accumulation_dtype(foreground, phase, target_phase)
         predicted = (foreground.squeeze(1).to(dtype)
                      * phase.squeeze(1).to(dtype)).sum(dim=[1, 2])
@@ -368,7 +374,7 @@ class CellIntegratedPhase(nn.Module):
     This is the central term of the v2 study, and the reason it exists is a
     cancellation the image-level version cannot see.
 
-    ``PhaseVolumePreservation`` compares one number per image: the phase integral
+    ``ImageIntegratedPhase`` compares one number per image: the phase integral
     inside the predicted mask against the integral inside the reference mask. A
     field in which one cell is over-measured by 20% and another under-measured by
     20% scores a perfect zero. Dry mass is reported per cell, so that is exactly
@@ -945,3 +951,8 @@ class ForwardModelConsistency(nn.Module):
             value = 1.0 - numerator / denominator
 
         return (value, coefficients) if return_coefficients else value
+
+
+# Backward-compatible names (old configurations, checkpoints and notebooks refer to them).
+PhaseMaskContrast = LegacyPhaseMaskContrast
+PhaseVolumePreservation = ImageIntegratedPhase

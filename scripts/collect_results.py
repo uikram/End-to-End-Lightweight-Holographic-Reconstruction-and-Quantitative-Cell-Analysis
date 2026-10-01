@@ -14,7 +14,7 @@ and writes both a machine-readable CSV and a paper-ready Markdown document.
 
 THE RESOLUTION CRITERION, APPLIED RATHER THAN DESCRIBED
 -------------------------------------------------------
-This is NOT a test of statistical significance. With three seeds per arm there
+This is a resolution criterion, not a hypothesis test. With three seeds per arm there
 is no null distribution, no p-value and no multiple-comparison correction. It
 answers a narrower and more answerable question: is this difference larger than
 the spread the same configuration produces when only the seed changes? A
@@ -143,7 +143,7 @@ MEASUREMENT = [
     ("cells_reference",                 "cells in reference"),
 ]
 
-# The physics-aware half of the study, which had no table at all. The forward
+# The forward-model half of the study, which had no table at all. The forward
 # residual, its ground-truth floor and the learned propagation distance were
 # computed, written to every metrics JSON and then never surfaced -- so the one
 # component the extension is named after was absent from the results document.
@@ -445,7 +445,7 @@ def main() -> int:
     lines.append("")
 
     # ---- Table 3b: the physics-aware half -------------------------------
-    lines.append("## Table 3b — Physics-aware forward model and reconstruction")
+    lines.append("## Table 3b — Forward-model consistency and reconstruction")
     lines.append("")
     lines.append("The forward-model residual asks whether the predicted field could "
                  "have produced the hologram that was actually recorded, so it needs "

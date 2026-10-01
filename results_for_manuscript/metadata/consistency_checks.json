@@ -1,0 +1,2556 @@
+{
+ "n_checks": 510,
+ "n_failed": 0,
+ "checks": [
+  {
+   "check": "A s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "A s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "A s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "A s1337: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "1337 vs 1337"
+  },
+  {
+   "check": "A s1337: provenance train_seed == seed",
+   "passed": true,
+   "detail": "1337"
+  },
+  {
+   "check": "A s1337: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A s1337: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "A s2024: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "2024 vs 2024"
+  },
+  {
+   "check": "A s2024: provenance train_seed == seed",
+   "passed": true,
+   "detail": "2024"
+  },
+  {
+   "check": "A s2024: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A s2024: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "A: number of training runs == planned (3)",
+   "passed": true,
+   "detail": "3"
+  },
+  {
+   "check": "A: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "G s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "G s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "G s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "G s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "G: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "G: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "B s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "B s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "B s1337: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "1337 vs 1337"
+  },
+  {
+   "check": "B s1337: provenance train_seed == seed",
+   "passed": true,
+   "detail": "1337"
+  },
+  {
+   "check": "B s1337: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B s1337: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "B s2024: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "2024 vs 2024"
+  },
+  {
+   "check": "B s2024: provenance train_seed == seed",
+   "passed": true,
+   "detail": "2024"
+  },
+  {
+   "check": "B s2024: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B s2024: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "B: number of training runs == planned (3)",
+   "passed": true,
+   "detail": "3"
+  },
+  {
+   "check": "B: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1 s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "B1 s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "B1 s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1 s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "B1 s1337: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "1337 vs 1337"
+  },
+  {
+   "check": "B1 s1337: provenance train_seed == seed",
+   "passed": true,
+   "detail": "1337"
+  },
+  {
+   "check": "B1 s1337: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1 s1337: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "B1 s2024: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "2024 vs 2024"
+  },
+  {
+   "check": "B1 s2024: provenance train_seed == seed",
+   "passed": true,
+   "detail": "2024"
+  },
+  {
+   "check": "B1 s2024: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1 s2024: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "B1: number of training runs == planned (3)",
+   "passed": true,
+   "detail": "3"
+  },
+  {
+   "check": "B1: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B2 s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "B2 s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "B2 s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B2 s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "B2: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "B2: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "C s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "C s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "C s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "C s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "C: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "C: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "W01 s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "W01 s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "W01 s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "W01 s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "W01: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "W01: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "W03 s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "W03 s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "W03 s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "W03 s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "W03: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "W03: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "W30 s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "W30 s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "W30 s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "W30 s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "W30: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "W30: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "D0 s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "D0 s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "D0 s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "D0 s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "D0: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "D0: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "D1 s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "D1 s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "D1 s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "D1 s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "D1: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "D1: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "D2 s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "D2 s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "D2 s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "D2 s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "D2: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "D2: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "KA s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "KA s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "KA s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "KA s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "KA: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "KA: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "KB s42: resolved_config project.seed == directory seed",
+   "passed": true,
+   "detail": "42 vs 42"
+  },
+  {
+   "check": "KB s42: provenance train_seed == seed",
+   "passed": true,
+   "detail": "42"
+  },
+  {
+   "check": "KB s42: provenance splits_sha256 == sha256(data/splits.json)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "KB s42: split is test",
+   "passed": true,
+   "detail": "test"
+  },
+  {
+   "check": "KB: number of training runs == planned (1)",
+   "passed": true,
+   "detail": "1"
+  },
+  {
+   "check": "KB: seeds distinct",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "W10 repeat is the configuration of B",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A s1337: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A s2024: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "G s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B s1337: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B s2024: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1 s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1 s1337: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1 s2024: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B2 s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "C s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "W01 s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "W03 s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "W30 s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "D0 s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "D1 s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "D2 s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "KA s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "KB s42: collector checkpoint sha == evaluation provenance sha",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "all runs use the same crop offset, z and optics",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "classical off-axis: 113 fields, 3186 reference cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "classical common off-axis: 107 fields, 3055 reference cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "classical common in-line: 107 fields, 3055 reference cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "baseline s42: 113 fields, 3186 reference cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "baseline s42 common: 107 fields, 3055 reference cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "baseline s1337: 113 fields, 3186 reference cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "baseline s1337 common: 107 fields, 3055 reference cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "baseline s2024: 113 fields, 3186 reference cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "baseline s2024 common: 107 fields, 3055 reference cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "in-line neural: 107 fields, 3055 reference cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "circularity has no field_total keys in metrics_test.json",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "matched-cell n equals cells_matched for area and dry mass (seed 42)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "Bland-Altman fields are matched-cell based; field totals are on all cells",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "common_fields_summary.csv G phase_mae_rad == metrics_test_common.json",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "common_fields_summary.csv G dry_mass_mape == metrics_test_common.json",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "common_fields_summary.csv G seg_dice == metrics_test_common.json",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "in-line split is 521/122/107",
+   "passed": true,
+   "detail": "{'train_excluded': 39, 'train': 521, 'val_excluded': 5, 'val': 122, 'test': 107, 'test_reference_cells': 3055}"
+  },
+  {
+   "check": "excluded fields: 39 train + 5 val + 6 test == 50 (SNU_01-SNU_50)",
+   "passed": true,
+   "detail": "{'train_excluded': 39, 'train': 521, 'val_excluded': 5, 'val': 122, 'test': 107, 'test_reference_cells': 3055, 'test_excluded': 6}"
+  },
+  {
+   "check": "collector comparison B_vs_A: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison B1_vs_A: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison B2_vs_B: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison C_vs_B: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison D0_vs_B: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison D1_vs_D0: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison W01_vs_A: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison W03_vs_A: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison W30_vs_A: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison KA_vs_A: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison KB_vs_B: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "collector comparison D2_vs_D1: delta and threshold agree",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "no n=1 comparison is assessed",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "off_axis scaled_0.9: win_rate*images is an integer",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "off_axis scaled_0.5: win_rate*images is an integer",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "gabor scaled_0.9: win_rate*images is an integer",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "gabor scaled_0.5: win_rate*images is an integer",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "configured tolerance in config/base.yaml is 0.01",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "validation discrimination tolerance stored with z calibration is 0.01",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "recording distance is 33.77 um",
+   "passed": true,
+   "detail": "33.77"
+  },
+  {
+   "check": "in-line grid minimum within one grid step of the recording distance",
+   "passed": true,
+   "detail": "33.68407094594592"
+  },
+  {
+   "check": "in-line grid minimum is not near 50.5 um (stale statement)",
+   "passed": true,
+   "detail": "33.68407094594592"
+  },
+  {
+   "check": "off-axis per-field best z has large spread (does not constrain z)",
+   "passed": true,
+   "detail": "[-96.24020270270269, 96.24020270270269, 33.68407094594592, 33.68407094594592]"
+  },
+  {
+   "check": "A_s1337 cell/all: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s1337 cell/interior: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s1337 cell/edge: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s1337 field: domain == S(Omega_pred,phi_ref)/S(Omega_ref,phi_ref) and phase == S(Omega_pred,phi_pred)/S(Omega_pred,phi_ref)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s1337 cell/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9988662645692519 vs 0.9988662645692519"
+  },
+  {
+   "check": "A_s1337 cell/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9476892659630829 vs 0.947689265963083"
+  },
+  {
+   "check": "A_s1337 cell/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.946614837064921 vs 0.9466148370649209"
+  },
+  {
+   "check": "A_s1337 cell/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.041555640468175975 vs 0.041555640468175975"
+  },
+  {
+   "check": "A_s1337 cell/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.0894038791003644 vs 0.0894038791003644"
+  },
+  {
+   "check": "A_s1337 cell/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.12264575237876707 vs 0.12264575237876707"
+  },
+  {
+   "check": "A_s1337 cell/interior domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0028740331959187 vs 1.0028740331959187"
+  },
+  {
+   "check": "A_s1337 cell/interior phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9769229505898609 vs 0.9769229505898609"
+  },
+  {
+   "check": "A_s1337 cell/interior total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9797306595797111 vs 0.9797306595797112"
+  },
+  {
+   "check": "A_s1337 cell/interior domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.03729649500668364 vs 0.03729649500668364"
+  },
+  {
+   "check": "A_s1337 cell/interior phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.07931996041487673 vs 0.07931996041487673"
+  },
+  {
+   "check": "A_s1337 cell/interior total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10751523240005895 vs 0.10751523240005895"
+  },
+  {
+   "check": "A_s1337 cell/edge domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9784131949254357 vs 0.9784131949254357"
+  },
+  {
+   "check": "A_s1337 cell/edge phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.810018893260991 vs 0.810018893260991"
+  },
+  {
+   "check": "A_s1337 cell/edge total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.7925331733054516 vs 0.7925331733054517"
+  },
+  {
+   "check": "A_s1337 cell/edge domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.08291387996736627 vs 0.08291387996736627"
+  },
+  {
+   "check": "A_s1337 cell/edge phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.2515202947657282 vs 0.2515202947657282"
+  },
+  {
+   "check": "A_s1337 cell/edge total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.2960531030431466 vs 0.2960531030431466"
+  },
+  {
+   "check": "A_s1337 field/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.895297396524479 vs 0.895297396524479"
+  },
+  {
+   "check": "A_s1337 field/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9568543718335194 vs 0.9568543718335194"
+  },
+  {
+   "check": "A_s1337 field/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8566692279556157 vs 0.8566692279556157"
+  },
+  {
+   "check": "A_s1337 field/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10358228267057758 vs 0.10358228267057758"
+  },
+  {
+   "check": "A_s1337 field/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.05732741048470945 vs 0.05732741048470945"
+  },
+  {
+   "check": "A_s1337 field/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.15905523420804274 vs 0.15905523420804274"
+  },
+  {
+   "check": "A_s2024 cell/all: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s2024 cell/interior: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s2024 cell/edge: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s2024 field: domain == S(Omega_pred,phi_ref)/S(Omega_ref,phi_ref) and phase == S(Omega_pred,phi_pred)/S(Omega_pred,phi_ref)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s2024 cell/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0023380887595355 vs 1.0023380887595355"
+  },
+  {
+   "check": "A_s2024 cell/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9176143265151322 vs 0.9176143265151324"
+  },
+  {
+   "check": "A_s2024 cell/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9197597902575463 vs 0.9197597902575462"
+  },
+  {
+   "check": "A_s2024 cell/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.042830358306011285 vs 0.042830358306011285"
+  },
+  {
+   "check": "A_s2024 cell/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10880498234655775 vs 0.10880498234655775"
+  },
+  {
+   "check": "A_s2024 cell/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.13760931561528567 vs 0.13760931561528567"
+  },
+  {
+   "check": "A_s2024 cell/interior domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0067737201688096 vs 1.0067737201688096"
+  },
+  {
+   "check": "A_s2024 cell/interior phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9461399362756542 vs 0.9461399362756542"
+  },
+  {
+   "check": "A_s2024 cell/interior total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9525488234445207 vs 0.9525488234445207"
+  },
+  {
+   "check": "A_s2024 cell/interior domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.039294648515560214 vs 0.039294648515560214"
+  },
+  {
+   "check": "A_s2024 cell/interior phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.09542760071738639 vs 0.09542760071738639"
+  },
+  {
+   "check": "A_s2024 cell/interior total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.11955332033889884 vs 0.11955332033889884"
+  },
+  {
+   "check": "A_s2024 cell/edge domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9796257333369144 vs 0.9796257333369143"
+  },
+  {
+   "check": "A_s2024 cell/edge phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.7827943084898211 vs 0.7827943084898211"
+  },
+  {
+   "check": "A_s2024 cell/edge total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.766845448506304 vs 0.7668454485063039"
+  },
+  {
+   "check": "A_s2024 cell/edge domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.07675210216054763 vs 0.07675210216054763"
+  },
+  {
+   "check": "A_s2024 cell/edge phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.28551697018012606 vs 0.28551697018012606"
+  },
+  {
+   "check": "A_s2024 cell/edge total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.32593800767269443 vs 0.32593800767269443"
+  },
+  {
+   "check": "A_s2024 field/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8981709172664526 vs 0.8981709172664526"
+  },
+  {
+   "check": "A_s2024 field/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9169466265559194 vs 0.9169466265559194"
+  },
+  {
+   "check": "A_s2024 field/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8235747926581095 vs 0.8235747926581095"
+  },
+  {
+   "check": "A_s2024 field/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10577875818627046 vs 0.10577875818627046"
+  },
+  {
+   "check": "A_s2024 field/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.07981992261766324 vs 0.07981992261766324"
+  },
+  {
+   "check": "A_s2024 field/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.1920147161376053 vs 0.1920147161376053"
+  },
+  {
+   "check": "A_s42 cell/all: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s42 cell/interior: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s42 cell/edge: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s42 field: domain == S(Omega_pred,phi_ref)/S(Omega_ref,phi_ref) and phase == S(Omega_pred,phi_pred)/S(Omega_pred,phi_ref)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "A_s42 cell/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.003507261913123 vs 1.003507261913123"
+  },
+  {
+   "check": "A_s42 cell/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9221715030716918 vs 0.9221715030716917"
+  },
+  {
+   "check": "A_s42 cell/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9254058000617824 vs 0.9254058000617824"
+  },
+  {
+   "check": "A_s42 cell/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.04116408214893462 vs 0.04116408214893462"
+  },
+  {
+   "check": "A_s42 cell/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10795259154963538 vs 0.10795259154963538"
+  },
+  {
+   "check": "A_s42 cell/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.13571916422576932 vs 0.13571916422576932"
+  },
+  {
+   "check": "A_s42 cell/interior domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0068930148106363 vs 1.0068930148106363"
+  },
+  {
+   "check": "A_s42 cell/interior phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9487960991244264 vs 0.9487960991244265"
+  },
+  {
+   "check": "A_s42 cell/interior total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9553361646879652 vs 0.9553361646879651"
+  },
+  {
+   "check": "A_s42 cell/interior domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.037906911726809094 vs 0.037906911726809094"
+  },
+  {
+   "check": "A_s42 cell/interior phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.09421138032170348 vs 0.09421138032170348"
+  },
+  {
+   "check": "A_s42 cell/interior total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.1213282157020811 vs 0.1213282157020811"
+  },
+  {
+   "check": "A_s42 cell/edge domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9865467745565194 vs 0.9865467745565194"
+  },
+  {
+   "check": "A_s42 cell/edge phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.798464060336286 vs 0.798464060336286"
+  },
+  {
+   "check": "A_s42 cell/edge total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.7877221433240652 vs 0.7877221433240651"
+  },
+  {
+   "check": "A_s42 cell/edge domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.06709361303128208 vs 0.06709361303128208"
+  },
+  {
+   "check": "A_s42 cell/edge phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.26351623296036514 vs 0.26351623296036514"
+  },
+  {
+   "check": "A_s42 cell/edge total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.2879956038802861 vs 0.2879956038802861"
+  },
+  {
+   "check": "A_s42 field/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8985273457322146 vs 0.8985273457322146"
+  },
+  {
+   "check": "A_s42 field/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9262726580122622 vs 0.9262726580122622"
+  },
+  {
+   "check": "A_s42 field/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8322813128280813 vs 0.8322813128280814"
+  },
+  {
+   "check": "A_s42 field/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10560839759828816 vs 0.10560839759828816"
+  },
+  {
+   "check": "A_s42 field/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.08306362562258672 vs 0.08306362562258672"
+  },
+  {
+   "check": "A_s42 field/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.185232560031663 vs 0.185232560031663"
+  },
+  {
+   "check": "B1_s1337 cell/all: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s1337 cell/interior: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s1337 cell/edge: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s1337 field: domain == S(Omega_pred,phi_ref)/S(Omega_ref,phi_ref) and phase == S(Omega_pred,phi_pred)/S(Omega_pred,phi_ref)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s1337 cell/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0001429894847702 vs 1.0001429894847702"
+  },
+  {
+   "check": "B1_s1337 cell/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9411945923633628 vs 0.9411945923633628"
+  },
+  {
+   "check": "B1_s1337 cell/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9413291732931933 vs 0.9413291732931933"
+  },
+  {
+   "check": "B1_s1337 cell/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.04483513518779021 vs 0.04483513518779021"
+  },
+  {
+   "check": "B1_s1337 cell/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.11317089018589664 vs 0.11317089018589664"
+  },
+  {
+   "check": "B1_s1337 cell/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.14220882725680842 vs 0.14220882725680842"
+  },
+  {
+   "check": "B1_s1337 cell/interior domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0040936477498013 vs 1.0040936477498013"
+  },
+  {
+   "check": "B1_s1337 cell/interior phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9649032432202395 vs 0.9649032432202395"
+  },
+  {
+   "check": "B1_s1337 cell/interior total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.968853217210624 vs 0.968853217210624"
+  },
+  {
+   "check": "B1_s1337 cell/interior domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.04125258890656721 vs 0.04125258890656721"
+  },
+  {
+   "check": "B1_s1337 cell/interior phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10380985550060534 vs 0.10380985550060534"
+  },
+  {
+   "check": "B1_s1337 cell/interior total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.12895890215570802 vs 0.12895890215570802"
+  },
+  {
+   "check": "B1_s1337 cell/edge domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9798666685046371 vs 0.979866668504637"
+  },
+  {
+   "check": "B1_s1337 cell/edge phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8270788717818364 vs 0.8270788717818365"
+  },
+  {
+   "check": "B1_s1337 cell/edge total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8104270186834418 vs 0.8104270186834419"
+  },
+  {
+   "check": "B1_s1337 cell/edge domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.07100435540169382 vs 0.07100435540169382"
+  },
+  {
+   "check": "B1_s1337 cell/edge phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.234074476475655 vs 0.234074476475655"
+  },
+  {
+   "check": "B1_s1337 cell/edge total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.3022309199863933 vs 0.3022309199863933"
+  },
+  {
+   "check": "B1_s1337 field/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8944331869032652 vs 0.8944331869032652"
+  },
+  {
+   "check": "B1_s1337 field/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9287819026921715 vs 0.9287819026921715"
+  },
+  {
+   "check": "B1_s1337 field/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8307333571630373 vs 0.8307333571630374"
+  },
+  {
+   "check": "B1_s1337 field/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10706088816639264 vs 0.10706088816639264"
+  },
+  {
+   "check": "B1_s1337 field/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.07886353423380925 vs 0.07886353423380925"
+  },
+  {
+   "check": "B1_s1337 field/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.17646269267574485 vs 0.17646269267574485"
+  },
+  {
+   "check": "B1_s2024 cell/all: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s2024 cell/interior: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s2024 cell/edge: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s2024 field: domain == S(Omega_pred,phi_ref)/S(Omega_ref,phi_ref) and phase == S(Omega_pred,phi_pred)/S(Omega_pred,phi_ref)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s2024 cell/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0021988872070267 vs 1.0021988872070267"
+  },
+  {
+   "check": "B1_s2024 cell/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9234081393944737 vs 0.9234081393944737"
+  },
+  {
+   "check": "B1_s2024 cell/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9254386097390527 vs 0.9254386097390526"
+  },
+  {
+   "check": "B1_s2024 cell/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.04445258654936653 vs 0.04445258654936653"
+  },
+  {
+   "check": "B1_s2024 cell/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.12230859311652387 vs 0.12230859311652387"
+  },
+  {
+   "check": "B1_s2024 cell/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.1496393651298618 vs 0.1496393651298618"
+  },
+  {
+   "check": "B1_s2024 cell/interior domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0070917826804457 vs 1.0070917826804457"
+  },
+  {
+   "check": "B1_s2024 cell/interior phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.944940460075141 vs 0.9449404600751409"
+  },
+  {
+   "check": "B1_s2024 cell/interior total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9516417724639542 vs 0.9516417724639542"
+  },
+  {
+   "check": "B1_s2024 cell/interior domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.04132842312303893 vs 0.04132842312303893"
+  },
+  {
+   "check": "B1_s2024 cell/interior phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.11226859516687049 vs 0.11226859516687049"
+  },
+  {
+   "check": "B1_s2024 cell/interior total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.13498707365059623 vs 0.13498707365059623"
+  },
+  {
+   "check": "B1_s2024 cell/edge domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9770166826768198 vs 0.9770166826768198"
+  },
+  {
+   "check": "B1_s2024 cell/edge phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8186266719474778 vs 0.8186266719474778"
+  },
+  {
+   "check": "B1_s2024 cell/edge total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.79981191537689 vs 0.7998119153768901"
+  },
+  {
+   "check": "B1_s2024 cell/edge domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.07794000555054614 vs 0.07794000555054614"
+  },
+  {
+   "check": "B1_s2024 cell/edge phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.2460173295103687 vs 0.2460173295103687"
+  },
+  {
+   "check": "B1_s2024 cell/edge total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.3002661505268549 vs 0.3002661505268549"
+  },
+  {
+   "check": "B1_s2024 field/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8963786226246822 vs 0.8963786226246822"
+  },
+  {
+   "check": "B1_s2024 field/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9119454650062154 vs 0.9119454650062153"
+  },
+  {
+   "check": "B1_s2024 field/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8174484198310966 vs 0.8174484198310966"
+  },
+  {
+   "check": "B1_s2024 field/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10869756665830992 vs 0.10869756665830992"
+  },
+  {
+   "check": "B1_s2024 field/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.09923478355316338 vs 0.09923478355316338"
+  },
+  {
+   "check": "B1_s2024 field/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.19540433562654372 vs 0.19540433562654372"
+  },
+  {
+   "check": "B1_s42 cell/all: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s42 cell/interior: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s42 cell/edge: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s42 field: domain == S(Omega_pred,phi_ref)/S(Omega_ref,phi_ref) and phase == S(Omega_pred,phi_pred)/S(Omega_pred,phi_ref)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B1_s42 cell/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9987821861057938 vs 0.9987821861057938"
+  },
+  {
+   "check": "B1_s42 cell/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9494020248270764 vs 0.9494020248270764"
+  },
+  {
+   "check": "B1_s42 cell/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9482458298500545 vs 0.9482458298500545"
+  },
+  {
+   "check": "B1_s42 cell/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.04371020883117159 vs 0.04371020883117159"
+  },
+  {
+   "check": "B1_s42 cell/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.11717193239980012 vs 0.11717193239980012"
+  },
+  {
+   "check": "B1_s42 cell/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.14191967658232352 vs 0.14191967658232352"
+  },
+  {
+   "check": "B1_s42 cell/interior domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.00215208583183 vs 1.00215208583183"
+  },
+  {
+   "check": "B1_s42 cell/interior phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9679981152418273 vs 0.9679981152418273"
+  },
+  {
+   "check": "B1_s42 cell/interior total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9700813302708774 vs 0.9700813302708773"
+  },
+  {
+   "check": "B1_s42 cell/interior domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.04112372627800113 vs 0.04112372627800113"
+  },
+  {
+   "check": "B1_s42 cell/interior phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10610043351215759 vs 0.10610043351215759"
+  },
+  {
+   "check": "B1_s42 cell/interior total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.1289689547266444 vs 0.1289689547266444"
+  },
+  {
+   "check": "B1_s42 cell/edge domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.981354857197816 vs 0.981354857197816"
+  },
+  {
+   "check": "B1_s42 cell/edge phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8578773191174152 vs 0.857877319117415"
+  },
+  {
+   "check": "B1_s42 cell/edge total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8418820739957162 vs 0.8418820739957161"
+  },
+  {
+   "check": "B1_s42 cell/edge domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.07244616636841882 vs 0.07244616636841882"
+  },
+  {
+   "check": "B1_s42 cell/edge phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.21496423976521092 vs 0.21496423976521092"
+  },
+  {
+   "check": "B1_s42 cell/edge total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.28839185543116186 vs 0.28839185543116186"
+  },
+  {
+   "check": "B1_s42 field/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8915396979865009 vs 0.8915396979865008"
+  },
+  {
+   "check": "B1_s42 field/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9343530313708057 vs 0.9343530313708057"
+  },
+  {
+   "check": "B1_s42 field/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8330128194010996 vs 0.8330128194010997"
+  },
+  {
+   "check": "B1_s42 field/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.11387781405028566 vs 0.11387781405028566"
+  },
+  {
+   "check": "B1_s42 field/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.0792237344784393 vs 0.0792237344784393"
+  },
+  {
+   "check": "B1_s42 field/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.1714058434947428 vs 0.1714058434947428"
+  },
+  {
+   "check": "B_s1337 cell/all: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s1337 cell/interior: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s1337 cell/edge: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s1337 field: domain == S(Omega_pred,phi_ref)/S(Omega_ref,phi_ref) and phase == S(Omega_pred,phi_pred)/S(Omega_pred,phi_ref)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s1337 cell/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0068241849106634 vs 1.0068241849106634"
+  },
+  {
+   "check": "B_s1337 cell/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9369732359776997 vs 0.9369732359776997"
+  },
+  {
+   "check": "B_s1337 cell/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9433673145963541 vs 0.9433673145963541"
+  },
+  {
+   "check": "B_s1337 cell/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.04412738097712168 vs 0.04412738097712168"
+  },
+  {
+   "check": "B_s1337 cell/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10686189544283559 vs 0.10686189544283559"
+  },
+  {
+   "check": "B_s1337 cell/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.13505506444714113 vs 0.13505506444714113"
+  },
+  {
+   "check": "B_s1337 cell/interior domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.009314370154151 vs 1.009314370154151"
+  },
+  {
+   "check": "B_s1337 cell/interior phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9645667416058523 vs 0.9645667416058523"
+  },
+  {
+   "check": "B_s1337 cell/interior total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9735510732755525 vs 0.9735510732755525"
+  },
+  {
+   "check": "B_s1337 cell/interior domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.03977290529309839 vs 0.03977290529309839"
+  },
+  {
+   "check": "B_s1337 cell/interior phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.09270856677759201 vs 0.09270856677759201"
+  },
+  {
+   "check": "B_s1337 cell/interior total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.12055216536205329 vs 0.12055216536205329"
+  },
+  {
+   "check": "B_s1337 cell/edge domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.994434115666166 vs 0.994434115666166"
+  },
+  {
+   "check": "B_s1337 cell/edge phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8101074814663177 vs 0.8101074814663178"
+  },
+  {
+   "check": "B_s1337 cell/edge total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8055985169265028 vs 0.8055985169265028"
+  },
+  {
+   "check": "B_s1337 cell/edge domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.08123584036029734 vs 0.08123584036029734"
+  },
+  {
+   "check": "B_s1337 cell/edge phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.2539065329821753 vs 0.2539065329821753"
+  },
+  {
+   "check": "B_s1337 cell/edge total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.303634778484074 vs 0.303634778484074"
+  },
+  {
+   "check": "B_s1337 field/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9095994003119942 vs 0.9095994003119942"
+  },
+  {
+   "check": "B_s1337 field/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9481042794520397 vs 0.9481042794520398"
+  },
+  {
+   "check": "B_s1337 field/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8623950840228106 vs 0.8623950840228107"
+  },
+  {
+   "check": "B_s1337 field/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.09499243177879396 vs 0.09499243177879396"
+  },
+  {
+   "check": "B_s1337 field/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.06314854182940187 vs 0.06314854182940187"
+  },
+  {
+   "check": "B_s1337 field/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.16159517608716584 vs 0.16159517608716584"
+  },
+  {
+   "check": "B_s2024 cell/all: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s2024 cell/interior: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s2024 cell/edge: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s2024 field: domain == S(Omega_pred,phi_ref)/S(Omega_ref,phi_ref) and phase == S(Omega_pred,phi_pred)/S(Omega_pred,phi_ref)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s2024 cell/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.016510410488877 vs 1.016510410488877"
+  },
+  {
+   "check": "B_s2024 cell/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9086945625561238 vs 0.9086945625561238"
+  },
+  {
+   "check": "B_s2024 cell/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9236974827929358 vs 0.9236974827929358"
+  },
+  {
+   "check": "B_s2024 cell/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.042833422174250936 vs 0.042833422174250936"
+  },
+  {
+   "check": "B_s2024 cell/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.13423058614444155 vs 0.13423058614444155"
+  },
+  {
+   "check": "B_s2024 cell/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.1561684460795377 vs 0.1561684460795377"
+  },
+  {
+   "check": "B_s2024 cell/interior domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0186284054799122 vs 1.0186284054799122"
+  },
+  {
+   "check": "B_s2024 cell/interior phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9293469684933072 vs 0.9293469684933071"
+  },
+  {
+   "check": "B_s2024 cell/interior total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9466592206539276 vs 0.9466592206539276"
+  },
+  {
+   "check": "B_s2024 cell/interior domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.03963347883191405 vs 0.039633478831914044"
+  },
+  {
+   "check": "B_s2024 cell/interior phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.11798988083559772 vs 0.11798988083559772"
+  },
+  {
+   "check": "B_s2024 cell/interior total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.13834345319151406 vs 0.13834345319151406"
+  },
+  {
+   "check": "B_s2024 cell/edge domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0062608515242524 vs 1.0062608515242524"
+  },
+  {
+   "check": "B_s2024 cell/edge phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8145123046481617 vs 0.8145123046481617"
+  },
+  {
+   "check": "B_s2024 cell/edge total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8196118452522406 vs 0.8196118452522405"
+  },
+  {
+   "check": "B_s2024 cell/edge domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.08340527636172224 vs 0.08340527636172224"
+  },
+  {
+   "check": "B_s2024 cell/edge phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.26122947921432454 vs 0.26122947921432454"
+  },
+  {
+   "check": "B_s2024 cell/edge total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.31881853373520896 vs 0.31881853373520896"
+  },
+  {
+   "check": "B_s2024 field/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9143937456631848 vs 0.9143937456631848"
+  },
+  {
+   "check": "B_s2024 field/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9148244832156563 vs 0.9148244832156563"
+  },
+  {
+   "check": "B_s2024 field/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8365097858319512 vs 0.8365097858319512"
+  },
+  {
+   "check": "B_s2024 field/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.09176378411761965 vs 0.09176378411761965"
+  },
+  {
+   "check": "B_s2024 field/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.09882255434575563 vs 0.09882255434575563"
+  },
+  {
+   "check": "B_s2024 field/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.1860442318082861 vs 0.1860442318082861"
+  },
+  {
+   "check": "B_s42 cell/all: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s42 cell/interior: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s42 cell/edge: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s42 field: domain == S(Omega_pred,phi_ref)/S(Omega_ref,phi_ref) and phase == S(Omega_pred,phi_pred)/S(Omega_pred,phi_ref)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B_s42 cell/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0061921189893712 vs 1.0061921189893712"
+  },
+  {
+   "check": "B_s42 cell/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9332792958355487 vs 0.9332792958355486"
+  },
+  {
+   "check": "B_s42 cell/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9390582722856786 vs 0.9390582722856788"
+  },
+  {
+   "check": "B_s42 cell/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.043052649596387105 vs 0.043052649596387105"
+  },
+  {
+   "check": "B_s42 cell/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.1140205751516037 vs 0.1140205751516037"
+  },
+  {
+   "check": "B_s42 cell/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.14431623063718105 vs 0.14431623063718105"
+  },
+  {
+   "check": "B_s42 cell/interior domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.009399595462922 vs 1.009399595462922"
+  },
+  {
+   "check": "B_s42 cell/interior phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9544960664038455 vs 0.9544960664038455"
+  },
+  {
+   "check": "B_s42 cell/interior total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.963467943298992 vs 0.963467943298992"
+  },
+  {
+   "check": "B_s42 cell/interior domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.03888161878445286 vs 0.03888161878445286"
+  },
+  {
+   "check": "B_s42 cell/interior phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10223948456498297 vs 0.10223948456498297"
+  },
+  {
+   "check": "B_s42 cell/interior total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.13009958362065063 vs 0.13009958362065063"
+  },
+  {
+   "check": "B_s42 cell/edge domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9900560628659136 vs 0.9900560628659136"
+  },
+  {
+   "check": "B_s42 cell/edge phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.832572004800986 vs 0.8325720048009863"
+  },
+  {
+   "check": "B_s42 cell/edge total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8242929611256451 vs 0.824292961125645"
+  },
+  {
+   "check": "B_s42 cell/edge domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.07882565194898361 vs 0.07882565194898361"
+  },
+  {
+   "check": "B_s42 cell/edge phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.24474556314912593 vs 0.24474556314912593"
+  },
+  {
+   "check": "B_s42 cell/edge total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.29626173562250546 vs 0.29626173562250546"
+  },
+  {
+   "check": "B_s42 field/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9035005810373161 vs 0.9035005810373162"
+  },
+  {
+   "check": "B_s42 field/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9253889292116381 vs 0.9253889292116381"
+  },
+  {
+   "check": "B_s42 field/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8360894352282148 vs 0.8360894352282148"
+  },
+  {
+   "check": "B_s42 field/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10012226285214504 vs 0.10012226285214504"
+  },
+  {
+   "check": "B_s42 field/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.08111183228087405 vs 0.08111183228087405"
+  },
+  {
+   "check": "B_s42 field/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.18154496975187623 vs 0.18154496975187623"
+  },
+  {
+   "check": "classical cell/all: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "classical cell/interior: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "classical cell/edge: domain x phase == total (max abs err < 1e-6)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "classical field: domain == S(Omega_pred,phi_ref)/S(Omega_ref,phi_ref) and phase == S(Omega_pred,phi_pred)/S(Omega_pred,phi_ref)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "classical cell/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9662455277898905 vs 0.9662455277898905"
+  },
+  {
+   "check": "classical cell/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0139681948294723 vs 1.0139681948294723"
+  },
+  {
+   "check": "classical cell/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9797422335751661 vs 0.9797422335751661"
+  },
+  {
+   "check": "classical cell/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.04609889650252811 vs 0.04609889650252811"
+  },
+  {
+   "check": "classical cell/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.11881896465601834 vs 0.11881896465601834"
+  },
+  {
+   "check": "classical cell/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.16876922060946423 vs 0.16876922060946423"
+  },
+  {
+   "check": "classical cell/interior domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9765354358245665 vs 0.9765354358245665"
+  },
+  {
+   "check": "classical cell/interior phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0276817714420743 vs 1.0276817714420743"
+  },
+  {
+   "check": "classical cell/interior total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0035676665641484 vs 1.0035676665641484"
+  },
+  {
+   "check": "classical cell/interior domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.04134567735132822 vs 0.04134567735132822"
+  },
+  {
+   "check": "classical cell/interior phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.10574568314113189 vs 0.10574568314113189"
+  },
+  {
+   "check": "classical cell/interior total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.15205932404066108 vs 0.15205932404066108"
+  },
+  {
+   "check": "classical cell/edge domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.919134944396114 vs 0.919134944396114"
+  },
+  {
+   "check": "classical cell/edge phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9516871162264908 vs 0.9516871162264907"
+  },
+  {
+   "check": "classical cell/edge total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8747288846553336 vs 0.8747288846553336"
+  },
+  {
+   "check": "classical cell/edge domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.09527907095286225 vs 0.09527907095286225"
+  },
+  {
+   "check": "classical cell/edge phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.2117473476067923 vs 0.2117473476067923"
+  },
+  {
+   "check": "classical cell/edge total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.30848318462164465 vs 0.30848318462164465"
+  },
+  {
+   "check": "classical field/all domain_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.8574976924137089 vs 0.8574976924137089"
+  },
+  {
+   "check": "classical field/all phase_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "1.0548154567153607 vs 1.0548154567153607"
+  },
+  {
+   "check": "classical field/all total_gm: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.9045018200557342 vs 0.9045018200557342"
+  },
+  {
+   "check": "classical field/all domain_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.1408215785753944 vs 0.1408215785753944"
+  },
+  {
+   "check": "classical field/all phase_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.061265858347949065 vs 0.061265858347949065"
+  },
+  {
+   "check": "classical field/all total_med_abs_log: recompute == decomposition_summary.csv",
+   "passed": true,
+   "detail": "0.09524458168613122 vs 0.09524458168613122"
+  },
+  {
+   "check": "by_config A field/all domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A field/all phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A field/all total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A cell/all domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A cell/all phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A cell/all total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A cell/edge domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A cell/edge phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A cell/edge total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A cell/interior domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A cell/interior phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config A cell/interior total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B field/all domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B field/all phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B field/all total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B cell/all domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B cell/all phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B cell/all total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B cell/edge domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B cell/edge phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B cell/edge total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B cell/interior domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B cell/interior phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B cell/interior total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 field/all domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 field/all phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 field/all total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 cell/all domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 cell/all phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 cell/all total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 cell/edge domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 cell/edge phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 cell/edge total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 cell/interior domain_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 cell/interior phase_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "by_config B1 cell/interior total_gm",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "decomposition matched-cell recount within 3 cells of the stored evaluation for every run",
+   "passed": true,
+   "detail": "max 3"
+  },
+  {
+   "check": "A_s42: unmatched.csv false positives == metrics cells_false_positive",
+   "passed": true,
+   "detail": "306 vs 306"
+  },
+  {
+   "check": "A_s1337: unmatched.csv false positives == metrics cells_false_positive",
+   "passed": true,
+   "detail": "370 vs 370"
+  },
+  {
+   "check": "A_s2024: unmatched.csv false positives == metrics cells_false_positive",
+   "passed": true,
+   "detail": "335 vs 335"
+  },
+  {
+   "check": "B_s42: unmatched.csv false positives == metrics cells_false_positive",
+   "passed": true,
+   "detail": "419 vs 419"
+  },
+  {
+   "check": "B_s1337: unmatched.csv false positives == metrics cells_false_positive",
+   "passed": true,
+   "detail": "498 vs 498"
+  },
+  {
+   "check": "B_s2024: unmatched.csv false positives == metrics cells_false_positive",
+   "passed": true,
+   "detail": "451 vs 451"
+  },
+  {
+   "check": "B1_s42: unmatched.csv false positives == metrics cells_false_positive",
+   "passed": true,
+   "detail": "320 vs 320"
+  },
+  {
+   "check": "B1_s1337: unmatched.csv false positives == metrics cells_false_positive",
+   "passed": true,
+   "detail": "333 vs 333"
+  },
+  {
+   "check": "B1_s2024: unmatched.csv false positives == metrics cells_false_positive",
+   "passed": true,
+   "detail": "372 vs 372"
+  },
+  {
+   "check": "classical: unmatched.csv false positives == metrics cells_false_positive",
+   "passed": true,
+   "detail": "494 vs 494"
+  },
+  {
+   "check": "1452 edge + 1734 interior == 3186 reference cells",
+   "passed": true,
+   "detail": "{'edge': 1452, 'interior': 1734}"
+  },
+  {
+   "check": "config deploy.benchmark: 50 warmup, 500 timed runs",
+   "passed": true,
+   "detail": "[50, 500, 1]"
+  },
+  {
+   "check": "A: collector statistics pytorch_fp32 latency mean == mean of sessions",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "B: collector statistics pytorch_fp32 latency mean == mean of sessions",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "D0: collector statistics pytorch_fp32 latency mean == mean of sessions",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "KA: collector statistics pytorch_fp32 latency mean == mean of sessions",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "KB: collector statistics pytorch_fp32 latency mean == mean of sessions",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "benchmark: 500 timed runs per runtime (all arms)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "gradient path: 30 batches, median 0.373, range 0.243-0.655 (rounded)",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "gradient path: the value 0.302 is not supported by the CSV",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "750 + 50 == 800 registration fields",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "test split has 113 fields",
+   "passed": true,
+   "detail": "113"
+  }
+ ]
+}
