@@ -8,8 +8,8 @@
 % results_for_manuscript/ (built by analysis/v42/compile_results.py). Tables 3-7
 % and 10-11 were brought in line with it by analysis/v42/update_tables.py; the
 % registration values of Sec. 4.1 come from the diagnostics archive
-% (diagnostics/registration_summary.json, hologram_registration.csv), which is not
-% part of the repository. Table 1 is the dataset composition. The numbers in the
+% (diagnostics/registration_summary.json, hologram_registration.csv), archived under
+% results_for_manuscript/registration/. Table 1 is the dataset composition. The numbers in the
 % tables and in the text are checked by analysis/v42/check_numbers.py
 % (output: analysis/v42/check_numbers.csv).
 % =============================================================================
@@ -109,8 +109,8 @@ in-line reconstruction recovered near-background specimen contrast ($r=-0.2075$)
 off-axis test set, both measurement-aware integrated-phase terms increased the
 matched-cell dry-mass MAPE ($+0.0141$ per cell and $+0.0145$ per image, both
 resolved under a between-seed criterion), and their effect on the field-total
-error was not resolved. The forward-model consistency term did not resolve the
-phase scale under the implemented operator and did not constrain the off-axis
+error was not resolved. The forward-model consistency term did not resolve a $10\%$
+change of the phase scale under the implemented operator and did not constrain the off-axis
 propagation distance, whereas the in-line residual had its minimum at the
 recording distance. Displacing every reference boundary outward by one pixel,
 with no trained model involved, changed dry mass by $4.8\%$ while Dice stayed at
@@ -884,7 +884,7 @@ exceeds twice the pooled between-seed standard deviation,
 $2\sqrt{(s_1^2+s_2^2)/2}$, of the same metric. This is a separation criterion
 defined before the comparisons were made; no hypothesis test is performed, and a
 comparison in which either configuration has fewer than three runs is reported
-as not resolvable. Within-run intervals are percentile bootstrap intervals over
+as not estimable from the available runs. Within-run intervals are percentile bootstrap intervals over
 fields (2000 resamples). Evaluation is deterministic in data and weights but
 not bit-exact, because convolution algorithms are selected at run time.
 Checkpoints were selected on the validation split by
@@ -939,7 +939,7 @@ dry-mass MAPE of $0.2129$ over 1798 matched cells. On the same fields the
 off-axis baseline has phase $r=0.8745\pm0.0023$, Dice $0.8330\pm0.0013$,
 boundary F1 $0.4706\pm0.0052$, recall $0.5936\pm0.0031$ and dry-mass MAPE
 $0.1740\pm0.0045$. The in-line configuration was trained once, so these
-differences (for example $+0.0389$ in dry-mass MAPE) are not resolvable under
+differences (for example $+0.0389$ in dry-mass MAPE) are not estimable under
 our criterion. The tested classical in-line reconstruction recovered
 near-background specimen contrast ($r=-0.2075$), consistent with the behaviour reported for a
 500-iteration Gerchberg--Saxton reconstruction in Park
@@ -1110,7 +1110,7 @@ rose by $0.0374$. Under +IPP (per-cell) the resolved changes are a higher edge
 domain factor ($+0.0154$) and edge total ($+0.0341$). By location, the
 matched-cell MAPE increase is resolved among interior cells for both terms
 ($+0.0139$ and $+0.0183$) and not among edge cells (Table~\ref{tab:edge}). The
-matched-cell domain factor did not change, so the route allowed by the
+No resolved change of the matched-cell domain factor was found over all matched cells, and none of the resolved subgroup changes was a decrease, so the route allowed by the
 formulation of Sec.~\ref{sec:obj-mawo}, a foreground receding inside the
 reference domain with a raised phase, was not observed.
 
@@ -1149,7 +1149,7 @@ once, and this is agreement with the output of one classical reconstruction,
 not with a measured transmittance. Dry mass depends on the amplitude only
 indirectly, through the shared encoder and phase decoder and through $\Lfwd$.
 Adding the amplitude output to +IPP (per-cell) changed the dry-mass MAPE by
-$-0.0026$, a single-run difference that is not resolvable.
+$-0.0026$, a single-run difference that is not estimable.
 
 \input{table_11.tex}
 
@@ -1176,7 +1176,7 @@ the reference phase leaves a residual of $0.915$ off-axis and $0.699$ in-line.
 Scaling the reference phase by $0.9$ raises the residual by $0.00035$ off-axis
 (higher on 18 of the 32 fields) and by $0.0043$ in-line (30 of 32); scaling it
 by $0.5$ raises it by $0.0080$ off-axis (20 of 32) and by $0.0622$ in-line (32 of
-32). Only the
+32). Of these validation probes, only the
 in-line $0.5\times$ margin exceeds the configured tolerance of $0.01$. On the 113
 off-axis test fields, the $0.9\times$ and $0.5\times$ rescalings change the
 residual by $+0.00027$ and $+0.0070$ with the global surface (higher than the
@@ -1265,7 +1265,7 @@ benchmark sessions the $p_{99}/p_{50}$ latency ratio lies between 1.01 and
 baseline to within 0.12\,ms except in PyTorch FP16, where its three sessions
 spread from 9.31 to 10.83\,ms. The Compact Baseline changes the dry-mass MAPE by
 $-0.0002$ relative to the baseline, inside the baseline's $2\times$SD of
-$0.0089$; it was trained once, so the comparison is not resolvable. These are
+$0.0089$; it was trained once, so the comparison is not estimable. These are
 measurements on one workstation GPU.
 
 \input{table_13.tex}
@@ -1408,7 +1408,7 @@ phase under any false-positive foreground. The difference in false positives
 between the two terms is consistent with this, but the experiment does not
 isolate it as the cause. The formulation also admits a receding foreground with
 a raised phase as a way to satisfy $\Lippc$ (Sec.~\ref{sec:obj-mawo}); the
-unchanged matched-cell domain factor shows that the trained models did not take
+matched-cell domain factor showed no resolved change and no resolved subgroup change was a decrease, so there is no sign that the trained models took
 this route.
 
 Two further possibilities were not tested. The first concerns the labels. The
@@ -1514,7 +1514,7 @@ their reference. The classical in-line reconstruction was run at one distance
 and with one algorithm.
 
 Only the baseline and the two integrated-phase configurations have three runs.
-All other comparisons are single runs and are reported as not resolvable. The
+All other comparisons are single runs and are reported as not estimable. The
 image-level term was run at the per-cell term's coefficient without matching
 its gradient magnitude. The location stratification and the mass-error
 decomposition were carried out after training.

@@ -148,7 +148,7 @@ recorded in `results_for_manuscript/metadata/configurations.json`.
 Rebuild and check the manuscript numbers (no GPU needed):
 
 ```bash
-python analysis/v42/compile_results.py     # runs/ + logs/ + config/  ->  results_for_manuscript/ (511 consistency checks)
+python analysis/v42/compile_results.py     # runs/ + logs/ + config/  ->  results_for_manuscript/ (526 consistency checks)
 python analysis/v42/check_numbers.py       # -> analysis/v42/check_numbers.csv
 python analysis/v42/update_tables.py       # tables 3-7, 10, 11 of HoloQPI_4.2 from the JSON files
 python results_for_manuscript/figures/scripts/make_all.py   # figures 2, 4-9 into figures/regenerated/

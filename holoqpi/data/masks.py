@@ -84,8 +84,8 @@ def build_mask(phase: np.ndarray, cfg: Config, pixel_area_um2: float) -> np.ndar
     # clears a 2-px rim at the array border (binary_closing_px = 2), so an
     # object that reached the edge now stops 2 px short of it and no longer
     # "touches" -- and clear_border(buffer_size=0) therefore keeps it. On the
-    # stored test masks, 1456 of the 3186 reference instances (45.7%, in 112 of
-    # 113 fields) lie within 4 px of the field edge: truncated cells and the
+    # stored test masks, 1452 of the 3186 reference instances (45.6%) lie within 3 px of
+    # the field edge (pixel index < 4): truncated cells and the
     # edge-illumination artefact above. The seed-42 End-to-End Neural Baseline
     # detects 21% of these and 91% of the interior instances. Changing this
     # step changes the labels, so it needs regenerated masks and re-evaluation.

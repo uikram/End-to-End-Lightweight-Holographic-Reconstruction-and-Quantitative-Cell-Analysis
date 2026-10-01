@@ -9,7 +9,7 @@ Everything below was checked against files in this repository by `analysis/v42/c
 |---|---|
 | GPU / `CUDA_VISIBLE_DEVICES=2,3` | **Not available** in this container (no `nvidia-smi`). No training, evaluation or benchmark was run. |
 | Checkpoints (`best_model.pt`), phase/mask/hologram data | **Not in the repository** (`.gitignore` excludes `*.pt`; `data/` holds only `manifest.csv`, `splits.json`). |
-| Registration archive (`diagnostics/registration_summary.json`, `hologram_registration.csv`, `classical_phase_shift.csv`, `hologram_inventory.csv`) | **Not in the repository.** |
+| Registration archive (`diagnostics/registration_summary.json`, `hologram_registration.csv`, `classical_phase_shift.csv`, `hologram_inventory.csv`) | Regenerated from `data/` with `scripts/register_holograms.py`; stored in `runs/diagnostics/` and `results_for_manuscript/registration/`. |
 | Reruns performed | **No training or re-evaluation of any experiment.** One post-hoc diagnostic (neural recovered contrast, section 7) was run by the author on the server with the existing checkpoints: `CUDA_VISIBLE_DEVICES=2 python scripts/neural_phase_contrast.py --config config/base.yaml --device cuda --with-classical` (~3 min; output `runs/common_fields/neural_phase_contrast.json`). |
 | Unit tests | `python scripts/selftest.py` passes before and after the code changes (torch CPU build installed here). |
 
@@ -64,7 +64,7 @@ Recording distance 33.77 µm (config). In-line pooled residual minimum on the gr
 
 ## 6. Gabor registration (NOT verifiable here)
 
-The registration archive is missing, so 734/800 within 1 px, AUC 0.975 / 0.973, low-pass-only AUC 0.506, 750 paired / 50 mismatched, r ranges are carried over as *author-supplied* and marked `verified: false` (`metadata/gradient_registration_crop.json`). Verifiable from logs: 521/122/107 split and the 39 + 5 + 6 = 50 exclusion. **Inconsistency to resolve:** the SNU_01–50 correlation range is −0.13 to 0.18 in the manuscript but 0.09–0.18 in the `config/base.yaml` comment (not changed; cannot be checked without `hologram_registration.csv`). Please check it against that file.
+The registration files were regenerated with `scripts/register_holograms.py`, and `compile_results.py` recomputes the Sec. 4.1 values from `hologram_registration.csv` (734/800 within 1 px, AUC 0.975 / 0.973, low-pass-only AUC 0.506, 750 paired / 50 mismatched); they are marked `verified: true` in `metadata/gradient_registration_crop.json`. The SNU_01–50 correlation range in the file is −0.1335 to 0.1769, which matches the manuscript (−0.13 to 0.18); the earlier 0.09–0.18 in the `config/base.yaml` comment was wrong and has been corrected. The split (521/122/107) and the 39 + 5 + 6 = 50 exclusion are also verifiable from the logs.
 
 ## 7. Results that need recomputation / missing outputs
 

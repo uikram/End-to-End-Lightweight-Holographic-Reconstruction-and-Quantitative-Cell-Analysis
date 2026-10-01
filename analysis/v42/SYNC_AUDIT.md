@@ -6,7 +6,7 @@ Pre-final pass. Branch `claude/admiring-maxwell-xwtq43`. No training or re-evalu
 
 * **`HoloQPI_4.1` / `HoloQPI_Manuscript_v4_1` is not in this repository or in its git history.** The brief's step "copy v4.1 to HoloQPI_4.2" could not be executed. `HoloQPI_4.2/` already existed in the repository with the locked section structure (verified below), so it was synchronised **in place**. Nothing named 4.1 was touched.
 * No GPU in this session. The only post-hoc diagnostic needed (neural recovered contrast) was run by the author on the server earlier; its output is in the repository.
-* The registration archive (`diagnostics/…`) is not in the repository (see §3).
+* The registration archive (`diagnostics/…`) was regenerated afterwards (see §3 and the final-pass update).
 
 ## 1. Already synchronised (verified, no edit needed)
 
@@ -46,7 +46,7 @@ Pre-final pass. Branch `claude/admiring-maxwell-xwtq43`. No training or re-evalu
 
 ## 3. Manuscript-only / code-only / obsolete / still unverifiable
 
-* **Manuscript-only values** (no source file in the repository): the registration statistics of Sec. 4.1 (734/800, AUC 0.975/0.973, low-pass AUC 0.506, 4.7 px, r ranges) — author-supplied from the missing archive; flagged `verified: false`; the SNU range (−0.13 to 0.18 in the manuscript, 0.09–0.18 in the older config comment) needs a check against `hologram_registration.csv`. The 96.97 M parameter count (Park et al.) is a literature value.
+* **Manuscript-only values** (no source file in the repository): the registration statistics of Sec. 4.1 (734/800, AUC 0.975/0.973, low-pass AUC 0.506, 4.7 px, r ranges) — originally author-supplied and flagged `verified: false`; since recomputed from the regenerated `hologram_registration.csv` (SNU_01–50 range −0.1335 to 0.1769, matching the manuscript). The 96.97 M parameter count (Park et al.) is a literature value.
 * **Code-only** (not in the manuscript, kept because the workflow uses them): `scripts/make_figures.py` (exploratory plots, run by `run_v2.sh` stage 9), `scripts/collect_results.py`/`runs/RESULTS.md`, `scripts/audit_labels.py`, `scripts/diagnose_bias.py`, `scripts/estimate_aberration.py`, `scripts/prepare_membrane.py`, `scripts/aggregate_seeds.py`, `config/v2/l_lora.yaml`, `test/` notebook.
 * **Obsolete (removed or archived):** see `CLEANUP.md`.
 * **Not regenerable here:** Figures 1 and 3 (checkpoints/data); pixel-identical regeneration of Figures 2, 4, 5, 6, 9 (authoring scripts outside the repository); regenerated PNGs have the same data but not the same bytes.

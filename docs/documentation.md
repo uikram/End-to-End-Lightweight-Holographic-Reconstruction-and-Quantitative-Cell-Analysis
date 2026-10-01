@@ -48,8 +48,9 @@ and the reference phase (band-pass registration against a derangement control; s
 manuscript, Sec. 4.1) and are excluded from the in-line modality only
 (`data.exclude`, 39 + 5 + 6 fields), giving 521 / 122 / 107. The 107 in-line test fields
 (3055 reference cells) define the common-field evaluation of Table 5. The registration
-statistics quoted in the manuscript come from a diagnostics archive that is not in this
-repository (`analysis/v42/AUDIT.md`, §6).
+statistics quoted in the manuscript were recomputed from the regenerated diagnostics
+(`scripts/register_holograms.py`; `results_for_manuscript/registration/`; checked in
+`analysis/v42/compile_results.py`).
 
 Holograms are cropped 1024 → 900 px without resampling; the origin is moved by (−6, −2) px
 in (y, x) from the centred crop (`data.crop_offset_px`), determined by registering the

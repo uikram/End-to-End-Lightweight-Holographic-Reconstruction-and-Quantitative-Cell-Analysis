@@ -367,8 +367,8 @@ mask_generation:
   # would target (measurable out to ~34 px) never reaches these masks anyway.
   # See holoqpi/data/masks.py for the stage-by-stage measurement.
   # CORRECTION (audit, 2026-09-26): closing leaves a 2-px empty rim, so edge
-  # objects stop "touching" and buffer 0 removes nothing; 1456 of the 3186
-  # test reference instances lie within 4 px of the edge. See masks.py.
+  # objects stop "touching" and buffer 0 removes nothing; 1452 of the 3186
+  # test reference instances (45.6%) lie within 3 px of the edge (pixel index < 4). See masks.py.
   border_buffer_px: 0
   watershed_min_distance_px: 15
   overwrite_existing: false
