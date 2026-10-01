@@ -1,0 +1,8 @@
+{
+  "script": "conventional_baseline.py",
+  "modality": "off_axis",
+  "split": "test",
+  "created_at": 1790779629.384889,
+  "config_digest": "1eaf9053c0b0a7ae431ec3e80d5537c34696cb0f928ddf6ef2f1b07f940044aa",
+  "splits_sha256": "11d124828ce9c48fed26d540bf2f0c3adc3f34a1befc02899e1216f33e4120bf"
+}

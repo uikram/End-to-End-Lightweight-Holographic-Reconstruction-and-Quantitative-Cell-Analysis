@@ -1,0 +1,370 @@
+% =============================================================================
+% references.bib -- bibliography for main.tex (BibTeX, unsrt style)
+%
+% Literature stage, 2026-09-28.
+% * Entries marked [FOLDER] were checked against the original PDF in
+%   Claude outputs/Literature Review/ (title, authors, venue, DOI as printed).
+%   The evidence for each use is in literature_.xlsx, sheet Claims.
+% * Entries marked [NOT IN FOLDER] were carried over unchanged from the
+%   previous bibliography; they are cited in Methods/Limitations text that was
+%   not revised at this stage and still need manual verification.
+% * Removed (not in the folder, could not be verified): oahnet, nasprnet,
+%   distill2025, styletransfer2026, edgeqpm2025, hansen2023, idrees2018,
+%   breger2025, buchholz2020denoiseg; unused: lora2021, samed2023,
+%   convlora2024, loramri2025. Old keys holophasenet/gedankennet/galande2024
+%   are replaced by jaferzadeh2022holophasenet/huang2023gedankennet/
+%   galande2024hdphysnet with metadata from the PDFs (the old HoloPhaseNet
+%   title was incorrect).
+% =============================================================================
+
+% [FOLDER] ---------------------------------------------------------------------
+@article{moon2026aidhm,
+  author  = {Moon, Inkyu and Javidi, Bahram},
+  title   = {{AI}-driven digital holographic microscopy for label-free quantitative cellular analysis: toward low-cost and field-deployable platforms},
+  journal = {Biomedical Optics Express},
+  volume  = {17},
+  number  = {5},
+  pages   = {2349--2371},
+  year    = {2026},
+  doi     = {10.1364/BOE.586407}
+}
+
+@article{lee2013qpi,
+  author  = {Lee, KyeoReh and Kim, Kyoohyun and Jung, Jaehwang and Heo, JiHan and Cho, Sangyeon and Lee, Sangyun and Chang, Gyuyoung and Jo, YoungJu and Park, Hyunjoo and Park, YongKeun},
+  title   = {Quantitative phase imaging techniques for the study of cell pathophysiology: from principles to applications},
+  journal = {Sensors},
+  volume  = {13},
+  pages   = {4170--4191},
+  year    = {2013},
+  doi     = {10.3390/s130404170}
+}
+
+@article{di2021phasenet,
+  author  = {Di, Jianglei and Wu, Ji and Wang, Kaiqiang and Tang, Ju and Li, Ying and Zhao, Jianlin},
+  title   = {Quantitative phase imaging using deep learning-based holographic microscope},
+  journal = {Frontiers in Physics},
+  volume  = {9},
+  pages   = {651313},
+  year    = {2021},
+  doi     = {10.3389/fphy.2021.651313}
+}
+
+@article{jaferzadeh2022holophasenet,
+  author  = {Jaferzadeh, Keyvan and Fevens, Thomas},
+  title   = {{HoloPhaseNet}: fully automated deep-learning-based hologram reconstruction using a conditional generative adversarial model},
+  journal = {Biomedical Optics Express},
+  volume  = {13},
+  number  = {7},
+  pages   = {4032--4046},
+  year    = {2022},
+  doi     = {10.1364/BOE.452645}
+}
+
+@article{zhao2023vynet,
+  author  = {Zhao, Jiaxi and Liu, Lin and Wang, Tianhe and Zhang, Jing and Wang, Xiangzhou and Du, Xiaohui and Hao, Ruqian and Liu, Juanxiu and Liu, Yi and Liu, Yong},
+  title   = {Quantitative phase imaging of living red blood cells combining digital holographic microscopy and deep learning},
+  journal = {Journal of Biophotonics},
+  volume  = {16},
+  number  = {10},
+  pages   = {e202300090},
+  year    = {2023},
+  doi     = {10.1002/jbio.202300090}
+}
+
+@misc{delikoyun2025rthad,
+  author  = {Delikoyun, Kerem and Chen, Qianyu and Liu, Wei and Myo, Si Ko and Krell, Johannes and Schlegel, Martin and Kuan, Win Sen and Soong, John Tshon Yit and Schneider, Gerhard and {Prazeres da Costa}, Clarissa and Knolle, Percy A. and Renia, Laurent and Cove, Matthew Edward and Lee, Hwee Kuan and Diepold, Klaus and Hayden, Oliver},
+  title   = {Real-time deep learning phase imaging flow cytometer reveals blood cell aggregate biomarkers for haematology diagnostics},
+  note    = {arXiv:2508.09215v1 (preprint)},
+  year    = {2025}
+}
+
+@article{balasubramani2021roadmap,
+  author  = {Balasubramani, Vinoth and Kujawi{\'n}ska, Ma{\l}gorzata and Allier, C{\'e}dric and Anand, Vijayakumar and Cheng, Chau-Jern and Depeursinge, Christian and Hai, Nathaniel and Juodkazis, Saulius and Kalkman, Jeroen and Ku{\'s}, Arkadiusz and Lee, Moosung and Magistretti, Pierre J. and Marquet, Pierre and Ng, Soon Hock and Rosen, Joseph and Park, Yong Keun and Ziemczonok, Micha{\l}},
+  title   = {Roadmap on digital holography-based quantitative phase imaging},
+  journal = {Journal of Imaging},
+  volume  = {7},
+  pages   = {252},
+  year    = {2021},
+  doi     = {10.3390/jimaging7120252}
+}
+
+@article{trujillo2019automatic,
+  title={Automatic detection and counting of phase objects in raw holograms of digital holographic microscopy via deep learning},
+  author={Trujillo, Carlos and Garcia-Sucerquia, Jorge},
+  journal={Optics and Lasers in Engineering},
+  volume={120},
+  pages={13--20},
+  year={2019},
+  publisher={Elsevier}
+}
+
+@article{li2025dlcspf,
+  author  = {Li, Zhuoshi and Gu, Haojie and Lu, Linpeng and Shen, Qian and Sun, Jiasong and Chen, Qian and Zuo, Chao},
+  title   = {{DL-CSPF}: deep-learning-based cell segmentation with a physical framework for digital holographic microscopy},
+  journal = {Applied Optics},
+  volume  = {64},
+  number  = {7},
+  pages   = {B20--B30},
+  year    = {2025},
+  doi     = {10.1364/AO.546044}
+}
+
+@article{park2025holofluonet,
+  author  = {Park, Seonghwan and Lee, Jaeseong and Park, Jaewoo and Moon, Inkyu},
+  title   = {{HoloFluoNet}: live cell imaging intelligence based on fused holography and fluorescence for virtual staining, cell segmentation, classification, and viability analysis},
+  journal = {Engineering Applications of Artificial Intelligence},
+  volume  = {161},
+  pages   = {112323},
+  year    = {2025},
+  doi     = {10.1016/j.engappai.2025.112323}
+}
+
+@misc{sandler2018mobilenetv2,
+  author  = {Sandler, Mark and Howard, Andrew and Zhu, Menglong and Zhmoginov, Andrey and Chen, Liang-Chieh},
+  title   = {{MobileNetV2}: inverted residuals and linear bottlenecks},
+  note    = {arXiv:1801.04381v4},
+  year    = {2019}
+}
+
+@misc{ronneberger2015unet,
+  author  = {Ronneberger, Olaf and Fischer, Philipp and Brox, Thomas},
+  title   = {{U-Net}: convolutional networks for biomedical image segmentation},
+  note    = {arXiv:1505.04597v1},
+  year    = {2015}
+}
+
+@article{park2021unwrapgan,
+  author  = {Park, Seonghwan and Kim, Youhyun and Moon, Inkyu},
+  title   = {Automated phase unwrapping in digital holography with deep learning},
+  journal = {Biomedical Optics Express},
+  volume  = {12},
+  number  = {11},
+  pages   = {7064--7081},
+  year    = {2021},
+  doi     = {10.1364/BOE.440338}
+}
+
+@article{svistunov2026holocel,
+  author  = {Svistunov, Andrey S. and Shifrina, Anna V. and Rymov, Dmitry A. and Kozlov, Alexander V. and Cheremkhin, Pavel A. and Starikov, Rostislav S. and Evtikhiev, Nikolay N.},
+  title   = {{HoloCel}: procedural generation of biological cell holograms},
+  journal = {Technologies},
+  volume  = {14},
+  pages   = {469},
+  year    = {2026},
+  doi     = {10.3390/technologies14080469}
+}
+
+@article{ongie2020deep,
+  author  = {Ongie, Gregory and Jalal, Ajil and Metzler, Christopher A. and Baraniuk, Richard G. and Dimakis, Alexandros G. and Willett, Rebecca},
+  title   = {Deep learning techniques for inverse problems in imaging},
+  journal = {IEEE Journal on Selected Areas in Information Theory},
+  volume  = {1},
+  number  = {1},
+  pages   = {39--56},
+  year    = {2020},
+  doi     = {10.1109/JSAIT.2020.2991563}
+}
+
+@article{wang2020physennet,
+  author  = {Wang, Fei and Bian, Yaoming and Wang, Haichao and Lyu, Meng and Pedrini, Giancarlo and Osten, Wolfgang and Barbastathis, George and Situ, Guohai},
+  title   = {Phase imaging with an untrained neural network},
+  journal = {Light: Science \& Applications},
+  volume  = {9},
+  pages   = {77},
+  year    = {2020},
+  doi     = {10.1038/s41377-020-0302-3}
+}
+
+@article{huang2023gedankennet,
+  author  = {Huang, Luzhe and Chen, Hanlong and Liu, Tairan and Ozcan, Aydogan},
+  title   = {Self-supervised learning of hologram reconstruction using physics consistency},
+  journal = {Nature Machine Intelligence},
+  volume  = {5},
+  pages   = {895--907},
+  year    = {2023},
+  doi     = {10.1038/s42256-023-00704-7}
+}
+
+@article{galande2024hdphysnet,
+  author  = {Galande, Ashwini S. and Thapa, Vikas and Vijay, Aswathy and John, Renu},
+  title   = {High-resolution lensless holographic microscopy using a physics-aware deep network},
+  journal = {Journal of Biomedical Optics},
+  volume  = {29},
+  number  = {10},
+  pages   = {106502},
+  year    = {2024},
+  doi     = {10.1117/1.JBO.29.10.106502}
+}
+
+@article{shen2022laf,
+  author  = {Shen, Qian and Li, Zhuoshi and Sun, Jiasong and Fan, Yao and Chen, Yuanyuan and Gu, Haojie and Gao, Peng and Chen, Qian and Zuo, Chao},
+  title   = {Live-cell analysis framework for quantitative phase imaging with slightly off-axis digital holographic microscopy},
+  journal = {Frontiers in Photonics},
+  volume  = {3},
+  pages   = {1083139},
+  year    = {2022},
+  doi     = {10.3389/fphot.2022.1083139}
+}
+
+@article{bai2026macrophage,
+  author  = {Bai, Baodan and Lu, Yanwei and Zhu, Geng and Liu, Feiyu and Liu, Yubo and Wu, Wen and Lu, Dezhi and Wu, Xiupin},
+  title   = {Macrophage volume analysis and real-time monitoring by digital holography},
+  journal = {Journal of Biomedical Optics},
+  volume  = {31},
+  number  = {6},
+  pages   = {066002},
+  year    = {2026},
+  doi     = {10.1117/1.JBO.31.6.066002}
+}
+
+@misc{kyeremah2025malaria,
+  author  = {Kyeremah, Charlotte and Paul, Aditya S. and Haehn, Daniel and Duraisingh, Manoj T. and Yelleswarapu, Chandra S.},
+  title   = {Phase-driven classification for improved detection of malaria-infected red blood cells in digital holographic microscopy},
+  note    = {Preprint, posted 17 April 2025, doi:10.21203/rs.3.rs-6246651/v1},
+  year    = {2025}
+}
+
+@inproceedings{llaguno2025dhm,
+  author    = {Llaguno, Juan M. and Liaigre, Remi and Arocena, Miguel and Lecumberry, Federico and Alonso, Julia},
+  title     = {Label-free analysis of epithelial cells using a custom-built digital holographic microscope and convolutional neural networks},
+  booktitle = {Frontiers in Optics + Laser Science (FiO + LS)},
+  note      = {Paper JD1A.1},
+  publisher = {Optica Publishing Group},
+  year      = {2025}
+}
+
+@inproceedings{numata2024rbcsam,
+  author    = {Numata, Riki and Kim, Hyun-Woo and Cho, Myungjin and Lee, Min-Chul},
+  title     = {A study on automatic segmentation of red blood cells in digital holographic microscopy},
+  booktitle = {2024 International Technical Conference on Circuits/Systems, Computers, and Communications (ITC-CSCC)},
+  publisher = {IEEE},
+  year      = {2024},
+  doi       = {10.1109/ITC-CSCC62988.2024.10628435}
+}
+
+@article{wen2026direct,
+  author  = {Wen, Yongan and Wang, Zihao and Song, Yunqi and Gao, Rongke and Wang, Feifei and Yu, Liandong and Lu, Yang},
+  title   = {Direct label-free classification of prostate cancer cells from holographic microscopic imaging flow cytometry},
+  journal = {Optics and Lasers in Engineering},
+  volume  = {206},
+  pages   = {110053},
+  year    = {2026},
+  doi     = {10.1016/j.optlaseng.2026.110053}
+}
+
+@article{bachimanchi2022microplankton,
+  author  = {Bachimanchi, Harshith and Midtvedt, Benjamin and Midtvedt, Daniel and Selander, Erik and Volpe, Giovanni},
+  title   = {Microplankton life histories revealed by holographic microscopy and deep learning},
+  journal = {eLife},
+  volume  = {11},
+  pages   = {e79760},
+  year    = {2022},
+  doi     = {10.7554/eLife.79760}
+}
+
+% lucas2018using: volume/issue/page range not printed legibly in the supplied PDF.
+@article{lucas2018using,
+  author  = {Lucas, Alice and Iliadis, Michael and Molina, Rafael and Katsaggelos, Aggelos K.},
+  title   = {Using deep neural networks for inverse problems in imaging: beyond analytical methods},
+  journal = {IEEE Signal Processing Magazine},
+  month   = jan,
+  year    = {2018},
+  doi     = {10.1109/MSP.2017.2760358}
+}
+
+
+% [WEB] Temporary keys. Metadata taken from the publisher/PMC pages
+% (2026-09-28); the PDFs are not in the Literature Review folder, so these
+% entries and the statements they support need manual verification against the
+% full texts. Mapping recorded in literature_.xlsx (Paper Index, P27-P29).
+
+@article{park2026ai,
+  title={AI-driven dual-mode phase and label-free fluorescence imaging platform using a single-shot gabor hologram},
+  author={Park, Seonghwan and Lee, Jaeseong and Park, Jaewoo and Moon, Inkyu},
+  journal={Microsystems \& Nanoengineering},
+  volume={12},
+  number={1},
+  pages={311},
+  year={2026},
+  publisher={Nature Publishing Group UK London}
+}
+
+@article{park2026simple,
+  title={Simple and practical single-shot digital holography based on unsupervised diffusion model},
+  author={Park, Seonghwan and Park, Jaewoo and Kim, Youhyun and Moon, Inkyu and Javidi, Bahram},
+  journal={Engineering Applications of Artificial Intelligence},
+  volume={163},
+  pages={112970},
+  year={2026},
+  publisher={Elsevier}
+}
+
+% [FOLDER] added in the restructuring pass
+@article{wen2025rbf,
+  author  = {Wen, Yongan and Song, Yunqi and Han, Zixuan and Gao, Rongke and Wang, Feifei and Chen, Xiaozhe and Yu, Liandong and Lu, Yang},
+  title   = {Enhanced phase compensation in digital holographic microscopic imaging flow cytometry using radial basis function neural networks},
+  journal = {Optics \& Laser Technology},
+  volume  = {191},
+  pages   = {113312},
+  year    = {2025},
+  doi     = {10.1016/j.optlastec.2025.113312}
+}
+
+% [NOT IN FOLDER] -------------------------------------------------------------
+@article{barer1952,
+  author  = {Barer, R.},
+  title   = {Interference microscopy and mass determination},
+  journal = {Nature},
+  volume  = {169},
+  pages   = {366--367},
+  year    = {1952}
+}
+
+@article{zangle2014,
+  author  = {Zangle, T. A. and Teitell, M. A.},
+  title   = {Live-cell mass profiling: an emerging approach in quantitative biophysics},
+  journal = {Nature Methods},
+  volume  = {11},
+  number  = {12},
+  pages   = {1221--1228},
+  year    = {2014}
+}
+
+@article{zhao2011,
+  author  = {Zhao, H. and Brown, P. H. and Schuck, P.},
+  title   = {On the distribution of protein refractive index increments},
+  journal = {Biophysical Journal},
+  volume  = {100},
+  number  = {9},
+  pages   = {2309--2317},
+  year    = {2011}
+}
+
+@article{chaumet2024,
+  author  = {Chaumet, P. C. and Bon, P. and Maire, G. and Sentenac, A. and Baffou, G.},
+  title   = {Quantitative phase microscopies: accuracy comparison},
+  journal = {Light: Science \& Applications},
+  volume  = {13},
+  year    = {2024}
+}
+
+@article{blandaltman1986,
+  author  = {Bland, J. M. and Altman, D. G.},
+  title   = {Statistical methods for assessing agreement between two methods of clinical measurement},
+  journal = {The Lancet},
+  volume  = {327},
+  number  = {8476},
+  pages   = {307--310},
+  year    = {1986}
+}
+
+@article{cuche1999,
+  author  = {Cuche, Etienne and Marquet, Pierre and Depeursinge, Christian},
+  title   = {Simultaneous amplitude-contrast and quantitative phase-contrast microscopy by numerical reconstruction of {F}resnel off-axis holograms},
+  journal = {Applied Optics},
+  volume  = {38},
+  number  = {34},
+  pages   = {6994--7001},
+  year    = {1999},
+  doi     = {10.1364/AO.38.006994}
+}

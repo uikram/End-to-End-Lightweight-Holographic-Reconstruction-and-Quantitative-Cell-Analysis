@@ -1,0 +1,61 @@
+% Table 10: between-seed variability and resolution of differences.
+\begin{table}[!htbp]
+\centering
+\caption{Replicated configurations on the off-axis test set (113 fields). (a)
+Mean $\pm$ SD over seeds 42, 1337 and 2024. (b) Differences in matched-cell and
+field-total dry-mass MAPE, configuration minus comparator, with the resolution
+threshold $2\times$ the pooled between-seed SD.}
+\label{tab:seeds}
+\footnotesize
+\textbf{(a) Mean $\pm$ SD over three seeds}\\[2pt]
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccc@{}}
+\toprule
+Metric & Baseline & +IPP (per-cell) & +IPP (image) \\
+\midrule
+Dry-mass MAPE & $0.1742 \pm 0.0045$ & $0.1883 \pm 0.0052$ & $0.1887 \pm 0.0013$ \\
+Field-total dry-mass MAPE & $0.1631 \pm 0.0141$ & $0.1676 \pm 0.0084$ & $0.1722 \pm 0.0107$ \\
+Field-total dry-mass bias & $-0.1560 \pm 0.0174$ & $-0.1496 \pm 0.0181$ & $-0.1667 \pm 0.0078$ \\
+Area MAPE & $0.1568 \pm 0.0027$ & $0.1679 \pm 0.0059$ & $0.1597 \pm 0.0014$ \\
+Phase MAE [rad] & $0.1568 \pm 0.0023$ & $0.1656 \pm 0.0032$ & $0.1644 \pm 0.0015$ \\
+Phase MAE inside cells [rad] & $0.2689 \pm 0.0056$ & $0.2876 \pm 0.0064$ & $0.2946 \pm 0.0039$ \\
+Phase $r$ & $0.8741 \pm 0.0023$ & $0.8636 \pm 0.0019$ & $0.8655 \pm 0.0005$ \\
+Dice & $0.8337 \pm 0.0013$ & $0.8294 \pm 0.0032$ & $0.8294 \pm 0.0004$ \\
+AJI & $0.6710 \pm 0.0025$ & $0.6616 \pm 0.0059$ & $0.6632 \pm 0.0009$ \\
+Boundary F1 & $0.4687 \pm 0.0053$ & $0.4518 \pm 0.0093$ & $0.4477 \pm 0.0028$ \\
+Detection recall & $0.5931 \pm 0.0027$ & $0.6006 \pm 0.0034$ & $0.5889 \pm 0.0013$ \\
+Detection precision & $0.8488 \pm 0.0124$ & $0.8077 \pm 0.0138$ & $0.8460 \pm 0.0100$ \\
+False positives per run & $337 \pm 32$ & $456 \pm 40$ & $342 \pm 27$ \\
+\bottomrule
+\end{tabular*}
+
+\vspace{8pt}
+\textbf{(b) Differences}\\[2pt]
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrlrrl@{}}
+\toprule
+ & \multicolumn{3}{c}{Matched-cell dry-mass MAPE} & \multicolumn{3}{c}{Field-total dry-mass MAPE} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Comparison & $\Delta$ & $2\times$SD & Verdict & $\Delta$ & $2\times$SD & Verdict \\
+\midrule
+\multicolumn{7}{@{}l}{\emph{Both configurations trained with three seeds}} \\
++IPP (per-cell) vs Baseline & $\mathbf{+0.0141}$ & 0.0097 & resolved & $+0.0045$ & 0.0232 & not resolved \\
++IPP (image) vs Baseline & $\mathbf{+0.0145}$ & 0.0066 & resolved & $+0.0091$ & 0.0250 & not resolved \\
++IPP (image) vs +IPP (per-cell) & $+0.0004$ & 0.0076 & not resolved & $+0.0046$ & 0.0193 & not resolved \\
+\midrule
+\multicolumn{7}{@{}l}{\emph{One configuration trained with one seed}} \\
++Area vs +IPP (per-cell) & $-0.0033$ & -- & not resolvable & $+0.0020$ & -- & not resolvable \\
++BGA vs +IPP (per-cell) & $+0.0038$ & -- & not resolvable & $-0.0025$ & -- & not resolvable \\
+$w=0.1$ vs Baseline & $+0.0012$ & -- & not resolvable & $+0.0199$ & -- & not resolvable \\
+$w=0.3$ vs Baseline & $+0.0138$ & -- & not resolvable & $+0.0322$ & -- & not resolvable \\
+$w=3.0$ vs Baseline & $+0.0221$ & -- & not resolvable & $-0.0315$ & -- & not resolvable \\
++Amplitude vs +IPP (per-cell) & $-0.0026$ & -- & not resolvable & $-0.0148$ & -- & not resolvable \\
++Fwd (fixed $z$) vs +Amplitude & $-0.0002$ & -- & not resolvable & $+0.0046$ & -- & not resolvable \\
++Fwd (free $z$) vs +Fwd (fixed $z$) & $+0.0065$ & -- & not resolvable & $+0.0025$ & -- & not resolvable \\
+Compact Baseline vs Baseline & $-0.0002$ & -- & not resolvable & $+0.0107$ & -- & not resolvable \\
+Compact +IPP vs +IPP (per-cell) & $+0.0003$ & -- & not resolvable & $-0.0137$ & -- & not resolvable \\
+\bottomrule
+\end{tabular*}
+\tabnote{$\Delta$: positive is worse. Bold: resolved, $|\Delta| >
+2\sqrt{(s_1^2+s_2^2)/2}$ with $s$ the between-seed SD of each configuration.
+Not resolvable: fewer than three runs on one side, so no between-seed SD exists.
+Differences are computed from unrounded means.}
+\end{table}

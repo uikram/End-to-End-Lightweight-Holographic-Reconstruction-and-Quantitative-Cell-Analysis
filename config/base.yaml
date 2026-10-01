@@ -214,6 +214,27 @@ data:
   modality: off_axis                    # off_axis | gabor  (the comparison axis)
   phase_size: 900
   align: center_crop                    # center_crop | resize  (hologram -> phase grid)
+  # Origin of the 900 x 900 hologram crop as [dy, dx] whole pixels added to the
+  # exact centre of the 1024 x 1024 frame. [0, 0] is the exact centre crop the
+  # acquisition group specified. The classical reconstruction of that crop sits
+  # a median +5.5 px (y) and +1.6 px (x) from the supplied phase grid on all
+  # 113 test fields and in all 15 cell-line x condition groups (2026-09-30), and
+  # moving the crop origin by (-6, -2) removed the offset on the fields tested.
+  # scripts/measure_crop_offset.py measures it on the current setting and, with
+  # --write, sets this key. Whole pixels only: a sub-pixel shift would
+  # interpolate the fringes. Applied to the network input, the forward model's
+  # raw hologram, the amplitude reference and the aberration fit.
+  crop_offset_px: [-6, -2]
+  # Fields removed from the listed modalities at load time, in every split.
+  # SNU_01-SNU_50: their Gabor frames do not show the same field as their
+  # off-axis hologram and reference phase (registration r 0.09-0.18, the level
+  # of randomly paired fields, while the other 750 fields register within 5 px;
+  # 2026-09-30). Their off-axis holograms are correctly paired, so they stay in
+  # every off-axis arm. Adding off_axis to modalities gives the common-field
+  # evaluation (run_corrected_study.sh does this with a --set override only).
+  exclude:
+    modalities: [gabor]
+    stems: [SNU_01, SNU_02, SNU_03, SNU_04, SNU_05, SNU_06, SNU_07, SNU_08, SNU_09, SNU_10, SNU_11, SNU_12, SNU_13, SNU_14, SNU_15, SNU_16, SNU_17, SNU_18, SNU_19, SNU_20, SNU_21, SNU_22, SNU_23, SNU_24, SNU_25, SNU_26, SNU_27, SNU_28, SNU_29, SNU_30, SNU_31, SNU_32, SNU_33, SNU_34, SNU_35, SNU_36, SNU_37, SNU_38, SNU_39, SNU_40, SNU_41, SNU_42, SNU_43, SNU_44, SNU_45, SNU_46, SNU_47, SNU_48, SNU_49, SNU_50]
   train_crop: 512                       # random square crop during training; null disables
   eval_size: null                       # null -> evaluate on the full phase_size field
   hologram_normalisation: zscore        # zscore | unit | none

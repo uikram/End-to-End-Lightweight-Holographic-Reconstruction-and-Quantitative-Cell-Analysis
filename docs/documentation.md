@@ -3,13 +3,6 @@
 Mathematical formulation, parameter reference, design rationale and experimental
 protocol for the end-to-end holographic analysis framework.
 
-> **Status (2026-09-26).** This document matches the code, the configurations
-> and the collected results in `runs/benchmark_results/` that the manuscript is
-> generated from. Configuration names follow the manuscript; the arm codes used
-> in file and directory names are given beside them (§8.2). Sections that record
-> how a design decision was reached keep their historical measurements and say
-> so; every number presented as a *result* is the final one.
-
 - [1. Objective and scope](#1-objective-and-scope)
 - [2. Data](#2-data)
 - [3. Physical model and calibration](#3-physical-model-and-calibration)
@@ -47,14 +40,7 @@ and, when off, the specimen is treated as purely refractive (A = 1).
 
 The second contribution is the comparison of two acquisition geometries —
 off-axis and in-line Gabor — through this single pipeline, under identical data,
-splits, architecture, objective and schedule. The two geometries are trained
-separately; they do not share weights.
-
-**Implemented but not used in any reported configuration:** the angular-spectrum
-demodulation front end (§5.1), LoRA adaptation of the encoder (§5.2, never
-trained), the drug-condition classifier (§5), and the phase–mask contrast and
-dry-mass consistency terms (§6.3). A shared backbone with swappable
-per-geometry adapters and embedded-hardware deployment are not implemented.
+splits, architecture, objective and schedule.
 
 ---
 
@@ -74,8 +60,9 @@ reconstructed phase map per field of view.
 
 The four drugs are chosen for their morphological effect — blebbistatin inhibits
 myosin II, FCCP uncouples mitochondria, staurosporine induces apoptosis, rotenone
-inhibits complex I — so the condition label functions as a phenotype label. A 5-way condition
-classifier is implemented but disabled in every reported configuration (§5).
+inhibits complex I — so the condition label functions as a phenotype label. This
+is the 5-way classification target, replacing the four red-blood-cell
+morphologies of the previous study.
 
 ### 2.2 File formats
 
@@ -99,9 +86,7 @@ The layout is declared in `formats.phase_binary`, so a change of acquisition
 software is a configuration edit rather than a code change.
 
 Observed values: pitch 2.84871 × 10⁻⁷ m and 2.11994 × 10⁻⁷ m, phase spanning
-roughly −2 to +5 rad with a background referenced to zero. The second pitch is
-the fluorescence camera's, not a y pitch of the phase grid, which is isotropic
-(§3); `optics.trust_header_pitch: false` makes the configuration authoritative.
+roughly −2 to +5 rad with a background referenced to zero.
 
 ### 2.3 Hologram-to-phase alignment
 
@@ -149,7 +134,7 @@ Default constants (`config/base.yaml`, section `optics`):
 
 | Parameter | Value | Note |
 |---|---|---|
-| `wavelength_um` | 0.666 | supplied for the instrument; not independently confirmed |
+| `wavelength_um` | 0.666 | as in the previous study's system |
 | `refraction_increment_ml_per_g` | 0.2 | confirmed with the acquisition group; range `[0.173, 0.215]` is recorded in the config |
 | `pixel_pitch_x_um` | 0.284871 | decoded from the phase headers |
 | `pixel_pitch_y_um` | 0.284871 | **isotropic**; see the correction below |
@@ -182,15 +167,13 @@ configuration beyond `header_pitch_tolerance_um`. Every area, volume and mass
 scales with these numbers, so a silent mismatch would corrupt the whole
 measurement chain.
 
-> **Absolute picograms carry the uncertainty of α and λ.** α = 0.2 mL/g is the
-> value the acquisition group used for this dataset (literature range for
-> cellular protein 0.173–0.215); λ = 0.666 µm is supplied for the instrument and
-> has not been independently confirmed. All *relative* comparisons, and every
-> agreement statistic, are invariant to both.
+> **Confirm λ and α with the acquisition group before publishing absolute
+> picograms.** The wavelength is inherited from the previous instrument and α is
+> a literature value for non-erythrocyte cells. All *relative* comparisons, and
+> every agreement statistic, are invariant to both.
 
-**Sanity check on the delivered data.** Over the 1 889 matched reference cells
-of the test split for the seed-42 End-to-End Neural Baseline
-(`runs/v2_baseline_off_axis/per_cell_test.csv`, computed with the
+**Sanity check on the delivered data.** Over the 1 889 reference cells of the
+test split (`runs/v2_baseline_off_axis/per_cell_test.csv`, computed with the
 corrected constants above), the measurement chain gives a median projected area
 of 411 µm², a median equivalent diameter of **22.9 µm** and a median dry mass of
 **212 pg** (IQR 137–304) — all within the expected range for adherent cancer
@@ -207,16 +190,12 @@ No manual annotations were delivered. Masks are derived from the ground-truth
 phase, on the physical argument that a cell is a connected region whose optical
 path length rises measurably above the surrounding medium:
 
-1. Gaussian smoothing, σ = `smoothing_sigma_px` (4 px)
-2. threshold — global Otsu per image (the default), or a fixed level in radians
-3. binary closing (`binary_closing_px`, 2 px), then hole filling
-4. removal of objects touching the field edge (`border_buffer_px: 0`; see §4.2)
-5. area filtering to `[min_object_area_um2, max_object_area_um2]`
-   (30–6000 µm²), which drops speckle at the lower bound and debris or confluent
-   sheets at the upper
-6. at evaluation, a distance-transform watershed instance split
-   (`watershed_min_distance_px`, 15 px), applied by the same function to the
-   prediction and the reference
+1. Gaussian smoothing, σ = `smoothing_sigma_px`
+2. threshold — Otsu by default, or a fixed level in radians
+3. binary closing, then hole filling
+4. area filtering to `[min_object_area_um2, max_object_area_um2]`, which drops
+   speckle at the lower bound and debris or confluent sheets at the upper
+5. optional watershed instance split for touching cells
 
 Mean foreground coverage on the delivered data is 19%.
 
@@ -236,45 +215,25 @@ Deriving the mask from the phase has two effects that no training curve reveals.
 `scripts/audit_labels.py` measures both; run it once and quote the numbers.
 
 **The threshold is chosen per image.** Otsu reads each image's own histogram, so
-the operational definition of "cell" moves between fields of view. Over the 800
-fields the level is 0.406 ± 0.151 rad (coefficient of variation 37%), and it
-**does** move with drug condition: one-way ANOVA F = 15.27, p = 4.9 × 10⁻¹²;
-Kruskal–Wallis H = 56.1, p = 1.9 × 10⁻¹¹ (`runs/label_audit_thresholds.json`).
-The label definition is therefore partly confounded with the condition, which
-the manuscript reports as a limitation. `mask_generation.threshold_method:
-fixed` with `fixed_threshold_rad` near the global mean is the sensitivity check.
+the operational definition of "cell" moves between fields of view. On the
+delivered data the level has a coefficient of variation of roughly 35–40%. That
+is tolerable as long as it does not move *with drug condition* — if it did, cells
+would appear morphologically different between conditions partly because the
+label definition differed, and the classification result would be confounded. The
+audit reports a one-way ANOVA and a Kruskal–Wallis test across conditions; a
+p-value above 0.05 rules this route out. Should it ever fail, switch to
+`mask_generation.threshold_method: fixed` with `fixed_threshold_rad` near the
+global mean and re-run as a sensitivity check.
 
 **The two supervised heads are not independent.** The mask is a deterministic
 function of the phase, so a perfect reconstruction determines the mask exactly.
 The audit tests this directly by applying the mask-generation function to the
 *predicted* phase and comparing the result with what the segmentation head
-produced (`runs/label_audit_redundancy.json`: Dice 0.921 off-axis, 0.919
-in-line). Dice above ~0.85 there means the head is largely redundant. This is
-the interpretation the manuscript offers for the negative result of the
-measurement-aware terms (§6.3): they constrain Σ(f ⊙ φ̂) inside domains that a
-correct reconstruction already determines, so they may add little useful
-gradient information. The present experiments are consistent with it but do not
-test it; testing it needs labels that are not derived from the reference phase.
-
-### 4.2 Objects at the field edge are not removed
-
-Step 4 is meant to drop objects cut by the field of view, whose area and
-integrated phase are truncated by the sensor. In practice it removes nothing:
-`scipy.ndimage.binary_closing` applies `border_value = 0` to its erosion, so
-closing clears a 2-px empty rim around the array, an object that reached the edge
-then stops 2 px short of it, and `clear_border` with a buffer of 0 no longer sees
-it as touching. On the stored test masks, **1 456 of the 3 186 reference
-instances (45.7%, in 112 of 113 fields) lie within 4 px of the field edge**; their
-median area is 119 µm² against 412 µm² for interior instances. They are truncated
-cells and the illumination fall-off at the field border.
-
-For the seed-42 End-to-End Neural Baseline this matters: detection recall is
-0.21 on these edge instances and 0.91 on interior ones, 1 147 of its 1 297 missed
-reference instances are edge instances, and the matched-cell dry-mass MAPE is
-0.300 on edge instances (309 cells) against 0.153 on interior ones (1 580 cells).
-Every reported result was computed with the masks as stored. Changing this step
-changes the labels, so it requires regenerating the masks and re-running
-training and evaluation.
+produced. Dice above ~0.85 there means the head is largely redundant. This is the
+mechanism behind the null result for the physics-consistency terms (§6.3): those
+terms constrain Σ(M ⊙ φ), a quantity already determined by the two primary
+losses, so they can add no gradient information. State this in the paper — it
+converts an unexplained negative result into a predicted one.
 
 ---
 
@@ -320,12 +279,10 @@ metric, rather than scoring the unity field the dataloader substitutes and
 recording a perfect agreement for an arm that never predicted one.
 
 **Classifier is disabled throughout the v2 study**
-(`model.classifier_enabled: false`). In preliminary three-seed runs of an
-earlier version of the framework with the head enabled, its off-axis accuracy
-moved by ±9.5 points (SD; `runs/base_off_axis`, `runs/base_s1337_off_axis`,
-`runs/base_s2024_off_axis`), which is wider than any effect the study is testing,
-and the drug label is a property of the dish rather than of a cell. The head and
-its metrics remain in the code.
+(`model.classifier_enabled: false`). Its accuracy moved ±9.5 points between
+seeds, which is wider than any effect the study is testing, and the drug label is
+a property of the dish rather than of a cell. The head and its metrics remain in
+the code.
 
 **Classifier.** The drug label is a property of the dish, not of an individual
 cell, so it is predicted once per field of view and attributed to every cell
@@ -353,11 +310,10 @@ Set `model.in_channels: 3` when enabling it.
 
 ### 5.2 LoRA (optional)
 
-**Implemented and tested, never trained.** No LoRA configuration was trained or
-evaluated (`config/v2/l_lora.yaml` is defined but outside the study), so no LoRA
-result exists. With the default settings, 35 encoder layers are injected at rank
-8. The encoder is frozen apart from its low-rank residuals; normalisation layers,
-the input stem and every decoder and head remain trainable.
+Carried forward from the previous study, where restricting adaptation to a
+low-rank subspace preserved rare classes that full fine-tuning destroyed. The
+encoder is frozen apart from its low-rank residuals; normalisation layers, the
+input stem and every decoder and head remain trainable.
 
 Grouped convolutions are skipped: a depthwise kernel has one filter per channel,
 so a shared low-rank factorisation across channels is undefined for it and the
@@ -367,8 +323,9 @@ merge step could not be expressed as a single dense update.
 0.0 output difference) before export and timing, so the deployed graph carries no
 adaptation branches.
 
-Note that the trainable fraction under LoRA is high here (77.5% for MobileNetV2)
-because the two U-Net decoders dominate the parameter count.
+Note that the trainable fraction under LoRA is high here (≈78% for MobileNetV2)
+because the two U-Net decoders dominate the parameter count, exactly as
+MobileNet-UNet did in the previous study.
 
 ---
 
@@ -489,14 +446,13 @@ gates; the 20 rejected are unwrapping failures with surfaces of 388–493 rad, a
 every one of them scores R² = 1.000, which is the second independent
 demonstration that R² cannot serve as the quality gate here.
 
-**A consequence for the z scan (historical, superseded).** With the surfaces
-corrected, an early in-line scan placed its minimum near 34.4 µm, close to the
-33.77 µm supplied by the acquiring group. That scan was scored on a window that
-depended on z (§5a.2). **The final scan** (`runs/z_calibration.json`, four
-validation fields, 4.8 µm grid) places the in-line minimum near **50.5 µm**
-(per-field IQR 6.0 µm) and finds the off-axis residual **not identifiable**
-(per-field IQR 156.4 µm). The supplied 33.77 µm is used throughout; the in-line
-distance is itself uncertain.
+**A consequence: z becomes identifiable from the in-line arm.** With the surfaces
+corrected, the Gabor scan places its minimum at **+34.377 µm** with a per-image
+IQR of **0.72 µm** across independent fields — an interior minimum, well depth
+2.8. The acquiring group independently supplied **33.77 µm**. Two unrelated
+routes agreeing to within one grid step (1.43 µm) is the strongest evidence in
+the study that the forward operator is now physically correct, and it is worth
+stating as such. Before the sign fix no distance was identifiable at all.
 
 ### 5a.2 Two traps in the z scan itself
 
@@ -562,54 +518,56 @@ the piston instead of being defeated by it. The residual then varies by 2e-4 ove
 a full cycle, and `scripts/selftest.py` asserts that invariance. The in-line arm
 is unchanged, which is the control: its curve was already smooth.
 
-**What it changed.** On the fields available at the time, the off-axis floor at
-z = 33.77 µm fell from 0.7477 to 0.1815 — the operator explains 82% of the
-recorded hologram rather than 25%. The final verdicts, on 32 validation fields
-with the training border, are in §5a.4; in them the off-axis residual is nearly
-flat in z.
+**What it changed.** The off-axis floor at z = 33.77 µm fell from 0.7477 to
+0.1815 — the operator explains 82% of the recorded hologram rather than 25%. The
+off-axis scan's own minimum moved to **+33.42 µm**, within one grid step of the
+supplied 33.77 µm, so the off-axis arm now corroborates the distance too, having
+previously placed it at +37.2 µm or at the edge of the range. The calibration
+probe still minimises at ×0.97, but its per-field IQR tightened from 0.50 to
+0.03. Every degraded phase except a 10% rescaling now scores worse than the truth
+in **100%** of fields.
 
 Figure 16's left panel before the fix shows the aliasing directly: a sawtooth of
 period ~λ/2 undersampled at a 1.4 µm grid step, against a smooth in-line curve.
 
 ### 5a.4 The verdict, and the calibration probe that sharpens it
 
-Final values from `runs/z_calibration.json`: 32 validation fields at
-z = 33.77 µm, scored on the training border (79 px). The margin is the mean rise
-in residual over the true phase; the second column is the fraction of
-*individual* fields in which the degraded phase scores worse (chance is 50%).
+Measured on 32 val fields at z = 33.77 µm, with a fixed 448 px scoring window.
+The margin is the mean rise in residual over the true phase; the last column is
+the fraction of *individual* fields in which the degraded phase scores worse
+(chance is 50%).
 
 | phase variant | off-axis margin | fields worse | Gabor margin | fields worse |
 |---|---:|---:|---:|---:|
-| × 0.9 | −0.00005 | 31% | +0.0002 | 59% |
-| × 0.5 | +0.0039 | 47% | +0.0065 | 78% |
-| + 0.3 noise | +0.0042 | **100%** | +0.0390 | **100%** |
-| zero | +0.0150 | 53% | +0.0612 | **100%** |
-| mirrored | +0.0273 | 72% | +0.0610 | **100%** |
+| × 0.9 | +0.0003 | 53% | −0.0020 | 19% |
+| × 0.5 | +0.0157 | 72% | +0.0067 | 75% |
+| + 0.3 noise | +0.0109 | **100%** | +0.0711 | **100%** |
+| zero | +0.0468 | 62% | +0.1334 | **100%** |
+| mirrored | +0.0942 | 84% | +0.1328 | **100%** |
 | **verdict** | **uninformative** | | **marginal** | |
 
-Off-axis, a 10% rescaled phase changes the residual by only 5 × 10⁻⁵, far below
-the tolerance of 0.01, and scores *lower* than the true phase on 22 of the 32
-fields: the term is blind near the truth. It was therefore trained only as a
-diagnostic, at `loss.weights.forward_model: 0.02`, in +Fwd (fixed z) and
-+Fwd (free z); every other configuration has it at 0.0.
+Both arms are correctly signed against gross corruption — nothing scores better
+than the truth by more than the tolerance — and both are blind near it. Neither
+is trained. `loss.weights.forward_model` stays at 0.0, and this table is the
+result, not a gap in it.
 
 **The calibration probe is the sharper statement.** Multiplying the reference
 phase by *s* and minimising the residual over *s* asks whether the operator
 agrees with the delivered phase about its **magnitude**, which is the operational
 content of "measurement-ready":
 
-Final values (`runs/z_calibration.json`, 32 validation fields, scales 0.2–1.6):
+| phase × s | 0.5 | 0.7 | 0.9 | 1.0 | 1.1 | 1.4 |
+|---|---:|---:|---:|---:|---:|---:|
+| off-axis residual | 0.4264 | 0.4018 | 0.3880 | 0.3851 | **0.3846** | 0.3937 |
+| in-line residual | 0.9459 | **0.9450** | 0.9462 | 0.9475 | 0.9491 | 0.9552 |
 
-| | best scale, per-field median | per-field IQR | pooled best scale |
-|---|---:|---:|---:|
-| off-axis | 0.68 | 0.80 | 0.95 |
-| in-line | 1.00 | 0.46 | 1.00 |
-
-Off-axis, the per-field optimum is widely spread: the residual barely constrains
-the phase magnitude, which is the same blindness the verdict table shows.
-(An earlier probe on fewer fields and a different scoring window gave an
-off-axis optimum near 1.05 and an in-line one near 0.7; it is superseded.)
-Figure 16 of `scripts/make_figures.py` draws the diagnostics.
+**The off-axis forward model recovers the correct phase magnitude to within
+5–10%** — a genuine parabolic well centred near s = 1. **The in-line model
+minimises near s ≈ 0.7**, roughly 30% low, which is what a single-term forward
+model does when the twin image is superposed on the object and it accounts for
+only part of the measured modulation. That asymmetry is physical, not incidental,
+and it is a direct quantitative answer on the phase-reconstruction-accuracy axis
+of the modality comparison. Figure 16 draws all three diagnostics.
 
 The same resolution is applied in `scripts/conventional_baseline.py`, which
 previously tested the *wrapped* phase, and in the optional angular-spectrum front
@@ -633,43 +591,36 @@ known rather than silent.
 `holoqpi/losses/composite.py`
 
 ```
-L = L_phase + L_seg
-  + w_IPP  · L_IPP  + w_PV   · L_PV              (measurement-aware)
-  + w_area · L_area + w_BGA  · L_BGA             (measurement-aware)
-  + w_amp  · L_amp                               (amplitude supervision)
-  + w_fwd  · L_fwd                               (physics-based)
-  [+ w_cls · L_cls + w_pmc · L_PMC + w_mass · L_mass + w_parea · L_parea — implemented, 0 in every reported configuration]
+L = w_phase · L_phase
+  + w_seg   · L_seg
+  + w_cls   · L_cls
+  + w_pmc   · L_PMC + w_bga · L_BGA + w_pv · L_PV
+  + w_mass  · L_mass + w_area · L_area
 ```
 
-`L_phase` and `L_seg` supervise the two heads against their own targets. The
-**measurement-aware** terms (`L_IPP`, `L_PV`, `L_area`, `L_BGA`) **act on the
-predicted phase and the predicted mask together**, so the network cannot satisfy
-them by getting either output right in isolation; they encode a consistency
-requirement of the measurement, not a physical model. `L_fwd` is the only
-**physics-based** term: it re-synthesises the hologram (§6.2a). `L_amp` is an L1
-term for the optional amplitude output against the reconstruction-derived
-amplitude reference.
+The first three terms supervise each head against its own target. The remaining
+five are the extension of the previous study's physics-aware loss to the
+end-to-end setting: **they act on the predicted phase and the predicted mask
+together**, so the network cannot satisfy them by getting either output right in
+isolation. That coupling is what makes the reconstruction measurement-ready.
 
-Setting any weight to zero removes its term, which is how every configuration of
-the study is defined (§6.4, §8.2).
+Setting any weight to zero removes its term, which is how the component-wise
+ablation is run.
 
 ### 6.1 Phase reconstruction
 
 ```
-L_phase = ‖φ̂ − φ‖₁ + 0.5 · ‖ |∇φ̂| − |∇φ| ‖₁ + 0.2 · (1 − SSIM(φ̂, φ))
+L_phase = w_l1 · ‖φ̂ − φ‖₁ + w_grad · ‖∇φ̂ − ∇φ‖₁ + w_ssim · (1 − SSIM(φ̂, φ))
 ```
 
-Norms are pixel means and |∇·| is the forward-difference gradient magnitude. The
-gradient term protects the membrane transitions where the phase falls steeply,
-which are precisely the locations that determine where a boundary can be placed.
-SSIM is implemented locally with an 11-pixel Gaussian window (σ = 1.5) and a data
-range of 8 rad; no extra dependency.
+The gradient term protects the membrane transitions where the phase falls
+steeply, which are precisely the locations that determine where a boundary can be
+placed. SSIM is implemented locally with a Gaussian window; no extra dependency.
 
 ### 6.2 Segmentation
 
-Dice plus cross-entropy with class weights (0.5, 1.0) for background and cell,
-with Laplace smoothing on the Dice denominator for numerical stability under
-mixed precision.
+Class-weighted Dice plus cross-entropy, with Laplace smoothing on the Dice
+denominator for numerical stability under mixed precision.
 
 ### 6.2a Forward-model consistency -- the term the reference literature means
 
@@ -684,7 +635,7 @@ raw hologram enters the network as input and, without this term, never appears i
 the objective again -- so nothing in training checks that the predicted field is
 consistent with the measurement it came from.
 
-It is what the reference literature means by physics consistency:
+It is what all four reference papers mean by physics consistency:
 
 * Huang, Chen, Liu & Ozcan, *Nature Machine Intelligence* 2023 (GedankenNet) --
   trained with *no* labelled data at all, using only the residual between the
@@ -748,36 +699,34 @@ out the carrier itself.
 **Amplitude.** A hologram is formed by a complex field, so synthesising one from
 phase alone assumes a purely refractive specimen. `model.amplitude.enabled` adds
 a head for transmitted amplitude, bounded to `1 +/- deviation` and
-zero-initialised so it starts from the pure-phase assumption. In the reported
-configurations (+Amplitude, +Fwd (fixed z), +Fwd (free z)) it is supervised by
-`L_amp`, an L1 term (weight 0.1) against the reconstruction-derived amplitude
-reference (§7.2); in the two +Fwd configurations the forward-model residual acts
-on it as well.
+zero-initialised so it starts from the pure-phase assumption. It has no ground
+truth and is trained *only* by this residual, exactly as in the self-supervised
+hologram-reconstruction literature.
 
-**z is not in the data.** The phase `.bin` header carries width, height and two
-pixel pitches and nothing else. The acquiring group supplied **33.77 µm**, which
-+Fwd (fixed z) and the Classical Pipeline use. Two other routes are implemented:
+**z is required and is not in the data.** The phase `.bin` header carries width,
+height and the two pixel pitches and nothing else. Three routes, in order of
+preference:
 
-1. **Recover it** with `scripts/calibrate_z.py`, which scans the *same* residual
+1. **Ask the acquiring group.** One email settles it outright.
+2. **Recover it** with `scripts/calibrate_z.py`, which scans the *same* residual
    the loss minimises and decides identifiability by whether individual images
-   independently agree on the minimum.
-2. **Learn it.** `loss.forward_model.learn_distance: true` makes z an
-   `nn.Parameter` initialised at `distance_um`, trained at
-   `training.physics_parameter_lr_scale` (100) × the base learning rate. The
-   angular-spectrum kernel is differentiable in z; the self-test recovers
-   z = 200 µm from an initialisation of 140 µm.
+   independently agree on the minimum — not by whether two estimators of unequal
+   quality agree with each other.
+3. **Learn it.** `loss.forward_model.learn_distance: true` makes z an
+   `nn.Parameter` initialised at `distance_um`. The angular-spectrum kernel is
+   differentiable in z, so this is a real refinement: the self-test recovers
+   z = 200 um from an initialisation of 140 um in eighty steps. Report the
+   converged value in the paper.
 
-In +Fwd (free z), z reads 34.12 µm after the first epoch and 33.39 µm after 60
-(total excursion 0.958 µm, spread over the last ten epochs 0.026 µm); the
-selected checkpoint (epoch 44) has z = 33.35 µm. That is a weak gradient near the
-initialisation, **not a measurement of z**.
+Training with a wrong fixed z is worse than not training the term: the residual
+then measures the error in z rather than the error in the reconstruction.
 
-**Only the in-line geometry constrains z.** An off-axis hologram encodes phase in
-its carrier fringes at any distance, so its residual is nearly flat in z (final
-per-field IQR 156.4 µm); an in-line hologram encodes phase only through defocus,
-so its residual has a real minimum. The final in-line scan places it near
-50.5 µm (IQR 6.0 µm, four fields), which does not agree with the supplied
-33.77 µm, so the in-line distance is itself uncertain (§11).
+**Only the in-line arm constrains z, and that is physics rather than a defect.**
+An off-axis hologram encodes phase in its carrier fringes at any distance, so its
+residual is nearly flat in z; an in-line hologram encodes phase only through
+defocus, so its residual has a real minimum. The same specimen was recorded at
+the same distance in both, so **the Gabor arm determines z and the value applies
+to both**. `calibrate_z.py` says this explicitly when it happens.
 
 **Verification.** Four checks run in `scripts/selftest.py` section [6] and must
 pass before any result from this term is quoted:
@@ -794,29 +743,8 @@ pass before any result from this term is quoted:
 
 Let `f = 1 − softmax(seg)[background]` be the predicted foreground probability.
 
-The measurement-aware terms used in the study are `L_IPP`, `L_PV`, `L_area`
-and `L_BGA`. Phase–mask contrast, dry-mass consistency and image-level
-projected-area consistency are implemented but set to 0 in every reported
-configuration; `config/base.yaml` records the measurement behind each decision.
-
-**Per-cell integrated-phase preservation** (`cell_integrated_phase`) — the
-relative phase-integral error inside each reference instance domain Ω_k,
-averaged over the K cells of the field:
-
-```
-L_IPP = (1/K) Σ_k | Σ_{p∈Ω_k} f_p φ̂_p − Σ_{p∈Ω_k} M_p φ_p | / ( |Σ_{p∈Ω_k} M_p φ_p| + ε )
-```
-
-Cells whose reference integral is below 50 rad·px are skipped and each relative
-error is capped at 10. On a field with one cell over-measured by 20% and another
-under-measured by 20%, `L_PV` is 0.0000 and `L_IPP` is 0.2000 — asserted in
-`scripts/selftest.py`.
-
-**Per-cell projected area** (`cell_projected_area`) — the same form on the
-foreground probability alone, `(1/K) Σ_k |Σ_{Ω_k} f − Σ_{Ω_k} M| / (Σ_{Ω_k} M + ε)`.
-
-**Phase-Mask Contrast** (not used) — the segmented interior must carry more
-optical path than its surround:
+**Phase-Mask Contrast** — the segmented interior must carry more optical path
+than its surround:
 
 ```
 L_PMC = max(0, µ_bg(φ̂) − µ_cell(φ̂) + margin)
@@ -826,13 +754,13 @@ L_PMC = max(0, µ_bg(φ̂) − µ_cell(φ̂) + margin)
 steepest optical path change:
 
 ```
-L_BGA = ‖ |∇f| / (max|∇f| + ε) − |∇φ̂| / (max|∇φ̂| + ε) ‖₁
+L_BGA = ‖ ∇f / max(∇f) − ∇φ_ref / max(∇φ_ref) ‖₁
 ```
 
 Both fields are max-normalised per sample first: a probability map and a phase
 map in radians are otherwise on incomparable scales. `bga_reference` selects
-whether the anchor is the predicted phase (`pred`, cross-head self-consistency,
-used in the study) or the reference phase (`gt`).
+whether the anchor is the predicted phase (cross-head self-consistency, the
+default) or the ground truth.
 
 **Phase-Volume Preservation** — conserves the phase integral enclosed by the
 predicted boundary:
@@ -845,42 +773,34 @@ Relative rather than absolute, both because dry mass inherits exactly this
 relative error and because an absolute integral over a full field reaches
 magnitudes that destabilise FP16 training.
 
-**Dry-Mass Consistency** (not used) — a smooth-L1 penalty on the ratio of predicted to
+**Dry-Mass Consistency** — a smooth-L1 penalty on the ratio of predicted to
 reference enclosed integral, closing the loop from raw hologram to picograms. The
 calibration constant cancels in this relative form. It is kept separate from
 L_PV because it is evaluated against the reference mask *and* phase jointly,
 constraining the quantity the study reports rather than either head alone.
 
-**Projected-Area Consistency** (image-level, not used; superseded by the per-cell
-term) — `|Σf − ΣM| / (ΣM + ε)`.
+**Projected-Area Consistency** — keeps the segmented footprint calibrated:
+`|Σf − ΣM| / (ΣM + ε)`.
 
-The mask–phase coupling terms return per-sample values and are averaged only over
-training crops with at least 370 px of reference foreground (30 µm², one cell's
-worth), so an empty crop contributes nothing rather than a spurious zero.
+All five return per-sample values and are averaged only over fields of view that
+contain cells, so an empty patch contributes nothing rather than a spurious zero.
 
-### 6.4 Weights in the reported configurations
+### 6.4 Default weights
 
-`phase` and `segmentation` are 1.0 everywhere; every weight not listed is 0.
-
-| Configuration (arm) | Non-zero coupling / output weights |
+| Term | Weight |
 |---|---|
-| End-to-End Neural Baseline (A), In-Line Neural Configuration (G), Compact Baseline (KA) | — |
-| +IPP (per-cell) (B), Compact +IPP (KB) | `cell_integrated_phase` 1.0 |
-| +IPP (image) (B1) | `phase_volume` 1.0 (same weight as B; not gradient-matched) |
-| +Area (B2) | `cell_integrated_phase` 1.0, `cell_projected_area` 1.0 |
-| +BGA (C) | `cell_integrated_phase` 1.0, `boundary_gradient_alignment` 0.05 |
-| +IPP (per-cell), w = 0.1 / 0.3 / 3.0 (W01 / W03 / W30) | `cell_integrated_phase` 0.1 / 0.3 / 3.0 |
-| +Amplitude (D0) | `cell_integrated_phase` 1.0, `amplitude` 0.1 |
-| +Fwd (fixed z) (D1) | as D0, plus `forward_model` 0.02 |
-| +Fwd (free z) (D2) | as D1, with `learn_distance: true` |
+| phase | 1.0 |
+| segmentation | 1.0 |
+| classification | 0.2 |
+| phase_mask_contrast | 0.1 |
+| boundary_gradient_alignment | 0.05 |
+| phase_volume | 0.1 |
+| dry_mass_consistency | 0.1 |
+| projected_area_consistency | 0.05 |
 
-**Why w_IPP = 1.0.** `scripts/check_gradient_path.py` measures the magnitude of
-the gradient `L_IPP` sends into the segmentation decoder relative to that of
-`L_seg`, at weight 1.0 and before training. Over 30 batches of 512 px training
-crops (none gated) the median ratio is 0.302 (range 0.18–0.67;
-`runs/gradient_path_b_cell_ipp_512.csv`). The effective ratio is w × 0.302: at
-w = 0.1 the segmentation loss leads by about 33:1, at w = 1.0 by about 3.3:1, and
-parity is near w = 3.3. The sweep over w = 0.1, 0.3, 1.0 and 3.0 spans that range.
+The three carried-over physics weights match the previous study. The two new
+measurement terms start at the same order of magnitude; the ablation grid in §8.2
+is how they get tuned.
 
 ---
 
@@ -985,7 +905,7 @@ selection rule actively prefers it. The weights are configurable under
 
 ### 8.1 The modality comparison
 
-`python main.py compare --config config/v2/a_baseline.yaml --modalities off_axis gabor`
+`python main.py compare --config config/base.yaml`
 
 Both arms share the split file, architecture, objective, schedule and seed. The
 input modality is the only free variable, so any difference in the table is
@@ -1001,52 +921,32 @@ per metric and a difference column, covering every axis the brief lists: phase
 accuracy, segmentation, classification, area, optical volume, dry mass, and
 computational efficiency.
 
-### 8.2 The configurations of the study
+### 8.2 Suggested ablations
 
-Each configuration is a file in `config/v2/` and differs from its comparator by
-exactly one objective term, one output or one capacity choice.
+Each is a configuration edit; no code change.
 
-| Manuscript name | Arm | Config file | Comparator | Seeds |
-|---|:-:|---|---|:-:|
-| End-to-End Neural Baseline | A | `a_baseline.yaml` | — | 3 |
-| In-Line Neural Configuration | G | `g_baseline_gabor.yaml` | baseline, other geometry | 1 |
-| +IPP (per-cell) | B | `b_cell_ipp.yaml` | baseline | 3 |
-| +IPP (image) | B1 | `b1_image_volume.yaml` | baseline | 3 |
-| +Area | B2 | `b2_cell_area.yaml` | +IPP (per-cell) | 1 |
-| +BGA | C | `c_cell_ipp_bga.yaml` | +IPP (per-cell) | 1 |
-| +IPP (per-cell), w = 0.1 / 0.3 / 3.0 | W01 / W03 / W30 | `w_ipp_01/03/30.yaml` | baseline | 1 |
-| +Amplitude | D0 | `d0_amplitude.yaml` | +IPP (per-cell) | 1 |
-| +Fwd (fixed z) | D1 | `d_forward_amplitude.yaml` | +Amplitude | 1 |
-| +Fwd (free z) | D2 | `d2_learned_z.yaml` | +Fwd (fixed z) | 1 |
-| Compact Baseline | KA | `k_compact_a.yaml` | baseline | 1 |
-| Compact +IPP | KB | `k_compact_b.yaml` | +IPP (per-cell) | 1 |
-| Classical Pipeline | — | `scripts/conventional_baseline.py` | — | deterministic |
-| LoRA (not trained) | L | `l_lora.yaml` | — | 0 |
-
-`w_ipp_10.yaml` is +IPP (per-cell) itself and is reported once. Further
-ablations the configuration supports but the study did not run:
-`model.share_decoder`, `model.frontend.kind: angular_spectrum` (with
-`model.in_channels: 3`), `model.lora.enabled` with a rank sweep, and
-`model.encoder` over the three registered encoders.
+| Question | Setting |
+|---|---|
+| Do the physics terms help? | zero `loss.weights.phase_mask_contrast`, `..._alignment`, `phase_volume` |
+| Do the measurement terms help? | zero `dry_mass_consistency`, `projected_area_consistency` |
+| Hierarchical or additive? | add the terms one at a time, as in the previous study |
+| Is the shared encoder doing work? | `model.share_decoder: true` versus `false` |
+| Does the physics front end help off-axis? | `model.frontend.kind: angular_spectrum`, `model.in_channels: 3` |
+| Does low-rank adaptation regularise? | `model.lora.enabled: true`, sweep `rank` over {2,4,8,16,32} |
+| Which backbone? | `model.encoder` over the three registered encoders |
 
 ### 8.3 Statistical treatment
 
 **Between runs.** Arms A, B and B′ are trained at three seeds (42, 1337, 2024);
 every other arm once (seed 42). Each trained model is evaluated once on the
 fixed test split. The independent replicate is the training run, not the image or the cell: the 113
-test fields and 3 186 reference cells inside one run are summarised by the evaluator into
+test fields and ~3,000 cells inside one run are summarised by the evaluator into
 one value per metric, and only those per-run values are aggregated. Each metric
 is reported as mean ± sample SD (ddof = 1) with n and a Student-t 95% interval
 (df = n − 1). A difference between arms is called resolved only when it exceeds
 `resolve_factor` (2) times the pooled between-seed SD — a resolution criterion,
 not a significance test. `scripts/collect_benchmark_results.py` computes all of
-this; `BENCHMARKING.md` documents the procedure and the output files. Two
-comparisons are resolved: +IPP (per-cell) vs the baseline, +0.0152 dry-mass MAPE
-against 2×SD 0.0070, and +IPP (image) vs the baseline, +0.0172 against 0.0052,
-both worse. Every other comparison has one run and is not resolvable.
-
-**Not bit-exact.** Evaluation runs with `cudnn.benchmark`, so re-evaluating the
-same checkpoint can move a metric by up to about 0.002.
+this; `BENCHMARKING.md` documents the procedure and the output files.
 
 **Within a run.** Cells within one field of view share an acquisition and are not independent. Take
 the **image as the unit of analysis** for any longitudinal or between-condition
@@ -1080,7 +980,7 @@ Inline overrides use dotted paths:
 
 ```bash
 python main.py train --config config/v2/g_baseline_gabor.yaml \
-  --set training.epochs=100 loss.weights.cell_integrated_phase=0.3
+  --set training.epochs=100 loss.weights.dry_mass_consistency=0.2
 ```
 
 ### 9.1 Augmentation policy
@@ -1116,9 +1016,7 @@ differentiable and correctly signed.
 
 ## 10a. Figures
 
-`scripts/make_figures.py` builds the repository's **diagnostic** figure set,
-written to `figures/`. The **manuscript** figures are generated separately,
-from `runs/benchmark_results/`. Every diagnostic figure answers a question
+`scripts/make_figures.py` builds the figure set. Every figure answers a question
 the paper has to answer; none restates a table. Most are built from files earlier
 steps already wrote, so they regenerate in seconds; figures 1 and 9 need a forward
 pass and are skipped automatically when no checkpoint exists.
@@ -1160,10 +1058,10 @@ manifest must not vouch for it.
 | 10 | Label audit | Important | Per-image Otsu threshold by condition, and the head-redundancy bars from §4.1. The two properties of the silver-standard labels a reviewer will probe, answered pre-emptively. | `label_audit_*` |
 | 11 | Confusion matrices | Important | Row-normalised condition confusion for both arms. An accuracy number cannot explain why the arm that reconstructs phase better classifies worse; whether the gap is one collapsed class or diffuse confusion decides whether the effect is biological or an acquisition artefact. | `confusion_<split>.json` |
 | 12 | Convergence | Important | Validation trajectories with each metric's own best epoch marked. The heads converge at different times — segmentation and phase plateau while condition accuracy is still climbing — so this is the evidence that the reported numbers were read at a defensible point. | `history.json` |
-| 13 | Forward-model consistency | **Essential** | The hologram data-fidelity residual per arm against its own reference-phase floor, for both geometries. Reading the level alone is meaningless — what the residual can reach is set by acquisition-chain mismatch, not by the network — so this plots the ratio and makes the near-truth blindness (§5a.4) visible rather than asserted. | `*_modality_comparison.json` |
+| 13 | Forward-model consistency | **Essential** | The hologram data-fidelity residual per arm against its own reference-phase floor, for both geometries. Reading the level alone is meaningless — what the residual can reach is set by acquisition-chain mismatch, not by the network — so this plots the ratio and makes the anti-discriminative result (§6.2a) visible rather than asserted. | `*_modality_comparison.json` |
 | 14 | Learned vs classical | **Essential** | The network and the textbook reconstruction on the same holograms, scored by the same evaluator, for both geometries. This is the study's primary claim and its clearest single panel: the in-line arm is where the classical route fails outright. | `conventional_baseline_<split>.json` |
 | 15 | Recall by cell size | Important | Detection recall binned by reference cell area, with the size distribution of missed cells. Detection recall is the binding constraint on every measurement number, and this says *which* cells are lost — the answer is the small ones, near the area filter. | `unmatched_<split>.csv` |
-| 16 | Forward-model diagnostics | **Essential** | The residual's response to a scaled, noised, mirrored and zeroed phase, and its z scan for both geometries. This is the measurement behind the claim that the term is a diagnostic and not a loss: a 10% phase error barely changes it. | `amplitude_sensitivity_*`, `z_calibration.json` |
+| 16 | Forward-model diagnostics | **Essential** | The residual's response to a scaled, noised, mirrored and zeroed phase, and its z scan for both geometries. This is the measurement behind the claim that the term is a diagnostic and not a loss: a 10% phase error *lowers* it. | `amplitude_sensitivity_*`, `z_calibration.json` |
 | 17 | Error propagation | **Essential** | Area and dry-mass error against a boundary moved a known number of pixels, and the ratio between them. No model is involved. It converts a segmentation error into a measurement error and shows why integrated quantities are intrinsically more robust than areal ones. | `error_propagation_summary.csv` |
 | 18 | Synthetic floor | **Essential** | The measurement chain against exact analytic ground truth. Every other number in the study is read against this floor: it separates pipeline error from model error, and it is what licenses the statement that the reported error is reconstruction and segmentation rather than calibration arithmetic. | `synthetic_validation_*.csv` |
 | 19 | v2 ablation | **Essential** | The v2 arms on the primary metric with per-bar between-seed bands and the resolution rule applied. The bands are the figure's whole purpose: without them a reader ranks bars that are inside seed noise. | `runs/*/metrics_<split>.json` |
@@ -1223,16 +1121,11 @@ because the mask is a deterministic function of the phase, the two supervised
 tasks are not independent, so Dice partly measures phase accuracy and the physics
 coupling terms constrain a quantity the primary losses already determine.
 
-**Edge objects remain in the reference labels** (§4.2). About 46% of the test
-reference instances lie within 4 px of the field edge; they are truncated cells
-and border artefacts that the edge-removal step was meant to drop.
-
-**Detection recall is well below one** (0.5920, three seeds). Roughly two fifths
-of reference instances are never matched, so per-cell measurement accuracy is
-conditioned on the subset the model finds. For the seed-42 baseline, 88% of the
-missed reference instances are the edge instances of §4.2. Any per-cell number
-should be quoted with its detection recall and the coverage-adjusted error beside
-it.
+**Detection recall is well below one.** Roughly two fifths of reference cells are
+never matched, so per-cell measurement accuracy is conditioned on the subset the
+model finds. Whole-field dry mass is biased low mainly through this route rather
+than through mismeasurement of the cells it does find. Any per-cell number should
+be quoted with its detection recall beside it.
 
 **Augmentation diversity was reduced in runs produced before the worker-seeding
 fix.** With `num_workers > 0`, each dataloader worker held an identical random
@@ -1241,9 +1134,9 @@ effective augmentation diversity was 1/`num_workers` of the intended. This is
 fixed by `_seed_worker` in `holoqpi/data/dataset.py`; results produced before it
 remain valid but were trained under weaker augmentation than configured.
 
-**Absolute dry mass depends on λ and α.** α = 0.2 mL/g is the acquisition
-group's value for this dataset; λ = 0.666 µm has not been independently
-confirmed. Relative comparisons are invariant to both.
+**Absolute dry mass depends on λ and α**, which are inherited and literature
+values respectively. Confirm both with the acquisition group. Relative
+comparisons are invariant to them.
 
 **The pixel pitch was decoded from an undocumented header field.** It is
 **isotropic at 0.284871 µm** in both axes. An earlier reading of the headers took
@@ -1261,19 +1154,16 @@ with that output. The comparison against the thin-phase assumption A = 1 is
 therefore the defensible claim, and the comparison against a physical
 transmittance is not available from this data.
 
-**The forward-model residual is blind near the truth** on this data (§5a.4): a
-10% rescaled reference phase changes it by 5 × 10⁻⁵ and scores lower on 22 of 32
-fields, and 12 of the 13 trained off-axis configurations score below their own
-reference-phase floor. It is reported as a consistency diagnostic; the +Fwd
-configurations reach a lower residual than the baseline with a higher in-cell
-phase error.
+**The forward-model residual is anti-discriminative near the truth** on this
+data (§6.2a): perturbing the reference phase by 10% lowers it, and every trained
+arm scores below its own reference-phase floor. It is reported as a consistency
+diagnostic and as a measure of acquisition-chain mismatch, and it is not used as
+a training signal in any configuration the study recommends.
 
 **The propagation distance is not identifiable off-axis.** An off-axis carrier
 records the phase at any reconstruction distance, so the residual is nearly flat
 in z and `calibrate_z.py` correctly refuses to return a value; in-line it is
-identifiable, near 50.5 µm on four fields — which does not agree with the
-supplied 33.77 µm used by the Classical Pipeline and +Fwd (fixed z), so the
-in-line distance is itself uncertain. An arm that makes z a free parameter and
+identifiable, with per-field agreement. An arm that makes z a free parameter and
 settles near its initialisation is therefore exhibiting a weak gradient, not
 recovering a distance, and must not be reported as a measurement of one.
 

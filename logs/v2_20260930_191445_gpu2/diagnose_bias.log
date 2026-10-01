@@ -1,0 +1,19 @@
+19:14:49 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+19:14:49 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+19:14:49 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True weights=local (weights) stages=[16, 24, 32, 96, 1280]
+19:14:49 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.60M parameters, 9.60M trainable (100.0%)
+19:14:51 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 440/440 tensors matched
+19:14:51 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+
+=== off_axis  (113 images) ===
+  mass ratio  pred/ref        +0.8323   (-16.8% mass error)
+    from the DOMAIN (boundary) +0.8985   (-10.1%)
+    from the PHASE  (recon)    +0.9263   (-7.4%)
+    domain x phase             +0.8323   (equals the mass ratio by construction)
+  median mass ratio            +0.8321   (outlier-resistant cross-check)
+  predicted / reference area   +0.8895   (-11.0% area error)
+  phase bias inside cells      -0.1939 rad
+  phase bias in background     +0.0258 rad
+
+  -> both contribute comparably; neither head alone explains the error.
+  per-image detail -> runs/v2_baseline_off_axis/bias_diagnosis_test.csv

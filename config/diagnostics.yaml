@@ -1,0 +1,99 @@
+# -----------------------------------------------------------------------------
+# Parameters for two analysis-only scripts:
+#   scripts/decompose_mass_error.py   boundary/phase split of the dry-mass error
+#   scripts/register_holograms.py     off-axis <-> Gabor registration check
+#
+# Nothing here is read by training, evaluation or the benchmark collector, so
+# adding this file changes no reported number and no provenance fingerprint.
+# Paths, optics, mask and measurement settings still come from config/base.yaml
+# (and, for each trained run, from that run's own resolved_config.yaml).
+# -----------------------------------------------------------------------------
+
+output_dir: diagnostics                 # written under paths.output_root (runs/)
+
+decomposition:
+  split: test
+  # label -> run directory under paths.output_root. Each directory must hold
+  # best_model.pt and resolved_config.yaml; the model is rebuilt from the
+  # latter, so every run is scored with the settings it was trained with.
+  runs:
+    A_s42:     v2_baseline_off_axis
+    A_s1337:   v2_A_seed1337_off_axis
+    A_s2024:   v2_A_seed2024_off_axis
+    B_s42:     v2_cell_ipp_off_axis
+    B_s1337:   v2_B_seed1337_off_axis
+    B_s2024:   v2_B_seed2024_off_axis
+    B1_s42:    v2_image_volume_off_axis
+    B1_s1337:  v2_B1_seed1337_off_axis
+    B1_s2024:  v2_B1_seed2024_off_axis
+  # A reference cell is an EDGE cell when any of its pixels lies within this
+  # many pixels of the field border (the 2026-09-26 audit used 4 px).
+  edge_margin_px: 4
+  # Also decompose the classical off-axis pipeline. No classical predictions
+  # are stored, so it is recomputed with scripts/conventional_baseline.py's own
+  # predictor at the settings in config/base.yaml (the same call run_v2.sh makes).
+  include_classical: true
+
+registration:
+  # Each variant is run on every field, matched and control. "lowpass" is the
+  # requested recipe (Gaussian sigma 5 only). On the 14 fields tested locally it
+  # does not work: the slow illumination envelope dominates the correlation,
+  # matched and control pairs give the same ~220 px shift and r ~ -0.66.
+  # "bandpass" also subtracts a sigma-50 background and applies a Hann window;
+  # there matched pairs registered within ~0.5 px (r ~ 0.8) and controls did not
+  # (r ~ 0.08). Both are reported so the choice is visible.
+  variants:
+    - name: lowpass
+      lowpass_sigma_px: 5.0
+      background_sigma_px: null         # null = no background subtraction
+      window: none                      # none | hann
+    - name: bandpass
+      lowpass_sigma_px: 5.0
+      background_sigma_px: 50.0
+      window: hann
+  upsample_factor: 10                   # skimage phase_cross_correlation sub-pixel factor
+  # None = plain cross-correlation of the low-passed images. 'phase' would
+  # whiten the spectrum again and undo the low-pass.
+  normalization: null
+  control_seed: 0                       # seed of the random derangement for the unmatched control
+  # Shift between the classical off-axis reconstruction and the reference phase,
+  # on this split, with the hologram cropped exactly as in evaluation.
+  classical_phase_split: test
+
+# Used by scripts/measure_crop_offset.py.
+crop_offset:
+  upsample_factor: 10                   # phase_cross_correlation sub-pixel factor
+  normalization: null                   # plain cross-correlation of the two phase maps
+  # Aligned when both median residuals are within this. The crop can only move
+  # by whole pixels, so a true offset of x.5 px leaves a residual of 0.5 px.
+  tolerance_px: 0.5
+
+# Used by scripts/summarise_common_fields.py: every configuration scored on the
+# SAME fields -- the 107 test fields whose Gabor frame is correctly paired -- so
+# the off-axis / in-line and learned / classical comparisons share one test set.
+# Each entry: label -> metrics file under paths.output_root.
+common_fields:
+  output: common_fields/common_fields_summary.csv
+  entries:
+    A_s42:              v2_baseline_off_axis/metrics_test_common.json
+    A_s1337:            v2_A_seed1337_off_axis/metrics_test_common.json
+    A_s2024:            v2_A_seed2024_off_axis/metrics_test_common.json
+    G_s42:              v2_baseline_gabor/metrics_test_common.json
+    classical_off_axis: common_fields/conventional_off_axis/metrics_test.json
+    classical_gabor:    common_fields/conventional_gabor/metrics_test.json
+  metrics:
+    - phase_n_images
+    - cells_reference
+    - phase_mae_rad
+    - phase_mae_rad_in_cell
+    - phase_pearson_r
+    - phase_ssim
+    - seg_dice
+    - seg_aji
+    - seg_boundary_f1
+    - detection_recall
+    - detection_precision
+    - detection_f1
+    - area_mape
+    - dry_mass_mape
+    - dry_mass_field_total_mape

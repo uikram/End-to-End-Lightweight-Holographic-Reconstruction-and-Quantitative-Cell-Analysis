@@ -1,0 +1,233 @@
+\begin{thebibliography}{10}
+
+\bibitem{barer1952}
+R.~Barer.
+\newblock Interference microscopy and mass determination.
+\newblock {\em Nature}, 169:366--367, 1952.
+
+\bibitem{zangle2014}
+T.~A. Zangle and M.~A. Teitell.
+\newblock Live-cell mass profiling: an emerging approach in quantitative
+  biophysics.
+\newblock {\em Nature Methods}, 11(12):1221--1228, 2014.
+
+\bibitem{lee2013qpi}
+KyeoReh Lee, Kyoohyun Kim, Jaehwang Jung, JiHan Heo, Sangyeon Cho, Sangyun Lee,
+  Gyuyoung Chang, YoungJu Jo, Hyunjoo Park, and YongKeun Park.
+\newblock Quantitative phase imaging techniques for the study of cell
+  pathophysiology: from principles to applications.
+\newblock {\em Sensors}, 13:4170--4191, 2013.
+
+\bibitem{zhao2023vynet}
+Jiaxi Zhao, Lin Liu, Tianhe Wang, Jing Zhang, Xiangzhou Wang, Xiaohui Du,
+  Ruqian Hao, Juanxiu Liu, Yi~Liu, and Yong Liu.
+\newblock Quantitative phase imaging of living red blood cells combining
+  digital holographic microscopy and deep learning.
+\newblock {\em Journal of Biophotonics}, 16(10):e202300090, 2023.
+
+\bibitem{wen2025rbf}
+Yongan Wen, Yunqi Song, Zixuan Han, Rongke Gao, Feifei Wang, Xiaozhe Chen,
+  Liandong Yu, and Yang Lu.
+\newblock Enhanced phase compensation in digital holographic microscopic
+  imaging flow cytometry using radial basis function neural networks.
+\newblock {\em Optics \& Laser Technology}, 191:113312, 2025.
+
+\bibitem{bai2026macrophage}
+Baodan Bai, Yanwei Lu, Geng Zhu, Feiyu Liu, Yubo Liu, Wen Wu, Dezhi Lu, and
+  Xiupin Wu.
+\newblock Macrophage volume analysis and real-time monitoring by digital
+  holography.
+\newblock {\em Journal of Biomedical Optics}, 31(6):066002, 2026.
+
+\bibitem{moon2026aidhm}
+Inkyu Moon and Bahram Javidi.
+\newblock {AI}-driven digital holographic microscopy for label-free
+  quantitative cellular analysis: toward low-cost and field-deployable
+  platforms.
+\newblock {\em Biomedical Optics Express}, 17(5):2349--2371, 2026.
+
+\bibitem{di2021phasenet}
+Jianglei Di, Ji~Wu, Kaiqiang Wang, Ju~Tang, Ying Li, and Jianlin Zhao.
+\newblock Quantitative phase imaging using deep learning-based holographic
+  microscope.
+\newblock {\em Frontiers in Physics}, 9:651313, 2021.
+
+\bibitem{jaferzadeh2022holophasenet}
+Keyvan Jaferzadeh and Thomas Fevens.
+\newblock {HoloPhaseNet}: fully automated deep-learning-based hologram
+  reconstruction using a conditional generative adversarial model.
+\newblock {\em Biomedical Optics Express}, 13(7):4032--4046, 2022.
+
+\bibitem{delikoyun2025rthad}
+Kerem Delikoyun, Qianyu Chen, Wei Liu, Si~Ko Myo, Johannes Krell, Martin
+  Schlegel, Win~Sen Kuan, John Tshon~Yit Soong, Gerhard Schneider, Clarissa
+  {Prazeres da Costa}, Percy~A. Knolle, Laurent Renia, Matthew~Edward Cove,
+  Hwee~Kuan Lee, Klaus Diepold, and Oliver Hayden.
+\newblock Real-time deep learning phase imaging flow cytometer reveals blood
+  cell aggregate biomarkers for haematology diagnostics, 2025.
+\newblock arXiv:2508.09215v1 (preprint).
+
+\bibitem{trujillo2019automatic}
+Carlos Trujillo and Jorge Garcia-Sucerquia.
+\newblock Automatic detection and counting of phase objects in raw holograms of
+  digital holographic microscopy via deep learning.
+\newblock {\em Optics and Lasers in Engineering}, 120:13--20, 2019.
+
+\bibitem{wen2026direct}
+Yongan Wen, Zihao Wang, Yunqi Song, Rongke Gao, Feifei Wang, Liandong Yu, and
+  Yang Lu.
+\newblock Direct label-free classification of prostate cancer cells from
+  holographic microscopic imaging flow cytometry.
+\newblock {\em Optics and Lasers in Engineering}, 206:110053, 2026.
+
+\bibitem{park2026ai}
+Seonghwan Park, Jaeseong Lee, Jaewoo Park, and Inkyu Moon.
+\newblock Ai-driven dual-mode phase and label-free fluorescence imaging
+  platform using a single-shot gabor hologram.
+\newblock {\em Microsystems \& Nanoengineering}, 12(1):311, 2026.
+
+\bibitem{balasubramani2021roadmap}
+Vinoth Balasubramani, Ma{\l}gorzata Kujawi{\'n}ska, C{\'e}dric Allier,
+  Vijayakumar Anand, Chau-Jern Cheng, Christian Depeursinge, Nathaniel Hai,
+  Saulius Juodkazis, Jeroen Kalkman, Arkadiusz Ku{\'s}, Moosung Lee, Pierre~J.
+  Magistretti, Pierre Marquet, Soon~Hock Ng, Joseph Rosen, Yong~Keun Park, and
+  Micha{\l} Ziemczonok.
+\newblock Roadmap on digital holography-based quantitative phase imaging.
+\newblock {\em Journal of Imaging}, 7:252, 2021.
+
+\bibitem{shen2022laf}
+Qian Shen, Zhuoshi Li, Jiasong Sun, Yao Fan, Yuanyuan Chen, Haojie Gu, Peng
+  Gao, Qian Chen, and Chao Zuo.
+\newblock Live-cell analysis framework for quantitative phase imaging with
+  slightly off-axis digital holographic microscopy.
+\newblock {\em Frontiers in Photonics}, 3:1083139, 2022.
+
+\bibitem{kyeremah2025malaria}
+Charlotte Kyeremah, Aditya~S. Paul, Daniel Haehn, Manoj~T. Duraisingh, and
+  Chandra~S. Yelleswarapu.
+\newblock Phase-driven classification for improved detection of
+  malaria-infected red blood cells in digital holographic microscopy, 2025.
+\newblock Preprint, posted 17 April 2025, doi:10.21203/rs.3.rs-6246651/v1.
+
+\bibitem{li2025dlcspf}
+Zhuoshi Li, Haojie Gu, Linpeng Lu, Qian Shen, Jiasong Sun, Qian Chen, and Chao
+  Zuo.
+\newblock {DL-CSPF}: deep-learning-based cell segmentation with a physical
+  framework for digital holographic microscopy.
+\newblock {\em Applied Optics}, 64(7):B20--B30, 2025.
+
+\bibitem{park2025holofluonet}
+Seonghwan Park, Jaeseong Lee, Jaewoo Park, and Inkyu Moon.
+\newblock {HoloFluoNet}: live cell imaging intelligence based on fused
+  holography and fluorescence for virtual staining, cell segmentation,
+  classification, and viability analysis.
+\newblock {\em Engineering Applications of Artificial Intelligence},
+  161:112323, 2025.
+
+\bibitem{bachimanchi2022microplankton}
+Harshith Bachimanchi, Benjamin Midtvedt, Daniel Midtvedt, Erik Selander, and
+  Giovanni Volpe.
+\newblock Microplankton life histories revealed by holographic microscopy and
+  deep learning.
+\newblock {\em eLife}, 11:e79760, 2022.
+
+\bibitem{sandler2018mobilenetv2}
+Mark Sandler, Andrew Howard, Menglong Zhu, Andrey Zhmoginov, and Liang-Chieh
+  Chen.
+\newblock {MobileNetV2}: inverted residuals and linear bottlenecks, 2019.
+\newblock arXiv:1801.04381v4.
+
+\bibitem{ronneberger2015unet}
+Olaf Ronneberger, Philipp Fischer, and Thomas Brox.
+\newblock {U-Net}: convolutional networks for biomedical image segmentation,
+  2015.
+\newblock arXiv:1505.04597v1.
+
+\bibitem{park2021unwrapgan}
+Seonghwan Park, Youhyun Kim, and Inkyu Moon.
+\newblock Automated phase unwrapping in digital holography with deep learning.
+\newblock {\em Biomedical Optics Express}, 12(11):7064--7081, 2021.
+
+\bibitem{park2026simple}
+Seonghwan Park, Jaewoo Park, Youhyun Kim, Inkyu Moon, and Bahram Javidi.
+\newblock Simple and practical single-shot digital holography based on
+  unsupervised diffusion model.
+\newblock {\em Engineering Applications of Artificial Intelligence},
+  163:112970, 2026.
+
+\bibitem{svistunov2026holocel}
+Andrey~S. Svistunov, Anna~V. Shifrina, Dmitry~A. Rymov, Alexander~V. Kozlov,
+  Pavel~A. Cheremkhin, Rostislav~S. Starikov, and Nikolay~N. Evtikhiev.
+\newblock {HoloCel}: procedural generation of biological cell holograms.
+\newblock {\em Technologies}, 14:469, 2026.
+
+\bibitem{ongie2020deep}
+Gregory Ongie, Ajil Jalal, Christopher~A. Metzler, Richard~G. Baraniuk,
+  Alexandros~G. Dimakis, and Rebecca Willett.
+\newblock Deep learning techniques for inverse problems in imaging.
+\newblock {\em IEEE Journal on Selected Areas in Information Theory},
+  1(1):39--56, 2020.
+
+\bibitem{wang2020physennet}
+Fei Wang, Yaoming Bian, Haichao Wang, Meng Lyu, Giancarlo Pedrini, Wolfgang
+  Osten, George Barbastathis, and Guohai Situ.
+\newblock Phase imaging with an untrained neural network.
+\newblock {\em Light: Science \& Applications}, 9:77, 2020.
+
+\bibitem{huang2023gedankennet}
+Luzhe Huang, Hanlong Chen, Tairan Liu, and Aydogan Ozcan.
+\newblock Self-supervised learning of hologram reconstruction using physics
+  consistency.
+\newblock {\em Nature Machine Intelligence}, 5:895--907, 2023.
+
+\bibitem{galande2024hdphysnet}
+Ashwini~S. Galande, Vikas Thapa, Aswathy Vijay, and Renu John.
+\newblock High-resolution lensless holographic microscopy using a physics-aware
+  deep network.
+\newblock {\em Journal of Biomedical Optics}, 29(10):106502, 2024.
+
+\bibitem{llaguno2025dhm}
+Juan~M. Llaguno, Remi Liaigre, Miguel Arocena, Federico Lecumberry, and Julia
+  Alonso.
+\newblock Label-free analysis of epithelial cells using a custom-built digital
+  holographic microscope and convolutional neural networks.
+\newblock In {\em Frontiers in Optics + Laser Science (FiO + LS)}. Optica
+  Publishing Group, 2025.
+\newblock Paper JD1A.1.
+
+\bibitem{numata2024rbcsam}
+Riki Numata, Hyun-Woo Kim, Myungjin Cho, and Min-Chul Lee.
+\newblock A study on automatic segmentation of red blood cells in digital
+  holographic microscopy.
+\newblock In {\em 2024 International Technical Conference on Circuits/Systems,
+  Computers, and Communications (ITC-CSCC)}. IEEE, 2024.
+
+\bibitem{zhao2011}
+H.~Zhao, P.~H. Brown, and P.~Schuck.
+\newblock On the distribution of protein refractive index increments.
+\newblock {\em Biophysical Journal}, 100(9):2309--2317, 2011.
+
+\bibitem{chaumet2024}
+P.~C. Chaumet, P.~Bon, G.~Maire, A.~Sentenac, and G.~Baffou.
+\newblock Quantitative phase microscopies: accuracy comparison.
+\newblock {\em Light: Science \& Applications}, 13, 2024.
+
+\bibitem{lucas2018using}
+Alice Lucas, Michael Iliadis, Rafael Molina, and Aggelos~K. Katsaggelos.
+\newblock Using deep neural networks for inverse problems in imaging: beyond
+  analytical methods.
+\newblock {\em IEEE Signal Processing Magazine}, January 2018.
+
+\bibitem{cuche1999}
+Etienne Cuche, Pierre Marquet, and Christian Depeursinge.
+\newblock Simultaneous amplitude-contrast and quantitative phase-contrast
+  microscopy by numerical reconstruction of {F}resnel off-axis holograms.
+\newblock {\em Applied Optics}, 38(34):6994--7001, 1999.
+
+\bibitem{blandaltman1986}
+J.~M. Bland and D.~G. Altman.
+\newblock Statistical methods for assessing agreement between two methods of
+  clinical measurement.
+\newblock {\em The Lancet}, 327(8476):307--310, 1986.
+
+\end{thebibliography}

@@ -1,0 +1,22 @@
+[
+  {
+    "modality": "off_axis",
+    "split": "test",
+    "experiment": "v2_baseline",
+    "labels_read_from": "mask",
+    "images": 113,
+    "dice_head_vs_threshold_of_predicted_phase": 0.9269736575475417,
+    "dice_head_vs_ground_truth": 0.8317422330119487,
+    "dice_threshold_of_predicted_phase_vs_ground_truth": 0.8421882489653358
+  },
+  {
+    "modality": "gabor",
+    "split": "test",
+    "experiment": "v2_baseline",
+    "labels_read_from": "mask",
+    "images": 107,
+    "dice_head_vs_threshold_of_predicted_phase": 0.9202752684648803,
+    "dice_head_vs_ground_truth": 0.814595952805481,
+    "dice_threshold_of_predicted_phase_vs_ground_truth": 0.8164946764478248
+  }
+]

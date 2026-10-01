@@ -1,0 +1,39 @@
+06:28:24 | INFO    | __main__ | warping 800 membrane fields onto the 900 px phase grid (scale 1.343769, offset 314,280)
+06:28:40 | INFO    | __main__ |   50/800
+06:28:55 | INFO    | __main__ |   100/800
+06:29:11 | INFO    | __main__ |   150/800
+06:29:26 | INFO    | __main__ |   200/800
+06:29:41 | INFO    | __main__ |   250/800
+06:29:56 | INFO    | __main__ |   300/800
+06:30:12 | INFO    | __main__ |   350/800
+06:30:27 | INFO    | __main__ |   400/800
+06:30:42 | INFO    | __main__ |   450/800
+06:30:58 | INFO    | __main__ |   500/800
+06:31:13 | INFO    | __main__ |   550/800
+06:31:29 | INFO    | __main__ |   600/800
+06:31:44 | INFO    | __main__ |   650/800
+06:31:59 | INFO    | __main__ |   700/800
+06:32:15 | INFO    | __main__ |   750/800
+06:32:30 | INFO    | __main__ |   800/800
+
+=== membrane warped onto the phase grid ===
+  fields written        800
+  scale                 1.343769 membrane px per phase px
+  offset                y 314, x 280
+  windows off the edge  0
+  illuminated fraction  median 0.907   min 0.869
+  arrays -> data/membrane_aligned/<stem>_membrane.npy  (+ valid mask)
+
+  PROVISIONAL masks -> data/membrane_mask
+  threshold             75th percentile inside the window
+  foreground            median 0.254   min 0.247   max 0.363
+  marginal phase        median +0.024 rad   (fraction negative 0.46)
+
+  -> the added pixels carry positive optical path (+0.024 rad), so the
+     threshold is inside real signal. These masks are still
+     PROVISIONAL: membrane stain marks the perimeter, so a threshold
+     returns rings and filling them fails wherever a lamellipodium
+     leaves one open. Use them as a cross-check, and get manual
+     labels on 25-40 fields for anything reported.
+
+  per-field detail -> runs/membrane_prepare.csv

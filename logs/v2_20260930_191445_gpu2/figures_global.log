@@ -1,0 +1,23 @@
+19:15:03 | INFO    | __main__ | --- figure 10 (label_audit, IMPORTANT) ---
+19:15:04 | INFO    | __main__ | wrote figures/fig10_label_audit.png / .pdf
+19:15:04 | INFO    | __main__ | --- figure 16 (forward_model_diagnostics, ESSENTIAL) ---
+19:15:05 | INFO    | __main__ | wrote figures/fig16_forward_model_diagnostics.png / .pdf
+19:15:05 | INFO    | __main__ | --- figure 17 (error_propagation, ESSENTIAL) ---
+19:15:06 | INFO    | __main__ | wrote figures/fig17_error_propagation.png / .pdf
+19:15:06 | INFO    | __main__ | --- figure 18 (synthetic_floor, ESSENTIAL) ---
+19:15:07 | INFO    | __main__ | wrote figures/fig18_synthetic_floor.png / .pdf
+19:15:07 | INFO    | __main__ | --- figure 19 (v2_ablation, ESSENTIAL) ---
+19:15:09 | INFO    | __main__ | wrote figures/fig19_v2_ablation.png / .pdf
+19:15:09 | INFO    | __main__ | --- figure 20 (membrane_labels, ESSENTIAL) ---
+19:15:19 | INFO    | __main__ | wrote figures/fig20_membrane_labels.png / .pdf
+
+figures written to /sda/usama/QPI_Extended_v2/figures
+  from config/base.yaml (experiment base, off_axis+gabor, test split)
+
+6 figure(s) written by THIS run:
+  fig10_label_audit.png / .pdf
+  fig16_forward_model_diagnostics.png / .pdf
+  fig17_error_propagation.png / .pdf
+  fig18_synthetic_floor.png / .pdf
+  fig19_v2_ablation.png / .pdf
+  fig20_membrane_labels.png / .pdf

@@ -1,0 +1,533 @@
+HoloQPI v2 study, started Wed Sep 30 05:44:28 KST 2026
+log directory logs/v2_20260930_054428_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+archived previous runs/ and figures/ to archive/pre_v2_20260930_054428
+
+########## stage 0: self-test
+
+=== selftest  05:44:28
+    python scripts/selftest.py
+    OK   -> logs/v2_20260930_054428_gpu2/selftest.log
+
+########## done Wed Sep 30 05:44:34 KST 2026
+summary  logs/v2_20260930_054428_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_054428_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_054428_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_054428_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_054428_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_054428_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 05:44:34 KST 2026
+log directory logs/v2_20260930_054434_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 1: prepare data
+
+=== prepare  05:44:34
+    python main.py prepare --config config/base.yaml
+    OK   -> logs/v2_20260930_054434_gpu2/prepare.log
+
+=== audit_labels  05:44:36
+    python scripts/audit_labels.py --config config/base.yaml
+    OK   -> logs/v2_20260930_054434_gpu2/audit_labels.log
+
+=== membrane_registration  05:45:25
+    python scripts/prepare_membrane.py --config config/base.yaml --estimate
+    OK   -> logs/v2_20260930_054434_gpu2/membrane_registration.log
+      offset_y  median 314  sd 4.1  range 298..332
+      offset_x  median 282  sd 6.2  range 266..308
+      correlation  median 0.479  min 0.119
+      config currently says offset_y=314, offset_x=280
+      -> the offset VARIES between fields, so the two cameras were not in a
+      per-field detail -> runs/membrane_registration.csv
+
+=== membrane_prepare  06:28:23
+    python scripts/prepare_membrane.py --config config/base.yaml --write-masks
+    OK   -> logs/v2_20260930_054434_gpu2/membrane_prepare.log
+      illuminated fraction  median 0.907   min 0.869
+      arrays -> data/membrane_aligned/<stem>_membrane.npy  (+ valid mask)
+      PROVISIONAL masks -> data/membrane_mask
+      foreground            median 0.254   min 0.247   max 0.363
+      marginal phase        median +0.024 rad   (fraction negative 0.46)
+      -> the added pixels carry positive optical path (+0.024 rad), so the
+      per-field detail -> runs/membrane_prepare.csv
+
+########## done Wed Sep 30 06:32:30 KST 2026
+summary  logs/v2_20260930_054434_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_054434_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_054434_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_054434_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_054434_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_054434_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 06:32:30 KST 2026
+log directory logs/v2_20260930_063230_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 2: aberration surfaces
+
+=== aberration  06:32:30
+    python scripts/estimate_aberration.py --config config/base.yaml
+    OK   -> logs/v2_20260930_063230_gpu2/aberration.log
+      surface peak-to-valley  median 18.0 rad   p95 23.6 rad   max 483.9 rad
+      peak-to-valley of the global surface        12.38 rad
+      per-field departure, all terms              median 12.05 rad   p95 20.50   max 25.42
+      per-field departure, degree >= 2 only       median 2.58 rad   p95 4.45   max 6.62
+      share of the tilt the carrier explains      -1.0%
+      -> most of the variation is degree <= 1, but the carrier does not
+      surfaces -> data/aberration.json
+      per-image quality -> runs/aberration_fit_order5.csv
+      -> the difference between the raw reconstruction and the delivered
+
+########## done Wed Sep 30 06:48:47 KST 2026
+summary  logs/v2_20260930_063230_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_063230_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_063230_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_063230_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_063230_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_063230_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 06:48:47 KST 2026
+log directory logs/v2_20260930_064847_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 3: amplitude reference
+
+=== amplitude_reference  06:48:47
+    python scripts/prepare_amplitude.py --config config/base.yaml
+    OK   -> logs/v2_20260930_064847_gpu2/amplitude_reference.log
+
+########## done Wed Sep 30 06:55:21 KST 2026
+summary  logs/v2_20260930_064847_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_064847_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_064847_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_064847_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_064847_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_064847_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 06:55:21 KST 2026
+log directory logs/v2_20260930_065521_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 4: pre-flight diagnostics
+
+=== gradient_path  06:55:21
+    python scripts/check_gradient_path.py --config config/v2/b_cell_ipp.yaml --batches 30
+    OK   -> logs/v2_20260930_065521_gpu2/gradient_path.log
+      magnitude ratio at weight 1.0   median 3.7345e-01   min 2.4305e-01   max 6.5524e-01
+      cosine with the seg gradient    median -0.1697   min -0.3867   max +0.2375
+      per-batch detail -> runs/gradient_path_b_cell_ipp_512.csv
+          weight w    effective ratio       seg : term
+      parity (effective ratio 1.0) is at w = 2.678
+      -> CONNECTED, comparable in scale (ratio 0.373, within an order of
+
+=== amplitude_sensitivity_per_field  06:56:10
+    python scripts/amplitude_sensitivity.py --config config/base.yaml --split test --set optics.aberration.mode=per_field data.train_crop=null data.augmentation.enabled=false
+    OK   -> logs/v2_20260930_065521_gpu2/amplitude_sensitivity_per_field.log
+      amplitude response  unity -> reference        0.030898
+      phase response      reference -> x0.9         +0.001101   (must be POSITIVE)
+      phase response      reference -> x0.5         +0.035905   (must be POSITIVE)
+      ratio, amplitude / |mild phase|               28.0659
+      per-batch detail -> runs/amplitude_sensitivity_off_axis_per_field.csv
+      -> the amplitude matters, and the classical reference explains the
+         phase response). The unit-amplitude assumption was costing the term
+
+=== amplitude_sensitivity_global  07:03:47
+    python scripts/amplitude_sensitivity.py --config config/base.yaml --split test --set optics.aberration.mode=global data.train_crop=null data.augmentation.enabled=false
+    OK   -> logs/v2_20260930_065521_gpu2/amplitude_sensitivity_global.log
+      amplitude response  unity -> reference        0.034438
+      phase response      reference -> x0.9         +0.000270   (must be POSITIVE)
+      phase response      reference -> x0.5         +0.006962   (must be POSITIVE)
+      ratio, amplitude / |mild phase|               127.3966
+      per-batch detail -> runs/amplitude_sensitivity_off_axis_global.csv
+      -> the amplitude matters, and the classical reference explains the
+         phase response). The unit-amplitude assumption was costing the term
+
+=== calibrate_z  07:11:20
+    python scripts/calibrate_z.py --config config/base.yaml --steps 41
+    OK   -> logs/v2_20260930_065521_gpu2/calibrate_z.log
+
+########## done Wed Sep 30 07:11:54 KST 2026
+summary  logs/v2_20260930_065521_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_065521_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_065521_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_065521_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_065521_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_065521_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 07:11:54 KST 2026
+log directory logs/v2_20260930_071154_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 5: label-free analyses
+
+=== error_propagation  07:11:54
+    python scripts/error_propagation.py --config config/base.yaml --max-shift 5
+    OK   -> logs/v2_20260930_071154_gpu2/error_propagation.log
+    === boundary error -> measurement error, 800 fields ===
+      ONE PIXEL of boundary error, which is 0.285 um:
+        dilated  by 1 px   Dice 0.9741   area +6.93%   mass +4.84%
+        eroded   by 1 px   Dice 0.9731   area -6.49%   mass -4.74%
+        asymmetry in mass  +0.10%   (outward minus inward, in magnitude)
+      mass error / area error   median 0.710   min 0.450   max 0.747
+      per-field detail -> runs/error_propagation.csv
+      summary -> runs/error_propagation_summary.csv
+      -> mass and area inherit the boundary error at about the same rate (ratio
+
+=== synthetic_validation  07:40:46
+    python scripts/synthetic_validation.py --config config/base.yaml --fields 12
+    OK   -> logs/v2_20260930_071154_gpu2/synthetic_validation.log
+      area  signed  mean +0.0395%   median +0.0330%   p95 |.| 0.6787%
+      mass  signed  mean +0.0074%   median +0.0084%   p95 |.| 0.1346%
+      field-summed mass  mean -1.6655%   median -2.0152%
+      10 of 144 cells were never measured. min_cell_area_um2 = 30.0 um^2 rejects anything below 3.09 um of radius,
+      and a field-summed error of -1.67%: the filter discards small cells, so the
+      -> the measurement pipeline reproduces exact ground truth to 0.04% in dry
+
+########## done Wed Sep 30 07:40:50 KST 2026
+summary  logs/v2_20260930_071154_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_071154_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_071154_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_071154_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_071154_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_071154_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 19:03:28 KST 2026
+log directory logs/v2_20260930_190328_gpu2
+GPU 2   arms: none   seeds (stages 11-14): from config
+
+########## stage 6: training arms
+    unknown arm none, skipped
+
+=== compare_modalities  19:03:28
+    python main.py compare --config config/v2/a_baseline.yaml --modalities off_axis gabor
+    OK   -> logs/v2_20260930_190328_gpu2/compare_modalities.log
+
+########## done Wed Sep 30 19:05:07 KST 2026
+summary  logs/v2_20260930_190328_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_190328_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_190328_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_190328_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_190328_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_190328_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 19:05:07 KST 2026
+log directory logs/v2_20260930_190507_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 7: conventional baseline
+
+=== conventional  19:05:07
+    python scripts/conventional_baseline.py --config config/base.yaml
+    OK   -> logs/v2_20260930_190507_gpu2/conventional.log
+
+########## done Wed Sep 30 19:10:38 KST 2026
+summary  logs/v2_20260930_190507_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_190507_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_190507_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_190507_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_190507_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_190507_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 19:10:38 KST 2026
+log directory logs/v2_20260930_191038_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 8: ONNX export and benchmark
+
+=== export_A  19:10:38
+    python main.py export --config config/v2/a_baseline.yaml
+    OK   -> logs/v2_20260930_191038_gpu2/export_A.log
+
+=== benchmark_A  19:10:49
+    python main.py benchmark --config config/v2/a_baseline.yaml --modalities off_axis
+    OK   -> logs/v2_20260930_191038_gpu2/benchmark_A.log
+
+=== export_B  19:11:29
+    python main.py export --config config/v2/b_cell_ipp.yaml
+    OK   -> logs/v2_20260930_191038_gpu2/export_B.log
+
+=== benchmark_B  19:11:39
+    python main.py benchmark --config config/v2/b_cell_ipp.yaml --modalities off_axis
+    OK   -> logs/v2_20260930_191038_gpu2/benchmark_B.log
+
+=== export_KA  19:12:18
+    python main.py export --config config/v2/k_compact_a.yaml
+    OK   -> logs/v2_20260930_191038_gpu2/export_KA.log
+
+=== benchmark_KA  19:12:28
+    python main.py benchmark --config config/v2/k_compact_a.yaml --modalities off_axis
+    OK   -> logs/v2_20260930_191038_gpu2/benchmark_KA.log
+
+=== export_KB  19:13:06
+    python main.py export --config config/v2/k_compact_b.yaml
+    OK   -> logs/v2_20260930_191038_gpu2/export_KB.log
+
+=== benchmark_KB  19:13:16
+    python main.py benchmark --config config/v2/k_compact_b.yaml --modalities off_axis
+    OK   -> logs/v2_20260930_191038_gpu2/benchmark_KB.log
+
+=== export_D0  19:13:53
+    python main.py export --config config/v2/d0_amplitude.yaml
+    OK   -> logs/v2_20260930_191038_gpu2/export_D0.log
+
+=== benchmark_D0  19:14:04
+    python main.py benchmark --config config/v2/d0_amplitude.yaml --modalities off_axis
+    OK   -> logs/v2_20260930_191038_gpu2/benchmark_D0.log
+
+########## done Wed Sep 30 19:14:45 KST 2026
+summary  logs/v2_20260930_191038_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_191038_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_191038_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_191038_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_191038_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_191038_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 19:14:45 KST 2026
+log directory logs/v2_20260930_191445_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 9: figures
+    per-arm figures illustrated with arm A (config/v2/a_baseline.yaml)
+
+=== diagnose_bias  19:14:45
+    python scripts/diagnose_bias.py --config config/v2/a_baseline.yaml --split test --modality off_axis
+    OK   -> logs/v2_20260930_191445_gpu2/diagnose_bias.log
+
+=== figures_global  19:15:01
+    python scripts/make_figures.py --config config/base.yaml --only 10 16 17 18 19 20
+    OK   -> logs/v2_20260930_191445_gpu2/figures_global.log
+
+=== figures_per_arm  19:15:20
+    python scripts/make_figures.py --config config/v2/a_baseline.yaml --modalities off_axis --only 1 2 3 4 6 8 9 12 15
+    OK   -> logs/v2_20260930_191445_gpu2/figures_per_arm.log
+
+=== figures_modality  19:16:02
+    python scripts/make_figures.py --config config/v2/a_baseline.yaml --modalities off_axis gabor --only 5 13 14
+    OK   -> logs/v2_20260930_191445_gpu2/figures_modality.log
+
+########## done Wed Sep 30 19:16:07 KST 2026
+summary  logs/v2_20260930_191445_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_191445_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_191445_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_191445_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_191445_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_191445_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 19:16:07 KST 2026
+log directory logs/v2_20260930_191607_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 10: collect results
+
+=== collect_results  19:16:07
+    python scripts/collect_results.py --config config/base.yaml --split test
+    OK   -> logs/v2_20260930_191607_gpu2/collect_results.log
+    -> runs/RESULTS.md is the document to read and to paste from
+
+########## done Wed Sep 30 19:16:10 KST 2026
+summary  logs/v2_20260930_191607_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_191607_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_191607_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_191607_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_191607_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_191607_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 23:33:42 KST 2026
+log directory logs/v2_20260930_233342_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 12: repeated hardware benchmark
+
+=== benchmark_A_seed42  23:33:48
+    python main.py benchmark --config config/v2/a_baseline.yaml --seed 42 --modalities off_axis --set experiment_name=v2_baseline
+    OK   -> logs/v2_20260930_233342_gpu2/benchmark_A_seed42.log
+
+=== benchmark_B_seed42  23:34:30
+    python main.py benchmark --config config/v2/b_cell_ipp.yaml --seed 42 --modalities off_axis --set experiment_name=v2_cell_ipp
+    OK   -> logs/v2_20260930_233342_gpu2/benchmark_B_seed42.log
+
+=== benchmark_D0_seed42  23:35:13
+    python main.py benchmark --config config/v2/d0_amplitude.yaml --seed 42 --modalities off_axis --set experiment_name=v2_amplitude
+    OK   -> logs/v2_20260930_233342_gpu2/benchmark_D0_seed42.log
+
+=== benchmark_KA_seed42  23:35:57
+    python main.py benchmark --config config/v2/k_compact_a.yaml --seed 42 --modalities off_axis --set experiment_name=v2_compact_baseline
+    OK   -> logs/v2_20260930_233342_gpu2/benchmark_KA_seed42.log
+
+=== benchmark_KB_seed42  23:36:37
+    python main.py benchmark --config config/v2/k_compact_b.yaml --seed 42 --modalities off_axis --set experiment_name=v2_compact_cell_ipp
+    OK   -> logs/v2_20260930_233342_gpu2/benchmark_KB_seed42.log
+
+=== benchmark_A_seed1337  23:37:20
+    python main.py benchmark --config config/v2/a_baseline.yaml --seed 1337 --modalities off_axis --set experiment_name=v2_A_seed1337
+    OK   -> logs/v2_20260930_233342_gpu2/benchmark_A_seed1337.log
+
+=== benchmark_B_seed1337  23:38:02
+    python main.py benchmark --config config/v2/b_cell_ipp.yaml --seed 1337 --modalities off_axis --set experiment_name=v2_B_seed1337
+    OK   -> logs/v2_20260930_233342_gpu2/benchmark_B_seed1337.log
+
+=== benchmark_A_seed2024  23:38:51
+    python main.py benchmark --config config/v2/a_baseline.yaml --seed 2024 --modalities off_axis --set experiment_name=v2_A_seed2024
+    OK   -> logs/v2_20260930_233342_gpu2/benchmark_A_seed2024.log
+
+=== benchmark_B_seed2024  23:39:33
+    python main.py benchmark --config config/v2/b_cell_ipp.yaml --seed 2024 --modalities off_axis --set experiment_name=v2_B_seed2024
+    OK   -> logs/v2_20260930_233342_gpu2/benchmark_B_seed2024.log
+
+########## done Wed Sep 30 23:40:18 KST 2026
+summary  logs/v2_20260930_233342_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_233342_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_233342_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_233342_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_233342_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_233342_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 23:40:18 KST 2026
+log directory logs/v2_20260930_234018_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 13: synthetic ground truth at every seed
+
+=== synthetic_seed42  23:40:20
+    python scripts/synthetic_validation.py --config config/base.yaml --fields 12 --set project.seed=42 paths.output_root=runs/synthetic_validation_seeds/seed42
+    OK   -> logs/v2_20260930_234018_gpu2/synthetic_seed42.log
+
+=== synthetic_seed1337  23:40:25
+    python scripts/synthetic_validation.py --config config/base.yaml --fields 12 --set project.seed=1337 paths.output_root=runs/synthetic_validation_seeds/seed1337
+    OK   -> logs/v2_20260930_234018_gpu2/synthetic_seed1337.log
+
+=== synthetic_seed2024  23:40:29
+    python scripts/synthetic_validation.py --config config/base.yaml --fields 12 --set project.seed=2024 paths.output_root=runs/synthetic_validation_seeds/seed2024
+    OK   -> logs/v2_20260930_234018_gpu2/synthetic_seed2024.log
+
+########## done Wed Sep 30 23:40:34 KST 2026
+summary  logs/v2_20260930_234018_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_234018_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_234018_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_234018_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_234018_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_234018_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0
+HoloQPI v2 study, started Wed Sep 30 23:40:34 KST 2026
+log directory logs/v2_20260930_234034_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 14: collect benchmark results
+
+=== collect_benchmark_results  23:40:34
+    collector collect --arms A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB
+    OK   -> logs/v2_20260930_234034_gpu2/collect_benchmark_results.log
+      wrote results_arm_A.json   n=3   seeds [42, 1337, 2024]
+      wrote results_arm_A_membrane.json   n=3   seeds [42, 1337, 2024]
+      wrote results_arm_B.json   n=3   seeds [42, 1337, 2024]
+      wrote results_arm_B_membrane.json   n=3   seeds [42, 1337, 2024]
+      wrote results_arm_B1.json   n=3   seeds [42, 1337, 2024]
+      wrote results_arm_B1_membrane.json   n=3   seeds [42, 1337, 2024]
+      wrote results_arm_B2.json   n=1   seeds [42]
+      wrote results_arm_B2_membrane.json   n=1   seeds [42]
+      wrote results_arm_C.json   n=1   seeds [42]
+      wrote results_arm_C_membrane.json   n=1   seeds [42]
+      wrote results_arm_D0.json   n=1   seeds [42]
+      wrote results_arm_D0_membrane.json   n=1   seeds [42]
+      wrote results_arm_D1.json   n=1   seeds [42]
+      wrote results_arm_D1_membrane.json   n=1   seeds [42]
+      wrote results_arm_D2.json   n=1   seeds [42]
+      wrote results_arm_D2_membrane.json   n=1   seeds [42]
+      wrote results_arm_G.json   n=1   seeds [42]
+      wrote results_arm_G_membrane.json   n=1   seeds [42]
+      wrote results_arm_W01.json   n=1   seeds [42]
+      wrote results_arm_W01_membrane.json   n=1   seeds [42]
+      wrote results_arm_W03.json   n=1   seeds [42]
+      wrote results_arm_W03_membrane.json   n=1   seeds [42]
+      wrote results_arm_W30.json   n=1   seeds [42]
+      wrote results_arm_W30_membrane.json   n=1   seeds [42]
+      wrote results_arm_KA.json   n=1   seeds [42]
+      wrote results_arm_KA_membrane.json   n=1   seeds [42]
+      wrote results_arm_KB.json   n=1   seeds [42]
+      wrote results_arm_KB_membrane.json   n=1   seeds [42]
+      wrote results_hardware_arm_A.json   n=3   seeds [42, 1337, 2024]
+      wrote results_hardware_arm_B.json   n=3   seeds [42, 1337, 2024]
+      wrote results_hardware_arm_D0.json   n=1   seeds [42]
+      wrote results_hardware_arm_KA.json   n=1   seeds [42]
+      wrote results_hardware_arm_KB.json   n=1   seeds [42]
+      wrote results_synthetic_validation.json   n=3   seeds [42, 1337, 2024]
+      wrote results_conventional_off_axis.json   n=1   seeds []
+      wrote results_conventional_gabor.json   n=1   seeds []
+      wrote results_error_propagation.json   n=1   seeds []
+      wrote results_z_calibration.json   n=1   seeds []
+    all benchmarks complete
+
+=== aggregate_seeds  23:40:45
+    python scripts/aggregate_seeds.py --config config/base.yaml
+    OK   -> logs/v2_20260930_234034_gpu2/aggregate_seeds.log
+
+=== collect_results  23:40:47
+    python scripts/collect_results.py --config config/base.yaml --split test
+    OK   -> logs/v2_20260930_234034_gpu2/collect_results.log
+    -> runs/benchmark_results/
+
+########## done Wed Sep 30 23:40:51 KST 2026
+summary  logs/v2_20260930_234034_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_234034_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_234034_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_234034_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_234034_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_234034_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0

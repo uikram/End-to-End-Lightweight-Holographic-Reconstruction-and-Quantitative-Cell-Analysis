@@ -156,16 +156,29 @@ def write_mask(mask: np.ndarray, path: str | Path) -> Path:
     return path
 
 
-def align_to_phase_grid(image: np.ndarray, target: int, mode: str) -> np.ndarray:
+def align_to_phase_grid(
+    image: np.ndarray, target: int, mode: str, offset: tuple[int, int] = (0, 0)
+) -> np.ndarray:
     """Bring a hologram onto the phase sampling grid.
 
     ``center_crop`` keeps the native sampling and discards the border, which is
     the correct operation for this dataset: the reconstruction crops the camera
-    frame rather than resampling it. ``resize`` is provided for datasets whose
-    reconstruction does rescale the field.
+    frame rather than resampling it. ``offset`` = (dy, dx) moves the crop
+    origin away from the exact centre by whole pixels (data.crop_offset_px;
+    read it with :func:`hologram_crop_offset`). Whole pixels only: a sub-pixel
+    shift would interpolate the fringes, which then no longer encode optical
+    path length. ``resize`` is provided for datasets whose reconstruction does
+    rescale the field, and takes no offset.
     """
+    dy, dx = _whole_pixel_offset(offset)
     height, width = image.shape[:2]
     if (height, width) == (target, target):
+        if (dy, dx) != (0, 0):
+            raise ValueError(
+                f"a {height}x{width} image is already on the {target}x{target} grid, so "
+                f"the crop offset ({dy}, {dx}) cannot be applied to it; pass the "
+                "offset only for holograms"
+            )
         return image
 
     if mode == "center_crop":
@@ -174,16 +187,63 @@ def align_to_phase_grid(image: np.ndarray, target: int, mode: str) -> np.ndarray
                 f"cannot centre-crop {height}x{width} to {target}x{target}; "
                 "the source is smaller than the target"
             )
-        top = (height - target) // 2
-        left = (width - target) // 2
+        top = (height - target) // 2 + dy
+        left = (width - target) // 2 + dx
+        if top < 0 or left < 0 or top + target > height or left + target > width:
+            raise ValueError(
+                f"crop offset ({dy}, {dx}) puts the {target}x{target} window outside "
+                f"the {height}x{width} frame (origin {top}, {left})"
+            )
         return image[top:top + target, left:left + target]
 
     if mode == "resize":
+        if (dy, dx) != (0, 0):
+            raise ValueError("data.crop_offset_px applies to align: center_crop only")
         from scipy.ndimage import zoom
 
         return zoom(image, (target / height, target / width), order=1).astype(image.dtype)
 
     raise ValueError(f"unknown alignment mode {mode!r}; use center_crop or resize")
+
+
+def _whole_pixel_offset(value) -> tuple[int, int]:
+    items = list(value)
+    if len(items) != 2:
+        raise ValueError(f"crop offset must be [dy, dx], got {value!r}")
+    out = []
+    for item in items:
+        number = float(item)
+        if number != round(number):
+            raise ValueError(
+                f"crop offset must be whole pixels, got {value!r}: a sub-pixel shift "
+                "would resample the hologram and interpolate its fringes"
+            )
+        out.append(int(round(number)))
+    return out[0], out[1]
+
+
+def hologram_crop_offset(data_cfg) -> tuple[int, int]:
+    """(dy, dx) from data.crop_offset_px.
+
+    A config written before the key existed describes a run that used the exact
+    centre crop, so a missing key reads as (0, 0): that is what those runs did,
+    not a tunable default. Every current config sets the key explicitly.
+    """
+    value = data_cfg.get("crop_offset_px")
+    if value is None:
+        return (0, 0)
+    return _whole_pixel_offset(value)
+
+
+def excluded_stems(data_cfg, modality: str) -> set[str]:
+    """Fields removed from ``modality`` by data.exclude (empty when not configured)."""
+    block = data_cfg.get("exclude")
+    if not block:
+        return set()
+    modalities = list(block.get("modalities") or [])
+    if modality not in modalities:
+        return set()
+    return {str(stem) for stem in (block.get("stems") or [])}
 
 
 def normalise_hologram(image: np.ndarray, method: str) -> np.ndarray:

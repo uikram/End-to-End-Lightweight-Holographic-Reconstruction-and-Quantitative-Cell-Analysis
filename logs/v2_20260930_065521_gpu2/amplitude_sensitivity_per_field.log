@@ -1,0 +1,147 @@
+06:56:11 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+
+  modality off_axis   z 33.8 um   border 79 px   criterion l2
+  aberration mode per_field   crop None   augmentation off
+    batch 0   images 1   unity 0.254442   reference 0.237683   phase x0.9 0.258525
+    batch 1   images 1   unity 0.300722   reference 0.297834   phase x0.9 0.307589
+    batch 2   images 1   unity 0.306569   reference 0.263477   phase x0.9 0.307563
+    batch 3   images 1   unity 0.279611   reference 0.259883   phase x0.9 0.286346
+    batch 4   images 1   unity 0.419260   reference 0.369001   phase x0.9 0.420120
+    batch 5   images 1   unity 0.206047   reference 0.176319   phase x0.9 0.206492
+    batch 6   images 1   unity 0.253575   reference 0.218232   phase x0.9 0.254352
+    batch 7   images 1   unity 0.303098   reference 0.282768   phase x0.9 0.306202
+    batch 8   images 1   unity 0.320305   reference 0.319509   phase x0.9 0.328264
+    batch 9   images 1   unity 0.314035   reference 0.297602   phase x0.9 0.318334
+    batch 10  images 1   unity 0.407715   reference 0.386163   phase x0.9 0.410861
+    batch 11  images 1   unity 0.409971   reference 0.391108   phase x0.9 0.415163
+    batch 12  images 1   unity 0.223084   reference 0.201036   phase x0.9 0.224284
+    batch 13  images 1   unity 0.517742   reference 0.468383   phase x0.9 0.517784
+    batch 14  images 1   unity 0.156180   reference 0.144638   phase x0.9 0.157946
+    batch 15  images 1   unity 0.334524   reference 0.308142   phase x0.9 0.336885
+    batch 16  images 1   unity 0.158323   reference 0.151624   phase x0.9 0.161963
+    batch 17  images 1   unity 0.375404   reference 0.345135   phase x0.9 0.375897
+    batch 18  images 1   unity 0.408140   reference 0.385915   phase x0.9 0.409141
+    batch 19  images 1   unity 0.369770   reference 0.336440   phase x0.9 0.371156
+    batch 20  images 1   unity 0.218222   reference 0.176789   phase x0.9 0.219100
+    batch 21  images 1   unity 0.264217   reference 0.241612   phase x0.9 0.266088
+    batch 22  images 1   unity 0.195966   reference 0.175906   phase x0.9 0.197869
+    batch 23  images 1   unity 0.535439   reference 0.483990   phase x0.9 0.535307
+    batch 24  images 1   unity 0.336647   reference 0.311067   phase x0.9 0.337025
+    batch 25  images 1   unity 0.366279   reference 0.322311   phase x0.9 0.367917
+    batch 26  images 1   unity 0.221845   reference 0.194937   phase x0.9 0.222630
+    batch 27  images 1   unity 0.298550   reference 0.256521   phase x0.9 0.298571
+    batch 28  images 1   unity 0.241228   reference 0.236059   phase x0.9 0.244721
+    batch 29  images 1   unity 0.393663   reference 0.371969   phase x0.9 0.396416
+    batch 30  images 1   unity 0.960568   reference 0.959487   phase x0.9 0.961078
+    batch 31  images 1   unity 0.586014   reference 0.556035   phase x0.9 0.587638
+    batch 32  images 1   unity 0.206526   reference 0.201122   phase x0.9 0.209017
+    batch 33  images 1   unity 0.961797   reference 0.960081   phase x0.9 0.961955
+    batch 34  images 1   unity 0.237869   reference 0.232392   phase x0.9 0.241420
+    batch 35  images 1   unity 0.367646   reference 0.329862   phase x0.9 0.368465
+    batch 36  images 1   unity 0.176887   reference 0.148544   phase x0.9 0.176957
+    batch 37  images 1   unity 0.261884   reference 0.224226   phase x0.9 0.261765
+    batch 38  images 1   unity 0.735130   reference 0.713353   phase x0.9 0.734973
+    batch 39  images 1   unity 0.158652   reference 0.128479   phase x0.9 0.158981
+    batch 40  images 1   unity 0.181238   reference 0.145103   phase x0.9 0.181409
+    batch 41  images 1   unity 0.171813   reference 0.148674   phase x0.9 0.171994
+    batch 42  images 1   unity 0.400227   reference 0.363666   phase x0.9 0.399913
+    batch 43  images 1   unity 0.308265   reference 0.276486   phase x0.9 0.307801
+    batch 44  images 1   unity 0.432175   reference 0.380511   phase x0.9 0.432378
+    batch 45  images 1   unity 0.958759   reference 0.934207   phase x0.9 0.958689
+    batch 46  images 1   unity 0.669366   reference 0.635923   phase x0.9 0.669670
+    batch 47  images 1   unity 0.267423   reference 0.236880   phase x0.9 0.268083
+    batch 48  images 1   unity 0.315831   reference 0.283470   phase x0.9 0.316248
+    batch 49  images 1   unity 0.436734   reference 0.415387   phase x0.9 0.436727
+    batch 50  images 1   unity 0.347944   reference 0.326263   phase x0.9 0.348702
+    batch 51  images 1   unity 0.502157   reference 0.469992   phase x0.9 0.503654
+    batch 52  images 1   unity 0.525949   reference 0.505850   phase x0.9 0.526535
+    batch 53  images 1   unity 0.956633   reference 0.947271   phase x0.9 0.956533
+    batch 54  images 1   unity 0.429262   reference 0.401391   phase x0.9 0.431060
+    batch 55  images 1   unity 0.188839   reference 0.171555   phase x0.9 0.189346
+    batch 56  images 1   unity 0.219280   reference 0.201259   phase x0.9 0.219827
+    batch 57  images 1   unity 0.488900   reference 0.476828   phase x0.9 0.489889
+    batch 58  images 1   unity 0.327129   reference 0.311871   phase x0.9 0.328280
+    batch 59  images 1   unity 0.341569   reference 0.317276   phase x0.9 0.341707
+    batch 60  images 1   unity 0.475501   reference 0.440828   phase x0.9 0.476278
+    batch 61  images 1   unity 0.275909   reference 0.257515   phase x0.9 0.276419
+    batch 62  images 1   unity 0.311727   reference 0.294124   phase x0.9 0.313631
+    batch 63  images 1   unity 0.443214   reference 0.415041   phase x0.9 0.444347
+    batch 64  images 1   unity 0.962890   reference 0.934991   phase x0.9 0.962695
+    batch 65  images 1   unity 0.944725   reference 0.923371   phase x0.9 0.943736
+    batch 66  images 1   unity 0.229464   reference 0.199434   phase x0.9 0.230102
+    batch 67  images 1   unity 0.193943   reference 0.161901   phase x0.9 0.194075
+    batch 68  images 1   unity 0.237824   reference 0.209789   phase x0.9 0.238722
+    batch 69  images 1   unity 0.205242   reference 0.174211   phase x0.9 0.205439
+    batch 70  images 1   unity 0.989348   reference 0.964231   phase x0.9 0.989137
+    batch 71  images 1   unity 0.405948   reference 0.386348   phase x0.9 0.406847
+    batch 72  images 1   unity 0.165956   reference 0.146201   phase x0.9 0.167629
+    batch 73  images 1   unity 0.193894   reference 0.169572   phase x0.9 0.193823
+    batch 74  images 1   unity 0.171730   reference 0.153268   phase x0.9 0.171567
+    batch 75  images 1   unity 0.218712   reference 0.200111   phase x0.9 0.218987
+    batch 76  images 1   unity 0.203751   reference 0.180265   phase x0.9 0.204289
+    batch 77  images 1   unity 0.333025   reference 0.304077   phase x0.9 0.332372
+    batch 78  images 1   unity 0.461673   reference 0.381442   phase x0.9 0.461809
+    batch 79  images 1   unity 0.161032   reference 0.095466   phase x0.9 0.162509
+    batch 80  images 1   unity 0.266203   reference 0.181336   phase x0.9 0.266004
+    batch 81  images 1   unity 0.337952   reference 0.283198   phase x0.9 0.338622
+    batch 82  images 1   unity 0.245700   reference 0.182237   phase x0.9 0.246913
+    batch 83  images 1   unity 0.468749   reference 0.410597   phase x0.9 0.469794
+    batch 84  images 1   unity 0.478136   reference 0.407943   phase x0.9 0.478596
+    batch 85  images 1   unity 0.641913   reference 0.581556   phase x0.9 0.642202
+    batch 86  images 1   unity 0.488577   reference 0.403395   phase x0.9 0.488907
+    batch 87  images 1   unity 0.378317   reference 0.278511   phase x0.9 0.378760
+    batch 88  images 1   unity 0.960819   reference 0.913315   phase x0.9 0.960859
+    batch 89  images 1   unity 0.275834   reference 0.201150   phase x0.9 0.277011
+    batch 90  images 1   unity 0.185979   reference 0.151874   phase x0.9 0.187082
+    batch 91  images 1   unity 0.955892   reference 0.941835   phase x0.9 0.955518
+    batch 92  images 1   unity 0.345259   reference 0.305926   phase x0.9 0.346349
+    batch 93  images 1   unity 0.529387   reference 0.480918   phase x0.9 0.530020
+    batch 94  images 1   unity 0.187921   reference 0.151815   phase x0.9 0.189153
+    batch 95  images 1   unity 0.428382   reference 0.385214   phase x0.9 0.428715
+    batch 96  images 1   unity 0.185884   reference 0.145176   phase x0.9 0.187964
+    batch 97  images 1   unity 0.440546   reference 0.389511   phase x0.9 0.441290
+    batch 98  images 1   unity 0.273301   reference 0.223271   phase x0.9 0.274326
+    batch 100 images 1   unity 0.449392   reference 0.403528   phase x0.9 0.450184
+    batch 101 images 1   unity 0.463604   reference 0.433912   phase x0.9 0.464697
+    batch 102 images 1   unity 0.566381   reference 0.537344   phase x0.9 0.566860
+    batch 103 images 1   unity 0.203938   reference 0.160818   phase x0.9 0.203674
+    batch 104 images 1   unity 0.304842   reference 0.254013   phase x0.9 0.305067
+    batch 105 images 1   unity 0.231487   reference 0.213672   phase x0.9 0.231002
+    batch 106 images 1   unity 0.954941   reference 0.946915   phase x0.9 0.954850
+    batch 107 images 1   unity 0.129852   reference 0.119396   phase x0.9 0.133434
+    batch 108 images 1   unity 0.371359   reference 0.354694   phase x0.9 0.374117
+    batch 109 images 1   unity 0.131628   reference 0.121642   phase x0.9 0.134829
+    batch 110 images 1   unity 0.435096   reference 0.408225   phase x0.9 0.435718
+    batch 111 images 1   unity 0.376201   reference 0.360503   phase x0.9 0.377034
+    batch 112 images 1   unity 0.959007   reference 0.949351   phase x0.9 0.959165
+
+=== residual over 112 images ===
+  variant                 residual   change vs unity
+  amp_unity               0.390634                  
+  amp_blend_0.25          0.376324         -0.014310
+  amp_blend_0.50          0.366423         -0.024212
+  amp_reference           0.359736         -0.030898
+  amp_over_1.5            0.362571         -0.028063
+  amp_inverted            0.428376         +0.037741
+  phase_reference         0.390634         +0.000000
+  phase_scaled_0.9        0.391735         +0.001101
+  phase_scaled_0.5        0.426539         +0.035905
+
+  READ THE DIFFERENCES, NOT THE LEVELS. The train loader shuffles and drops
+  the short final batch, so which fields are seen changes between runs and
+  the absolute residual moves with them -- measured here, 0.44 to 0.51 on
+  the same configuration. Every difference in the right-hand column is
+  computed within a run on identical pixels and is reproducible to the third
+  decimal. Use --split test for a fixed set.
+
+  amplitude response  unity -> reference        0.030898
+  phase response      reference -> x0.9         +0.001101   (must be POSITIVE)
+  phase response      reference -> x0.5         +0.035905   (must be POSITIVE)
+  ratio, amplitude / |mild phase|               28.0659
+  per-batch detail -> runs/amplitude_sensitivity_off_axis_per_field.csv
+
+  -> the amplitude matters, and the classical reference explains the
+     hologram BETTER than unity does (0.030898 lower, 28.07x the
+     phase response). The unit-amplitude assumption was costing the term
+     accuracy. Run experiment D0 with loss.weights.amplitude > 0. Say that
+     the reference is a reconstruction, not a measurement.

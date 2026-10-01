@@ -5,10 +5,8 @@
 # Every trained arm in this study reads the off-axis hologram. The only in-line
 # result is the CLASSICAL baseline, which fails by physics: at z ~ 34 um the
 # in-line intensity of a pure phase object is |A e^{i phi}|^2 = A^2 and
-# contains no phi, so Gerchberg-Saxton recovers in-cell contrast of -0.067 rad
-# -- that is, none -- with phase Pearson r = -0.1359 (Classical Pipeline,
-# in-line, at the supplied distance; the final z scan places the in-line
-# minimum near 50.5 um, so the distance itself is uncertain).
+# contains no phi, so Gerchberg-Saxton recovers in-cell contrast of -0.065 rad
+# -- that is, none -- with phase Pearson r = -0.136.
 #
 # That failure is what makes the learned in-line arm interesting, and without
 # it the study cannot say anything about the off-axis / in-line comparison it
@@ -20,12 +18,10 @@
 # runs/v2_baseline_gabor/ alongside runs/v2_baseline_off_axis/. That is what
 # `main.py compare` needs: it loads both modalities of one experiment_name,
 # scores them through the same evaluator and the same instance labeller, and
-# writes v2_baseline_modality_comparison.json, which scripts/make_figures.py
-# figures 5, 13 and 14 read.
-#
-# RESULT (runs/benchmark_results/results_arm_G.json): phase Pearson r 0.8098,
-# Dice 0.7758, dry-mass MAPE 0.2308 over 1755 matched cells -- the In-Line
-# Neural Configuration of the manuscript.
+# writes v2_baseline_modality_comparison.json. Three figures are gated on that
+# file and are currently absent for exactly this reason -- figure 5 (modality
+# comparison), figure 13 (forward-model consistency across modalities) and
+# figure 14 (learned vs classical).
 #
 # WHAT IT CAN AND CANNOT SHOW
 #

@@ -1,0 +1,14 @@
+19:16:04 | INFO    | __main__ | --- figure 05 (modality_comparison, ESSENTIAL) ---
+19:16:05 | INFO    | __main__ | wrote figures/fig05_modality_comparison.png / .pdf
+19:16:05 | INFO    | __main__ | --- figure 13 (forward_model_consistency, ESSENTIAL) ---
+19:16:06 | INFO    | __main__ | wrote figures/fig13_forward_model_consistency.png / .pdf
+19:16:06 | INFO    | __main__ | --- figure 14 (learned_vs_classical, ESSENTIAL) ---
+19:16:06 | INFO    | __main__ | wrote figures/fig14_learned_vs_classical.png / .pdf
+
+figures written to /sda/usama/QPI_Extended_v2/figures
+  from config/v2/a_baseline.yaml (experiment v2_baseline, off_axis+gabor, test split)
+
+3 figure(s) written by THIS run:
+  fig05_modality_comparison.png / .pdf
+  fig13_forward_model_consistency.png / .pdf
+  fig14_learned_vs_classical.png / .pdf

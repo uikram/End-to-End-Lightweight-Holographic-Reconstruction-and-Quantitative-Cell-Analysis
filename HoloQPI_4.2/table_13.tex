@@ -1,0 +1,32 @@
+% Table 13: inference latency, throughput and memory on one workstation GPU.
+\begin{table}[!htbp]
+\centering
+\caption{Computational benchmarking at $900\times900$, batch 1, on an NVIDIA
+RTX~A5000. Baseline entries are mean $\pm$ SD over three benchmark sessions,
+one per trained seed; the +Amplitude and Compact Baseline rows are each a
+single benchmark session.}
+\label{tab:efficiency}
+\footnotesize
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llccccc@{}}
+\toprule
+Configuration & Runtime & \shortstack{Latency\\{[ms]}} & $p_{99}/p_{50}$ & FPS & \shortstack{Weights\\{[MB]}} & \shortstack{Peak alloc.\\{[MB]}} \\
+\midrule
+End-to-End Neural Baseline, $n=3$ & PyTorch FP32 & $12.31 \pm 0.12$ & $1.15 \pm 0.03$ & $81.2 \pm 0.8$ & 36.77 & 223.9 \\
+9\,598\,099 par., 45.85\,GMAC & ONNX FP32 & $14.21 \pm 0.08$ & $1.08 \pm 0.06$ & $70.4 \pm 0.4$ & -- & -- \\
+ & PyTorch FP16 & $9.19 \pm 0.10$ & $1.11 \pm 0.06$ & $108.9 \pm 1.2$ & 18.38 & 112.0 \\
+ & ONNX FP16 & $8.42 \pm 0.07$ & $1.01 \pm 0.00$ & $118.8 \pm 0.9$ & -- & -- \\
+\midrule
++Amplitude, $n=1$ & PyTorch FP32 & 12.97 & 1.13 & 77.1 & 36.81 & 223.9 \\
+9\,607\,412 par., 47.87\,GMAC & ONNX FP32 & 15.45 & 1.09 & 64.7 & -- & -- \\
+ & PyTorch FP16 & 11.26 & 1.12 & 88.8 & 18.40 & 111.4 \\
+ & ONNX FP16 & 9.18 & 1.01 & 109.0 & -- & -- \\
+\midrule
+Compact Baseline, $n=1$ & PyTorch FP32 & 11.80 & 1.20 & 84.7 & 12.97 & 195.7 \\
+3\,360\,403 par., 24.03\,GMAC & ONNX FP32 & 13.32 & 1.10 & 75.1 & -- & -- \\
+ & PyTorch FP16 & 9.21 & 1.16 & 108.5 & 6.48 & 98.7 \\
+ & ONNX FP16 & 7.97 & 1.01 & 125.4 & -- & -- \\
+\bottomrule
+\end{tabular*}
+\tabnote{Latency: mean over 500 timed passes after 50 warm-up passes. Weights
+and peak allocated memory are reported for PyTorch only.}
+\end{table}

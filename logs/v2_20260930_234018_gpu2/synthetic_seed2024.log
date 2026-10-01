@@ -1,0 +1,40 @@
+
+  12 synthetic fields of 900 px, 12 cells each
+  radius 2.5-8.0 um = 8.8-28.1 px   peak phase 0.8-3.0 rad
+  calibration: pitch 0.284871 um, pixel area 0.081151 um^2, 4.300915e-02 pg per rad-pixel
+  instance labelling: watershed, watershed distance 15 px
+
+=== pipeline error against exact ground truth ===
+  cells placed 144   measured 131   paired 131
+  area  signed  mean -0.0289%   median -0.0216%   p95 |.| 0.6078%
+  mass  signed  mean -0.0121%   median -0.0062%   p95 |.| 0.1238%
+  field-summed mass  mean -2.6733%   median -2.9209%
+
+  13 of 144 cells were never measured. min_cell_area_um2 = 30.0 um^2 rejects anything below 3.09 um of radius,
+  and the synthesised radii start at 2.50 um. That is the whole of the gap between a per-cell error of 0.04%
+  and a field-summed error of -2.67%: the filter discards small cells, so the
+  TOTAL mass of a field is biased low by that much while every cell it keeps is exact.
+  Report the filter's cost whenever a field total or a population mean is reported.
+
+     radius (um)  cells    |dA/A|    |dm/m|
+    3.26-4.21        33   0.3577%   0.0734%
+    4.21-5.28        33   0.2387%   0.0356%
+    5.28-6.58        33   0.1601%   0.0193%
+    6.58-7.98        33   0.1061%   0.0128%
+
+=== the loss term against the analytic answer, 6 cells of 6.0 um radius ===
+  exact prediction            0.000e+00   (must be 0)
+  phase scaled by 1.07        0.070000   (must be 0.070000)
+  area term, exact foreground 0.000e+00   (must be 0)
+
+  -> the measurement pipeline reproduces exact ground truth to 0.04% in dry
+     mass on the cells it keeps, and the loss term returns the analytic
+     relative error. That 0.04% is the FLOOR under every PER-CELL
+     measurement error this project reports: a measured error of 4% is
+     113x the floor, so it is model error and not pipeline error. The
+     floor grows for small cells -- see the table by radius.
+
+     But the FIELD TOTAL has a separate and much larger bias, -2.67%,
+     entirely from the area filter discarding small cells. The two floors
+     are different numbers for different claims: quote 0.04% for 'the mass of
+     this cell' and -2.67% for 'the mass on this field'.

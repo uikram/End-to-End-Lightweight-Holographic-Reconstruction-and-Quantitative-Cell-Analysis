@@ -1,0 +1,12 @@
+
+=== runs found: 14 of 15 arms, off_axis, test split ===
+  not yet run: L (v2_lora_off_axis)
+
+  wrote runs/RESULTS.md
+  wrote runs/results_table.csv
+
+  14 arms collected, 1 missing
+
+  -> no arm-to-arm difference is resolved at the 2x-seed-spread rule.
+     Run bash run_v2.sh --stage 11 (BENCHMARKING.md) to fill that column, and
+     report an unresolved difference as unresolved rather than as a result.

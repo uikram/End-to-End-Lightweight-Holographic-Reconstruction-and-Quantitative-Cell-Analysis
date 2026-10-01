@@ -1,0 +1,42 @@
+% Table 9: ablation over objective terms and decoder capacity (off-axis, 113 test fields).
+\begin{table}[!htbp]
+\centering
+\caption{Ablation over objective terms and decoder capacity on the off-axis
+test set (113 fields, 3186 reference cells). $n$: training runs; $n=3$
+entries are means over seeds 42, 1337 and 2024, $n=1$ entries are seed-42 runs.}
+\label{tab:ablation}
+\scriptsize
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcrrrrrrrr@{}}
+\toprule
+ & & \multicolumn{3}{c}{Dry-mass MAPE $\downarrow$} & Area & Recall & Precision & Dice & Phase \\
+\cmidrule(lr){3-5}
+Configuration & $n$ & matched & cov.-adj. & field total & MAPE $\downarrow$ & $\uparrow$ & $\uparrow$ & $\uparrow$ & MAE [rad] $\downarrow$ \\
+\midrule
+End-to-End Neural Baseline & 3 & 0.1742 & 0.5102 & 0.1631 & 0.1568 & 0.5931 & 0.8488 & 0.8337 & 0.1568 \\
+\midrule
++IPP (per-cell) & 3 & 0.1883 & 0.5125 & 0.1676 & 0.1679 & 0.6006 & 0.8077 & 0.8294 & 0.1656 \\
++IPP (image) & 3 & 0.1887 & 0.5222 & 0.1722 & 0.1597 & 0.5889 & 0.8460 & 0.8294 & 0.1644 \\
++Area & 1 & 0.1850 & 0.5075 & 0.1696 & 0.1779 & 0.6042 & 0.7958 & 0.8294 & 0.1646 \\
++BGA & 1 & 0.1921 & 0.5182 & 0.1651 & 0.1652 & 0.5964 & 0.8183 & 0.8309 & 0.1654 \\
+\midrule
++IPP (per-cell), $w=0.1$ & 1 & 0.1754 & 0.5158 & 0.1830 & 0.1504 & 0.5873 & 0.8428 & 0.8331 & 0.1567 \\
++IPP (per-cell), $w=0.3$ & 1 & 0.1881 & 0.5196 & 0.1953 & 0.1564 & 0.5917 & 0.8389 & 0.8328 & 0.1620 \\
++IPP (per-cell), $w=1.0$ & 3 & 0.1883 & 0.5125 & 0.1676 & 0.1679 & 0.6006 & 0.8077 & 0.8294 & 0.1656 \\
++IPP (per-cell), $w=3.0$ & 1 & 0.1963 & 0.5197 & 0.1316 & 0.1729 & 0.5976 & 0.7855 & 0.8164 & 0.1813 \\
+\midrule
++Amplitude & 1 & 0.1857 & 0.5157 & 0.1528 & 0.1591 & 0.5948 & 0.8282 & 0.8297 & 0.1633 \\
++Fwd (fixed $z$) & 1 & 0.1855 & 0.5081 & 0.1573 & 0.1685 & 0.6039 & 0.8297 & 0.8318 & 0.1647 \\
++Fwd (free $z$) & 1 & 0.1920 & 0.5212 & 0.1599 & 0.1583 & 0.5926 & 0.8248 & 0.8290 & 0.1636 \\
+\midrule
+Compact Baseline & 1 & 0.1740 & 0.5123 & 0.1738 & 0.1508 & 0.5904 & 0.8496 & 0.8345 & 0.1562 \\
+Compact +IPP & 1 & 0.1887 & 0.5088 & 0.1539 & 0.1656 & 0.6055 & 0.8174 & 0.8306 & 0.1652 \\
+\bottomrule
+\end{tabular*}
+\tabnote{Differences from a single run ($n=1$) are not resolvable under the
+between-seed criterion (Sec.~\ref{sec:stats}). Field totals sum all predicted
+and all reference cells and are dominated by the coverage deficit: the
+field-total dry-mass bias is negative in every configuration (Table~\ref{tab:seeds}a
+for the replicated ones). The $w=1.0$ row repeats +IPP (per-cell); a separate
+seed-42 training of the identical configuration gave a matched-cell MAPE of
+0.1872 (seed-42 run of +IPP (per-cell): 0.1875).}
+\end{table}

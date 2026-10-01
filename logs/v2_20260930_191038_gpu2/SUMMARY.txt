@@ -1,0 +1,58 @@
+HoloQPI v2 study, started Wed Sep 30 19:10:38 KST 2026
+log directory logs/v2_20260930_191038_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 8: ONNX export and benchmark
+
+=== export_A  19:10:38
+    python main.py export --config config/v2/a_baseline.yaml
+    OK   -> logs/v2_20260930_191038_gpu2/export_A.log
+
+=== benchmark_A  19:10:49
+    python main.py benchmark --config config/v2/a_baseline.yaml --modalities off_axis
+    OK   -> logs/v2_20260930_191038_gpu2/benchmark_A.log
+
+=== export_B  19:11:29
+    python main.py export --config config/v2/b_cell_ipp.yaml
+    OK   -> logs/v2_20260930_191038_gpu2/export_B.log
+
+=== benchmark_B  19:11:39
+    python main.py benchmark --config config/v2/b_cell_ipp.yaml --modalities off_axis
+    OK   -> logs/v2_20260930_191038_gpu2/benchmark_B.log
+
+=== export_KA  19:12:18
+    python main.py export --config config/v2/k_compact_a.yaml
+    OK   -> logs/v2_20260930_191038_gpu2/export_KA.log
+
+=== benchmark_KA  19:12:28
+    python main.py benchmark --config config/v2/k_compact_a.yaml --modalities off_axis
+    OK   -> logs/v2_20260930_191038_gpu2/benchmark_KA.log
+
+=== export_KB  19:13:06
+    python main.py export --config config/v2/k_compact_b.yaml
+    OK   -> logs/v2_20260930_191038_gpu2/export_KB.log
+
+=== benchmark_KB  19:13:16
+    python main.py benchmark --config config/v2/k_compact_b.yaml --modalities off_axis
+    OK   -> logs/v2_20260930_191038_gpu2/benchmark_KB.log
+
+=== export_D0  19:13:53
+    python main.py export --config config/v2/d0_amplitude.yaml
+    OK   -> logs/v2_20260930_191038_gpu2/export_D0.log
+
+=== benchmark_D0  19:14:04
+    python main.py benchmark --config config/v2/d0_amplitude.yaml --modalities off_axis
+    OK   -> logs/v2_20260930_191038_gpu2/benchmark_D0.log
+
+########## done Wed Sep 30 19:14:45 KST 2026
+summary  logs/v2_20260930_191038_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_191038_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_191038_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_191038_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_191038_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_191038_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0

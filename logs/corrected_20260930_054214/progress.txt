@@ -1,0 +1,74 @@
+[05:42:14] corrected study started, GPU 2 and GPU 3, log logs/corrected_20260930_054214
+[05:42:14] 0 checks
+[05:42:14]   crop offset in config: crop_offset_px: [-6, -2]
+    05:42:15 | INFO    | __main__ | classical reconstruction at z = 33.77 um; current crop offset [-6, -2]
+      current data.crop_offset_px   [-6, -2]
+      residual dy  median -0.10 px   IQR [-0.50, +0.20]   5-95% [-1.88, +1.64]
+      residual dx  median +0.00 px   IQR [-0.20, +0.20]   5-95% [-3.06, +2.12]
+      ALIGNED at the current offset: both medians within 0.5 px.
+      Recommended data.crop_offset_px: [-6, -2]
+[05:44:28]   split file sha256 11d124828ce9c48fed26d540bf2f0c3adc3f34a1befc02899e1216f33e4120bf
+[05:44:28] 1 archive stale generated data
+[05:44:28]   data/amplitude_reference and data/aberration.json moved to archive/corrected_20260930_054214
+[05:44:28] 2 stages 0-5 (GPU 2); CLEAN=1 archives runs/ and figures/
+[06:32:30]   stage 1 done
+[06:48:47]   stage 2 done
+[06:55:21]   stage 3 done
+[07:11:54]   stage 4 done
+[07:40:50]   stage 5 done
+[07:40:50]   stages 0-5: 0 FAILED steps so far
+[07:40:50] 3 stage 6: arms on both GPUs
+[19:05:07]   stage 6 done: 0 FAILED steps
+[19:05:07] 4 stages 7-10 (GPU 2, GPU 3 idle)
+[19:10:38]   stage 7 done
+[19:14:45]   stage 8 done
+[19:16:07]   stage 9 done
+[19:16:11]   stage 10 done
+[19:16:11] 5 stage 11: other seeds on both GPUs
+[23:33:42]   stage 11 done: 0 FAILED steps
+[23:33:42] 6 stages 12-14 (GPU 2 alone)
+[23:40:18]   stage 12 done
+[23:40:34]   stage 13 done
+[23:40:51]   stage 14 done
+[23:40:51] 7 common-field evaluation (107 correctly paired test fields)
+    
+    === Common test fields: 107 fields, 3055 reference cells ===
+    
+    metric                                     A_s42             A_s1337             A_s2024               G_s42  classical_off_axis     classical_gabor              A_mean                A_sd
+    phase_n_images                               107                 107                 107                 107                 107                 107            107.0000              0.0000
+    cells_reference                             3055                3055                3055                3055                3055                3055           3055.0000              0.0000
+    phase_mae_rad                             0.1586              0.1562              0.1610              0.1625              0.1990              0.3996              0.1586              0.0024
+    phase_mae_rad_in_cell                     0.2737              0.2665              0.2777              0.3005              0.3157              1.0448              0.2726              0.0057
+    phase_pearson_r                           0.8761              0.8755              0.8719              0.8667              0.7849             -0.2075              0.8745              0.0023
+    phase_ssim                                0.6381              0.6429              0.6322              0.6296              0.5297              0.0639              0.6377              0.0053
+    seg_dice                                  0.8346              0.8322              0.8324              0.8148              0.8240              0.1583              0.8330              0.0013
+    seg_aji                                   0.6730              0.6690              0.6669              0.6399              0.6355              0.0549              0.6697              0.0031
+    seg_boundary_f1                           0.4747              0.4722              0.4648              0.4165              0.3943              0.1087              0.4706              0.0052
+    detection_recall                          0.5967              0.5935              0.5905              0.5885              0.5849              0.0347              0.5936              0.0031
+    detection_precision                       0.8623              0.8343              0.8493              0.8406              0.7883              0.0077              0.8487              0.0140
+    detection_f1                              0.7054              0.6936              0.6967              0.6923              0.6716              0.0125              0.6985              0.0061
+    area_mape                                 0.1542              0.1535              0.1580              0.1669              0.1576              0.5315              0.1552              0.0025
+    dry_mass_mape                             0.1745              0.1692              0.1783              0.2129              0.2204              0.6942              0.1740              0.0045
+    dry_mass_field_total_mape                 0.1732              0.1489              0.1749              0.1356              0.1101              0.6602              0.1657              0.0145
+    
+    Written to runs/common_fields/common_fields_summary.csv
+[23:49:51] 8 diagnostics on the new runs
+    23:49:53 | INFO    | __main__ | classical reconstruction at z = 33.77 um; current crop offset [-6, -2]
+      current data.crop_offset_px   [-6, -2]
+      residual dy  median -0.10 px   IQR [-0.50, +0.20]   5-95% [-1.88, +1.64]
+      residual dx  median +0.00 px   IQR [-0.20, +0.20]   5-95% [-3.06, +2.12]
+      ALIGNED at the current offset: both medians within 0.5 px.
+    === Self-check against stored metrics (must agree) ===
+      A_s42      matched  1897 (stored 1898)   dry-mass MAPE 0.1751 (stored 0.1749886606808202)   field-total MAPE 0.1704 (stored 0.17037205468979952)
+      A_s1337    matched  1887 (stored 1890)   dry-mass MAPE 0.1696 (stored 0.1694019692588005)   field-total MAPE 0.1468 (stored 0.1468579834660001)
+      A_s2024    matched  1882 (stored 1881)   dry-mass MAPE 0.1784 (stored 0.1782285013434748)   field-total MAPE 0.1721 (stored 0.17207148152410068)
+      B_s42      matched  1909 (stored 1909)   dry-mass MAPE 0.1875 (stored 0.18753635108105524)   field-total MAPE 0.1641 (stored 0.1640708069870285)
+      B_s1337    matched  1906 (stored 1906)   dry-mass MAPE 0.1836 (stored 0.18354006933379233)   field-total MAPE 0.1615 (stored 0.1615150136367414)
+      B_s2024    matched  1925 (stored 1926)   dry-mass MAPE 0.1939 (stored 0.1938371825289397)   field-total MAPE 0.1772 (stored 0.17720553035321085)
+      B1_s42     matched  1874 (stored 1875)   dry-mass MAPE 0.1894 (stored 0.18952358249181303)   field-total MAPE 0.1668 (stored 0.16681295464303134)
+      B1_s1337   matched  1871 (stored 1873)   dry-mass MAPE 0.1867 (stored 0.18725279500474876)   field-total MAPE 0.1652 (stored 0.1651657481358401)
+      B1_s2024   matched  1880 (stored 1881)   dry-mass MAPE 0.1892 (stored 0.1893052605638898)   field-total MAPE 0.1845 (stored 0.18451839302141668)
+      classical  matched  1870 (stored 1870)   dry-mass MAPE 0.2203 (stored 0.22033939890203486)   field-total MAPE 0.1094 (stored 0.10938239775698252)
+    
+[23:59:09] DONE. FAILED steps in run_v2.sh logs during this study: 0
+[23:59:09] Results packed in corrected_results.zip -- send that file to Claude.

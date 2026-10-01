@@ -1,0 +1,46 @@
+19:15:22 | INFO    | __main__ | --- figure 01 (qualitative_panel, ESSENTIAL) ---
+19:15:24 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+19:15:24 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+19:15:24 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True weights=local (weights) stages=[16, 24, 32, 96, 1280]
+19:15:24 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.60M parameters, 9.60M trainable (100.0%)
+19:15:26 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 440/440 tensors matched
+19:15:26 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+19:15:32 | INFO    | __main__ | wrote figures/fig01_qualitative_panel.png / .pdf
+19:15:32 | INFO    | __main__ | --- figure 02 (bland_altman, ESSENTIAL) ---
+19:15:33 | INFO    | __main__ | wrote figures/fig02_bland_altman.png / .pdf
+19:15:33 | INFO    | __main__ | --- figure 03 (error_decomposition, ESSENTIAL) ---
+19:15:34 | INFO    | __main__ | wrote figures/fig03_error_decomposition.png / .pdf
+19:15:34 | INFO    | __main__ | --- figure 04 (detection_gap, ESSENTIAL) ---
+19:15:34 | INFO    | __main__ | wrote figures/fig04_detection_gap.png / .pdf
+19:15:34 | INFO    | __main__ | --- figure 06 (loss_composition, ESSENTIAL) ---
+/sda/usama/QPI_Extended_v2/scripts/make_figures.py:737: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  bottom.legend(fontsize=7)
+19:15:35 | INFO    | __main__ | wrote figures/fig06_loss_composition.png / .pdf
+19:15:35 | INFO    | __main__ | --- figure 08 (efficiency_tradeoff, ESSENTIAL) ---
+19:15:36 | INFO    | __main__ | wrote figures/fig08_efficiency_tradeoff.png / .pdf
+19:15:36 | INFO    | __main__ | --- figure 09 (phase_error_structure, OPTIONAL) ---
+19:15:36 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+19:15:36 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+19:15:36 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True weights=local (weights) stages=[16, 24, 32, 96, 1280]
+19:15:36 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.60M parameters, 9.60M trainable (100.0%)
+19:15:36 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 440/440 tensors matched
+19:15:36 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+19:15:39 | INFO    | __main__ | wrote figures/fig09_phase_error_structure.png / .pdf
+19:15:39 | INFO    | __main__ | --- figure 12 (convergence, IMPORTANT) ---
+19:15:40 | INFO    | __main__ | wrote figures/fig12_convergence.png / .pdf
+19:15:40 | INFO    | __main__ | --- figure 15 (recall_by_cell_size, IMPORTANT) ---
+19:15:41 | INFO    | __main__ | wrote figures/fig15_recall_by_cell_size.png / .pdf
+
+figures written to /sda/usama/QPI_Extended_v2/figures
+  from config/v2/a_baseline.yaml (experiment v2_baseline, off_axis, test split)
+
+9 figure(s) written by THIS run:
+  fig01_qualitative_panel.png / .pdf
+  fig02_bland_altman.png / .pdf
+  fig03_error_decomposition.png / .pdf
+  fig04_detection_gap.png / .pdf
+  fig06_loss_composition.png / .pdf
+  fig08_efficiency_tradeoff.png / .pdf
+  fig09_phase_error_structure.png / .pdf
+  fig12_convergence.png / .pdf
+  fig15_recall_by_cell_size.png / .pdf

@@ -1,0 +1,37 @@
+% Table 7: decomposition of the dry-mass ratio into a domain factor and a phase factor.
+\begin{table}[!htbp]
+\centering
+\caption{Decomposition of the predicted-to-reference dry-mass ratio into a
+domain factor and a phase factor (Eq.~\eqref{eq:decomp}) on the off-axis test
+set (113 fields). GM: geometric mean of the factor (mean $\pm$ SD over three
+seeds for the baseline); $|\log|$: median absolute log ratio (spread). Edge:
+reference instance with a pixel within 3\,px of the field boundary.}
+\label{tab:decomp}
+\scriptsize
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrccccccc@{}}
+\toprule
+ & & & \multicolumn{3}{c}{GM} & \multicolumn{3}{c}{$|\log|$} \\
+\cmidrule(lr){4-6}\cmidrule(lr){7-9}
+Level / group & $n$ & Recall & Domain & Phase & Total & Domain & Phase & Total \\
+\midrule
+\multicolumn{9}{@{}l}{\emph{End-to-End Neural Baseline ($n=3$)}} \\
+\quad Matched cells, all & 1889 & 0.593 & $1.002 \pm 0.002$ & $0.929 \pm 0.016$ & $0.931 \pm 0.014$ & 0.042 & 0.102 & 0.132 \\
+\quad Matched cells, interior & 1581 & 0.912 & $1.006 \pm 0.002$ & $0.957 \pm 0.017$ & $0.963 \pm 0.015$ & 0.038 & 0.090 & 0.116 \\
+\quad Matched cells, edge & 308 & 0.212 & $0.982 \pm 0.004$ & $0.797 \pm 0.014$ & $0.782 \pm 0.014$ & 0.076 & 0.267 & 0.303 \\
+\quad Field (foreground) & 113 fields & -- & $0.897 \pm 0.002$ & $0.933 \pm 0.021$ & $0.838 \pm 0.017$ & 0.105 & 0.073 & 0.179 \\
+\midrule
+\multicolumn{9}{@{}l}{\emph{Classical pipeline ($n=1$)}} \\
+\quad Matched cells, all & 1870 & 0.587 & 0.966 & 1.014 & 0.980 & 0.046 & 0.119 & 0.169 \\
+\quad Matched cells, interior & 1543 & 0.890 & 0.977 & 1.028 & 1.004 & 0.041 & 0.106 & 0.152 \\
+\quad Matched cells, edge & 327 & 0.225 & 0.919 & 0.952 & 0.875 & 0.095 & 0.212 & 0.308 \\
+\quad Field (foreground) & 113 fields & -- & 0.857 & 1.055 & 0.905 & 0.141 & 0.061 & 0.095 \\
+\bottomrule
+\end{tabular*}
+\tabnote{$n$: matched cells per run (baseline: mean over seeds) or fields.
+Matched cells are recomputed by the decomposition script and differ from the
+stored evaluation by at most three cells per run; the re-scoring gives a per-run
+mean of 1889 matched cells, against $1890\pm9$ from the stored evaluation
+(Table~\ref{tab:learned-vs-classical}). Field level: the whole
+predicted and reference foreground, so undetected and spurious cells enter the
+domain factor.}
+\end{table}

@@ -1,0 +1,21 @@
+19:13:10 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+19:13:10 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+19:13:10 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True weights=local (weights) stages=[16, 24, 32, 96, 1280]
+19:13:10 | INFO    | holoqpi.models.holonet | HoloQPINet built: 3.36M parameters, 3.36M trainable (100.0%)
+19:13:11 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 446/446 tensors matched
+/sda/usama/QPI_Extended_v2/holoqpi/models/blocks.py:87: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_h or pad_w:
+/sda/usama/QPI_Extended_v2/holoqpi/models/blocks.py:46: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != skip.shape[-2:]:
+/sda/usama/QPI_Extended_v2/holoqpi/models/holonet.py:158: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != target:
+/sda/usama/QPI_Extended_v2/holoqpi/models/holonet.py:160: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if abs(scale_h - 1.0) > 1e-6:
+/sda/usama/QPI_Extended_v2/holoqpi/models/blocks.py:94: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_h:
+/sda/usama/QPI_Extended_v2/holoqpi/models/blocks.py:96: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if pad_w:
+/sda/usama/QPI_Extended_v2/holoqpi/models/holonet.py:166: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if x.shape[-2:] != target:
+19:13:15 | INFO    | holoqpi.deploy.export | exported ONNX (fp32, opset 17, 900x900) -> runs/v2_compact_cell_ipp_off_axis/v2_compact_cell_ipp_off_axis_fp32.onnx
+19:13:15 | INFO    | holoqpi.deploy.export | ONNX graph verified: 365 nodes

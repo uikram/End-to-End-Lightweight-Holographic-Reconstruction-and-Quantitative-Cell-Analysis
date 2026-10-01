@@ -5,7 +5,7 @@
 | file | what it is |
 |---|---|
 | `HoloQPI_Evaluation.ipynb` | the notebook to open and run |
-| `HoloQPI_Evaluation.EXAMPLE_RUN.ipynb` | the same notebook already executed (local copy only, not in the public repository). **Its numbers are not the study's results** — see the caveat below |
+| `HoloQPI_Evaluation.EXAMPLE_RUN.ipynb` | the same notebook already executed, so you can see the expected output without running it. **Its numbers are not the study's results** — see the caveat below |
 | `test_outputs/` | created on the first run: `predictions/`, `figures/`, `tables/` |
 
 ## Run it
@@ -44,9 +44,8 @@ preprocessing, measurement chain and metric classes — everything is imported f
 
 ## Defaults
 
-- **Models**: arm A (the End-to-End Neural Baseline), arm KA (the Compact Baseline,
-  3.36 M parameters), and arm D1 (+Fwd (fixed z), the only one of the three with an
-  amplitude head). Change `MODELS` to load others;
+- **Models**: arm A (the recommended configuration), arm KA (the 3.36 M compact model), and
+  arm D1 (the only one of the three with an amplitude head). Change `MODELS` to load others;
   any `config/v2/*.yaml` works as long as `runs/<experiment_name>_<modality>/best_model.pt`
   exists.
 - **Split**: `"test"`. This is the honest default — it is the split the study reports. If no
@@ -82,11 +81,10 @@ Three things that will bite you, in order of likelihood:
 
 That file was executed in a CPU container holding **13 of the 800 fields**, of which only
 **2** belong to the test split. Its numbers are therefore single-field observations, not the
-study's results — expect them to differ from `runs/benchmark_results/`, which averages 113
-test fields. It is there to show the notebook working, not to report performance. It is
-not included in the public repository.
+study's results — expect them to differ from `runs/RESULTS.md`, which averages 113 test
+fields. It is there to show the notebook working, not to report performance.
 
 Per-field variation is large and real: on one field arm A scored a phase MAE of 0.222 rad
 against the study's 113-field mean of 0.159, and a detection recall of 0.41 against 0.59.
-Quote `runs/benchmark_results/` (see `BENCHMARKING.md`) for results; use this notebook to
-inspect individual fields and to run new data.
+Quote `runs/RESULTS.md` for results; use this notebook to inspect individual fields and to
+run new data.

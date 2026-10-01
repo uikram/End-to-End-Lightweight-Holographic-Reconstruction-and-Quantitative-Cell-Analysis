@@ -313,7 +313,10 @@ def main() -> int:
         hologram = data_io.read_hologram(
             data_io.hologram_path(root, cfg, stem, "off_axis")
         )
-        hologram = data_io.align_to_phase_grid(hologram, cfg.data.phase_size, cfg.data.align)
+        hologram = data_io.align_to_phase_grid(
+            hologram, cfg.data.phase_size, cfg.data.align,
+            data_io.hologram_crop_offset(cfg.data),
+        )
         hologram = torch.from_numpy(hologram.astype(np.float32)).to(device).view(1, 1, *reference.shape)
 
         field = reconstruct_off_axis(
@@ -514,6 +517,7 @@ def main() -> int:
             "align": cfg.data.align,
             "conjugate_detrend_order": cfg.optics.conjugate.detrend_order,
             "conjugate_min_skewness": cfg.optics.conjugate.min_skewness,
+            "crop_offset_px": list(data_io.hologram_crop_offset(cfg.data)),
         },
     }
     destination = root / cfg.paths.aberration_file

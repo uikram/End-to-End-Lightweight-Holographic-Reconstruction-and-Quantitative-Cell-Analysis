@@ -1,0 +1,120 @@
+[2026-09-30 04:27:22] run_everything started
+[2026-09-30 04:27:22] step 1/4: checking the corrections are applied
+  [already applied] holoqpi/data/io.py: align_to_phase_grid takes a whole-pixel crop offset; helpers read the config
+  [already applied] holoqpi/data/dataset.py: dataset reads the crop offset
+  [already applied] holoqpi/data/dataset.py: dataset applies the crop offset to the hologram
+  [already applied] holoqpi/data/dataset.py: loaders drop the fields data.exclude removes from this modality
+  [already applied] holoqpi/utils.py: crop offset and exclusions join the analysis fingerprint
+  [already applied] scripts/prepare_amplitude.py: amplitude reference uses the crop offset
+  [already applied] scripts/prepare_amplitude.py: amplitude provenance records the crop offset (stale references are refused)
+  [already applied] scripts/estimate_aberration.py: aberration fit uses the crop offset
+  [already applied] scripts/estimate_aberration.py: aberration.json records the crop offset it was fitted with
+  [already applied] config/base.yaml: data.crop_offset_px and data.exclude
+  [already applied] test/HoloQPI_Evaluation.ipynb: evaluation notebook crops with the configured offset
+
+--check: 0 edits would be applied. Nothing changed.
+[2026-09-30 04:27:22]   corrections applied
+[2026-09-30 04:27:22] step 2/4: choosing the crop offset on the validation fields
+04:27:23 | INFO    | __main__ | classical reconstruction at z = 33.77 um; current crop offset [0, 0]
+04:27:24 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+04:29:51 | INFO    | __main__ | offset [0, 0]: 127 fields registered
+04:29:51 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+04:32:14 | INFO    | __main__ | offset [-6, -2]: 127 fields registered
+04:32:14 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+04:34:36 | INFO    | __main__ | offset [-6, -1]: 127 fields registered
+04:34:37 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+04:36:59 | INFO    | __main__ | offset [-6, 0]: 127 fields registered
+04:36:59 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+04:39:20 | INFO    | __main__ | offset [-5, -2]: 127 fields registered
+04:39:21 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+04:41:43 | INFO    | __main__ | offset [-5, -1]: 127 fields registered
+04:41:43 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+04:44:07 | INFO    | __main__ | offset [-5, 0]: 127 fields registered
+04:44:07 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+04:46:29 | INFO    | __main__ | offset [-4, -2]: 127 fields registered
+04:46:29 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+04:48:51 | INFO    | __main__ | offset [-4, -1]: 127 fields registered
+04:48:51 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+04:51:13 | INFO    | __main__ | offset [-4, 0]: 127 fields registered
+
+=== Crop offset, val split, 127 fields ===
+  current data.crop_offset_px   [0, 0]
+  residual dy  median +5.40 px   IQR [+4.65, +6.25]   5-95% [+2.50, +8.91]
+  residual dx  median +1.10 px   IQR [+0.25, +2.20]   5-95% [+0.00, +3.57]
+  per group (median dy, dx):
+    NCI                        n=  8  +5.05  +0.65
+    NCI_Blebbistatin_5uM       n=  8  +5.20  +0.25
+    NCI_FCCP_10uM              n=  8  +5.35  +0.70
+    NCI_Staurosporine_100nM    n=  8  +5.45  +0.25
+    NCI_rotenone_500nM         n=  8  +5.00  +1.25
+    SNU                        n= 15  +5.80  +1.10
+    SNU_FCCP_10uM              n=  8  +5.60  +2.30
+    SNU_Rotenone_500nM         n=  8  +4.65  +0.30
+    SNU_blebbistatin           n=  8  +5.90  +0.30
+    SNU_staurosporine          n=  8  +6.75  +0.90
+    T24                        n=  8  +5.50  +1.05
+    T24_Blebbistatin_5uM       n=  8  +4.70  +1.15
+    T24_FCCP_10uM              n=  8  +5.55  +2.15
+    T24_Staurosporine_100nM    n=  8  +6.10  +2.80
+    T24_rotenone_500nM         n=  8  +5.75  +1.80
+  candidate offsets (median residual dy, dx):
+    [ -6,  -2]   +0.00  +0.00   <- recommended
+    [ -6,  -1]   +0.00  +0.40
+    [ -6,   0]   +0.00  +1.40
+    [ -5,  -2]   +0.50  +0.00
+    [ -5,  -1]   +0.60  +0.30
+    [ -5,   0]   +0.60  +1.60
+    [ -4,  -2]   +1.50  +0.00
+    [ -4,  -1]   +1.70  +0.40
+    [ -4,   0]   +1.70  +1.20
+    [  0,   0]   +5.40  +1.10
+
+  OFFSET PRESENT at the current setting.
+  Recommended data.crop_offset_px: [-6, -2]
+  written to runs/diagnostics/crop_offset_val_dy0_dx0.csv and .json
+
+  WROTE data.crop_offset_px: [-6, -2] to config/base.yaml
+  Confirm on another split with --require-aligned.
+[2026-09-30 04:51:14]   crop_offset_px: [-6, -2]  (written to config/base.yaml)
+[2026-09-30 04:51:14] step 3/4: confirming the offset on the test fields
+04:51:16 | INFO    | __main__ | classical reconstruction at z = 33.77 um; current crop offset [-6, -2]
+04:51:16 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+04:53:28 | INFO    | __main__ | offset [-6, -2]: 113 fields registered
+
+=== Crop offset, test split, 113 fields ===
+  current data.crop_offset_px   [-6, -2]
+  residual dy  median -0.10 px   IQR [-0.50, +0.20]   5-95% [-1.88, +1.64]
+  residual dx  median +0.00 px   IQR [-0.20, +0.20]   5-95% [-3.06, +2.12]
+  per group (median dy, dx):
+    NCI                        n=  7  +0.00  +0.00
+    NCI_Blebbistatin_5uM       n=  7  -0.10  +0.00
+    NCI_FCCP_10uM              n=  7  +0.10  -0.10
+    NCI_Staurosporine_100nM    n=  7  +0.20  -0.30
+    NCI_rotenone_500nM         n=  7  -0.30  +0.00
+    SNU                        n= 15  +0.10  +0.10
+    SNU_FCCP_10uM              n=  7  -0.20  +0.10
+    SNU_Rotenone_500nM         n=  7  +0.00  +0.00
+    SNU_blebbistatin           n=  7  -0.10  +0.10
+    SNU_staurosporine          n=  7  +0.00  +0.00
+    T24                        n=  7  -0.30  +0.10
+    T24_Blebbistatin_5uM       n=  7  -0.10  +0.20
+    T24_FCCP_10uM              n=  7  -1.60  +0.00
+    T24_Staurosporine_100nM    n=  7  +0.00  +1.10
+    T24_rotenone_500nM         n=  7  -0.10  +0.10
+
+  ALIGNED at the current offset: both medians within 0.5 px.
+  Recommended data.crop_offset_px: [-6, -2]
+  written to runs/diagnostics/crop_offset_test_dy-6_dx-2.csv and .json
+    04:51:16 | INFO    | __main__ | classical reconstruction at z = 33.77 um; current crop offset [-6, -2]
+      current data.crop_offset_px   [-6, -2]
+      residual dy  median -0.10 px   IQR [-0.50, +0.20]   5-95% [-1.88, +1.64]
+      residual dx  median +0.00 px   IQR [-0.20, +0.20]   5-95% [-3.06, +2.12]
+      ALIGNED at the current offset: both medians within 0.5 px.
+[2026-09-30 04:53:29]   ALIGNED on the test fields
+[2026-09-30 04:53:29] step 4/4: the full study (run_corrected_study.sh); progress in logs/corrected_*/progress.txt
+[04:53:29] corrected study started, GPU 2 and GPU 3, log logs/corrected_20260930_045329
+[04:53:29] 0 checks
+[04:53:29] STOPPED: the corrections are not (all) applied; run: python apply_fixes.py
+[04:53:29] Nothing after this point was run. Send logs/corrected_20260930_045329/progress.txt to Claude.
+[2026-09-30 04:53:29] STOPPED at step 4: run_corrected_study.sh stopped -- see the newest logs/corrected_*/progress.txt
+[2026-09-30 04:53:29] Nothing after this step was run. Send logs/run_everything_20260930_042722.txt to Claude.

@@ -47,6 +47,7 @@ class HologramQPIDataset(Dataset):
         data_cfg = cfg.data
         self.phase_size = data_cfg.phase_size
         self.align = data_cfg.align
+        self.crop_offset = data_io.hologram_crop_offset(data_cfg)
         self.normalisation = data_cfg.hologram_normalisation
         self.phase_format = cfg.formats.phase_binary
 
@@ -165,7 +166,9 @@ class HologramQPIDataset(Dataset):
         hologram = data_io.read_hologram(
             data_io.hologram_path(self.data_root, self.cfg, stem, self.modality)
         )
-        hologram = data_io.align_to_phase_grid(hologram, self.phase_size, self.align)
+        hologram = data_io.align_to_phase_grid(
+            hologram, self.phase_size, self.align, self.crop_offset
+        )
         # Two representations of the same measurement, kept separately on
         # purpose. The network needs a normalised input; the forward-model loss
         # needs the intensity the sensor actually recorded. Normalising once and
@@ -334,9 +337,26 @@ def build_dataloaders(
     splits = load_splits(data_root / cfg.paths.splits_file)
     data_cfg = cfg.data
 
+    # Fields removed from this modality by data.exclude. A name that is in no
+    # split is a typo, and a typo would silently exclude nothing, so it raises.
+    excluded = data_io.excluded_stems(data_cfg, data_cfg.modality)
+    if excluded:
+        known = {stem for group in splits.values() for stem in group}
+        unknown = sorted(excluded - known)
+        if unknown:
+            raise ValueError(f"data.exclude lists fields that are in no split: {unknown}")
+
     loaders: dict[str, DataLoader] = {}
     for split in splits_to_build:
         stems = splits.get(split, [])
+        if excluded:
+            kept = [stem for stem in stems if stem not in excluded]
+            if len(kept) != len(stems):
+                LOGGER.info(
+                    "%s split: %d of %d fields excluded for modality %s (data.exclude)",
+                    split, len(stems) - len(kept), len(stems), data_cfg.modality,
+                )
+            stems = kept
         if not stems:
             LOGGER.warning("split %r is empty; skipping", split)
             continue

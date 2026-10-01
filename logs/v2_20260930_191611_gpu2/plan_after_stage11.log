@@ -1,0 +1,11 @@
+seeds [1337]   (reduced arms ['B2', 'C', 'D0', 'D1', 'D2', 'G', 'KA', 'KB', 'W01', 'W03', 'W30']: first 1)
+arm          1337   run directory (seed 42)
+A       evaluated   v2_baseline_off_axis
+B       evaluated   v2_cell_ipp_off_axis
+B1      evaluated   v2_image_volume_off_axis
+
+hardware (cuda)
+A            todo
+B            todo
+
+0 training/evaluation run(s) not yet complete

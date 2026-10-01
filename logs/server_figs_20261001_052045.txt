@@ -1,0 +1,79 @@
+[05:20:45] run_server_figures started, GPU 2, log logs/server_figs_20261001_052045.txt
+[05:20:45] step 0/5: checks
+[05:20:45]   project, scripts, config and checkpoints OK
+[05:20:45] step 1/5: Figure 1 image panels (field NCI_08)
+[05:20:57]   12 panels in manuscript_images/fig1_panels/
+[05:20:57] step 2/5: manuscript figure 3
+[05:21:09]   manuscript_images/figure_3.png written
+[05:21:09] step 3/5: label audit with the head-redundancy test (off-axis and in-line baselines)
+05:21:16 | INFO    | __main__ | thresholds: 100/800
+05:21:22 | INFO    | __main__ | thresholds: 200/800
+05:21:27 | INFO    | __main__ | thresholds: 300/800
+05:21:33 | INFO    | __main__ | thresholds: 400/800
+05:21:39 | INFO    | __main__ | thresholds: 500/800
+05:21:44 | INFO    | __main__ | thresholds: 600/800
+05:21:50 | INFO    | __main__ | thresholds: 700/800
+05:21:56 | INFO    | __main__ | thresholds: 800/800
+05:21:57 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+05:21:57 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+05:21:57 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True weights=local (weights) stages=[16, 24, 32, 96, 1280]
+05:21:57 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.60M parameters, 9.60M trainable (100.0%)
+05:22:00 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 440/440 tensors matched
+05:22:00 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+
+=== 1. Otsu threshold stability ===
+  800 images
+  level  0.4058 +/- 0.1506 rad [0.0638, 1.0657]  CV = 37.1%
+  between-condition SD 0.0455 rad (unweighted)   within-condition SD 0.1455 rad (pooled)
+    blebbistatin           n=150  0.3633 +/- 0.1450 rad
+    control                n=200  0.3747 +/- 0.1433 rad
+    fccp                   n=150  0.4222 +/- 0.0953 rad
+    rotenone               n=150  0.4781 +/- 0.1897 rad
+    staurosporine          n=150  0.4010 +/- 0.1395 rad
+  one-way ANOVA across conditions  F=15.265  p=4.936e-12
+  Kruskal-Wallis                   H=56.095  p=1.915e-11
+
+  -> the threshold DOES separate by condition. The label definition is
+     partly confounded with the class label; report this, and consider
+     mask_generation.threshold_method: fixed with fixed_threshold_rad
+     set near 0.406 as a sensitivity check.
+
+  per-image detail -> runs/label_audit_thresholds_test.csv
+05:22:18 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+05:22:19 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+05:22:19 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True weights=local (weights) stages=[16, 24, 32, 96, 1280]
+05:22:19 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.60M parameters, 9.60M trainable (100.0%)
+05:22:19 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 440/440 tensors matched
+05:22:19 | INFO    | holoqpi.data.dataset | test split: 6 of 113 fields excluded for modality gabor (data.exclude)
+05:22:19 | INFO    | holoqpi.data.dataset | test split: 107 samples | modality=gabor | crop=None | augment=False
+
+=== 2. Segmentation / phase head redundancy ===
+  Dice(seg head, threshold(predicted phase)) measures how much of the
+  segmentation output is already implied by the reconstruction.
+
+  modality       head vs GT   derived vs GT   head vs derived
+  off_axis           0.8317          0.8422            0.9270
+  gabor              0.8146          0.8165            0.9203
+
+  -> the two heads are largely redundant. Thresholding the predicted
+     phase reproduces the segmentation head, which is the expected
+     consequence of deriving the masks from the phase and is the
+     mechanism behind the null result for the physics-consistency
+     terms: those terms constrain a quantity already determined by
+     the two primary losses. State this in the paper.
+
+  detail -> runs/label_audit_redundancy.json
+[05:22:35]   runs/label_audit_redundancy.json written
+[05:22:35] step 4/5: repository figure 10 (label audit)
+05:22:37 | INFO    | __main__ | --- figure 10 (label_audit, IMPORTANT) ---
+05:22:38 | INFO    | __main__ | wrote figures/fig10_label_audit.png / .pdf
+
+figures written to /sda/usama/QPI_Extended_v2/figures
+  from config/base.yaml (experiment base, off_axis+gabor, test split)
+
+1 figure(s) written by THIS run:
+  fig10_label_audit.png / .pdf
+[05:22:38]   figures/fig10_label_audit.png written
+[05:22:38] step 5/5: packing server_figs.zip
+  23 files packed into server_figs.zip
+[05:22:39] FINISHED. Send server_figs.zip to Claude.

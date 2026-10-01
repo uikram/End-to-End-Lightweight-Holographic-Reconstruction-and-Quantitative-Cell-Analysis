@@ -1,0 +1,35 @@
+HoloQPI v2 study, started Wed Sep 30 19:14:45 KST 2026
+log directory logs/v2_20260930_191445_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1 D2 G W01 W03 W10 W30 KA KB   seeds (stages 11-14): from config
+
+########## stage 9: figures
+    per-arm figures illustrated with arm A (config/v2/a_baseline.yaml)
+
+=== diagnose_bias  19:14:45
+    python scripts/diagnose_bias.py --config config/v2/a_baseline.yaml --split test --modality off_axis
+    OK   -> logs/v2_20260930_191445_gpu2/diagnose_bias.log
+
+=== figures_global  19:15:01
+    python scripts/make_figures.py --config config/base.yaml --only 10 16 17 18 19 20
+    OK   -> logs/v2_20260930_191445_gpu2/figures_global.log
+
+=== figures_per_arm  19:15:20
+    python scripts/make_figures.py --config config/v2/a_baseline.yaml --modalities off_axis --only 1 2 3 4 6 8 9 12 15
+    OK   -> logs/v2_20260930_191445_gpu2/figures_per_arm.log
+
+=== figures_modality  19:16:02
+    python scripts/make_figures.py --config config/v2/a_baseline.yaml --modalities off_axis gabor --only 5 13 14
+    OK   -> logs/v2_20260930_191445_gpu2/figures_modality.log
+
+########## done Wed Sep 30 19:16:07 KST 2026
+summary  logs/v2_20260930_191445_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_191445_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_191445_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_191445_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_191445_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_191445_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0

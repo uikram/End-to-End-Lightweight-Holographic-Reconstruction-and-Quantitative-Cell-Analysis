@@ -13,31 +13,31 @@
     {
       "seed": null,
       "file": "runs/z_calibration.json",
-      "modified_at": 1789990423.7021446,
+      "modified_at": 1790719914.0334456,
       "metrics": {
-        "off_axis.reference_floor": 0.8061649799346924,
-        "off_axis.z_forward_um": 96.24020270270269,
-        "off_axis.forward_residual_min": 0.8061649799346924,
-        "off_axis.forward_well_depth": 1.5639958905786646,
+        "off_axis.reference_floor": 0.8110279738903046,
+        "off_axis.z_forward_um": 33.68407094594592,
+        "off_axis.forward_residual_min": 0.8110279738903046,
+        "off_axis.forward_well_depth": 1.9102122665110197,
         "off_axis.z_inverse_um": -52.932111486486484,
-        "off_axis.inverse_prominence": 2.8118039155465406,
-        "off_axis.per_image_median_z_um": -24.060050675675683,
-        "off_axis.per_image_iqr_um": 156.39032939189184,
+        "off_axis.inverse_prominence": 2.2749038389982177,
+        "off_axis.per_image_median_z_um": 33.68407094594592,
+        "off_axis.per_image_iqr_um": 48.120101351351344,
         "off_axis.grid_step_um": 4.812010135135139,
         "off_axis.sweep_border_px": 225.0,
         "off_axis.sweep_pad_px": 225.0,
         "off_axis.verdict_border_px": 79.0,
         "off_axis.field_px": 900.0,
-        "gabor.reference_floor": 0.807953879237175,
-        "gabor.z_forward_um": 48.12010135135132,
-        "gabor.forward_residual_min": 0.807953879237175,
-        "gabor.forward_well_depth": 2.612761021452355,
+        "gabor.reference_floor": 0.45828648656606674,
+        "gabor.z_forward_um": 33.68407094594592,
+        "gabor.forward_residual_min": 0.45828648656606674,
+        "gabor.forward_well_depth": 3.7973285872626423,
         "gabor.z_inverse_um": -91.42819256756755,
-        "gabor.inverse_prominence": 1.1954370854928793,
-        "gabor.per_image_median_z_um": 50.5261064189189,
-        "gabor.per_image_iqr_um": 6.015012668918935,
+        "gabor.inverse_prominence": 0.745382907203002,
+        "gabor.per_image_median_z_um": 33.68407094594592,
+        "gabor.per_image_iqr_um": 0.0,
         "gabor.grid_step_um": 4.812010135135139,
-        "gabor.recommended_z_um": 50.5261064189189,
+        "gabor.recommended_z_um": 33.68407094594592,
         "gabor.sweep_border_px": 225.0,
         "gabor.sweep_pad_px": 225.0,
         "gabor.verdict_border_px": 79.0,
@@ -49,7 +49,7 @@
         "off_axis.identifiable": false,
         "off_axis.recommended_z_um": null,
         "off_axis.forward_model_usable": false,
-        "off_axis.forward_model_verdict": "uninformative",
+        "off_axis.forward_model_verdict": "marginal",
         "gabor.images_agree": true,
         "gabor.peak_at_scan_edge": false,
         "gabor.identifiable": true,
@@ -70,23 +70,23 @@
       "n_missing": 0
     },
     "gabor.forward_residual_min": {
-      "mean": 0.807953879237175,
+      "mean": 0.45828648656606674,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 0.807953879237175,
-      "max": 0.807953879237175,
+      "min": 0.45828648656606674,
+      "max": 0.45828648656606674,
       "n_missing": 0
     },
     "gabor.forward_well_depth": {
-      "mean": 2.612761021452355,
+      "mean": 3.7973285872626423,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 2.612761021452355,
-      "max": 2.612761021452355,
+      "min": 3.7973285872626423,
+      "max": 3.7973285872626423,
       "n_missing": 0
     },
     "gabor.grid_step_um": {
@@ -100,53 +100,53 @@
       "n_missing": 0
     },
     "gabor.inverse_prominence": {
-      "mean": 1.1954370854928793,
+      "mean": 0.745382907203002,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 1.1954370854928793,
-      "max": 1.1954370854928793,
+      "min": 0.745382907203002,
+      "max": 0.745382907203002,
       "n_missing": 0
     },
     "gabor.per_image_iqr_um": {
-      "mean": 6.015012668918935,
+      "mean": 0.0,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 6.015012668918935,
-      "max": 6.015012668918935,
+      "min": 0.0,
+      "max": 0.0,
       "n_missing": 0
     },
     "gabor.per_image_median_z_um": {
-      "mean": 50.5261064189189,
+      "mean": 33.68407094594592,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 50.5261064189189,
-      "max": 50.5261064189189,
+      "min": 33.68407094594592,
+      "max": 33.68407094594592,
       "n_missing": 0
     },
     "gabor.recommended_z_um": {
-      "mean": 50.5261064189189,
+      "mean": 33.68407094594592,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 50.5261064189189,
-      "max": 50.5261064189189,
+      "min": 33.68407094594592,
+      "max": 33.68407094594592,
       "n_missing": 0
     },
     "gabor.reference_floor": {
-      "mean": 0.807953879237175,
+      "mean": 0.45828648656606674,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 0.807953879237175,
-      "max": 0.807953879237175,
+      "min": 0.45828648656606674,
+      "max": 0.45828648656606674,
       "n_missing": 0
     },
     "gabor.sweep_border_px": {
@@ -180,13 +180,13 @@
       "n_missing": 0
     },
     "gabor.z_forward_um": {
-      "mean": 48.12010135135132,
+      "mean": 33.68407094594592,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 48.12010135135132,
-      "max": 48.12010135135132,
+      "min": 33.68407094594592,
+      "max": 33.68407094594592,
       "n_missing": 0
     },
     "gabor.z_inverse_um": {
@@ -210,23 +210,23 @@
       "n_missing": 0
     },
     "off_axis.forward_residual_min": {
-      "mean": 0.8061649799346924,
+      "mean": 0.8110279738903046,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 0.8061649799346924,
-      "max": 0.8061649799346924,
+      "min": 0.8110279738903046,
+      "max": 0.8110279738903046,
       "n_missing": 0
     },
     "off_axis.forward_well_depth": {
-      "mean": 1.5639958905786646,
+      "mean": 1.9102122665110197,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 1.5639958905786646,
-      "max": 1.5639958905786646,
+      "min": 1.9102122665110197,
+      "max": 1.9102122665110197,
       "n_missing": 0
     },
     "off_axis.grid_step_um": {
@@ -240,43 +240,43 @@
       "n_missing": 0
     },
     "off_axis.inverse_prominence": {
-      "mean": 2.8118039155465406,
+      "mean": 2.2749038389982177,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 2.8118039155465406,
-      "max": 2.8118039155465406,
+      "min": 2.2749038389982177,
+      "max": 2.2749038389982177,
       "n_missing": 0
     },
     "off_axis.per_image_iqr_um": {
-      "mean": 156.39032939189184,
+      "mean": 48.120101351351344,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 156.39032939189184,
-      "max": 156.39032939189184,
+      "min": 48.120101351351344,
+      "max": 48.120101351351344,
       "n_missing": 0
     },
     "off_axis.per_image_median_z_um": {
-      "mean": -24.060050675675683,
+      "mean": 33.68407094594592,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": -24.060050675675683,
-      "max": -24.060050675675683,
+      "min": 33.68407094594592,
+      "max": 33.68407094594592,
       "n_missing": 0
     },
     "off_axis.reference_floor": {
-      "mean": 0.8061649799346924,
+      "mean": 0.8110279738903046,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 0.8061649799346924,
-      "max": 0.8061649799346924,
+      "min": 0.8110279738903046,
+      "max": 0.8110279738903046,
       "n_missing": 0
     },
     "off_axis.sweep_border_px": {
@@ -310,13 +310,13 @@
       "n_missing": 0
     },
     "off_axis.z_forward_um": {
-      "mean": 96.24020270270269,
+      "mean": 33.68407094594592,
       "std": null,
       "n": 1,
       "sem": null,
       "ci95": null,
-      "min": 96.24020270270269,
-      "max": 96.24020270270269,
+      "min": 33.68407094594592,
+      "max": 33.68407094594592,
       "n_missing": 0
     },
     "off_axis.z_inverse_um": {
@@ -330,6 +330,6 @@
       "n_missing": 0
     }
   },
-  "generated_at": "2026-09-21 20:40:46",
+  "generated_at": "2026-09-30 23:40:44",
   "ci_level": 0.95
 }

@@ -1,0 +1,411 @@
+project:
+  name: holo_qpi
+  seed: 1337
+  deterministic: false
+paths:
+  data_root: data
+  phase_dir: phase
+  hologram_dirs:
+    off_axis: off_axis_hologram
+    gabor: in_line_gabor_hologram
+  mask_dir: mask
+  manual_mask_dir: null
+  amplitude_dir: amplitude_reference
+  splits_file: splits.json
+  manifest_file: manifest.csv
+  aberration_file: aberration.json
+  output_root: runs
+formats:
+  phase_binary:
+    suffix: _phase.bin
+    header_bytes: 23
+    dtype: float32
+    byte_order: little
+    width_offset: 6
+    height_offset: 10
+    pitch_x_offset: 14
+    pitch_y_offset: 18
+  hologram:
+    suffixes:
+      off_axis: _holo.tif
+      gabor: _gabor.tif
+  mask:
+    suffix: _mask.png
+  amplitude:
+    suffix: _amp.npy
+amplitude_reference:
+  clip_max: 1.5
+  min_background_fraction: 0.05
+optics:
+  wavelength_um: 0.666
+  refraction_increment_ml_per_g: 0.2
+  refraction_increment_range_ml_per_g:
+  - 0.173
+  - 0.215
+  pixel_pitch_x_um: 0.284871
+  pixel_pitch_y_um: 0.284871
+  trust_header_pitch: false
+  aberration:
+    enabled: true
+    order: 5
+    span_tolerance_factor: 2.5
+    min_agreement: 0.5
+    mode: global
+    global_from_split: train
+  conjugate:
+    enabled: true
+    detrend_order: 2
+    min_skewness: 0.2
+  warn_on_header_pitch_mismatch: false
+  header_pitch_tolerance_um: 0.001
+data:
+  modality: off_axis
+  phase_size: 900
+  align: center_crop
+  crop_offset_px:
+  - -6
+  - -2
+  exclude:
+    modalities:
+    - gabor
+    stems:
+    - SNU_01
+    - SNU_02
+    - SNU_03
+    - SNU_04
+    - SNU_05
+    - SNU_06
+    - SNU_07
+    - SNU_08
+    - SNU_09
+    - SNU_10
+    - SNU_11
+    - SNU_12
+    - SNU_13
+    - SNU_14
+    - SNU_15
+    - SNU_16
+    - SNU_17
+    - SNU_18
+    - SNU_19
+    - SNU_20
+    - SNU_21
+    - SNU_22
+    - SNU_23
+    - SNU_24
+    - SNU_25
+    - SNU_26
+    - SNU_27
+    - SNU_28
+    - SNU_29
+    - SNU_30
+    - SNU_31
+    - SNU_32
+    - SNU_33
+    - SNU_34
+    - SNU_35
+    - SNU_36
+    - SNU_37
+    - SNU_38
+    - SNU_39
+    - SNU_40
+    - SNU_41
+    - SNU_42
+    - SNU_43
+    - SNU_44
+    - SNU_45
+    - SNU_46
+    - SNU_47
+    - SNU_48
+    - SNU_49
+    - SNU_50
+  train_crop: 512
+  eval_size: null
+  hologram_normalisation: zscore
+  batch_size: 4
+  eval_batch_size: 1
+  num_workers: 4
+  pin_memory: true
+  drop_last: true
+  cache_in_memory: false
+  provide_instances: true
+  provide_amplitude: false
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    stratify_by:
+    - cell_line
+    - condition
+    min_per_stratum: 3
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rot90: 0.75
+membrane:
+  source_dir: membrane
+  output_dir: membrane_aligned
+  mask_dir: membrane_mask
+  suffix: _membrane.npy
+  valid_suffix: _membrane_valid.npy
+  scale: 1.343769
+  offset_y: 314
+  offset_x: 280
+  illumination_sigma: 8.0
+  illumination_factor: 1.05
+  threshold_percentile: 75.0
+labels:
+  cell_lines:
+  - NCI
+  - SNU
+  - T24
+  conditions:
+  - control
+  - blebbistatin
+  - fccp
+  - staurosporine
+  - rotenone
+  condition_aliases:
+    control:
+    - control
+    - ctrl
+    - ''
+    blebbistatin:
+    - blebbistatin
+    - bleb
+    fccp:
+    - fccp
+    staurosporine:
+    - staurosporine
+    - stauro
+    - sts
+    rotenone:
+    - rotenone
+    - rot
+  segmentation_classes:
+  - background
+  - cell
+mask_generation:
+  smoothing_sigma_px: 4.0
+  threshold_method: otsu
+  fixed_threshold_rad: 0.35
+  otsu_scale: 1.0
+  min_object_area_um2: 30.0
+  max_object_area_um2: 6000.0
+  fill_holes: true
+  binary_closing_px: 2
+  border_buffer_px: 0
+  watershed_min_distance_px: 15
+  overwrite_existing: false
+model:
+  name: holoqpinet
+  encoder: mobilenet_v2
+  pretrained_encoder: true
+  pretrained_dir: weights
+  in_channels: 1
+  decoder_bottleneck: null
+  decoder_channels:
+  - 256
+  - 128
+  - 64
+  - 32
+  segmentation_classes: 2
+  condition_classes: 5
+  classifier_enabled: false
+  classifier_hidden: 128
+  classifier_dropout: 0.2
+  share_decoder: false
+  size_divisor: 32
+  frontend:
+    kind: none
+    sideband_radius_px: 130
+    dc_exclusion_px: 60
+    output: amplitude_phase
+    detach: true
+    resolve_conjugate: true
+    conjugate_detrend_order: 2
+    conjugate_min_skewness: 0.2
+  amplitude:
+    enabled: false
+    deviation: 0.3
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 8.0
+    dropout: 0.0
+    strategy: encoder_only
+    train_norm_layers: true
+    train_input_stem: true
+    always_trainable_patterns:
+    - decoder
+    - head
+    - classifier
+    - final
+loss:
+  weights:
+    phase: 1.0
+    segmentation: 1.0
+    classification: 0.0
+    phase_mask_contrast: 0.0
+    boundary_gradient_alignment: 0.0
+    phase_volume: 1.0
+    cell_integrated_phase: 0.0
+    cell_projected_area: 0.0
+    amplitude: 0.0
+    forward_model: 0.0
+    dry_mass_consistency: 0.0
+    projected_area_consistency: 0.0
+  phase:
+    l1: 1.0
+    gradient: 0.5
+    ssim: 0.2
+    ssim_window: 11
+    ssim_sigma: 1.5
+    ssim_data_range: 8.0
+  amplitude:
+    l1: 1.0
+  segmentation:
+    dice: 1.0
+    cross_entropy: 1.0
+    class_weights:
+    - 0.5
+    - 1.0
+    dice_smooth: 1.0
+  classification:
+    label_smoothing: 0.05
+    class_weights: null
+  forward_model:
+    distance_um: 33.77
+    learn_distance: false
+    criterion: l2
+    fit_radiometry: true
+    feature_um: 1.0
+    pad_px: null
+    border_px: null
+    dc_exclusion_frac: 0.13
+    dc_exclusion_px: null
+    discrimination_tolerance: 0.01
+    discrimination_batches: 32
+    discrimination_win_rate: 0.75
+    scale_probe_min: 0.2
+    scale_probe_max: 1.6
+    scale_probe_steps: 29
+  physics:
+    pmc_margin: 0.1
+    pmc_collapse_warn_ratio: 0.85
+    bga_reference: pred
+    bga_epsilon: 1.0e-08
+    volume_epsilon: 0.0001
+    skip_empty_targets: true
+    min_foreground_pixels: 370
+    cell_min_reference_rad: 50.0
+    max_relative_error: 10.0
+training:
+  epochs: 60
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas:
+  - 0.9
+  - 0.999
+  scheduler: cosine
+  min_learning_rate: 1.0e-06
+  warmup_epochs: 2
+  grad_clip_norm: 1.0
+  mixed_precision: true
+  amp_dtype: float16
+  accumulation_steps: 1
+  log_every_n_steps: 20
+  physics_parameter_lr_scale: 100.0
+  checkpoint_metric: composite
+  checkpoint_mode: auto
+  save_last: true
+  early_stopping_patience: null
+  composite_metric:
+    seg_dice: 0.35
+    phase_pearson: 0.25
+    dry_mass_accuracy: 0.25
+    detection_f1: 0.15
+evaluation:
+  seed_replication:
+    seeds:
+    - 1337
+    - 2024
+    reduced_arms:
+    - B2
+    - C
+    - D0
+    - D1
+    - D2
+    - G
+    - W01
+    - W03
+    - W30
+    - KA
+    - KB
+    reduced_runs: 1
+    min_runs: 3
+    hardware_arms:
+    - A
+    - B
+    - D0
+    - KA
+    - KB
+    ci_level: 0.95
+    resolve_factor: 2.0
+    metrics:
+    - phase_mae_rad
+    - phase_pearson_r
+    - seg_dice
+    - seg_aji
+    - seg_boundary_f1
+    - cls_accuracy
+    - dry_mass_mape
+    - area_mape
+    - detection_f1
+  conventional_baseline:
+    gs_iterations: 20
+    aberration_order: 3
+    min_recovered_contrast_rad: 0.1
+  segmentation:
+    boundary_tolerance_px: 2
+    instance_from: watershed
+  phase:
+    psnr_data_range: 8.0
+  measurement:
+    min_cell_area_um2: 30.0
+    max_cell_area_um2: 6000.0
+    match_iou_threshold: 0.5
+    report_bland_altman: true
+    report_coverage_adjusted: true
+    field_bootstrap_resamples: 2000
+  forward_model:
+    report_residual: true
+  save_per_cell_csv: true
+deploy:
+  onnx:
+    opset: 17
+    dynamic_axes: false
+    input_name: hologram
+    output_names:
+    - phase
+    - segmentation
+    - amplitude
+    - condition_logits
+    constant_folding: true
+    merge_lora_before_export: true
+  benchmark:
+    warmup_runs: 50
+    timed_runs: 500
+    precisions:
+    - fp32
+    - fp16
+    runtimes:
+    - pytorch
+    - onnx
+    batch_size: 1
+    input_size: 900
+    measure_flops: true
+experiment_name: v2_B1_seed1337
+_config_file: /sda/usama/QPI_Extended_v2/config/v2/b1_image_volume.yaml

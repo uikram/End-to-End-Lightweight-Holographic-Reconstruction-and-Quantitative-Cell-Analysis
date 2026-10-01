@@ -1,0 +1,106 @@
+HoloQPI v2 study, started Wed Sep 30 07:40:50 KST 2026
+log directory logs/v2_20260930_074050_gpu2
+GPU 2   arms: A B B1 B2 C D0 D1   seeds (stages 11-14): from config
+
+########## stage 6: training arms
+
+=== train_A  07:40:50
+    python main.py train --config config/v2/a_baseline.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/train_A.log
+
+=== evaluate_A  09:05:21
+    python main.py evaluate --config config/v2/a_baseline.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_A.log
+
+=== evaluate_A_membrane  09:06:19
+    python main.py evaluate --config config/v2/a_baseline.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_A_membrane.log
+
+=== train_B  09:07:19
+    python main.py train --config config/v2/b_cell_ipp.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/train_B.log
+
+=== evaluate_B  10:30:04
+    python main.py evaluate --config config/v2/b_cell_ipp.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_B.log
+
+=== evaluate_B_membrane  10:31:03
+    python main.py evaluate --config config/v2/b_cell_ipp.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_B_membrane.log
+
+=== train_B1  10:32:02
+    python main.py train --config config/v2/b1_image_volume.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/train_B1.log
+
+=== evaluate_B1  11:53:59
+    python main.py evaluate --config config/v2/b1_image_volume.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_B1.log
+
+=== evaluate_B1_membrane  11:54:58
+    python main.py evaluate --config config/v2/b1_image_volume.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_B1_membrane.log
+
+=== train_B2  11:55:55
+    python main.py train --config config/v2/b2_cell_area.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/train_B2.log
+
+=== evaluate_B2  13:21:19
+    python main.py evaluate --config config/v2/b2_cell_area.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_B2.log
+
+=== evaluate_B2_membrane  13:22:18
+    python main.py evaluate --config config/v2/b2_cell_area.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_B2_membrane.log
+
+=== train_C  13:23:16
+    python main.py train --config config/v2/c_cell_ipp_bga.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/train_C.log
+
+=== evaluate_C  14:46:25
+    python main.py evaluate --config config/v2/c_cell_ipp_bga.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_C.log
+
+=== evaluate_C_membrane  14:47:23
+    python main.py evaluate --config config/v2/c_cell_ipp_bga.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_C_membrane.log
+
+=== train_D0  14:48:24
+    python main.py train --config config/v2/d0_amplitude.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/train_D0.log
+
+=== evaluate_D0  16:15:02
+    python main.py evaluate --config config/v2/d0_amplitude.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_D0.log
+
+=== evaluate_D0_membrane  16:16:01
+    python main.py evaluate --config config/v2/d0_amplitude.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_D0_membrane.log
+
+=== train_D1  16:17:01
+    python main.py train --config config/v2/d_forward_amplitude.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/train_D1.log
+
+=== evaluate_D1  17:43:26
+    python main.py evaluate --config config/v2/d_forward_amplitude.yaml
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_D1.log
+
+=== evaluate_D1_membrane  17:44:29
+    python main.py evaluate --config config/v2/d_forward_amplitude.yaml --tag membrane --set paths.manual_mask_dir=membrane_mask
+    OK   -> logs/v2_20260930_074050_gpu2/evaluate_D1_membrane.log
+
+=== compare_modalities  17:45:28
+    python main.py compare --config config/v2/a_baseline.yaml --modalities off_axis gabor
+    OK   -> logs/v2_20260930_074050_gpu2/compare_modalities.log
+
+########## done Wed Sep 30 17:47:13 KST 2026
+summary  logs/v2_20260930_074050_gpu2/SUMMARY.txt
+logs     logs/v2_20260930_074050_gpu2/
+
+WHAT TO READ FIRST, in this order:
+  1. logs/v2_20260930_074050_gpu2/error_propagation.log     the label-free headline result
+  2. logs/v2_20260930_074050_gpu2/synthetic_validation.log  the floor under every other number
+  3. logs/v2_20260930_074050_gpu2/gradient_path.log         whether the loss weight was heard
+  4. logs/v2_20260930_074050_gpu2/amplitude_sensitivity_global.log   whether the forward model is usable
+  5. runs/RESULTS.md                     every table, assembled
+
+steps that failed: 0

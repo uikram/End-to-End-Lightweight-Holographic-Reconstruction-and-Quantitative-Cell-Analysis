@@ -1,0 +1,47 @@
+23:44:33 | INFO    | holoqpi.data.dataset | test split: 6 of 113 fields excluded for modality off_axis (data.exclude)
+23:44:33 | INFO    | holoqpi.data.dataset | test split: 107 samples | modality=off_axis | crop=None | augment=False
+23:44:33 | INFO    | __main__ | conventional off_axis reconstruction at z = 33.77 um (GS iterations 20)
+23:47:09 | INFO    | holoqpi.data.dataset | test split: 6 of 113 fields excluded for modality gabor (data.exclude)
+23:47:09 | INFO    | holoqpi.data.dataset | test split: 107 samples | modality=gabor | crop=None | augment=False
+23:47:09 | INFO    | __main__ | conventional gabor reconstruction at z = 33.77 um (GS iterations 20)
+
+=== conventional off_axis ===
+  recovered in-cell phase contrast +0.9216 rad
+  phase_mae_rad                0.1990
+  phase_mae_rad_in_cell        0.3157
+  phase_pearson_r              0.7849
+  seg_dice                     0.8240
+  seg_aji                      0.6355
+  seg_boundary_f1              0.3943
+  detection_recall             0.5849
+  detection_f1                 0.6716
+  area_mape                    0.1576
+  dry_mass_mape                0.2204
+  dry_mass_relative_bias       0.0029
+
+=== conventional gabor ===
+  recovered in-cell phase contrast -0.0836 rad
+  !! The classical in-line pipeline recovered no cell contrast. At this
+     distance that is the expected physical outcome rather than a
+     misconfiguration: an in-line intensity of a pure phase object is
+     |A exp(i phi)|^2 = A^2, which does not contain phi, and the twin
+     image is superposed on what little contrast defocus provides.
+     Report this as the classical in-line baseline FAILING on this data,
+     and contrast it with the learned Gabor arm, which recovers usable
+     phase and segmentation from the same holograms. Do not quote the
+     measurement metrics below; quote the failure.
+  phase_mae_rad                0.3996
+  phase_mae_rad_in_cell        1.0448
+  phase_pearson_r              -0.2075
+  seg_dice                     0.1583
+  seg_aji                      0.0549
+  seg_boundary_f1              0.1087
+  detection_recall             0.0347
+  detection_f1                 0.0125
+  area_mape                    0.5315
+  dry_mass_mape                0.6942
+  dry_mass_relative_bias       -0.9875
+
+baseline table -> runs/common_fields/conventional_baseline_test.csv
+Compare against runs/*_modality_comparison.csv; the two are scored by the
+same evaluator, so the difference is attributable to reconstruction alone.

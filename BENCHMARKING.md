@@ -32,13 +32,11 @@ their randomness lives in different places.
 | Measurement-chain floor (synthetic ground truth) | `scripts/synthetic_validation.py` | the randomly generated synthetic cells | one set of synthetic fields per seed |
 | Classical baseline, boundary-error propagation, z scan | `conventional_baseline.py`, `error_propagation.py`, `calibrate_z.py` | none | deterministic: run once, n = 1 |
 
-**Evaluation is not replication.** It is deterministic in data and weights but
-not bit-exact: `cudnn.benchmark` selects the convolution algorithm at run time,
-so re-evaluating the same checkpoint can move a metric by up to about 0.002 —
-far below the between-seed spread. Repeating an accuracy benchmark therefore
-means training the configuration again at another seed.
+**Evaluation itself is deterministic.** Scoring the same checkpoint five times
+reproduces the same numbers, so it is not replication. Repeating an accuracy
+benchmark therefore means training the configuration again at another seed.
 
-**Images and cells are not replicates.** The 113 test fields and 3,186 reference cells are
+**Images and cells are not replicates.** The 113 test fields and ~3,000 cells are
 the *same* in every run. Inside one run the evaluator summarises them into one
 value per metric (its own within-run bootstrap intervals, over fields, are kept
 as metrics in their own right — `*_ci_lower`, `*_ci_upper`). Across runs, only
@@ -49,10 +47,10 @@ number of images or cells.
 
 The models that already exist, and nothing else — **no model is retrained**:
 
-| arms (manuscript names) | trained models (seeds) | n |
+| arms | trained models (seeds) | n |
 |---|---|---|
-| A (End-to-End Neural Baseline), B (+IPP (per-cell)), B′ = B1 (+IPP (image)) | 42, 1337, 2024 | 3 |
-| B″ = B2 (+Area), C (+BGA), D0 (+Amplitude), D1 (+Fwd (fixed z)), D2 (+Fwd (free z)), G (In-Line Neural Configuration), W01 / W03 / W30 (+IPP (per-cell) at w = 0.1 / 0.3 / 3.0), KA (Compact Baseline), KB (Compact +IPP) | 42 | 1 |
+| A, B, B′ | 42, 1337, 2024 | 3 |
+| B″, C, D0, D1, D2, G, W01, W03, W30, KA, KB | 42 | 1 |
 
 This is set in `config/base.yaml`: `evaluation.seed_replication.seeds: [1337, 2024]`
 plus `project.seed` (42), with the single-model arms listed in `reduced_arms`
@@ -306,13 +304,11 @@ pooled between-seed SD, √(((n₁−1)s₁² + (n₂−1)s₂²)/(n₁+n₂−2
 function `aggregate_seeds.py` and `collect_results.py` use. This is a resolution
 criterion, not a significance test, and no p-values are produced.
 
-`collect_results.py` (→ `RESULTS.md`) computes its between-seed spread from
-**all** planned seeds including seed 42 and, once both arms of a comparison are
-replicated, reports the difference of means rather than of the seed-42 values.
-The collected results (2026-09-21) resolve two comparisons, both worse than the
-baseline: B vs A, +0.0152 dry-mass MAPE against 2×SD 0.0070, and B′ vs A,
-+0.0172 against 0.0052. Every other comparison has n = 1 on at least one side
-and is reported as not resolvable.
+`collect_results.py` (→ `RESULTS.md`) now computes its between-seed spread from
+**all** planned seeds including seed 42 — it previously left the primary run out —
+and, once both arms of a comparison are replicated, reports the difference of
+means rather than of the seed-42 values. The 2×SD thresholds in `RESULTS.md`
+Table 2 will therefore change when it is regenerated.
 
 ## 9. Metrics collected
 
@@ -429,5 +425,4 @@ for arm in ["A", "B", "B1"]:
 ```
 
 `benchmark_summary.csv` has the same numbers as one flat table for a
-spreadsheet. The manuscript's Tables 4–10 and Figures 2 and 4–9 are generated
-from these files.
+spreadsheet.

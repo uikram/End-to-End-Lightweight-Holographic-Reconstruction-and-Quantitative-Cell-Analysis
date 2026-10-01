@@ -1,0 +1,29 @@
+17:45:30 | INFO    | holoqpi | compare: scoring existing checkpoints (pass --train to train each arm first)
+17:45:31 | INFO    | holoqpi.engine.compare | ======================================================================
+17:45:31 | INFO    | holoqpi.engine.compare | modality=off_axis  device=cuda  run_dir=runs/v2_baseline_off_axis
+17:45:31 | INFO    | holoqpi.engine.compare | ======================================================================
+17:45:31 | INFO    | holoqpi.data.dataset | train split: 560 samples | modality=off_axis | crop=512 | augment=True
+17:45:31 | INFO    | holoqpi.data.dataset | val split: 127 samples | modality=off_axis | crop=None | augment=False
+17:45:31 | INFO    | holoqpi.data.dataset | test split: 113 samples | modality=off_axis | crop=None | augment=False
+17:45:32 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+17:45:32 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+17:45:32 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True weights=local (weights) stages=[16, 24, 32, 96, 1280]
+17:45:32 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.60M parameters, 9.60M trainable (100.0%)
+17:45:34 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 440/440 tensors matched
+17:46:26 | INFO    | holoqpi.engine.compare | modality=off_axis test metrics written to runs/v2_baseline_off_axis
+17:46:26 | INFO    | holoqpi.engine.compare | ======================================================================
+17:46:26 | INFO    | holoqpi.engine.compare | modality=gabor  device=cuda  run_dir=runs/v2_baseline_gabor
+17:46:26 | INFO    | holoqpi.engine.compare | ======================================================================
+17:46:26 | INFO    | holoqpi.data.dataset | train split: 39 of 560 fields excluded for modality gabor (data.exclude)
+17:46:26 | INFO    | holoqpi.data.dataset | train split: 521 samples | modality=gabor | crop=512 | augment=True
+17:46:26 | INFO    | holoqpi.data.dataset | val split: 5 of 127 fields excluded for modality gabor (data.exclude)
+17:46:26 | INFO    | holoqpi.data.dataset | val split: 122 samples | modality=gabor | crop=None | augment=False
+17:46:26 | INFO    | holoqpi.data.dataset | test split: 6 of 113 fields excluded for modality gabor (data.exclude)
+17:46:26 | INFO    | holoqpi.data.dataset | test split: 107 samples | modality=gabor | crop=None | augment=False
+17:46:26 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+17:46:26 | INFO    | holoqpi.models.encoders | loading pretrained mobilenet_v2 from weights/mobilenet_v2-b0353104.pth
+17:46:26 | INFO    | holoqpi.models.encoders | encoder=mobilenet_v2 in_channels=1 pretrained=True weights=local (weights) stages=[16, 24, 32, 96, 1280]
+17:46:26 | INFO    | holoqpi.models.holonet | HoloQPINet built: 9.60M parameters, 9.60M trainable (100.0%)
+17:46:27 | INFO    | holoqpi.engine.trainer | checkpoint best_model.pt: 440/440 tensors matched
+17:47:11 | INFO    | holoqpi.engine.compare | modality=gabor test metrics written to runs/v2_baseline_gabor
+17:47:11 | INFO    | holoqpi.engine.compare | comparison table written to runs/v2_baseline_modality_comparison.csv
