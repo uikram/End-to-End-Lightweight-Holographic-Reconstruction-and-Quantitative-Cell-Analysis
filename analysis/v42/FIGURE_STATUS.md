@@ -26,6 +26,6 @@ Figures 1 (`figure_1_overview.png`) and 3 (`figure_3.png`) were inspected visual
 stale terminology (labels: "+IPP (per-cell)", "+IPP (image)", "Classical Pipeline", "Integrated phase S_k",
 "Dry mass"), no seed or field-set statements, and no v4.1 values apart from the per-field MAE annotations in
 Fig. 3 (NCI 06: 0.248 rad, NCI 08: 0.296 rad). Fig. 1 shows the architecture and Fig. 3 shows two example
-fields; neither can be regenerated here (no checkpoints or image data). The Fig. 3 per-field MAE labels were
-**not** re-derived from stored files and are marked verified-by-inspection only. Figures 2 and 4-9 are
+fields; neither can be regenerated here (no checkpoints or image data). The NCI_08 label (0.296 rad) was checked against `fig1_panels.json` (0.2959 rad); the NCI_06 label (0.248 rad)
+was checked by inspection only. Figures 2 and 4-9 are
 regenerated from results_for_manuscript/ into figures/regenerated/.
