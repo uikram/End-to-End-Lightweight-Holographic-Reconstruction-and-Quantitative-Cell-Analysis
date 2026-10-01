@@ -1,5 +1,8 @@
 # DISCREPANCIES — HoloQPI_4.2
 
+> **Status note.** Written during the first synchronisation pass. It is superseded by `analysis/v42/AUDIT.md`, `analysis/v42/SYNC_AUDIT.md` and `analysis/v42/MANUSCRIPT_SYNC.md`. Items 1-15 remain a record of where file values differ from earlier expectations (the gradient ratio in particular: the CSV gives median 0.373, range 0.243-0.655). The registration files were regenerated afterwards and all Sec. 4.1 values agree with the manuscript (see VERSION_MANIFEST.md); the SNU range flag below is resolved: the file gives -0.1335 to 0.1769, so the `config/base.yaml` comment (0.09-0.18) was the outdated one.
+
+
 This file lists three kinds of item:
 - places where the corrected result files disagree with the task prompt's "expected" values;
 - sources the task asked for that are not in the project folder;

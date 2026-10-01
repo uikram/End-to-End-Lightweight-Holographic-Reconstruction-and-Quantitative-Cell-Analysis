@@ -1,0 +1,1701 @@
+{
+ "description": "End-to-End Neural Baseline (off-axis), three training runs, 113 test fields.",
+ "field_set": "113 off-axis test fields; 3186 reference cells",
+ "n_runs": 3,
+ "seeds": [
+  42,
+  1337,
+  2024
+ ],
+ "table_4": {
+  "phase_mae_rad": {
+   "neural": {
+    "value": 0.15679374702033042,
+    "units": "rad",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "phase_mae_rad: seed 42",
+     "phase_mae_rad: seed 1337",
+     "phase_mae_rad: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0023393371082937784,
+    "per_seed": {
+     "42": 0.15678428166208014,
+     "1337": 0.15445915695312804,
+     "2024": 0.15913780244578302
+    }
+   },
+   "classical": {
+    "value": 0.19676522673231311,
+    "units": "rad",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": -0.0399714797119827,
+    "units": "rad",
+    "source_file": "derived",
+    "source_key": "phase_mae_rad",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "phase_mae_rad_in_cell": {
+   "neural": {
+    "value": 0.2689294574622911,
+    "units": "rad",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "phase_mae_rad_in_cell: seed 42",
+     "phase_mae_rad_in_cell: seed 1337",
+     "phase_mae_rad_in_cell: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0056454888879915125,
+    "per_seed": {
+     "42": 0.2699239487405372,
+     "1337": 0.26285280458695065,
+     "2024": 0.2740116190593854
+    }
+   },
+   "classical": {
+    "value": 0.3112234502239565,
+    "units": "rad",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": -0.0422939927616654,
+    "units": "rad",
+    "source_file": "derived",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "phase_pearson_r": {
+   "neural": {
+    "value": 0.8741126907082787,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "phase_pearson_r",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "phase_pearson_r: seed 42",
+     "phase_pearson_r: seed 1337",
+     "phase_pearson_r: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.002264880128944914,
+    "per_seed": {
+     "42": 0.8757208770355293,
+     "1337": 0.8750946503297418,
+     "2024": 0.8715225447595647
+    }
+   },
+   "classical": {
+    "value": 0.7850669261760417,
+    "units": "1",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "phase_pearson_r",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": 0.089045764532237,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "phase_pearson_r",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "phase_ssim": {
+   "neural": {
+    "value": 0.6386138951752037,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "phase_ssim",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "phase_ssim: seed 42",
+     "phase_ssim: seed 1337",
+     "phase_ssim: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0053112339782857695,
+    "per_seed": {
+     "42": 0.6390065060252637,
+     "1337": 0.6437179292593382,
+     "2024": 0.6331172502410095
+    }
+   },
+   "classical": {
+    "value": 0.529890722405594,
+    "units": "1",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "phase_ssim",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": 0.10872317276960974,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "phase_ssim",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "seg_dice": {
+   "neural": {
+    "value": 0.8337458751814576,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "seg_dice",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "seg_dice: seed 42",
+     "seg_dice: seed 1337",
+     "seg_dice: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0012777353597661545,
+    "per_seed": {
+     "42": 0.8352199330236699,
+     "1337": 0.8330633692642672,
+     "2024": 0.8329543232564357
+    }
+   },
+   "classical": {
+    "value": 0.8252547276104372,
+    "units": "1",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "seg_dice",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": 0.00849114757102043,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "seg_dice",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "seg_aji": {
+   "neural": {
+    "value": 0.6709657600452449,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "seg_aji",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "seg_aji: seed 42",
+     "seg_aji: seed 1337",
+     "seg_aji: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0025410673118453787,
+    "per_seed": {
+     "42": 0.6736276091856036,
+     "1337": 0.670703920340176,
+     "2024": 0.6685657506099553
+    }
+   },
+   "classical": {
+    "value": 0.63871697875796,
+    "units": "1",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "seg_aji",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": 0.03224878128728492,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "seg_aji",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "seg_boundary_f1": {
+   "neural": {
+    "value": 0.4686802510669446,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "seg_boundary_f1",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "seg_boundary_f1: seed 42",
+     "seg_boundary_f1: seed 1337",
+     "seg_boundary_f1: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0053132150427403916,
+    "per_seed": {
+     "42": 0.47271097376160404,
+     "1337": 0.47067053698434896,
+     "2024": 0.46265924245488094
+    }
+   },
+   "classical": {
+    "value": 0.39537012466573257,
+    "units": "1",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "seg_boundary_f1",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": 0.07331012640121204,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "seg_boundary_f1",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "detection_recall": {
+   "neural": {
+    "value": 0.5931157145846412,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "detection_recall",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "detection_recall: seed 42",
+     "detection_recall: seed 1337",
+     "detection_recall: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0026694603101429038,
+    "per_seed": {
+     "42": 0.5957313245448839,
+     "1337": 0.5932203389830508,
+     "2024": 0.5903954802259888
+    }
+   },
+   "classical": {
+    "value": 0.5869428750784683,
+    "units": "1",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "detection_recall",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": 0.006172839506172867,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "detection_recall",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "detection_precision": {
+   "neural": {
+    "value": 0.8487571417143531,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "detection_precision",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "detection_precision: seed 42",
+     "detection_precision: seed 1337",
+     "detection_precision: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.012439315251802642,
+    "per_seed": {
+     "42": 0.8611615245009074,
+     "1337": 0.8362831858407079,
+     "2024": 0.848826714801444
+    }
+   },
+   "classical": {
+    "value": 0.7910321489001692,
+    "units": "1",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "detection_precision",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": 0.05772499281418397,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "detection_precision",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "area_mape": {
+   "neural": {
+    "value": 0.15677843737686237,
+    "units": "fraction",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "area_mape",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "area_mape: seed 42",
+     "area_mape: seed 1337",
+     "area_mape: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.002680662602976521,
+    "per_seed": {
+     "42": 0.1557928801207174,
+     "1337": 0.1547300627899276,
+     "2024": 0.15981236921994216
+    }
+   },
+   "classical": {
+    "value": 0.15776911254105397,
+    "units": "fraction",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "area_mape",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": -0.0009906751641916012,
+    "units": "fraction",
+    "source_file": "derived",
+    "source_key": "area_mape",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "dry_mass_mape": {
+   "neural": {
+    "value": 0.17420637709436515,
+    "units": "fraction",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "dry_mass_mape",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "dry_mass_mape: seed 42",
+     "dry_mass_mape: seed 1337",
+     "dry_mass_mape: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.004464962806975429,
+    "per_seed": {
+     "42": 0.1749886606808202,
+     "1337": 0.1694019692588005,
+     "2024": 0.1782285013434748
+    }
+   },
+   "classical": {
+    "value": 0.22033939890203486,
+    "units": "fraction",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "dry_mass_mape",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": -0.046133021807669705,
+    "units": "fraction",
+    "source_file": "derived",
+    "source_key": "dry_mass_mape",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "dry_mass_cell_pearson_r": {
+   "neural": {
+    "value": 0.9363406529467363,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "dry_mass_cell_pearson_r",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "dry_mass_cell_pearson_r: seed 42",
+     "dry_mass_cell_pearson_r: seed 1337",
+     "dry_mass_cell_pearson_r: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0007385691110502166,
+    "per_seed": {
+     "42": 0.9370712759629145,
+     "1337": 0.9355943862733449,
+     "2024": 0.9363562966039497
+    }
+   },
+   "classical": {
+    "value": 0.8936873395896491,
+    "units": "1",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "dry_mass_cell_pearson_r",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": 0.04265331335708722,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "dry_mass_cell_pearson_r",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "dry_mass_field_total_mape": {
+   "neural": {
+    "value": 0.16310050655996677,
+    "units": "fraction",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "dry_mass_field_total_mape",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "dry_mass_field_total_mape: seed 42",
+     "dry_mass_field_total_mape: seed 1337",
+     "dry_mass_field_total_mape: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.014092078634283025,
+    "per_seed": {
+     "42": 0.17037205468979952,
+     "1337": 0.1468579834660001,
+     "2024": 0.17207148152410068
+    }
+   },
+   "classical": {
+    "value": 0.10938239775698252,
+    "units": "fraction",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "dry_mass_field_total_mape",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": 0.05371810880298425,
+    "units": "fraction",
+    "source_file": "derived",
+    "source_key": "dry_mass_field_total_mape",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical"
+   },
+   "assessment": "Not applicable: comparator is deterministic (no between-run SD); difference reported without a resolution test"
+  },
+  "cells_matched": {
+   "neural": {
+    "value": 1889.6666666666667,
+    "units": "cells",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "cells_matched",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "cells_matched: seed 42",
+     "cells_matched: seed 1337",
+     "cells_matched: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 8.504900548115382,
+    "per_seed": {
+     "42": 1898,
+     "1337": 1890,
+     "2024": 1881
+    }
+   },
+   "classical": {
+    "value": 1870,
+    "units": "cells",
+    "source_file": "runs/conventional_off_axis/metrics_test.json",
+    "source_key": "cells_matched",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "delta_neural_minus_classical": {
+    "value": 19.666666666666742,
+    "units": "cells",
+    "source_file": "derived",
+    "source_key": "cells_matched",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "runs/conventional_off_axis/metrics_test.json"
+    ],
+    "calculation": "mean(neural over 3 seeds) - classical",
+    "note": "DESCRIPTIVE ONLY. A matched-cell count is not a quality-error metric and the 2x pooled-SD resolution rule is not applied to it. Classical is deterministic (single run)."
+   },
+   "descriptive_difference_text": "+20 \u00b1 9",
+   "descriptive_difference_sd_note": "SD is the between-seed SD of the neural count; classical has none."
+  }
+ },
+ "per_seed_checkpoints": {
+  "42": {
+   "checkpoint_sha256": "1d1d56d70215b210a5c18e9d33292d2b82789b26766ab8941f1f5861e5b590fd",
+   "checkpoint_epoch": 50,
+   "epochs_completed": 60,
+   "wall_hours": 1.405,
+   "source": "runs/benchmark_results/results_arm_A.json"
+  },
+  "1337": {
+   "checkpoint_sha256": "6669063336b2634913f5c6c237ea7266907715659e8241fa2c716f28de3292af",
+   "checkpoint_epoch": 50,
+   "epochs_completed": 60,
+   "wall_hours": 1.371,
+   "source": "runs/benchmark_results/results_arm_A.json"
+  },
+  "2024": {
+   "checkpoint_sha256": "a4ec31e8c0242bc74c84d213d33e1f15af3e4652ebbb40d49d46f676e02d4f59",
+   "checkpoint_epoch": 32,
+   "epochs_completed": 60,
+   "wall_hours": 1.377,
+   "source": "runs/benchmark_results/results_arm_A.json"
+  }
+ },
+ "table_6": {
+  "Projected area": {
+   "matched_cells": {
+    "mape": {
+     "value": 0.15677843737686237,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "area_mape",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "area_mape: seed 42",
+      "area_mape: seed 1337",
+      "area_mape: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.002680662602976521,
+     "per_seed": {
+      "42": 0.1557928801207174,
+      "1337": 0.1547300627899276,
+      "2024": 0.15981236921994216
+     }
+    },
+    "mape_ci95_seed42": [
+     {
+      "value": 0.14706578246531418,
+      "units": "fraction",
+      "source_file": "runs/v2_baseline_off_axis/metrics_test.json",
+      "source_key": "area_mape_ci_lower",
+      "field_set": "113 fields",
+      "n_runs": 1,
+      "seeds": [
+       42
+      ],
+      "derivation": "direct",
+      "derived_from": null,
+      "calculation": null
+     },
+     {
+      "value": 0.166250958066517,
+      "units": "fraction",
+      "source_file": "runs/v2_baseline_off_axis/metrics_test.json",
+      "source_key": "area_mape_ci_upper",
+      "field_set": "113 fields",
+      "n_runs": 1,
+      "seeds": [
+       42
+      ],
+      "derivation": "direct",
+      "derived_from": null,
+      "calculation": null
+     }
+    ],
+    "coverage_adjusted_mape": {
+     "value": 0.49986835861527473,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "area_mape_coverage_adjusted",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "area_mape_coverage_adjusted: seed 42",
+      "area_mape_coverage_adjusted: seed 1337",
+      "area_mape_coverage_adjusted: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.003618338611127704,
+     "per_seed": {
+      "42": 0.49707937428409343,
+      "1337": 0.49856868131605875,
+      "2024": 0.503957020245672
+     }
+    },
+    "pearson_r_per_cell": {
+     "value": 0.8986417703497477,
+     "units": "1",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "area_cell_pearson_r",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "area_cell_pearson_r: seed 42",
+      "area_cell_pearson_r: seed 1337",
+      "area_cell_pearson_r: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.0011472811135528284,
+     "per_seed": {
+      "42": 0.8999207858772458,
+      "1337": 0.898301166272542,
+      "2024": 0.8977033588994554
+     }
+    },
+    "n_matched_cells": {
+     "value": 1889.6666666666667,
+     "units": "cells",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "area_n_cells",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "area_n_cells: seed 42",
+      "area_n_cells: seed 1337",
+      "area_n_cells: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 8.504900548115382,
+     "per_seed": {
+      "42": 1898,
+      "1337": 1890,
+      "2024": 1881
+     }
+    }
+   },
+   "per_field_bland_altman": {
+    "relative_bias": {
+     "value": 0.06494687287589461,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "area_relative_bias",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "area_relative_bias: seed 42",
+      "area_relative_bias: seed 1337",
+      "area_relative_bias: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.002783787020935911,
+     "per_seed": {
+      "42": 0.06368949069030644,
+      "1337": 0.06301358959187392,
+      "2024": 0.06813753834550344
+     }
+    },
+    "loa_lower": {
+     "value": -0.16205159882879777,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "area_loa_lower",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "area_loa_lower: seed 42",
+      "area_loa_lower: seed 1337",
+      "area_loa_lower: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.01219752405266244,
+     "per_seed": {
+      "42": -0.15997296044812193,
+      "1337": -0.1751548742473829,
+      "2024": -0.15102696179088848
+     }
+    },
+    "loa_upper": {
+     "value": 0.291945344580587,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "area_loa_upper",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "area_loa_upper: seed 42",
+      "area_loa_upper: seed 1337",
+      "area_loa_upper: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.007999263427234527,
+     "per_seed": {
+      "42": 0.2873519418287348,
+      "1337": 0.30118205343113075,
+      "2024": 0.28730203848189534
+     }
+    }
+   },
+   "field_total": {
+    "bias": {
+     "value": -0.09005370574123929,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "area_field_total_bias",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "area_field_total_bias: seed 42",
+      "area_field_total_bias: seed 1337",
+      "area_field_total_bias: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.0036846296390724044,
+     "per_seed": {
+      "42": -0.09227353651850455,
+      "1337": -0.08580042288007657,
+      "2024": -0.09208715782513678
+     }
+    },
+    "mape": {
+     "value": 0.15529677151362226,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "area_field_total_mape",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "area_field_total_mape: seed 42",
+      "area_field_total_mape: seed 1337",
+      "area_field_total_mape: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.004678276926313179,
+     "per_seed": {
+      "42": 0.1529003738416228,
+      "1337": 0.16068773001927883,
+      "2024": 0.15230221067996513
+     }
+    },
+    "pearson_r": {
+     "value": 0.9341451794502341,
+     "units": "1",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "area_field_total_pearson_r",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "area_field_total_pearson_r: seed 42",
+      "area_field_total_pearson_r: seed 1337",
+      "area_field_total_pearson_r: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.004275840211980063,
+     "per_seed": {
+      "42": 0.9352307647222581,
+      "1337": 0.9294311833929947,
+      "2024": 0.9377735902354495
+     }
+    },
+    "basis": "all predicted cells vs all reference cells per field (not only matched cells)"
+   }
+  },
+  "Circularity": {
+   "matched_cells": {
+    "mape": {
+     "value": 0.05712324127091425,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "circularity_mape",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "circularity_mape: seed 42",
+      "circularity_mape: seed 1337",
+      "circularity_mape: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.0026712459347398316,
+     "per_seed": {
+      "42": 0.05597890723760694,
+      "1337": 0.05521479756457545,
+      "2024": 0.06017601901056033
+     }
+    },
+    "mape_ci95_seed42": [
+     {
+      "value": 0.04931989997471698,
+      "units": "fraction",
+      "source_file": "runs/v2_baseline_off_axis/metrics_test.json",
+      "source_key": "circularity_mape_ci_lower",
+      "field_set": "113 fields",
+      "n_runs": 1,
+      "seeds": [
+       42
+      ],
+      "derivation": "direct",
+      "derived_from": null,
+      "calculation": null
+     },
+     {
+      "value": 0.06326658692929896,
+      "units": "fraction",
+      "source_file": "runs/v2_baseline_off_axis/metrics_test.json",
+      "source_key": "circularity_mape_ci_upper",
+      "field_set": "113 fields",
+      "n_runs": 1,
+      "seeds": [
+       42
+      ],
+      "derivation": "direct",
+      "derived_from": null,
+      "calculation": null
+     }
+    ],
+    "coverage_adjusted_mape": {
+     "value": 0.44076114512375913,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "circularity_mape_coverage_adjusted",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "circularity_mape_coverage_adjusted: seed 42",
+      "circularity_mape_coverage_adjusted: seed 1337",
+      "circularity_mape_coverage_adjusted: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.003904900061034486,
+     "per_seed": {
+      "42": 0.4376170640103509,
+      "1337": 0.4395342019450872,
+      "2024": 0.4451321694158392
+     }
+    },
+    "pearson_r_per_cell": {
+     "value": 0.8861352787044874,
+     "units": "1",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "circularity_cell_pearson_r",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "circularity_cell_pearson_r: seed 42",
+      "circularity_cell_pearson_r: seed 1337",
+      "circularity_cell_pearson_r: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.0071843834284513524,
+     "per_seed": {
+      "42": 0.8894609651048446,
+      "1337": 0.891054245492592,
+      "2024": 0.8778906255160255
+     }
+    },
+    "n_matched_cells": {
+     "value": 1889.6666666666667,
+     "units": "cells",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "circularity_n_cells",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "circularity_n_cells: seed 42",
+      "circularity_n_cells: seed 1337",
+      "circularity_n_cells: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 8.504900548115382,
+     "per_seed": {
+      "42": 1898,
+      "1337": 1890,
+      "2024": 1881
+     }
+    }
+   },
+   "per_field_bland_altman": {
+    "relative_bias": {
+     "value": 0.02167687971429701,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "circularity_relative_bias",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "circularity_relative_bias: seed 42",
+      "circularity_relative_bias: seed 1337",
+      "circularity_relative_bias: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.005679274488431562,
+     "per_seed": {
+      "42": 0.02087292185356463,
+      "1337": 0.016442423819920303,
+      "2024": 0.027715293469406106
+     }
+    },
+    "loa_lower": {
+     "value": -0.05398631082166631,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "circularity_loa_lower",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "circularity_loa_lower: seed 42",
+      "circularity_loa_lower: seed 1337",
+      "circularity_loa_lower: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.0033225197235376893,
+     "per_seed": {
+      "42": -0.05063935751153976,
+      "1337": -0.05728384565554328,
+      "2024": -0.0540357292979159
+     }
+    },
+    "loa_upper": {
+     "value": 0.09734007025026033,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "circularity_loa_upper",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "circularity_loa_upper: seed 42",
+      "circularity_loa_upper: seed 1337",
+      "circularity_loa_upper: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.010559953036673073,
+     "per_seed": {
+      "42": 0.09238520121866903,
+      "1337": 0.09016869329538388,
+      "2024": 0.10946631623672812
+     }
+    }
+   },
+   "field_total": {
+    "bias": "N/A",
+    "mape": "N/A",
+    "pearson_r": "N/A",
+    "reason": "Circularity is not additive, so no field total is defined; no field-total circularity statistic exists in the result files."
+   }
+  },
+  "Dry mass": {
+   "matched_cells": {
+    "mape": {
+     "value": 0.17420637709436515,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "dry_mass_mape",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "dry_mass_mape: seed 42",
+      "dry_mass_mape: seed 1337",
+      "dry_mass_mape: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.004464962806975429,
+     "per_seed": {
+      "42": 0.1749886606808202,
+      "1337": 0.1694019692588005,
+      "2024": 0.1782285013434748
+     }
+    },
+    "mape_ci95_seed42": [
+     {
+      "value": 0.16502737899044947,
+      "units": "fraction",
+      "source_file": "runs/v2_baseline_off_axis/metrics_test.json",
+      "source_key": "dry_mass_mape_ci_lower",
+      "field_set": "113 fields",
+      "n_runs": 1,
+      "seeds": [
+       42
+      ],
+      "derivation": "direct",
+      "derived_from": null,
+      "calculation": null
+     },
+     {
+      "value": 0.18490457765813115,
+      "units": "fraction",
+      "source_file": "runs/v2_baseline_off_axis/metrics_test.json",
+      "source_key": "dry_mass_mape_ci_upper",
+      "field_set": "113 fields",
+      "n_runs": 1,
+      "seeds": [
+       42
+      ],
+      "derivation": "direct",
+      "derived_from": null,
+      "calculation": null
+     }
+    ],
+    "coverage_adjusted_mape": {
+     "value": 0.5102056927075126,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "dry_mass_mape_coverage_adjusted",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "dry_mass_mape_coverage_adjusted: seed 42",
+      "dry_mass_mape_coverage_adjusted: seed 1337",
+      "dry_mass_mape_coverage_adjusted: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.004052518444929313,
+     "per_seed": {
+      "42": 0.5085149020628363,
+      "1337": 0.5072723546450512,
+      "2024": 0.5148298214146503
+     }
+    },
+    "pearson_r_per_cell": {
+     "value": 0.9363406529467363,
+     "units": "1",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "dry_mass_cell_pearson_r",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "dry_mass_cell_pearson_r: seed 42",
+      "dry_mass_cell_pearson_r: seed 1337",
+      "dry_mass_cell_pearson_r: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.0007385691110502166,
+     "per_seed": {
+      "42": 0.9370712759629145,
+      "1337": 0.9355943862733449,
+      "2024": 0.9363562966039497
+     }
+    },
+    "n_matched_cells": {
+     "value": 1889.6666666666667,
+     "units": "cells",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "dry_mass_n_cells",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "dry_mass_n_cells: seed 42",
+      "dry_mass_n_cells: seed 1337",
+      "dry_mass_n_cells: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 8.504900548115382,
+     "per_seed": {
+      "42": 1898,
+      "1337": 1890,
+      "2024": 1881
+     }
+    }
+   },
+   "per_field_bland_altman": {
+    "relative_bias": {
+     "value": -0.03722607238392343,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "dry_mass_relative_bias",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "dry_mass_relative_bias: seed 42",
+      "dry_mass_relative_bias: seed 1337",
+      "dry_mass_relative_bias: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.017197841197085503,
+     "per_seed": {
+      "42": -0.046587264979740375,
+      "1337": -0.017378347263189334,
+      "2024": -0.047712604908840585
+     }
+    },
+    "loa_lower": {
+     "value": -0.24656213500367544,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "dry_mass_loa_lower",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "dry_mass_loa_lower: seed 42",
+      "dry_mass_loa_lower: seed 1337",
+      "dry_mass_loa_lower: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.01242274436813819,
+     "per_seed": {
+      "42": -0.26056206255749836,
+      "1337": -0.23685549448176996,
+      "2024": -0.24226884797175802
+     }
+    },
+    "loa_upper": {
+     "value": 0.1721099902358286,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "dry_mass_loa_upper",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "dry_mass_loa_upper: seed 42",
+      "dry_mass_loa_upper: seed 1337",
+      "dry_mass_loa_upper: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.027928648929514105,
+     "per_seed": {
+      "42": 0.16738753259801764,
+      "1337": 0.20209879995539132,
+      "2024": 0.14684363815407686
+     }
+    }
+   },
+   "field_total": {
+    "bias": {
+     "value": -0.15603327154023033,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "dry_mass_field_total_bias",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "dry_mass_field_total_bias: seed 42",
+      "dry_mass_field_total_bias: seed 1337",
+      "dry_mass_field_total_bias: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.01737460684142899,
+     "per_seed": {
+      "42": -0.16049172461147101,
+      "1337": -0.13686389712884192,
+      "2024": -0.17074419288037807
+     }
+    },
+    "mape": {
+     "value": 0.16310050655996677,
+     "units": "fraction",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "dry_mass_field_total_mape",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "dry_mass_field_total_mape: seed 42",
+      "dry_mass_field_total_mape: seed 1337",
+      "dry_mass_field_total_mape: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.014092078634283025,
+     "per_seed": {
+      "42": 0.17037205468979952,
+      "1337": 0.1468579834660001,
+      "2024": 0.17207148152410068
+     }
+    },
+    "pearson_r": {
+     "value": 0.988300064096021,
+     "units": "1",
+     "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+     "source_key": "dry_mass_field_total_pearson_r",
+     "field_set": "113 off-axis test fields",
+     "n_runs": 3,
+     "seeds": [
+      42,
+      1337,
+      2024
+     ],
+     "derivation": "derived",
+     "derived_from": [
+      "dry_mass_field_total_pearson_r: seed 42",
+      "dry_mass_field_total_pearson_r: seed 1337",
+      "dry_mass_field_total_pearson_r: seed 2024"
+     ],
+     "calculation": "mean and sample SD (ddof=1) over training runs",
+     "sd": 0.0006536783738374644,
+     "per_seed": {
+      "42": 0.9876129010005286,
+      "1337": 0.9883731820111514,
+      "2024": 0.988914109276383
+     }
+    },
+    "basis": "all predicted cells vs all reference cells per field (not only matched cells)"
+   }
+  }
+ }
+}

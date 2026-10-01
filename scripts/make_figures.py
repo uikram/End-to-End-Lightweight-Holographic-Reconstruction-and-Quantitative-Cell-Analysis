@@ -688,7 +688,7 @@ def figure_loss_components(cfg, args, out_dir: Path) -> None:
              "no history.json with more than one epoch (a composition plot needs a trajectory)")
         return
 
-    physics = ["phase_mask_contrast", "boundary_gradient_alignment", "phase_volume",
+    physics = ["phase_mask_contrast", "boundary_gradient_alignment", "image_integrated_phase", "phase_volume",
                "dry_mass_consistency", "projected_area_consistency"]
     primary = ["phase", "segmentation", "classification"]
 
@@ -1524,7 +1524,7 @@ def figure_conventional_baseline(cfg, args, out_dir: Path) -> None:
         ax.set_xlabel("% advantage of the network over classical reconstruction")
         title = f"{LABEL.get(modality, modality)}   (learned vs classical)"
         if not valid:
-            title += "\nCLASSICAL RECONSTRUCTION FAILED - not a valid baseline"
+            title += "\nCLASSICAL RECONSTRUCTION INVALID - not used as a baseline"
             ax.set_facecolor("#00000008")
         ax.set_title(title, fontsize=9.5)
 

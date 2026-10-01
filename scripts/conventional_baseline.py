@@ -347,10 +347,10 @@ def main() -> int:
                   "     Report this as the classical in-line baseline FAILING on this data,\n"
                   "     and contrast it with the learned Gabor arm, which recovers usable\n"
                   "     phase and segmentation from the same holograms. Do not quote the\n"
-                  "     measurement metrics below; quote the failure.")
+                  "     measurement metrics below; report that no cell contrast was recovered.")
         elif not metrics["reconstruction_valid"]:
             print("  !! The reconstruction did NOT recover positive cell contrast, so the\n"
-                  "     metrics below describe a failed reconstruction, not the classical\n"
+                  "     metrics below describe an invalid reconstruction, not the classical\n"
                   "     method's real performance. Do not report them as a baseline.\n"
                   "     Most likely causes, in order: the propagation distance is wrong\n"
                   "     (run scripts/calibrate_z.py, or ask for z); the aberration order is\n"

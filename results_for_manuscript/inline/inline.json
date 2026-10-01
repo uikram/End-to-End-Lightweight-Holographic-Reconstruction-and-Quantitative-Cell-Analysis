@@ -1,0 +1,1120 @@
+{
+ "description": "In-Line Neural Configuration: one training run (seed 42), scored on the 107 common test fields; Table 5 puts it beside the off-axis three-seed baseline re-scored on the same fields and the two deterministic classical pipelines.",
+ "field_set": "107 common test fields; 3055 reference cells",
+ "n_runs": {
+  "in_line_neural": 1,
+  "off_axis_neural": 3,
+  "classical": 1
+ },
+ "seeds": {
+  "in_line_neural": [
+   42
+  ],
+  "off_axis_neural": [
+   42,
+   1337,
+   2024
+  ]
+ },
+ "table_5": {
+  "phase_mae_rad": {
+   "in_line_neural": {
+    "value": 0.1625362087354482,
+    "units": "rad",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "phase_mae_rad",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.1585833578605518,
+    "units": "rad",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "phase_mae_rad",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "phase_mae_rad: seed 42",
+     "phase_mae_rad: seed 1337",
+     "phase_mae_rad: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.002376347475912833,
+    "per_seed": {
+     "42": 0.1585884873415822,
+     "1337": 0.156204449796231,
+     "2024": 0.16095713644384224
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.19904151962739286,
+    "units": "rad",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.3996107686902875,
+    "units": "rad",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "phase_mae_rad",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "phase_mae_rad_in_cell": {
+   "in_line_neural": {
+    "value": 0.3005485987273332,
+    "units": "rad",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.2726280594540534,
+    "units": "rad",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "phase_mae_rad_in_cell: seed 42",
+     "phase_mae_rad_in_cell: seed 1337",
+     "phase_mae_rad_in_cell: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.005668032818489027,
+    "per_seed": {
+     "42": 0.2736545083957298,
+     "1337": 0.2665169427049494,
+     "2024": 0.2777127272614809
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.31573429035249156,
+    "units": "rad",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 1.0448215208320975,
+    "units": "rad",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "phase_pearson_r": {
+   "in_line_neural": {
+    "value": 0.8667298677925751,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "phase_pearson_r",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.8745034995294434,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "phase_pearson_r",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "phase_pearson_r: seed 42",
+     "phase_pearson_r: seed 1337",
+     "phase_pearson_r: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.002280927161847251,
+    "per_seed": {
+     "42": 0.876136096281426,
+     "1337": 0.8754770613719369,
+     "2024": 0.8718973409349673
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.7849157405930145,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "phase_pearson_r",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": -0.20753599522269775,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "phase_pearson_r",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "phase_ssim": {
+   "in_line_neural": {
+    "value": 0.6295758675192004,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "phase_ssim",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.6377411767190491,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "phase_ssim",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "phase_ssim: seed 42",
+     "phase_ssim: seed 1337",
+     "phase_ssim: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0053307387728637945,
+    "per_seed": {
+     "42": 0.6381027932479003,
+     "1337": 0.6428819002809926,
+     "2024": 0.6322388366282543
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.5296505032298721,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "phase_ssim",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.06388770646326436,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "phase_ssim",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "seg_dice": {
+   "in_line_neural": {
+    "value": 0.814808696094374,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "seg_dice",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.8330475208493926,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "seg_dice",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "seg_dice: seed 42",
+     "seg_dice: seed 1337",
+     "seg_dice: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0013435018596999447,
+    "per_seed": {
+     "42": 0.8345951304967635,
+     "1337": 0.8321805734922398,
+     "2024": 0.8323668585591746
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.8239530754629008,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "seg_dice",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.15833488374835994,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "seg_dice",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "seg_aji": {
+   "in_line_neural": {
+    "value": 0.6398729407536774,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "seg_aji",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.6696530825405226,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "seg_aji",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "seg_aji: seed 42",
+     "seg_aji: seed 1337",
+     "seg_aji: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.003087216613682908,
+    "per_seed": {
+     "42": 0.673015612174302,
+     "1337": 0.6689969773532839,
+     "2024": 0.6669466580939818
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.6355183155649254,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "seg_aji",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.05490150483947841,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "seg_aji",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "seg_boundary_f1": {
+   "in_line_neural": {
+    "value": 0.4164888170672219,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "seg_boundary_f1",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.47058425349132316,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "seg_boundary_f1",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "seg_boundary_f1: seed 42",
+     "seg_boundary_f1: seed 1337",
+     "seg_boundary_f1: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.005155506771375177,
+    "per_seed": {
+     "42": 0.47473880498291804,
+     "1337": 0.4721994060112419,
+     "2024": 0.46481454947980944
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.39427386366155087,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "seg_boundary_f1",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.10868802601144072,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "seg_boundary_f1",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "detection_recall": {
+   "in_line_neural": {
+    "value": 0.5885433715220949,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "detection_recall",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.5935624659028914,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "detection_recall",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "detection_recall: seed 42",
+     "detection_recall: seed 1337",
+     "detection_recall: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.003111091637617749,
+    "per_seed": {
+     "42": 0.5967266775777414,
+     "1337": 0.5934533551554828,
+     "2024": 0.5905073649754501
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.5849427168576105,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "detection_recall",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.03469721767594108,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "detection_recall",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "detection_precision": {
+   "in_line_neural": {
+    "value": 0.8405797101449275,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "detection_precision",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.8486725160248065,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "detection_precision",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "detection_precision: seed 42",
+     "detection_precision: seed 1337",
+     "detection_precision: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.014019875216081184,
+    "per_seed": {
+     "42": 0.8623462630085147,
+     "1337": 0.8343304187758859,
+     "2024": 0.8493408662900188
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.788266431407146,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "detection_precision",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.007658406184524239,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "detection_precision",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "area_mape": {
+   "in_line_neural": {
+    "value": 0.16691030908839152,
+    "units": "fraction",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "area_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.15521593625922583,
+    "units": "fraction",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "area_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "area_mape: seed 42",
+     "area_mape: seed 1337",
+     "area_mape: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0024535192467177317,
+    "per_seed": {
+     "42": 0.15417711161066597,
+     "1337": 0.15345272088583528,
+     "2024": 0.15801797628117634
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.15759931460620635,
+    "units": "fraction",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "area_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.531507445134638,
+    "units": "fraction",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "area_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "dry_mass_mape": {
+   "in_line_neural": {
+    "value": 0.2129129171420357,
+    "units": "fraction",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "dry_mass_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.17399887953868098,
+    "units": "fraction",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "dry_mass_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "dry_mass_mape: seed 42",
+     "dry_mass_mape: seed 1337",
+     "dry_mass_mape: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.004547607796604595,
+    "per_seed": {
+     "42": 0.17449651578951936,
+     "1337": 0.16922292045089632,
+     "2024": 0.1782772023756273
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.22042459834301242,
+    "units": "fraction",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "dry_mass_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.694203088389677,
+    "units": "fraction",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "dry_mass_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "dry_mass_field_total_mape": {
+   "in_line_neural": {
+    "value": 0.13556284763306833,
+    "units": "fraction",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "dry_mass_field_total_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.16568248480702352,
+    "units": "fraction",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "dry_mass_field_total_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "dry_mass_field_total_mape: seed 42",
+     "dry_mass_field_total_mape: seed 1337",
+     "dry_mass_field_total_mape: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.014521501262915504,
+    "per_seed": {
+     "42": 0.1731709401964686,
+     "1337": 0.14894532534771932,
+     "2024": 0.1749311888768826
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.11010262530805873,
+    "units": "fraction",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "dry_mass_field_total_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.660202163483381,
+    "units": "fraction",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "dry_mass_field_total_mape",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "dry_mass_cell_pearson_r": {
+   "in_line_neural": {
+    "value": 0.9028822251645099,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "dry_mass_cell_pearson_r",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.9373732086557208,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "dry_mass_cell_pearson_r",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "dry_mass_cell_pearson_r: seed 42",
+     "dry_mass_cell_pearson_r: seed 1337",
+     "dry_mass_cell_pearson_r: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0010045488296256018,
+    "per_seed": {
+     "42": 0.9384251372191008,
+     "1337": 0.9364239205331464,
+     "2024": 0.9372705682149154
+    }
+   },
+   "classical_off_axis": {
+    "value": 0.8939580281206216,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "dry_mass_cell_pearson_r",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 0.8758275961450909,
+    "units": "1",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "dry_mass_cell_pearson_r",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "note": "Computed over the matched cells of the classical in-line pipeline only (106 cells); not comparable with the other columns."
+   }
+  },
+  "cells_matched": {
+   "in_line_neural": {
+    "value": 1798,
+    "units": "cells",
+    "source_file": "runs/v2_baseline_gabor/metrics_test_common.json",
+    "source_key": "cells_matched",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 1813.3333333333333,
+    "units": "cells",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test_common.json; runs/v2_A_seed1337_off_axis/metrics_test_common.json; runs/v2_A_seed2024_off_axis/metrics_test_common.json",
+    "source_key": "cells_matched",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "cells_matched: seed 42",
+     "cells_matched: seed 1337",
+     "cells_matched: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 9.504384952922168,
+    "per_seed": {
+     "42": 1823,
+     "1337": 1813,
+     "2024": 1804
+    }
+   },
+   "classical_off_axis": {
+    "value": 1787,
+    "units": "cells",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "cells_matched",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": 106,
+    "units": "cells",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "cells_matched",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "note": "106 matched cells"
+   }
+  },
+  "recovered_in_cell_phase_contrast": {
+   "definition": "median over test fields of [mean phase inside reference cell pixels - mean phase outside them]; scripts/conventional_baseline.py predict(), diagnostics['contrast']",
+   "classical_off_axis": {
+    "value": 0.9215815663337708,
+    "units": "rad",
+    "source_file": "runs/common_fields/conventional_off_axis/metrics_test.json",
+    "source_key": "recovered_phase_contrast_rad",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "classical_in_line": {
+    "value": -0.08357414603233337,
+    "units": "rad",
+    "source_file": "runs/common_fields/conventional_gabor/metrics_test.json",
+    "source_key": "recovered_phase_contrast_rad",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "in_line_neural": {
+    "value": 0.8868686556816101,
+    "units": "rad",
+    "source_file": "runs/common_fields/neural_phase_contrast.json",
+    "source_key": "in_line_neural.median_contrast_rad",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "off_axis_neural": {
+    "value": 0.8992382089296976,
+    "units": "rad",
+    "source_file": "runs/common_fields/neural_phase_contrast.json",
+    "source_key": "off_axis_neural.<seed>.median_contrast_rad",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/common_fields/neural_phase_contrast.json"
+    ],
+    "calculation": "mean over 3 seeds of the per-seed median contrast",
+    "sd": 0.03623130912225076
+   },
+   "reference_median_contrast_rad": 1.0969147682189941
+  }
+ },
+ "checkpoint": {
+  "checkpoint_sha256": "b9a0b5205685eaae57cc0c760a19764134b1a59ec7ff81ae2636ad6324dd2275",
+  "checkpoint_epoch": 52,
+  "epochs_completed": 60,
+  "wall_hours": 1.272,
+  "source": "runs/benchmark_results/results_arm_G.json"
+ },
+ "split": {
+  "train_excluded": {
+   "value": 39,
+   "units": "fields",
+   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_key": "train_excluded",
+   "field_set": "in-line Gabor",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "train": {
+   "value": 521,
+   "units": "fields",
+   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_key": "train",
+   "field_set": "in-line Gabor",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "val_excluded": {
+   "value": 5,
+   "units": "fields",
+   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_key": "val_excluded",
+   "field_set": "in-line Gabor",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "val": {
+   "value": 122,
+   "units": "fields",
+   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_key": "val",
+   "field_set": "in-line Gabor",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "test": {
+   "value": 107,
+   "units": "fields",
+   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_key": "test",
+   "field_set": "in-line Gabor",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "test_reference_cells": {
+   "value": 3055,
+   "units": "fields",
+   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_key": "test_reference_cells",
+   "field_set": "in-line Gabor",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "test_excluded": {
+   "value": 6,
+   "units": "fields",
+   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_key": "test_excluded",
+   "field_set": "in-line Gabor",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  }
+ },
+ "split_log_excerpt": [
+  "excluded for modality gabor (data.exclude)",
+  "excluded for modality gabor (data.exclude)"
+ ],
+ "statement": "SNU_01-SNU_50 in-line frames are excluded from train/val/test before training (train_G.log), so the in-line model was not trained on the mismatched fields."
+}

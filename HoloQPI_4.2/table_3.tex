@@ -2,32 +2,32 @@
 \begin{table}[!htbp]
 \centering
 \caption{Experimental configurations. Each differs from its comparator by one
-change; weights not listed are zero. Seeds: number of training runs.}
+change; weights not listed are zero. Training runs (seeds): number of trained models and their seeds.}
 \label{tab:arms}
 \footnotesize
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.6cm}c@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.6cm}>{\centering\arraybackslash}p{2.7cm}@{}}
 \toprule
-Configuration & Change relative to comparator & Comparator & Seeds \\
+Configuration & Change relative to comparator & Comparator & Training runs (seeds) \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{Main pipeline and hologram mode}} \\
-End-to-End Neural Baseline & off-axis; reconstruction + segmentation losses only & -- & 3 \\
-In-Line Neural Configuration & the baseline's objective on in-line Gabor holograms; SNU\_01--SNU\_50 excluded & End-to-End Neural Baseline & 1 \\
+End-to-End Neural Baseline & off-axis; reconstruction + segmentation losses only & -- & 3 (42, 1337, 2024) \\
+In-Line Neural Configuration & the baseline's objective on in-line Gabor holograms; SNU\_01--SNU\_50 excluded & End-to-End Neural Baseline & 1 (42) \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{Measurement-aware objectives}} \\
-+IPP (per-cell) & $+\,\mathcal{L}_\mathrm{IPP}^\mathrm{cell}$, $w=1.0$ & End-to-End Neural Baseline & 3 \\
-+IPP (image) & $+\,\mathcal{L}_\mathrm{IPP}^\mathrm{img}$, $w=1.0$ & End-to-End Neural Baseline & 3 \\
-+Area & $+\,\mathcal{L}_\mathrm{area}$, per-cell, $w=1.0$ & +IPP (per-cell) & 1 \\
-+BGA & $+\,\mathcal{L}_\mathrm{BGA}$, $w=0.05$ & +IPP (per-cell) & 1 \\
-+IPP (per-cell), $w=0.1/0.3/3.0$ & $\mathcal{L}_\mathrm{IPP}^\mathrm{cell}$ weight $0.1$, $0.3$, $3.0$ & End-to-End Neural Baseline & 1 \\
++IPP (per-cell) & $+\,\mathcal{L}_\mathrm{IPP}^\mathrm{cell}$, $w=1.0$ & End-to-End Neural Baseline & 3 (42, 1337, 2024) \\
++IPP (image) & $+\,\mathcal{L}_\mathrm{IPP}^\mathrm{img}$, $w=1.0$ & End-to-End Neural Baseline & 3 (42, 1337, 2024) \\
++Area & $+\,\mathcal{L}_\mathrm{area}$, per-cell, $w=1.0$ & +IPP (per-cell) & 1 (42) \\
++BGA & $+\,\mathcal{L}_\mathrm{BGA}$, $w=0.05$ & +IPP (per-cell) & 1 (42) \\
++IPP (per-cell), $w=0.1/0.3/3.0$ & $\mathcal{L}_\mathrm{IPP}^\mathrm{cell}$ weight $0.1$, $0.3$, $3.0$ & End-to-End Neural Baseline & 1 (42) \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{Amplitude output and forward-model consistency}} \\
-+Amplitude & $+$ amplitude head, $+\,\mathcal{L}_\mathrm{amp}$, $w=0.1$ & +IPP (per-cell) & 1 \\
-+Fwd (fixed $z$) & $+\,\mathcal{L}_\mathrm{fwd}$, $w=0.02$, $z$ fixed & +Amplitude & 1 \\
-+Fwd (free $z$) & $z$ becomes a trainable parameter & +Fwd (fixed $z$) & 1 \\
++Amplitude & $+$ amplitude head, $+\,\mathcal{L}_\mathrm{amp}$, $w=0.1$ & +IPP (per-cell) & 1 (42) \\
++Fwd (fixed $z$) & $+\,\mathcal{L}_\mathrm{fwd}$, $w=0.02$, $z$ fixed & +Amplitude & 1 (42) \\
++Fwd (free $z$) & $z$ becomes a trainable parameter & +Fwd (fixed $z$) & 1 (42) \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{Model capacity}} \\
-Compact Baseline & shared $1\times1$ projection to 256 channels before the decoders (3.36\,M parameters) & End-to-End Neural Baseline & 1 \\
-Compact +IPP & compact decoder, with $\mathcal{L}_\mathrm{IPP}^\mathrm{cell}$ & +IPP (per-cell) & 1 \\
+Compact Baseline & shared $1\times1$ projection to 256 channels before the decoders (3.36\,M parameters) & End-to-End Neural Baseline & 1 (42) \\
+Compact +IPP & compact decoder, with $\mathcal{L}_\mathrm{IPP}^\mathrm{cell}$ & +IPP (per-cell) & 1 (42) \\
 \bottomrule
 \end{tabularx}
 \end{table}

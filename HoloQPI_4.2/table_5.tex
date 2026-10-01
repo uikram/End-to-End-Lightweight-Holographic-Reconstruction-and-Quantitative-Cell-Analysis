@@ -5,7 +5,7 @@
 geometries (3055 reference cells; SNU\_01--SNU\_50 excluded). In-line neural:
 one training run; off-axis neural: mean $\pm$ SD over three seeds, the same
 models as in Table~\ref{tab:learned-vs-classical} re-scored on these fields;
-classical pipelines: one deterministic run each.}
+classical pipelines: one deterministic run each. $n$: number of training runs.}
 \label{tab:common}
 \footnotesize
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrr@{}}
@@ -14,7 +14,7 @@ classical pipelines: one deterministic run each.}
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
 Quantity & In-line ($n=1$) & Off-axis ($n=3$) & Off-axis & In-line \\
 \midrule
-Recovered in-cell phase contrast [rad] & -- & -- & $+0.922$ & $-0.084$ \\
+Recovered in-cell phase contrast [rad]$^{\ddagger}$ & $+0.887$ & $+0.899 \pm 0.036$ & $+0.922$ & $-0.084$ \\
 \midrule
 Phase MAE [rad] $\downarrow$ & 0.1625 & $0.1586 \pm 0.0024$ & 0.1990 & 0.3996 \\
 Phase MAE inside cells [rad] $\downarrow$ & 0.3005 & $0.2726 \pm 0.0057$ & 0.3157 & 1.0448 \\
@@ -35,5 +35,5 @@ Dry-mass Pearson $r$, per cell $\uparrow$ & 0.9029 & $0.9374 \pm 0.0010$ & 0.894
 Cells matched (of 3055) & 1798 & $1813 \pm 10$ & 1787 & 106 \\
 \bottomrule
 \end{tabular*}
-\tabnote{$^{\ast}$Computed over the 106 cells matched by the classical in-line pipeline; not comparable with the other columns.}
+\tabnote{$^{\ast}$Computed over the 106 cells matched by the classical in-line pipeline; not comparable with the other columns. $^{\ddagger}$Median over the 107 fields of the mean phase inside the reference cell masks minus the mean phase outside them, computed identically for all four columns; the reference phase gives $+1.097$\,rad. The differences between the single in-line run and the three off-axis runs are not resolvable under the criterion of Sec.~\ref{sec:stats}.}
 \end{table}

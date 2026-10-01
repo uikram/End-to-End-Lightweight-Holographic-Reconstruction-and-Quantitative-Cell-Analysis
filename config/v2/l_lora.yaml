@@ -2,7 +2,7 @@
 #
 # WHY THIS FILE EXISTS, AND WHY IT IS NOT IN THE DEFAULT ARM LIST
 #
-# The project is titled "Physics-Aware LoRA-Adapted Lightweight AI ...", and the
+# The project is titled "LoRA-Adapted Lightweight AI ...", and the
 # LoRA machinery is implemented and tested (holoqpi/models/lora.py, with the
 # merge path exercised by the ONNX exporter). But `model.lora.enabled` is FALSE
 # in config/base.yaml and is overridden nowhere, so as the study currently
@@ -20,7 +20,7 @@
 #
 #   2. Leave it untrained and drop LoRA from the title and the claims, citing
 #      paper 1 (where it WAS used) for the LoRA result and describing this work
-#      as the end-to-end physics-aware extension. Nothing in the current results
+#      as the end-to-end extension. Nothing in the current results
 #      supports a LoRA claim.
 #
 #   3. Train it as a parameter-efficiency comparison alongside K A/K B, which

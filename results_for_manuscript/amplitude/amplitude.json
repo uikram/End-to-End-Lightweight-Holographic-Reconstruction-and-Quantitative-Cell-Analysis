@@ -1,0 +1,1747 @@
+{
+ "description": "Amplitude output (+Amplitude, +Fwd fixed z, +Fwd free z); one training run each; 113 test fields.",
+ "n_runs": 1,
+ "seeds": [
+  42
+ ],
+ "field_set": "113 off-axis test fields",
+ "table_11a": {
+  "D0": {
+   "label": "+Amplitude",
+   "amplitude_mae": {
+    "value": 0.0650522738563276,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_mae",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.0650522738563276
+    }
+   },
+   "amplitude_rmse": {
+    "value": 0.10035547389915388,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_rmse",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.10035547389915388
+    }
+   },
+   "amplitude_bias": {
+    "value": 0.033941311287576235,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_bias",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.033941311287576235
+    }
+   },
+   "amplitude_pearson_r": {
+    "value": 0.9047086569192135,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_pearson_r",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.9047086569192135
+    }
+   },
+   "amplitude_unity_mae": {
+    "value": 0.1468617420280929,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_unity_mae",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.1468617420280929
+    }
+   },
+   "amplitude_pred_mean": {
+    "value": 1.0324180025969987,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_pred_mean",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 1.0324180025969987
+    }
+   },
+   "amplitude_pred_sd": {
+    "value": 0.12074326563923232,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_pred_sd",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.12074326563923232
+    }
+   },
+   "amplitude_reference_mean": {
+    "value": 0.9984766846209501,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_reference_mean",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.9984766846209501
+    }
+   },
+   "amplitude_n_images": {
+    "value": 113.0,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_n_images",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 113
+    }
+   },
+   "amplitude_mae_over_unity": {
+    "value": 0.44294908230003066,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_mae_over_unity",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.44294908230003066
+    }
+   },
+   "amplitude_mae_in_cell": {
+    "value": 0.09058539757290773,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_mae_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.09058539757290773
+    }
+   },
+   "amplitude_bias_in_cell": {
+    "value": 0.022275196782424553,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_bias_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.022275196782424553
+    }
+   },
+   "ratio_mae_over_unity_mae": {
+    "value": 0.44294908230003066,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "amplitude_mae / amplitude_unity_mae",
+    "field_set": "113 fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "amplitude_mae",
+     "amplitude_unity_mae"
+    ],
+    "calculation": "amplitude_mae / amplitude_unity_mae (<1: closer to the reference than A=1)"
+   }
+  },
+  "D1": {
+   "label": "+Fwd (fixed z)",
+   "amplitude_mae": {
+    "value": 0.06647670730552842,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_mae",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.06647670730552842
+    }
+   },
+   "amplitude_rmse": {
+    "value": 0.10088608724150967,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_rmse",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.10088608724150967
+    }
+   },
+   "amplitude_bias": {
+    "value": 0.03784452367211338,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_bias",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.03784452367211338
+    }
+   },
+   "amplitude_pearson_r": {
+    "value": 0.9063962360398959,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_pearson_r",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.9063962360398959
+    }
+   },
+   "amplitude_unity_mae": {
+    "value": 0.1468617420280929,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_unity_mae",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.1468617420280929
+    }
+   },
+   "amplitude_pred_mean": {
+    "value": 1.0363212080128426,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_pred_mean",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 1.0363212080128426
+    }
+   },
+   "amplitude_pred_sd": {
+    "value": 0.12226431190440085,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_pred_sd",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.12226431190440085
+    }
+   },
+   "amplitude_reference_mean": {
+    "value": 0.9984766846209501,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_reference_mean",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.9984766846209501
+    }
+   },
+   "amplitude_n_images": {
+    "value": 113.0,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_n_images",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 113
+    }
+   },
+   "amplitude_mae_over_unity": {
+    "value": 0.45264822810567107,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_mae_over_unity",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.45264822810567107
+    }
+   },
+   "amplitude_mae_in_cell": {
+    "value": 0.09224691977147507,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_mae_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.09224691977147507
+    }
+   },
+   "amplitude_bias_in_cell": {
+    "value": 0.035051285025619376,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "amplitude_bias_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.035051285025619376
+    }
+   },
+   "ratio_mae_over_unity_mae": {
+    "value": 0.45264822810567107,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "amplitude_mae / amplitude_unity_mae",
+    "field_set": "113 fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "amplitude_mae",
+     "amplitude_unity_mae"
+    ],
+    "calculation": "amplitude_mae / amplitude_unity_mae (<1: closer to the reference than A=1)"
+   }
+  },
+  "D2": {
+   "label": "+Fwd (free z)",
+   "amplitude_mae": {
+    "value": 0.06514096055674341,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_mae",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.06514096055674341
+    }
+   },
+   "amplitude_rmse": {
+    "value": 0.1002126202326353,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_rmse",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.1002126202326353
+    }
+   },
+   "amplitude_bias": {
+    "value": 0.03229418431455836,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_bias",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.03229418431455836
+    }
+   },
+   "amplitude_pearson_r": {
+    "value": 0.9045203187692482,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_pearson_r",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.9045203187692482
+    }
+   },
+   "amplitude_unity_mae": {
+    "value": 0.1468617420280929,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_unity_mae",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.1468617420280929
+    }
+   },
+   "amplitude_pred_mean": {
+    "value": 1.0307708656893366,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_pred_mean",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 1.0307708656893366
+    }
+   },
+   "amplitude_pred_sd": {
+    "value": 0.12001503896858312,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_pred_sd",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.12001503896858312
+    }
+   },
+   "amplitude_reference_mean": {
+    "value": 0.9984766846209501,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_reference_mean",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.9984766846209501
+    }
+   },
+   "amplitude_n_images": {
+    "value": 113.0,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_n_images",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 113
+    }
+   },
+   "amplitude_mae_over_unity": {
+    "value": 0.44355296115364556,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_mae_over_unity",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.44355296115364556
+    }
+   },
+   "amplitude_mae_in_cell": {
+    "value": 0.08979216155357066,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_mae_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.08979216155357066
+    }
+   },
+   "amplitude_bias_in_cell": {
+    "value": 0.01661138911293696,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "amplitude_bias_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.01661138911293696
+    }
+   },
+   "ratio_mae_over_unity_mae": {
+    "value": 0.44355296115364556,
+    "units": "1",
+    "source_file": "derived",
+    "source_key": "amplitude_mae / amplitude_unity_mae",
+    "field_set": "113 fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "amplitude_mae",
+     "amplitude_unity_mae"
+    ],
+    "calculation": "amplitude_mae / amplitude_unity_mae (<1: closer to the reference than A=1)"
+   }
+  }
+ },
+ "table_11b": {
+  "A": {
+   "label": "End-to-End Neural Baseline",
+   "forward_residual": {
+    "value": 0.8948461817780778,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "forward_residual",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "forward_residual: seed 42",
+     "forward_residual: seed 1337",
+     "forward_residual: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0002048343870196899,
+    "per_seed": {
+     "42": 0.8950795789735507,
+     "1337": 0.8946962952613831,
+     "2024": 0.8947626710992999
+    }
+   },
+   "forward_residual_reference": {
+    "value": 0.8913735829095925,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "forward_residual_reference",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "forward_residual_reference: seed 42",
+     "forward_residual_reference: seed 1337",
+     "forward_residual_reference: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0,
+    "per_seed": {
+     "42": 0.8913735829095925,
+     "1337": 0.8913735829095925,
+     "2024": 0.8913735829095925
+    }
+   },
+   "forward_residual_ratio": {
+    "value": 1.0038957839171656,
+    "units": "1",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "forward_residual_ratio",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "forward_residual_ratio: seed 42",
+     "forward_residual_ratio: seed 1337",
+     "forward_residual_ratio: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0002297963401059014,
+    "per_seed": {
+     "42": 1.004157623845954,
+     "1337": 1.0037276316187707,
+     "2024": 1.0038020962867722
+    }
+   },
+   "phase_mae_rad_in_cell": {
+    "value": 0.2689294574622911,
+    "units": "rad",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "phase_mae_rad_in_cell: seed 42",
+     "phase_mae_rad_in_cell: seed 1337",
+     "phase_mae_rad_in_cell: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0056454888879915125,
+    "per_seed": {
+     "42": 0.2699239487405372,
+     "1337": 0.26285280458695065,
+     "2024": 0.2740116190593854
+    }
+   },
+   "forward_distance_um": {
+    "value": 33.77,
+    "units": "um",
+    "source_file": "runs/v2_baseline_off_axis/metrics_test.json; runs/v2_A_seed1337_off_axis/metrics_test.json; runs/v2_A_seed2024_off_axis/metrics_test.json",
+    "source_key": "forward_distance_um",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "forward_distance_um: seed 42",
+     "forward_distance_um: seed 1337",
+     "forward_distance_um: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0,
+    "per_seed": {
+     "42": 33.77,
+     "1337": 33.77,
+     "2024": 33.77
+    }
+   }
+  },
+  "B": {
+   "label": "+IPP (per-cell)",
+   "forward_residual": {
+    "value": 0.896818845672945,
+    "units": "1",
+    "source_file": "runs/v2_cell_ipp_off_axis/metrics_test.json; runs/v2_B_seed1337_off_axis/metrics_test.json; runs/v2_B_seed2024_off_axis/metrics_test.json",
+    "source_key": "forward_residual",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "forward_residual: seed 42",
+     "forward_residual: seed 1337",
+     "forward_residual: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.000482135965893637,
+    "per_seed": {
+     "42": 0.8970326506986027,
+     "1337": 0.8962667795409144,
+     "2024": 0.8971571067793179
+    }
+   },
+   "forward_residual_reference": {
+    "value": 0.8913735829095925,
+    "units": "1",
+    "source_file": "runs/v2_cell_ipp_off_axis/metrics_test.json; runs/v2_B_seed1337_off_axis/metrics_test.json; runs/v2_B_seed2024_off_axis/metrics_test.json",
+    "source_key": "forward_residual_reference",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "forward_residual_reference: seed 42",
+     "forward_residual_reference: seed 1337",
+     "forward_residual_reference: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0,
+    "per_seed": {
+     "42": 0.8913735829095925,
+     "1337": 0.8913735829095925,
+     "2024": 0.8913735829095925
+    }
+   },
+   "forward_residual_ratio": {
+    "value": 1.006108844672711,
+    "units": "1",
+    "source_file": "runs/v2_cell_ipp_off_axis/metrics_test.json; runs/v2_B_seed1337_off_axis/metrics_test.json; runs/v2_B_seed2024_off_axis/metrics_test.json",
+    "source_key": "forward_residual_ratio",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "forward_residual_ratio: seed 42",
+     "forward_residual_ratio: seed 1337",
+     "forward_residual_ratio: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0005408910193634395,
+    "per_seed": {
+     "42": 1.006348704850034,
+     "1337": 1.0054895015122052,
+     "2024": 1.0064883276558938
+    }
+   },
+   "phase_mae_rad_in_cell": {
+    "value": 0.2876482743956698,
+    "units": "rad",
+    "source_file": "runs/v2_cell_ipp_off_axis/metrics_test.json; runs/v2_B_seed1337_off_axis/metrics_test.json; runs/v2_B_seed2024_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "phase_mae_rad_in_cell: seed 42",
+     "phase_mae_rad_in_cell: seed 1337",
+     "phase_mae_rad_in_cell: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.006393704760419567,
+    "per_seed": {
+     "42": 0.2882091827624667,
+     "1337": 0.2809925949679012,
+     "2024": 0.29374304545664154
+    }
+   },
+   "forward_distance_um": {
+    "value": 33.77,
+    "units": "um",
+    "source_file": "runs/v2_cell_ipp_off_axis/metrics_test.json; runs/v2_B_seed1337_off_axis/metrics_test.json; runs/v2_B_seed2024_off_axis/metrics_test.json",
+    "source_key": "forward_distance_um",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "forward_distance_um: seed 42",
+     "forward_distance_um: seed 1337",
+     "forward_distance_um: seed 2024"
+    ],
+    "calculation": "mean and sample SD (ddof=1) over training runs",
+    "sd": 0.0,
+    "per_seed": {
+     "42": 33.77,
+     "1337": 33.77,
+     "2024": 33.77
+    }
+   }
+  },
+  "D0": {
+   "label": "+Amplitude",
+   "forward_residual": {
+    "value": 0.8699443519642923,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "forward_residual",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.8699443519642923
+    }
+   },
+   "forward_residual_reference": {
+    "value": 0.8646782064332371,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "forward_residual_reference",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.8646782064332371
+    }
+   },
+   "forward_residual_ratio": {
+    "value": 1.0060902952010065,
+    "units": "1",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "forward_residual_ratio",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 1.0060902952010065
+    }
+   },
+   "phase_mae_rad_in_cell": {
+    "value": 0.28622506545708243,
+    "units": "rad",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.28622506545708243
+    }
+   },
+   "forward_distance_um": {
+    "value": 33.77,
+    "units": "um",
+    "source_file": "runs/v2_amplitude_off_axis/metrics_test.json",
+    "source_key": "forward_distance_um",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 33.77
+    }
+   }
+  },
+  "D1": {
+   "label": "+Fwd (fixed z)",
+   "forward_residual": {
+    "value": 0.8702429725533039,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "forward_residual",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.8702429725533039
+    }
+   },
+   "forward_residual_reference": {
+    "value": 0.8643323496907158,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "forward_residual_reference",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.8643323496907158
+    }
+   },
+   "forward_residual_ratio": {
+    "value": 1.0068383682095239,
+    "units": "1",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "forward_residual_ratio",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 1.0068383682095239
+    }
+   },
+   "phase_mae_rad_in_cell": {
+    "value": 0.28925324594025065,
+    "units": "rad",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.28925324594025065
+    }
+   },
+   "forward_distance_um": {
+    "value": 33.77,
+    "units": "um",
+    "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+    "source_key": "forward_distance_um",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 33.77
+    }
+   }
+  },
+  "D2": {
+   "label": "+Fwd (free z)",
+   "forward_residual": {
+    "value": 0.8698769380561019,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "forward_residual",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.8698769380561019
+    }
+   },
+   "forward_residual_reference": {
+    "value": 0.8639940107818198,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "forward_residual_reference",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.8639940107818198
+    }
+   },
+   "forward_residual_ratio": {
+    "value": 1.0068089908041824,
+    "units": "1",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "forward_residual_ratio",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 1.0068089908041824
+    }
+   },
+   "phase_mae_rad_in_cell": {
+    "value": 0.2886312928347461,
+    "units": "rad",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "phase_mae_rad_in_cell",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.2886312928347461
+    }
+   },
+   "forward_distance_um": {
+    "value": 33.40824890136719,
+    "units": "um",
+    "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+    "source_key": "forward_distance_um",
+    "field_set": "113 off-axis test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 33.40824890136719
+    }
+   }
+  },
+  "G_in_line_107_fields": {
+   "label": "In-Line Neural Configuration",
+   "forward_residual": {
+    "value": 0.7573359494454392,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test.json",
+    "source_key": "forward_residual",
+    "field_set": "107 in-line test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.7573359494454392
+    }
+   },
+   "forward_residual_reference": {
+    "value": 0.7654254578541373,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test.json",
+    "source_key": "forward_residual_reference",
+    "field_set": "107 in-line test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.7654254578541373
+    }
+   },
+   "forward_residual_ratio": {
+    "value": 0.9894313569980062,
+    "units": "1",
+    "source_file": "runs/v2_baseline_gabor/metrics_test.json",
+    "source_key": "forward_residual_ratio",
+    "field_set": "107 in-line test fields",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null,
+    "sd": null,
+    "per_seed": {
+     "42": 0.9894313569980062
+    }
+   }
+  }
+ },
+ "table_11c": {
+  "Off-axis, 32 validation fields": {
+   "source_file": "runs/z_calibration.json",
+   "field_set": "32 validation fields",
+   "reference_residual": {
+    "value": 0.9146810993552208,
+    "units": "1",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "off_axis.discrimination.floor",
+    "field_set": "32 validation fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "scale_0.9": {
+    "margin": {
+     "value": 0.00034572556614875793,
+     "units": "1",
+     "source_file": "runs/z_calibration.json",
+     "source_key": "off_axis.discrimination.margins.scaled_0.9",
+     "field_set": "32 validation fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "direct",
+     "derived_from": null,
+     "calculation": null
+    },
+    "fields_favouring_reference_phase": {
+     "value": 18,
+     "units": "fields",
+     "source_file": "runs/z_calibration.json",
+     "source_key": "off_axis.discrimination.win_rates.scaled_0.9 x images",
+     "field_set": "32 validation fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "off_axis.discrimination.win_rates.scaled_0.9",
+      "off_axis.discrimination.images"
+     ],
+     "calculation": "win_rate x images; win_rate = mean(scaled residual - reference residual > 0)"
+    },
+    "of": 32
+   },
+   "scale_0.5": {
+    "margin": {
+     "value": 0.007992720231413841,
+     "units": "1",
+     "source_file": "runs/z_calibration.json",
+     "source_key": "off_axis.discrimination.margins.scaled_0.5",
+     "field_set": "32 validation fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "direct",
+     "derived_from": null,
+     "calculation": null
+    },
+    "fields_favouring_reference_phase": {
+     "value": 20,
+     "units": "fields",
+     "source_file": "runs/z_calibration.json",
+     "source_key": "off_axis.discrimination.win_rates.scaled_0.5 x images",
+     "field_set": "32 validation fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "off_axis.discrimination.win_rates.scaled_0.5",
+      "off_axis.discrimination.images"
+     ],
+     "calculation": "win_rate x images; win_rate = mean(scaled residual - reference residual > 0)"
+    },
+    "of": 32
+   }
+  },
+  "In-line, 32 validation fields": {
+   "source_file": "runs/z_calibration.json",
+   "field_set": "32 validation fields",
+   "reference_residual": {
+    "value": 0.6993121644482017,
+    "units": "1",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "gabor.discrimination.floor",
+    "field_set": "32 validation fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "scale_0.9": {
+    "margin": {
+     "value": 0.004318851977586746,
+     "units": "1",
+     "source_file": "runs/z_calibration.json",
+     "source_key": "gabor.discrimination.margins.scaled_0.9",
+     "field_set": "32 validation fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "direct",
+     "derived_from": null,
+     "calculation": null
+    },
+    "fields_favouring_reference_phase": {
+     "value": 30,
+     "units": "fields",
+     "source_file": "runs/z_calibration.json",
+     "source_key": "gabor.discrimination.win_rates.scaled_0.9 x images",
+     "field_set": "32 validation fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "gabor.discrimination.win_rates.scaled_0.9",
+      "gabor.discrimination.images"
+     ],
+     "calculation": "win_rate x images; win_rate = mean(scaled residual - reference residual > 0)"
+    },
+    "of": 32
+   },
+   "scale_0.5": {
+    "margin": {
+     "value": 0.06224722322076559,
+     "units": "1",
+     "source_file": "runs/z_calibration.json",
+     "source_key": "gabor.discrimination.margins.scaled_0.5",
+     "field_set": "32 validation fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "direct",
+     "derived_from": null,
+     "calculation": null
+    },
+    "fields_favouring_reference_phase": {
+     "value": 32,
+     "units": "fields",
+     "source_file": "runs/z_calibration.json",
+     "source_key": "gabor.discrimination.win_rates.scaled_0.5 x images",
+     "field_set": "32 validation fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "gabor.discrimination.win_rates.scaled_0.5",
+      "gabor.discrimination.images"
+     ],
+     "calculation": "win_rate x images; win_rate = mean(scaled residual - reference residual > 0)"
+    },
+    "of": 32
+   }
+  },
+  "Off-axis, 113 test fields, global surface": {
+   "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+   "field_set": "113 test fields",
+   "reference_residual": {
+    "value": 0.8913752842793422,
+    "units": "1",
+    "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+    "source_key": "phase_reference",
+    "field_set": "113 test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "derived",
+    "derived_from": [
+     "runs/amplitude_sensitivity_off_axis_global.csv"
+    ],
+    "calculation": "mean over fields of phase_reference"
+   },
+   "scale_0.9": {
+    "margin": {
+     "value": 0.000270324470722616,
+     "units": "1",
+     "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+     "source_key": "phase_scaled_0.9 - phase_reference",
+     "field_set": "113 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "runs/amplitude_sensitivity_off_axis_global.csv"
+     ],
+     "calculation": "mean(scaled) - mean(reference)"
+    },
+    "fields_favouring_reference_phase": {
+     "value": 60,
+     "units": "fields",
+     "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+     "source_key": "count(phase_scaled_0.9 > phase_reference)",
+     "field_set": "113 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "runs/amplitude_sensitivity_off_axis_global.csv"
+     ],
+     "calculation": "number of fields whose scaled-phase residual exceeds the reference-phase residual"
+    },
+    "ties": 0,
+    "of": 113
+   },
+   "scale_0.5": {
+    "margin": {
+     "value": 0.006961949631176245,
+     "units": "1",
+     "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+     "source_key": "phase_scaled_0.5 - phase_reference",
+     "field_set": "113 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "runs/amplitude_sensitivity_off_axis_global.csv"
+     ],
+     "calculation": "mean(scaled) - mean(reference)"
+    },
+    "fields_favouring_reference_phase": {
+     "value": 71,
+     "units": "fields",
+     "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+     "source_key": "count(phase_scaled_0.5 > phase_reference)",
+     "field_set": "113 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "runs/amplitude_sensitivity_off_axis_global.csv"
+     ],
+     "calculation": "number of fields whose scaled-phase residual exceeds the reference-phase residual"
+    },
+    "ties": 0,
+    "of": 113
+   }
+  },
+  "Off-axis, 112 test fields, per-field surfaces": {
+   "source_file": "runs/amplitude_sensitivity_off_axis_per_field.csv",
+   "field_set": "112 test fields",
+   "reference_residual": {
+    "value": 0.3906342184969357,
+    "units": "1",
+    "source_file": "runs/amplitude_sensitivity_off_axis_per_field.csv",
+    "source_key": "phase_reference",
+    "field_set": "112 test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "derived",
+    "derived_from": [
+     "runs/amplitude_sensitivity_off_axis_per_field.csv"
+    ],
+    "calculation": "mean over fields of phase_reference"
+   },
+   "scale_0.9": {
+    "margin": {
+     "value": 0.0011009049734899135,
+     "units": "1",
+     "source_file": "runs/amplitude_sensitivity_off_axis_per_field.csv",
+     "source_key": "phase_scaled_0.9 - phase_reference",
+     "field_set": "112 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "runs/amplitude_sensitivity_off_axis_per_field.csv"
+     ],
+     "calculation": "mean(scaled) - mean(reference)"
+    },
+    "fields_favouring_reference_phase": {
+     "value": 93,
+     "units": "fields",
+     "source_file": "runs/amplitude_sensitivity_off_axis_per_field.csv",
+     "source_key": "count(phase_scaled_0.9 > phase_reference)",
+     "field_set": "112 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "runs/amplitude_sensitivity_off_axis_per_field.csv"
+     ],
+     "calculation": "number of fields whose scaled-phase residual exceeds the reference-phase residual"
+    },
+    "ties": 0,
+    "of": 112
+   },
+   "scale_0.5": {
+    "margin": {
+     "value": 0.035904748631375216,
+     "units": "1",
+     "source_file": "runs/amplitude_sensitivity_off_axis_per_field.csv",
+     "source_key": "phase_scaled_0.5 - phase_reference",
+     "field_set": "112 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "runs/amplitude_sensitivity_off_axis_per_field.csv"
+     ],
+     "calculation": "mean(scaled) - mean(reference)"
+    },
+    "fields_favouring_reference_phase": {
+     "value": 110,
+     "units": "fields",
+     "source_file": "runs/amplitude_sensitivity_off_axis_per_field.csv",
+     "source_key": "count(phase_scaled_0.5 > phase_reference)",
+     "field_set": "112 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "runs/amplitude_sensitivity_off_axis_per_field.csv"
+     ],
+     "calculation": "number of fields whose scaled-phase residual exceeds the reference-phase residual"
+    },
+    "ties": 0,
+    "of": 112
+   }
+  },
+  "Off-axis, 112 test fields, global surface (same fields as per-field row)": {
+   "source_file": "runs/amplitude_sensitivity_off_axis_global.csv restricted to batches in the per-field CSV",
+   "field_set": "112 test fields",
+   "reference_residual": {
+    "value": 0.8925678102033479,
+    "units": "1",
+    "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+    "source_key": "phase_reference",
+    "field_set": "112 test fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "derived",
+    "derived_from": [
+     "batches shared with the per-field CSV"
+    ],
+    "calculation": "mean over the 112 shared fields"
+   },
+   "scale_0.9": {
+    "margin": {
+     "value": 0.0002532164965357575,
+     "units": "1",
+     "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+     "source_key": "phase_scaled_0.9 - phase_reference",
+     "field_set": "112 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "shared batches"
+     ],
+     "calculation": "mean(scaled) - mean(reference), 112 shared fields"
+    },
+    "fields_favouring_reference_phase": {
+     "value": 59,
+     "units": "fields",
+     "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+     "source_key": "count(phase_scaled_0.9 > phase_reference)",
+     "field_set": "112 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "shared batches"
+     ],
+     "calculation": "count over the 112 shared fields"
+    },
+    "of": 112
+   },
+   "scale_0.5": {
+    "margin": {
+     "value": 0.006724023925406608,
+     "units": "1",
+     "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+     "source_key": "phase_scaled_0.5 - phase_reference",
+     "field_set": "112 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "shared batches"
+     ],
+     "calculation": "mean(scaled) - mean(reference), 112 shared fields"
+    },
+    "fields_favouring_reference_phase": {
+     "value": 70,
+     "units": "fields",
+     "source_file": "runs/amplitude_sensitivity_off_axis_global.csv",
+     "source_key": "count(phase_scaled_0.5 > phase_reference)",
+     "field_set": "112 test fields",
+     "n_runs": 1,
+     "seeds": null,
+     "derivation": "derived",
+     "derived_from": [
+      "shared batches"
+     ],
+     "calculation": "count over the 112 shared fields"
+    },
+    "of": 112
+   }
+  }
+ },
+ "amplitude_keys_available": [
+  "amplitude_mae",
+  "amplitude_rmse",
+  "amplitude_bias",
+  "amplitude_pearson_r",
+  "amplitude_unity_mae",
+  "amplitude_pred_mean",
+  "amplitude_pred_sd",
+  "amplitude_reference_mean",
+  "amplitude_n_images",
+  "amplitude_mae_over_unity",
+  "amplitude_mae_in_cell",
+  "amplitude_bias_in_cell"
+ ],
+ "configured_tolerance": {
+  "value": 0.01,
+  "units": "1",
+  "source_file": "config/base.yaml",
+  "source_key": "loss.forward_model.discrimination_tolerance",
+  "field_set": "n/a",
+  "n_runs": null,
+  "seeds": null,
+  "derivation": "direct",
+  "derived_from": null,
+  "calculation": null
+ },
+ "terminology": "'configured tolerance' (never 'preregistered'); 'Fields favouring reference phase' (not 'Fields worse')"
+}

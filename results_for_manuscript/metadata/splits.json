@@ -1,0 +1,19 @@
+{
+ "splits_sha256": "11d124828ce9c48fed26d540bf2f0c3adc3f34a1befc02899e1216f33e4120bf",
+ "off_axis": {
+  "train": 560,
+  "val": 127,
+  "test": 113
+ },
+ "in_line": {
+  "train_excluded": 39,
+  "train": 521,
+  "val_excluded": 5,
+  "val": 122,
+  "test": 107,
+  "test_reference_cells": 3055,
+  "test_excluded": 6
+ },
+ "common_fields": 107,
+ "source_file": "data/splits.json; logs/v2_20260930_074055_gpu3/train_G.log"
+}

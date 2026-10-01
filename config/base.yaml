@@ -92,7 +92,7 @@ optics:
   # analysed with.
   refraction_increment_ml_per_g: 0.2
   # Literature range for alpha, propagated onto ABSOLUTE dry mass by
-  # scripts/mass_uncertainty.py. Zhao, Brown & Schuck (Biophys. J. 2011) give a
+  # legacy/scripts/mass_uncertainty.py. Zhao, Brown & Schuck (Biophys. J. 2011) give a
   # protein mean of 0.190 mL/g (SD 0.003) spanning 0.173-0.215; Barer & Joseph
   # (1954) recommend 0.18 for whole protoplasm; Schuermann et al. (2016) use 0.2.
   #
@@ -227,7 +227,7 @@ data:
   crop_offset_px: [-6, -2]
   # Fields removed from the listed modalities at load time, in every split.
   # SNU_01-SNU_50: their Gabor frames do not show the same field as their
-  # off-axis hologram and reference phase (registration r 0.09-0.18, the level
+  # off-axis hologram and reference phase (registration r -0.13 to 0.18, the level
   # of randomly paired fields, while the other 750 fields register within 5 px;
   # 2026-09-30). Their off-axis holograms are correctly paired, so they stay in
   # every off-axis arm. Adding off_axis to modalities gives the common-field
@@ -485,20 +485,21 @@ model:
     always_trainable_patterns: [decoder, head, classifier, final]
 
 # -----------------------------------------------------------------------------
-# Joint physics-aware objective
+# Joint objective: supervised terms, measurement-aware terms, forward-model consistency
 #
 #   L = w_phase * L_phase
 #     + w_seg   * L_seg
 #     + w_cls   * L_cls
-#     + w_pmc   * L_PMC + w_bga * L_BGA + w_pv * L_PV
-#     + w_mass  * L_mass + w_area * L_area
+#     + w_bga * L_BGA + w_ipp_img * L_IPP^img (key image_integrated_phase)
+#     + w_ipp_cell * L_IPP^cell (key cell_integrated_phase) + w_area * L_area
+#     (legacy, off: w_pmc * L_PMC (key phase_mask_contrast), w_mass * L_mass)
 # -----------------------------------------------------------------------------
 loss:
   weights:
     phase: 1.0
     segmentation: 1.0
     classification: 0.2
-    # --- physics-aware terms -------------------------------------------------
+    # --- measurement-aware terms and forward-model consistency -------------------------------------------------
     # v2 defaults. Three terms from v1 are now OFF by default, each for a
     # measured reason rather than for simplification; see docs/documentation.md.
     #
@@ -509,17 +510,17 @@ loss:
     #                         exactly 0.00000 throughout every v1 run. Inert at
     #                         any defensible margin, not a tuning problem.
     #
-    #   dry_mass_consistency  acts on the same per-image ratio as phase_volume
+    #   dry_mass_consistency  acts on the same per-image ratio as image_integrated_phase
     #                         (dry mass is a fixed multiple of the phase
     #                         integral), differing only in penalty shape. Keeping
     #                         both double-weights one constraint.
     #
-    #   phase_volume          superseded by cell_integrated_phase, which is the
+    #   image_integrated_phase superseded by cell_integrated_phase, which is the
     #                         same constraint without the image-level
     #                         cancellation between over- and under-measured cells.
     phase_mask_contrast: 0.0
     boundary_gradient_alignment: 0.0    # ablated in experiment C, not assumed
-    phase_volume: 0.0                   # superseded by cell_integrated_phase
+    image_integrated_phase: 0.0         # L_IPP^img; superseded by cell_integrated_phase (old name phase_volume still accepted)
     cell_integrated_phase: 0.0          # experiment B raises this; A is the baseline
     # Per-cell projected area, the symmetric partner of cell_integrated_phase.
     # Experiment B'' raises this. Projected area is one of the four measurements
