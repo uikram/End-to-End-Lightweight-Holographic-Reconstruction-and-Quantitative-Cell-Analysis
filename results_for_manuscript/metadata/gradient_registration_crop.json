@@ -66,6 +66,57 @@
   "train_crop": "512",
   "note": "Source of truth is the CSV. A previously quoted median 0.302 (range 0.18-0.67) is NOT supported by it."
  },
+ "membrane_registration": {
+  "scale": {
+   "value": 1.343769,
+   "units": "membrane px per phase px",
+   "source_file": "config/base.yaml",
+   "source_key": "membrane.scale",
+   "field_set": "",
+   "n_runs": 1,
+   "seeds": null,
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "offset_y_px": {
+   "value": 314,
+   "units": "px",
+   "source_file": "config/base.yaml",
+   "source_key": "membrane.offset_y",
+   "field_set": "",
+   "n_runs": 1,
+   "seeds": null,
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "offset_x_px": {
+   "value": 280,
+   "units": "px",
+   "source_file": "config/base.yaml",
+   "source_key": "membrane.offset_x",
+   "field_set": "",
+   "n_runs": 1,
+   "seeds": null,
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "second_header_pitch_um": {
+   "value": 0.211994,
+   "units": "um",
+   "source_file": "config/base.yaml (comment at membrane.scale) / scripts/prepare_data.py",
+   "source_key": "phase-file header pitch_y",
+   "field_set": "",
+   "n_runs": 1,
+   "seeds": null,
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "check": "0.284871 / 0.211994 = 1.343769"
+ },
  "registration": {
   "verified": false,
   "reason": "The diagnostics archive (registration_summary.json, hologram_registration.csv, classical_phase_shift.csv, hologram_inventory.csv) is not present in this repository, so these values cannot be re-derived or checked here. They are carried over as author-supplied.",

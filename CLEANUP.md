@@ -28,3 +28,12 @@ Retained on purpose, because stored configs/logs use them: config section `loss.
 
 ## Left in place deliberately
 `runs/` (all raw), top-level `runs/v2_*_hardware_benchmark_cuda.*` (early benchmark stage, not used), `figures/` (exploratory `make_figures.py` output), `server_figs.zip`, `cleanup_server.sh`, `HoloQPI_4.2/`. Suggested later (after your sign-off): delete `server_figs.zip` and `figures/`; remove the `phase_volume` alias only together with re-labelling stored configs.
+
+## Phase 2 (manuscript synchronisation) — removed or archived
+* Removed (confirmed unreferenced by code, configs, docs, the manuscript and `run_v2.sh`; contents regenerable or superseded):
+  `server_figs.zip` (transfer archive, duplicated files already in the repository), `cleanup_server.sh` (one-off server clean-up of files from an earlier phase), `figures/` (outputs of the exploratory `scripts/make_figures.py`; the script is kept and regenerates them),
+  `HoloQPI_4.2/analysis/` (first-generation value extractor and its 77k-line `values.json`; scripts archived in `legacy/analysis_v42_old/`),
+  `HoloQPI_4.2/figure_code/{figure_7.py,make_figure_boundary_sensitivity.py,mstyle.py}` (duplicates of `results_for_manuscript/figures/scripts/`).
+* Archived: v4.1 figure scripts/images and `assets/` → `legacy/figures_v4.1/`.
+* Retained deliberately (source traceability, listed in `results_for_manuscript/RESULTS_INDEX.md`): all of `runs/` and `logs/`.
+* Rewritten: `README.md`, `docs/documentation.md`, `config/v2/_shared.md`; corrected: `BENCHMARKING.md`; regenerated: `MANIFEST.txt`.

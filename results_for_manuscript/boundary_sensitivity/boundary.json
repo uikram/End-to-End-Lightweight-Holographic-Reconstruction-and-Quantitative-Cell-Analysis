@@ -484,6 +484,20 @@
   "edge": 1452,
   "interior": 1734
  },
+ "median_mass_over_area_ratio": {
+  "value": 0.7102632983708845,
+  "units": "1",
+  "source_file": "runs/error_propagation_summary.csv",
+  "source_key": "mass_over_area",
+  "field_set": "113 off-axis test fields",
+  "n_runs": 1,
+  "seeds": null,
+  "derivation": "derived",
+  "derived_from": [
+   "mass_over_area at shifts +-1..5 px"
+  ],
+  "calculation": "median over the ten non-zero displacements"
+ },
  "table_12_boundary_displacement": {
   "source_file": "runs/error_propagation_summary.csv",
   "rows": [

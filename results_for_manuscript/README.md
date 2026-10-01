@@ -1,5 +1,7 @@
 # results_for_manuscript
 
+`RESULTS_INDEX.md` maps every manuscript table and figure to its file, source, key, runs, seeds and field set.
+
 Built by `python analysis/v42/compile_results.py` from `runs/`, `logs/`, `config/`, `data/` (never from the manuscript). Verified by `python analysis/v42/check_numbers.py` (`analysis/v42/check_numbers.csv`). Every numeric entry carries `value, units, source_file, source_key, field_set, n_runs, seeds, derivation (direct|derived), derived_from, calculation`.
 
 Training runs (n = trained models): baseline, +IPP (per-cell), +IPP (image) = 3 (seeds 42, 1337, 2024); every other neural configuration, including the In-Line Neural Configuration, = 1 (seed 42); classical pipelines are deterministic (single run). `N`/fields/cells are never called n.

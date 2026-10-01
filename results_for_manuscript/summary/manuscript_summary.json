@@ -37,7 +37,7 @@
   "configurations": "metadata/configurations.json"
  },
  "consistency_checks": {
-  "n": 510,
+  "n": 511,
   "failed": []
  }
 }

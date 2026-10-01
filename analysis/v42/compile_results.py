@@ -874,6 +874,10 @@ boundary["reference_cells"] = refcells
 
 # Table 12: boundary displacement + synthetic validation
 ep = rcsv(RUNS / "error_propagation_summary.csv")
+_ratios = [fnum(r["mass_over_area"]) for r in ep if int(float(r["shift_px"])) != 0]
+boundary["median_mass_over_area_ratio"] = E(statistics.median(_ratios), "1", "runs/error_propagation_summary.csv", "mass_over_area",
+                                            "113 off-axis test fields", 1, None, derived_from=["mass_over_area at shifts +-1..5 px"],
+                                            calc="median over the ten non-zero displacements")
 boundary["table_12_boundary_displacement"] = {
     "source_file": "runs/error_propagation_summary.csv",
     "rows": [{k: (fnum(v) if k != "kind" else v) for k, v in row.items()} for row in ep],
@@ -922,6 +926,7 @@ for arm in ("A", "B", "D0", "KA", "KB"):
             if key in st:
                 d[q] = E(st[key]["mean"], u, rel(p), f"statistics.{key}.mean", "", st[key]["n"], h["seeds"])
                 d[q]["sd"] = st[key]["std"]
+                d[q]["session_min"], d[q]["session_max"] = st[key]["min"], st[key]["max"]
         a["runtimes"][rt] = d
     bench["arms"][arm] = a
     # recompute mean latency from the per-session values
@@ -969,12 +974,19 @@ cb = (ROOT / "config" / "base.yaml").read_text()
 registration["config_base_yaml_mentions_0.09_to_0.18"] = bool(re.search(r"0\.09", cb))
 check("750 + 50 == 800 registration fields", 750 + 50 == 800)
 
+_mb = yaml.safe_load(cfgtxt)["membrane"] if "membrane" in yaml.safe_load(cfgtxt) else {}
+membrane = {"scale": E(_mb.get("scale"), "membrane px per phase px", "config/base.yaml", "membrane.scale", "", 1, None),
+            "offset_y_px": E(_mb.get("offset_y"), "px", "config/base.yaml", "membrane.offset_y", "", 1, None),
+            "offset_x_px": E(_mb.get("offset_x"), "px", "config/base.yaml", "membrane.offset_x", "", 1, None),
+            "second_header_pitch_um": E(0.211994, "um", "config/base.yaml (comment at membrane.scale) / scripts/prepare_data.py", "phase-file header pitch_y", "", 1, None),
+            "check": "0.284871 / 0.211994 = %.6f" % (0.284871 / 0.211994)}
+check("membrane scale equals the pitch ratio 0.284871/0.211994", abs(_mb.get("scale", 0) - 0.284871 / 0.211994) < 1e-6)
 crop = {"configured_offset_px": E(RUN["A"][42]["cfg"]["data"]["crop_offset_px"], "px", rel(RUNS / RUN["A"][42]["dir"] / "resolved_config.yaml"),
                                   "data.crop_offset_px", "", 1, None)}
 cj = jload(RUNS / "diagnostics" / "crop_offset_test_dy-6_dx-2.json")
 crop["test_confirmation"] = {"source_file": "runs/diagnostics/crop_offset_test_dy-6_dx-2.json", "content": cj}
 lab = jload(RUNS / "label_audit_thresholds.json")
-write("metadata/gradient_registration_crop.json", {"gradient_path": meta_grad, "registration": registration, "crop": crop,
+write("metadata/gradient_registration_crop.json", {"gradient_path": meta_grad, "membrane_registration": membrane, "registration": registration, "crop": crop,
                                                    "label_audit_thresholds": {k: lab[k] for k in lab if not isinstance(lab[k], (list, dict))}})
 
 # splits

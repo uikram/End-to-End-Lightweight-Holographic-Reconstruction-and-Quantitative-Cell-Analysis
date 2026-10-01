@@ -1,5 +1,5 @@
 {
- "n_checks": 510,
+ "n_checks": 511,
  "n_failed": 0,
  "checks": [
   {
@@ -2544,6 +2544,11 @@
   },
   {
    "check": "750 + 50 == 800 registration fields",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "membrane scale equals the pitch ratio 0.284871/0.211994",
    "passed": true,
    "detail": ""
   },

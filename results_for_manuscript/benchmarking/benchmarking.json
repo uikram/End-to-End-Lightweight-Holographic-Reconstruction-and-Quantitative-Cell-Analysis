@@ -78,7 +78,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.11575960191689581
+      "sd": 0.11575960191689581,
+      "session_min": 12.178199708461761,
+      "session_max": 12.388915725052357
      },
      "latency_p50_ms": {
       "value": 12.236352389057478,
@@ -95,7 +97,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.09181281442655041
+      "sd": 0.09181281442655041,
+      "session_min": 12.13049702346325,
+      "session_max": 12.294337153434753
      },
      "latency_p99_ms": {
       "value": 14.052153266966343,
@@ -112,7 +116,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.5257338040007961
+      "sd": 0.5257338040007961,
+      "session_min": 13.454729355871677,
+      "session_max": 14.444190114736557
      },
      "latency_p99_over_p50": {
       "value": 1.1482230663128352,
@@ -129,7 +135,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.034564706369020995
+      "sd": 0.034564706369020995,
+      "session_min": 1.1091655461311314,
+      "session_max": 1.174865300542143
      },
      "fps": {
       "value": 81.23135769213975,
@@ -146,7 +154,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.7677959883297502
+      "sd": 0.7677959883297502,
+      "session_min": 80.7173139436118,
+      "session_max": 82.1139432707095
      },
      "timed_runs": {
       "value": 500.0,
@@ -163,7 +173,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 500.0,
+      "session_max": 500.0
      },
      "weights_mb": {
       "value": 36.76925277709961,
@@ -180,7 +192,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 36.76925277709961,
+      "session_max": 36.76925277709961
      },
      "peak_activation_mb": {
       "value": 187.111328125,
@@ -197,7 +211,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 187.111328125,
+      "session_max": 187.111328125
      },
      "peak_allocated_mb": {
       "value": 223.8805809020996,
@@ -214,7 +230,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 223.8805809020996,
+      "session_max": 223.8805809020996
      }
     },
     "onnx_fp32": {
@@ -233,7 +251,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.08152039825155352
+      "sd": 0.08152039825155352,
+      "session_min": 14.116448573768139,
+      "session_max": 14.268337301909924
      },
      "latency_p50_ms": {
       "value": 14.176666115721067,
@@ -250,7 +270,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.06111516129937108
+      "sd": 0.06111516129937108,
+      "session_min": 14.10609856247902,
+      "session_max": 14.212427660822868
      },
      "latency_p99_ms": {
       "value": 15.244105669359366,
@@ -267,7 +289,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.9119967550496041
+      "sd": 0.9119967550496041,
+      "session_min": 14.205440543591973,
+      "session_max": 15.913834869861603
      },
      "latency_p99_over_p50": {
       "value": 1.0751263148041788,
@@ -284,7 +308,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.05991104959925539
+      "sd": 0.05991104959925539,
+      "session_min": 1.0070424845447483,
+      "session_max": 1.1197879242321416
      },
      "fps": {
       "value": 70.3769983139678,
@@ -301,7 +327,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.40496157033632973
+      "sd": 0.40496157033632973,
+      "session_min": 70.08525091890998,
+      "session_max": 70.83934707616531
      },
      "timed_runs": {
       "value": 500.0,
@@ -318,7 +346,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 500.0,
+      "session_max": 500.0
      }
     },
     "pytorch_fp16": {
@@ -337,7 +367,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.10165140816265088
+      "sd": 0.10165140816265088,
+      "session_min": 9.072807222604752,
+      "session_max": 9.269493021070957
      },
      "latency_p50_ms": {
       "value": 9.113398691018423,
@@ -354,7 +386,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0921084187191091
+      "sd": 0.0921084187191091,
+      "session_min": 9.011322632431984,
+      "session_max": 9.190307930111885
      },
      "latency_p99_ms": {
       "value": 10.115553711851438,
@@ -371,7 +405,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.6479965354058523
+      "sd": 0.6479965354058523,
+      "session_min": 9.376669339835642,
+      "session_max": 10.587157160043716
      },
      "latency_p99_over_p50": {
       "value": 1.109563492770003,
@@ -388,7 +424,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.06029557404491657
+      "sd": 0.06029557404491657,
+      "session_min": 1.0405430725661475,
+      "session_max": 1.1519915589939134
      },
      "fps": {
       "value": 108.87022142829214,
@@ -405,7 +443,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 1.2101538269892969
+      "sd": 1.2101538269892969,
+      "session_min": 107.88076518606239,
+      "session_max": 110.21946961559111
      },
      "timed_runs": {
       "value": 500.0,
@@ -422,7 +462,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 500.0,
+      "session_max": 500.0
      },
      "weights_mb": {
       "value": 18.38459587097168,
@@ -439,7 +481,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 18.38459587097168,
+      "session_max": 18.38459587097168
      },
      "peak_activation_mb": {
       "value": 93.59033203125,
@@ -456,7 +500,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 93.59033203125,
+      "session_max": 93.59033203125
      },
      "peak_allocated_mb": {
       "value": 111.97492790222168,
@@ -473,7 +519,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 111.97492790222168,
+      "session_max": 111.97492790222168
      }
     },
     "onnx_fp16": {
@@ -492,7 +540,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0651062677243082
+      "sd": 0.0651062677243082,
+      "session_min": 8.34618865698576,
+      "session_max": 8.459851644933224
      },
      "latency_p50_ms": {
       "value": 8.421011889974276,
@@ -509,7 +559,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.06152634218857391
+      "sd": 0.06152634218857391,
+      "session_min": 8.350159972906113,
+      "session_max": 8.460965007543564
      },
      "latency_p99_ms": {
       "value": 8.482848989466826,
@@ -526,7 +578,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.05116466061856045
+      "sd": 0.05116466061856045,
+      "session_min": 8.423838652670383,
+      "session_max": 8.514835610985756
      },
      "latency_p99_over_p50": {
       "value": 1.0073494805702221,
@@ -543,7 +597,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0013000278520690378
+      "sd": 0.0013000278520690378,
+      "session_min": 1.0063669573617386,
+      "session_max": 1.0088236249369278
      },
      "fps": {
       "value": 118.75042425023294,
@@ -560,7 +616,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.9221825768501946
+      "sd": 0.9221825768501946,
+      "session_min": 118.2053825493406,
+      "session_max": 119.81516846770532
      },
      "timed_runs": {
       "value": 500.0,
@@ -577,7 +635,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 500.0,
+      "session_max": 500.0
      }
     }
    }
@@ -658,7 +718,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.018552243593819254
+      "sd": 0.018552243593819254,
+      "session_min": 12.41169723123312,
+      "session_max": 12.445156700909138
      },
      "latency_p50_ms": {
       "value": 12.315247828761736,
@@ -675,7 +737,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.020173225231836126
+      "sd": 0.020173225231836126,
+      "session_min": 12.29299046099186,
+      "session_max": 12.332327663898468
      },
      "latency_p99_ms": {
       "value": 14.328075100978213,
@@ -692,7 +756,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.2653280049354884
+      "sd": 0.2653280049354884,
+      "session_min": 14.028086066246031,
+      "session_max": 14.531957320868967
      },
      "latency_p99_over_p50": {
       "value": 1.163457599920742,
@@ -709,7 +775,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.022683847031770697
+      "sd": 0.022683847031770697,
+      "session_min": 1.137505136788711,
+      "session_max": 1.1795012667666291
      },
      "fps": {
       "value": 80.49080824860846,
@@ -726,7 +794,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.12009473654736001
+      "sd": 0.12009473654736001,
+      "session_min": 80.3525438877719,
+      "session_max": 80.56915838098062
      },
      "timed_runs": {
       "value": 500.0,
@@ -743,7 +813,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 500.0,
+      "session_max": 500.0
      },
      "weights_mb": {
       "value": 36.76925277709961,
@@ -760,7 +832,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 36.76925277709961,
+      "session_max": 36.76925277709961
      },
      "peak_activation_mb": {
       "value": 187.111328125,
@@ -777,7 +851,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 187.111328125,
+      "session_max": 187.111328125
      },
      "peak_allocated_mb": {
       "value": 223.8805809020996,
@@ -794,7 +870,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 223.8805809020996,
+      "session_max": 223.8805809020996
      }
     },
     "onnx_fp32": {
@@ -813,7 +891,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.03674271172485942
+      "sd": 0.03674271172485942,
+      "session_min": 14.188215002417564,
+      "session_max": 14.253710269927979
      },
      "latency_p50_ms": {
       "value": 14.202602207660675,
@@ -830,7 +910,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.031188476619218024
+      "sd": 0.031188476619218024,
+      "session_min": 14.166655018925667,
+      "session_max": 14.222465455532074
      },
      "latency_p99_ms": {
       "value": 15.355732801059881,
@@ -847,7 +929,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.239266655924794
+      "sd": 0.239266655924794,
+      "session_min": 15.079859979450701,
+      "session_max": 15.506675839424133
      },
      "latency_p99_over_p50": {
       "value": 1.0811704498023034,
@@ -864,7 +948,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.014509035503532487
+      "sd": 0.014509035503532487,
+      "session_min": 1.064461579625187,
+      "session_max": 1.0905842971316675
      },
      "fps": {
       "value": 70.2715056246859,
@@ -881,7 +967,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.18170528079772838
+      "sd": 0.18170528079772838,
+      "session_min": 70.15717178633608,
+      "session_max": 70.4810294902923
      },
      "timed_runs": {
       "value": 500.0,
@@ -898,7 +986,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 500.0,
+      "session_max": 500.0
      }
     },
     "pytorch_fp16": {
@@ -917,7 +1007,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.8741740515781339
+      "sd": 0.8741740515781339,
+      "session_min": 9.308017820119858,
+      "session_max": 10.831333585083485
      },
      "latency_p50_ms": {
       "value": 9.723025684555372,
@@ -934,7 +1026,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.8278789578044549
+      "sd": 0.8278789578044549,
+      "session_min": 9.236032143235207,
+      "session_max": 10.678920894861221
      },
      "latency_p99_ms": {
       "value": 11.177467219531534,
@@ -951,7 +1045,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 1.038086141925876
+      "sd": 1.038086141925876,
+      "session_min": 10.560639537870882,
+      "session_max": 12.375974059104918
      },
      "latency_p99_over_p50": {
       "value": 1.1491070316188416,
@@ -968,7 +1064,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.009015968158002614
+      "sd": 0.009015968158002614,
+      "session_min": 1.1411819768249307,
+      "session_max": 1.158916165870311
      },
      "fps": {
       "value": 102.32642965535898,
@@ -985,7 +1083,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 8.662382538397246
+      "sd": 8.662382538397246,
+      "session_min": 92.32473472861766,
+      "session_max": 107.43425929400757
      },
      "timed_runs": {
       "value": 500.0,
@@ -1002,7 +1102,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 500.0,
+      "session_max": 500.0
      },
      "weights_mb": {
       "value": 18.38459587097168,
@@ -1019,7 +1121,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 18.38459587097168,
+      "session_max": 18.38459587097168
      },
      "peak_activation_mb": {
       "value": 93.59033203125,
@@ -1036,7 +1140,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 93.59033203125,
+      "session_max": 93.59033203125
      },
      "peak_allocated_mb": {
       "value": 111.97492790222168,
@@ -1053,7 +1159,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 111.97492790222168,
+      "session_max": 111.97492790222168
      }
     },
     "onnx_fp16": {
@@ -1072,7 +1180,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.02600776558305677
+      "sd": 0.02600776558305677,
+      "session_min": 8.425555519759655,
+      "session_max": 8.473776668310165
      },
      "latency_p50_ms": {
       "value": 8.448362350463867,
@@ -1089,7 +1199,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.030927144614415442
+      "sd": 0.030927144614415442,
+      "session_min": 8.412832394242287,
+      "session_max": 8.469242602586746
      },
      "latency_p99_ms": {
       "value": 8.512259808679422,
@@ -1106,7 +1218,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.031908542977531554
+      "sd": 0.031908542977531554,
+      "session_min": 8.4754828363657,
+      "session_max": 8.532583713531494
      },
      "latency_p99_over_p50": {
       "value": 1.0075631982031148,
@@ -1123,7 +1237,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0006077683377181652
+      "sd": 0.0006077683377181652,
+      "session_min": 1.0070219116802914,
+      "session_max": 1.0082206735049395
      },
      "fps": {
       "value": 118.2698192775136,
@@ -1140,7 +1256,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.3643795373781754
+      "sd": 0.3643795373781754,
+      "session_min": 118.01113472104514,
+      "session_max": 118.6865361761364
      },
      "timed_runs": {
       "value": 500.0,
@@ -1157,7 +1275,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0
+      "sd": 0.0,
+      "session_min": 500.0,
+      "session_max": 500.0
      }
     }
    }
@@ -1228,7 +1348,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 12.971086516976357,
+      "session_max": 12.971086516976357
      },
      "latency_p50_ms": {
       "value": 12.859880924224854,
@@ -1243,7 +1365,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 12.859880924224854,
+      "session_max": 12.859880924224854
      },
      "latency_p99_ms": {
       "value": 14.509333744645119,
@@ -1258,7 +1382,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 14.509333744645119,
+      "session_max": 14.509333744645119
      },
      "latency_p99_over_p50": {
       "value": 1.1282634598360162,
@@ -1273,7 +1399,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.1282634598360162,
+      "session_max": 1.1282634598360162
      },
      "fps": {
       "value": 77.09454398374535,
@@ -1288,7 +1416,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 77.09454398374535,
+      "session_max": 77.09454398374535
      },
      "timed_runs": {
       "value": 500.0,
@@ -1303,7 +1433,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      },
      "weights_mb": {
       "value": 36.80506134033203,
@@ -1318,7 +1450,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 36.80506134033203,
+      "session_max": 36.80506134033203
      },
      "peak_activation_mb": {
       "value": 187.111328125,
@@ -1333,7 +1467,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 187.111328125,
+      "session_max": 187.111328125
      },
      "peak_allocated_mb": {
       "value": 223.91638946533203,
@@ -1348,7 +1484,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 223.91638946533203,
+      "session_max": 223.91638946533203
      }
     },
     "onnx_fp32": {
@@ -1365,7 +1503,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 15.446215845644474,
+      "session_max": 15.446215845644474
      },
      "latency_p50_ms": {
       "value": 15.406448394060135,
@@ -1380,7 +1520,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 15.406448394060135,
+      "session_max": 15.406448394060135
      },
      "latency_p99_ms": {
       "value": 16.773046292364597,
@@ -1395,7 +1537,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 16.773046292364597,
+      "session_max": 16.773046292364597
      },
      "latency_p99_over_p50": {
       "value": 1.0887029809434436,
@@ -1410,7 +1554,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.0887029809434436,
+      "session_max": 1.0887029809434436
      },
      "fps": {
       "value": 64.74077599284489,
@@ -1425,7 +1571,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 64.74077599284489,
+      "session_max": 64.74077599284489
      },
      "timed_runs": {
       "value": 500.0,
@@ -1440,7 +1588,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      }
     },
     "pytorch_fp16": {
@@ -1457,7 +1607,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 11.259532168507576,
+      "session_max": 11.259532168507576
      },
      "latency_p50_ms": {
       "value": 11.162439361214638,
@@ -1472,7 +1624,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 11.162439361214638,
+      "session_max": 11.162439361214638
      },
      "latency_p99_ms": {
       "value": 12.556042857468128,
@@ -1487,7 +1641,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 12.556042857468128,
+      "session_max": 12.556042857468128
      },
      "latency_p99_over_p50": {
       "value": 1.1248475759783967,
@@ -1502,7 +1658,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.1248475759783967,
+      "session_max": 1.1248475759783967
      },
      "fps": {
       "value": 88.81363675099723,
@@ -1517,7 +1675,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 88.81363675099723,
+      "session_max": 88.81363675099723
      },
      "timed_runs": {
       "value": 500.0,
@@ -1532,7 +1692,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      },
      "weights_mb": {
       "value": 18.402496337890625,
@@ -1547,7 +1709,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 18.402496337890625,
+      "session_max": 18.402496337890625
      },
      "peak_activation_mb": {
       "value": 93.01220703125,
@@ -1562,7 +1726,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 93.01220703125,
+      "session_max": 93.01220703125
      },
      "peak_allocated_mb": {
       "value": 111.41470336914062,
@@ -1577,7 +1743,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 111.41470336914062,
+      "session_max": 111.41470336914062
      }
     },
     "onnx_fp16": {
@@ -1594,7 +1762,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 9.175913341343403,
+      "session_max": 9.175913341343403
      },
      "latency_p50_ms": {
       "value": 9.164294227957726,
@@ -1609,7 +1779,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 9.164294227957726,
+      "session_max": 9.164294227957726
      },
      "latency_p99_ms": {
       "value": 9.242319911718369,
@@ -1624,7 +1796,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 9.242319911718369,
+      "session_max": 9.242319911718369
      },
      "latency_p99_over_p50": {
       "value": 1.00851409631989,
@@ -1639,7 +1813,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.00851409631989,
+      "session_max": 1.00851409631989
      },
      "fps": {
       "value": 108.98097691205905,
@@ -1654,7 +1830,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 108.98097691205905,
+      "session_max": 108.98097691205905
      },
      "timed_runs": {
       "value": 500.0,
@@ -1669,7 +1847,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      }
     }
    }
@@ -1740,7 +1920,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 11.800876215100288,
+      "session_max": 11.800876215100288
      },
      "latency_p50_ms": {
       "value": 11.680103838443756,
@@ -1755,7 +1937,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 11.680103838443756,
+      "session_max": 11.680103838443756
      },
      "latency_p99_ms": {
       "value": 14.034759476780886,
@@ -1770,7 +1954,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 14.034759476780886,
+      "session_max": 14.034759476780886
      },
      "latency_p99_over_p50": {
       "value": 1.2015954370702633,
@@ -1785,7 +1971,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.2015954370702633,
+      "session_max": 1.2015954370702633
      },
      "fps": {
       "value": 84.73947033868635,
@@ -1800,7 +1988,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 84.73947033868635,
+      "session_max": 84.73947033868635
      },
      "timed_runs": {
       "value": 500.0,
@@ -1815,7 +2005,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      },
      "weights_mb": {
       "value": 12.96847915649414,
@@ -1830,7 +2022,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 12.96847915649414,
+      "session_max": 12.96847915649414
      },
      "peak_activation_mb": {
       "value": 182.73681640625,
@@ -1845,7 +2039,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 182.73681640625,
+      "session_max": 182.73681640625
      },
      "peak_allocated_mb": {
       "value": 195.70529556274414,
@@ -1860,7 +2056,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 195.70529556274414,
+      "session_max": 195.70529556274414
      }
     },
     "onnx_fp32": {
@@ -1877,7 +2075,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 13.320187039673328,
+      "session_max": 13.320187039673328
      },
      "latency_p50_ms": {
       "value": 13.291878625750542,
@@ -1892,7 +2092,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 13.291878625750542,
+      "session_max": 13.291878625750542
      },
      "latency_p99_ms": {
       "value": 14.679415859282015,
@@ -1907,7 +2109,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 14.679415859282015,
+      "session_max": 14.679415859282015
      },
      "latency_p99_over_p50": {
       "value": 1.1043898513219477,
@@ -1922,7 +2126,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.1043898513219477,
+      "session_max": 1.1043898513219477
      },
      "fps": {
       "value": 75.07402088435873,
@@ -1937,7 +2143,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 75.07402088435873,
+      "session_max": 75.07402088435873
      },
      "timed_runs": {
       "value": 500.0,
@@ -1952,7 +2160,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      }
     },
     "pytorch_fp16": {
@@ -1969,7 +2179,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 9.213946677744389,
+      "session_max": 9.213946677744389
      },
      "latency_p50_ms": {
       "value": 9.13248211145401,
@@ -1984,7 +2196,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 9.13248211145401,
+      "session_max": 9.13248211145401
      },
      "latency_p99_ms": {
       "value": 10.578853003680706,
@@ -1999,7 +2213,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 10.578853003680706,
+      "session_max": 10.578853003680706
      },
      "latency_p99_over_p50": {
       "value": 1.1583765371314168,
@@ -2014,7 +2230,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.1583765371314168,
+      "session_max": 1.1583765371314168
      },
      "fps": {
       "value": 108.53112514916398,
@@ -2029,7 +2247,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 108.53112514916398,
+      "session_max": 108.53112514916398
      },
      "timed_runs": {
       "value": 500.0,
@@ -2044,7 +2264,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      },
      "weights_mb": {
       "value": 6.484212875366211,
@@ -2059,7 +2281,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 6.484212875366211,
+      "session_max": 6.484212875366211
      },
      "peak_activation_mb": {
       "value": 92.23681640625,
@@ -2074,7 +2298,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 92.23681640625,
+      "session_max": 92.23681640625
      },
      "peak_allocated_mb": {
       "value": 98.72102928161621,
@@ -2089,7 +2315,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 98.72102928161621,
+      "session_max": 98.72102928161621
      }
     },
     "onnx_fp16": {
@@ -2106,7 +2334,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 7.973844341933727,
+      "session_max": 7.973844341933727
      },
      "latency_p50_ms": {
       "value": 7.969565689563751,
@@ -2121,7 +2351,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 7.969565689563751,
+      "session_max": 7.969565689563751
      },
      "latency_p99_ms": {
       "value": 8.023254461586475,
@@ -2136,7 +2368,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 8.023254461586475,
+      "session_max": 8.023254461586475
      },
      "latency_p99_over_p50": {
       "value": 1.0067367249501475,
@@ -2151,7 +2385,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.0067367249501475,
+      "session_max": 1.0067367249501475
      },
      "fps": {
       "value": 125.41002270900754,
@@ -2166,7 +2402,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 125.41002270900754,
+      "session_max": 125.41002270900754
      },
      "timed_runs": {
       "value": 500.0,
@@ -2181,7 +2419,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      }
     }
    }
@@ -2252,7 +2492,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 12.015810653567314,
+      "session_max": 12.015810653567314
      },
      "latency_p50_ms": {
       "value": 11.861676350235939,
@@ -2267,7 +2509,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 11.861676350235939,
+      "session_max": 11.861676350235939
      },
      "latency_p99_ms": {
       "value": 13.77133335918188,
@@ -2282,7 +2526,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 13.77133335918188,
+      "session_max": 13.77133335918188
      },
      "latency_p99_over_p50": {
       "value": 1.160993855552968,
@@ -2297,7 +2543,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.160993855552968,
+      "session_max": 1.160993855552968
      },
      "fps": {
       "value": 83.22368160013532,
@@ -2312,7 +2560,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 83.22368160013532,
+      "session_max": 83.22368160013532
      },
      "timed_runs": {
       "value": 500.0,
@@ -2327,7 +2577,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      },
      "weights_mb": {
       "value": 12.96847915649414,
@@ -2342,7 +2594,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 12.96847915649414,
+      "session_max": 12.96847915649414
      },
      "peak_activation_mb": {
       "value": 182.73681640625,
@@ -2357,7 +2611,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 182.73681640625,
+      "session_max": 182.73681640625
      },
      "peak_allocated_mb": {
       "value": 195.70529556274414,
@@ -2372,7 +2628,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 195.70529556274414,
+      "session_max": 195.70529556274414
      }
     },
     "onnx_fp32": {
@@ -2389,7 +2647,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 13.334420830011368,
+      "session_max": 13.334420830011368
      },
      "latency_p50_ms": {
       "value": 13.29515315592289,
@@ -2404,7 +2664,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 13.29515315592289,
+      "session_max": 13.29515315592289
      },
      "latency_p99_ms": {
       "value": 14.708562269806858,
@@ -2419,7 +2681,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 14.708562269806858,
+      "session_max": 14.708562269806858
      },
      "latency_p99_over_p50": {
       "value": 1.1063101039384646,
@@ -2434,7 +2698,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.1063101039384646,
+      "session_max": 1.1063101039384646
      },
      "fps": {
       "value": 74.99388333007542,
@@ -2449,7 +2715,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 74.99388333007542,
+      "session_max": 74.99388333007542
      },
      "timed_runs": {
       "value": 500.0,
@@ -2464,7 +2732,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      }
     },
     "pytorch_fp16": {
@@ -2481,7 +2751,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 9.387821197509766,
+      "session_max": 9.387821197509766
      },
      "latency_p50_ms": {
       "value": 9.310266003012657,
@@ -2496,7 +2768,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 9.310266003012657,
+      "session_max": 9.310266003012657
      },
      "latency_p99_ms": {
       "value": 10.671692304313183,
@@ -2511,7 +2785,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 10.671692304313183,
+      "session_max": 10.671692304313183
      },
      "latency_p99_over_p50": {
       "value": 1.1462285074196579,
@@ -2526,7 +2802,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.1462285074196579,
+      "session_max": 1.1462285074196579
      },
      "fps": {
       "value": 106.52098915830035,
@@ -2541,7 +2819,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 106.52098915830035,
+      "session_max": 106.52098915830035
      },
      "timed_runs": {
       "value": 500.0,
@@ -2556,7 +2836,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      },
      "weights_mb": {
       "value": 6.484212875366211,
@@ -2571,7 +2853,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 6.484212875366211,
+      "session_max": 6.484212875366211
      },
      "peak_activation_mb": {
       "value": 92.23681640625,
@@ -2586,7 +2870,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 92.23681640625,
+      "session_max": 92.23681640625
      },
      "peak_allocated_mb": {
       "value": 98.72102928161621,
@@ -2601,7 +2887,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 98.72102928161621,
+      "session_max": 98.72102928161621
      }
     },
     "onnx_fp16": {
@@ -2618,7 +2906,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 7.984796293079853,
+      "session_max": 7.984796293079853
      },
      "latency_p50_ms": {
       "value": 7.972510531544685,
@@ -2633,7 +2923,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 7.972510531544685,
+      "session_max": 7.972510531544685
      },
      "latency_p99_ms": {
       "value": 8.03767345845699,
@@ -2648,7 +2940,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 8.03767345845699,
+      "session_max": 8.03767345845699
      },
      "latency_p99_over_p50": {
       "value": 1.0081734513431466,
@@ -2663,7 +2957,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 1.0081734513431466,
+      "session_max": 1.0081734513431466
      },
      "fps": {
       "value": 125.23801025038865,
@@ -2678,7 +2974,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 125.23801025038865,
+      "session_max": 125.23801025038865
      },
      "timed_runs": {
       "value": 500.0,
@@ -2693,7 +2991,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": null
+      "sd": null,
+      "session_min": 500.0,
+      "session_max": 500.0
      }
     }
    }

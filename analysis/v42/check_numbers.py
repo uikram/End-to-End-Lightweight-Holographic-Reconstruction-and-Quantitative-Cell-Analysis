@@ -237,6 +237,18 @@ for jf in sorted(RFM.rglob("*.json")):
             failures += (not ok)
             add(loc, v, srcs, key, "regex on log / stored metric", "DERIVED_MATCH" if ok else "MISMATCH", "parsed from the log or metrics file")
             continue
+        if srcs.endswith("error_propagation_summary.csv") and key == "mass_over_area":
+            rows_ = [float(r["mass_over_area"]) for r in load(srcs) if int(float(r["shift_px"])) != 0]
+            ok = close(v, statistics.median(rows_))
+            failures += (not ok)
+            add(loc, v, srcs, key, calc, "DERIVED_MATCH" if ok else "MISMATCH", "median recomputed from the CSV")
+            continue
+        if "0.211994" in str(v) or (isinstance(v, float) and abs(v - 0.211994) < 1e-12):
+            ok = "0.211994" in load("config/base.yaml".replace("base.yaml", "base.yaml")) if isinstance(load("config/base.yaml"), str) else "0.211994" in (ROOT / "config/base.yaml").read_text()
+            ok = ok and "0.211994" in (ROOT / "scripts/prepare_data.py").read_text()
+            failures += (not ok)
+            add(loc, v, srcs, key, "constant stated in config comment and prepare_data.py", "DERIVED_MATCH" if ok else "MISMATCH", "string found in both files")
+            continue
         # --- CSV rules
         if srcs.endswith(".csv") and "gradient_path" in srcs:
             col = [float(r["ratio_at_weight_1"]) for r in load(srcs)]
@@ -403,6 +415,25 @@ for tex in sorted(ms.glob("table_*.tex"), key=lambda p: int(re.search(r"\d+", p.
                 "yes (rounded)" if ok else "not found in JSON",
                 "" if ok else "may be a derived quantity not exported as a number, or a stale value; see MANUSCRIPT_SYNC.md")
 
+
+# ----------------------------------------------------------------------------- part 3b: numbers in main.tex
+# Every decimal number in the running text must be found among the exported values (at its printed precision,
+# also as a percentage or as an absolute value), or be a literature value / method constant listed here.
+EXTERNAL = {"96.97": "Park et al. 2026, reported parameter count (literature)"}
+for ln, line in enumerate((ms / "main.tex").read_text().splitlines(), 1):
+    if line.lstrip().startswith("%"):
+        continue
+    line = re.sub(r"\\(cite|ref|label|eqref|includegraphics)(\[[^]]*\])?\{[^}]*\}", "", line)
+    for m in re.finditer(r"(?<![\w.])\d+\.\d+", line):
+        s_ = m.group(0)
+        if s_ in EXTERNAL:
+            add(f"HoloQPI_4.2/main.tex:{ln}", s_, "literature", "", "", "EXTERNAL_VALUE", EXTERNAL[s_])
+        elif found(s_):
+            add(f"HoloQPI_4.2/main.tex:{ln}", s_, "results_for_manuscript/**/*.json", "any numeric value", "rounded lookup", "yes (rounded)", "")
+        else:
+            add(f"HoloQPI_4.2/main.tex:{ln}", s_, "", "", "", "not found in JSON", line.strip()[:90])
+
+
 def norm(r):
     m, notes, calc = r["match"], r["notes"], r["calculation"]
     if m == "yes":
@@ -415,6 +446,8 @@ def norm(r):
         return "NOT_RECOMPUTED"
     if m == "not found in JSON":
         return "NOT_FOUND"
+    if m == "EXTERNAL_VALUE":
+        return "EXTERNAL_VALUE"
     if m == "n/a":
         return "NON_NUMERIC"
     return m
@@ -429,6 +462,6 @@ with open(OUTCSV, "w", newline="") as fh:
 from collections import Counter
 cnt = Counter(r["match"] for r in ROWS)
 n_no = cnt["MISMATCH"]
-print(f"{len(ROWS)} rows: " + ", ".join(f"{k} {cnt[k]}" for k in ("DIRECT_MATCH", "DERIVED_MATCH", "ROUNDED_MATCH", "NOT_RECOMPUTED", "MISMATCH", "NOT_FOUND", "NON_NUMERIC")) + f" -> {OUTCSV.name}")
+print(f"{len(ROWS)} rows: " + ", ".join(f"{k} {cnt[k]}" for k in ("DIRECT_MATCH", "DERIVED_MATCH", "ROUNDED_MATCH", "NOT_RECOMPUTED", "MISMATCH", "NOT_FOUND", "NON_NUMERIC", "EXTERNAL_VALUE")) + f" -> {OUTCSV.name}")
 print(f"unresolved numeric claims (NOT_RECOMPUTED + NOT_FOUND + MISMATCH): {cnt['NOT_RECOMPUTED'] + cnt['NOT_FOUND'] + cnt['MISMATCH']}")
 sys.exit(1 if (n_no or cnt["NOT_FOUND"]) else 0)
