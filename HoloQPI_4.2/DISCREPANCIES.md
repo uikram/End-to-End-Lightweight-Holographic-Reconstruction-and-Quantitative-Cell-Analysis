@@ -1,5 +1,8 @@
 # DISCREPANCIES — HoloQPI_4.2
 
+> **Status note.** Written during the first synchronisation pass. It is superseded by `analysis/v42/AUDIT.md`, `analysis/v42/SYNC_AUDIT.md` and `analysis/v42/MANUSCRIPT_SYNC.md`. Items 1-15 remain a record of where file values differ from earlier expectations (the gradient ratio in particular: the CSV gives median 0.373, range 0.243-0.655). The registration archive is still not in the repository.
+
+
 This file lists three kinds of item:
 - places where the corrected result files disagree with the task prompt's "expected" values;
 - sources the task asked for that are not in the project folder;

@@ -4,13 +4,14 @@
 % Compile with BibTeX:
 %     pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 %
-% Tables 2 and 4-13 are written by analysis/v42/make_tables_v42.py from
-% analysis/v42/values.json, which analysis/v42/extract_values.py builds from
-% the corrected result files under runs/ and logs/, and from the diagnostics
-% archive produced before the correction (diagnostics/registration_summary.json,
-% hologram_registration.csv; registration values in Sec. 4.1). Table 1 is the
-% dataset composition. Every number in the text is checked against values.json by
-% analysis/v42/check_numbers.py (output: analysis/v42/number_check.csv).
+% Every number comes from the corrected result files under runs/ and logs/ via
+% results_for_manuscript/ (built by analysis/v42/compile_results.py). Tables 3-7
+% and 10-11 were brought in line with it by analysis/v42/update_tables.py; the
+% registration values of Sec. 4.1 come from the diagnostics archive
+% (diagnostics/registration_summary.json, hologram_registration.csv), which is not
+% part of the repository. Table 1 is the dataset composition. The numbers in the
+% tables and in the text are checked by analysis/v42/check_numbers.py
+% (output: analysis/v42/check_numbers.csv).
 % =============================================================================
 \documentclass[11pt]{article}
 
@@ -881,7 +882,7 @@ the replicated configurations are three-run means with the between-seed sample
 SD. A difference between two configurations is called \emph{resolved} if it
 exceeds twice the pooled between-seed standard deviation,
 $2\sqrt{(s_1^2+s_2^2)/2}$, of the same metric. This is a separation criterion
-defined before the comparisons were made, not a significance test, and a
+defined before the comparisons were made; no hypothesis test is performed, and a
 comparison in which either configuration has fewer than three runs is reported
 as not resolvable. Within-run intervals are percentile bootstrap intervals over
 fields (2000 resamples). Evaluation is deterministic in data and weights but
@@ -944,9 +945,13 @@ specimen phase ($r=-0.2075$), consistent with the behaviour reported for a
 500-iteration Gerchberg--Saxton reconstruction in Park
 \emph{et al.}~\cite{park2026ai} (Supplementary Section~S2), whose phase profile
 remained near the background.
-Our in-line reconstruction used 20 iterations at $33.77\,\mu$m. Its mean
-in-cell phase contrast is $-0.084$\,rad, against $+0.922$\,rad for the
-classical off-axis reconstruction on the same fields, and it matched 106 of
+Our in-line reconstruction used 20 iterations at $33.77\,\mu$m. Its in-cell
+phase contrast (median over the 107 fields of the mean phase inside the reference
+cells minus the mean outside, computed identically for all columns of
+Table~\ref{tab:common}) is $-0.084$\,rad, against $+0.922$\,rad for the
+classical off-axis reconstruction on the same fields; the reference phase gives
+$+1.097$\,rad, the In-Line Neural Configuration $+0.887$\,rad and the off-axis
+baseline $+0.899\pm0.036$\,rad. The classical in-line pipeline matched 106 of
 3055 reference cells (Dice $0.1583$). Its measurements are therefore computed
 from a phase map that does not carry the specimen contrast, and its per-cell
 dry-mass correlation, over 106 cells, is not comparable with the other
@@ -1059,7 +1064,7 @@ Table~\ref{tab:ablation} lists, for every configuration, the matched-cell
 dry-mass MAPE next to the coverage-adjusted and field-total errors and the
 intermediate metrics; Table~\ref{tab:seeds} gives the between-seed statistics
 of the replicated configurations and every dry-mass difference with its
-resolution verdict. Figure~\ref{fig:ablation} plots dry-mass MAPE and Dice for
+assessment under the resolution criterion. Figure~\ref{fig:ablation} plots dry-mass MAPE and Dice for
 the configurations outside the weight sweep.
 
 \input{table_9.tex}
@@ -1174,11 +1179,12 @@ by $0.5$ raises it by $0.0080$ off-axis (20 of 32) and by $0.0622$ in-line (32 o
 32). Only the
 in-line $0.5\times$ margin exceeds the configured tolerance of $0.01$. On the 113
 off-axis test fields, the $0.9\times$ and $0.5\times$ rescalings change the
-residual by $+0.00027$ and $+0.0070$ with the global surface; with per-field
+residual by $+0.00027$ and $+0.0070$ with the global surface (higher than the
+reference-phase residual on 60 and 71 of the 113 fields); with per-field
 surfaces, which are fitted against each field's reference phase and are not
 available at inference and exist for 112 of the 113 fields
 (Table~\ref{tab:amplitude}c), the residual is $0.391$ and the changes are
-$+0.0011$ and $+0.0359$. The per-field best-fitting phase scale has a median of $0.975$
+$+0.0011$ and $+0.0359$ (93 and 110 of the 112 fields). The per-field best-fitting phase scale has a median of $0.975$
 (IQR $0.575$) off-axis and $1.00$ (IQR $0.05$) in-line. Under the implemented
 operator the residual therefore did not resolve the phase scale near the
 reference in either geometry.

@@ -27,6 +27,7 @@ The manuscript was **not** edited. All numbers below are generated from `results
 * Seeds/runs statement: three training runs for baseline, +IPP (per-cell), +IPP (image); one for all others including the In-Line Neural Configuration.
 
 
+
 ### Table 3 — configurations (training runs, seeds, comparator)
 
 | Configuration | Training runs | Seeds | Comparator | Loss weights (non-zero) | Source |

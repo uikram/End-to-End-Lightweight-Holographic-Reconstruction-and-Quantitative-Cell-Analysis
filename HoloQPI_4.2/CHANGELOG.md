@@ -1,5 +1,8 @@
 # CHANGELOG: HoloQPI_Manuscript_V4.1 → HoloQPI_4.2
 
+> **Status note.** The regeneration commands in this changelog refer to the first-generation scripts (now in `legacy/analysis_v42_old/`). Current tooling: `python analysis/v42/compile_results.py`, `update_tables.py`, `check_numbers.py` (see `README.md`).
+
+
 HoloQPI_Manuscript_V4.1 was not modified. All numbers are read from the corrected result files.
 
 **Regenerate.** Run these from the repository root:
