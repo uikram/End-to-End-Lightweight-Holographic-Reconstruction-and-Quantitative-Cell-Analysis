@@ -974,6 +974,59 @@ cb = (ROOT / "config" / "base.yaml").read_text()
 registration["config_base_yaml_mentions_0.09_to_0.18"] = bool(re.search(r"0\.09", cb))
 check("750 + 50 == 800 registration fields", 750 + 50 == 800)
 
+# ---- registration provenance (Sec. 4.1): verified against the diagnostics archive when it is present
+REGDIR = RUNS / "diagnostics"
+REG_FILES = ("registration_summary.json", "hologram_registration.csv", "classical_phase_shift.csv", "hologram_inventory.csv")
+if all((REGDIR / f).exists() for f in REG_FILES):
+    import numpy as _np
+    (OUT / "registration").mkdir(parents=True, exist_ok=True)
+    for f in REG_FILES:
+        shutil_dst = OUT / "registration" / f
+        shutil_dst.write_bytes((REGDIR / f).read_bytes())
+    rows_ = rcsv(REGDIR / "hologram_registration.csv")
+
+    def _auc(pos, neg):
+        pos, neg = _np.asarray(pos, float), _np.asarray(neg, float)
+        gt = (pos[:, None] > neg[None, :]).sum() + 0.5 * (pos[:, None] == neg[None, :]).sum()
+        return float(gt / (len(pos) * len(neg)))
+
+    snu = {f"SNU_{i:02d}" for i in range(1, 51)}
+    got = {}
+    for variant in ("bandpass", "lowpass"):
+        m = [r for r in rows_ if r["variant"] == variant and r["pairing"] == "matched"]
+        c = [r for r in rows_ if r["variant"] == variant and r["pairing"] == "control"]
+        mag = lambda r: math.hypot(fnum(r["dy"]), fnum(r["dx"]))
+        got[variant] = {
+            "fields": len(m), "matched_within_1px": sum(mag(r) <= 1.0 for r in m), "control_within_1px": sum(mag(r) <= 1.0 for r in c),
+            "auc_r": _auc([fnum(r["r_after_shift"]) for r in m], [fnum(r["r_after_shift"]) for r in c]),
+            "auc_error": _auc([-fnum(r["error"]) for r in m], [-fnum(r["error"]) for r in c]),
+            "control_r_max": max(fnum(r["r_after_shift"]) for r in c)}
+        pr = [r for r in m if r["stem"] not in snu]
+        sn = [r for r in m if r["stem"] in snu]
+        got[variant].update(paired_fields=len(pr), paired_max_shift_px=max(mag(r) for r in pr), paired_within_1px=sum(mag(r) <= 1.0 for r in pr),
+                            paired_r_min=min(fnum(r["r_after_shift"]) for r in pr), paired_r_max=max(fnum(r["r_after_shift"]) for r in pr),
+                            snu_fields=len(sn), snu_r_min=min(fnum(r["r_after_shift"]) for r in sn), snu_r_max=max(fnum(r["r_after_shift"]) for r in sn))
+    b, lo = got["bandpass"], got["lowpass"]
+    claims = [("matched_within_1px", 734, 0), ("control_within_1px", 3, 0), ("fields", 800, 0), ("paired_fields", 750, 0), ("paired_within_1px", 734, 0),
+              ("snu_fields", 50, 0), ("auc_r", 0.975, 3), ("auc_error", 0.973, 3), ("paired_max_shift_px", 4.7, 1), ("paired_r_min", 0.47, 2),
+              ("paired_r_max", 1.00, 2), ("control_r_max", 0.25, 2), ("snu_r_min", -0.13, 2), ("snu_r_max", 0.18, 2)]
+    reg_checks = {}
+    for k, v, d in claims:
+        val = b[k]
+        ok = (round(val, d) == v) if d else (val == v)
+        reg_checks[k] = {"manuscript": v, "recomputed": val, "match": ok}
+        check(f"registration (bandpass) {k}: manuscript {v} vs archive {val}", ok)
+    ok = round(lo["auc_r"], 3) == 0.506
+    reg_checks["lowpass_auc_r"] = {"manuscript": 0.506, "recomputed": lo["auc_r"], "match": ok}
+    check(f"registration (lowpass) auc_r: manuscript 0.506 vs archive {lo['auc_r']}", ok)
+    summ_ = jload(REGDIR / "registration_summary.json")
+    registration = {"verified": all(c_["match"] for c_ in reg_checks.values()),
+                    "source_files": [f"results_for_manuscript/registration/{f}" for f in REG_FILES], "origin": "runs/diagnostics/ (scripts/register_holograms.py)",
+                    "recomputed_from_hologram_registration_csv": got, "manuscript_claims_checked": reg_checks,
+                    "summary_json_bandpass_separation": summ_["registration"]["bandpass"]["separation"],
+                    "split_from_train_G_log": split}
+
+
 _mb = yaml.safe_load(cfgtxt)["membrane"] if "membrane" in yaml.safe_load(cfgtxt) else {}
 membrane = {"scale": E(_mb.get("scale"), "membrane px per phase px", "config/base.yaml", "membrane.scale", "", 1, None),
             "offset_y_px": E(_mb.get("offset_y"), "px", "config/base.yaml", "membrane.offset_y", "", 1, None),
