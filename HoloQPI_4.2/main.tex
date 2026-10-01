@@ -105,7 +105,7 @@ in the predicted phase level rather than in the predicted cell domain. On the
 107 test fields whose in-line Gabor hologram is correctly paired with the
 reference (3055 reference cells), a single in-line training run reached a phase
 Pearson $r$ of $0.8667$ and a dry-mass MAPE of $0.2129$; the tested classical
-in-line reconstruction did not recover the specimen phase ($r=-0.2075$). On the
+in-line reconstruction recovered near-background specimen contrast ($r=-0.2075$). On the
 off-axis test set, both measurement-aware integrated-phase terms increased the
 matched-cell dry-mass MAPE ($+0.0141$ per cell and $+0.0145$ per image, both
 resolved under a between-seed criterion), and their effect on the field-total
@@ -913,8 +913,8 @@ precision is higher for the network ($0.7910\rightarrow0.8488$). At the
 measurement level, projected-area MAPE is essentially equal ($0.1578$ and
 $0.1568$) while the matched-cell dry-mass MAPE is lower for the network
 ($0.2203\rightarrow0.1742$), with a per-cell dry-mass correlation of $0.9363$
-against $0.8937$. The field-total dry-mass MAPE goes the other way: $0.1094$ for
-the tested classical pipeline and $0.1631\pm0.0141$ for the network
+against $0.8937$. The field-total dry-mass MAPE was lower for the tested classical pipeline:
+$0.1094$, against $0.1631\pm0.0141$ for the network
 (Sec.~\ref{sec:res-measure}). All comparisons in this paragraph are with the
 tested classical pipeline only.
 
@@ -940,8 +940,8 @@ off-axis baseline has phase $r=0.8745\pm0.0023$, Dice $0.8330\pm0.0013$,
 boundary F1 $0.4706\pm0.0052$, recall $0.5936\pm0.0031$ and dry-mass MAPE
 $0.1740\pm0.0045$. The in-line configuration was trained once, so these
 differences (for example $+0.0389$ in dry-mass MAPE) are not resolvable under
-our criterion. The tested classical in-line reconstruction did not recover the
-specimen phase ($r=-0.2075$), consistent with the behaviour reported for a
+our criterion. The tested classical in-line reconstruction recovered
+near-background specimen contrast ($r=-0.2075$), consistent with the behaviour reported for a
 500-iteration Gerchberg--Saxton reconstruction in Park
 \emph{et al.}~\cite{park2026ai} (Supplementary Section~S2), whose phase profile
 remained near the background.
@@ -1026,7 +1026,7 @@ domain factor is $0.966$ and its phase factor $1.014$, and at field level
 $0.857$ and $1.055$, giving a field-level total of $0.905$ against $0.838$ for
 the baseline. Opposing domain and phase deviations thus coincide with the lower
 field-total error of the classical pipeline reported in
-Sec.~\ref{sec:res-recon}, which indicates a compensatory error structure. The
+Sec.~\ref{sec:res-recon}, which describes a compensating error structure. The
 factors and the field-total MAPE are different summaries, and the factors do
 not by themselves account for the MAPE values.
 
@@ -1294,7 +1294,7 @@ measurements at a matched-cell MAPE of $0.174$ and a per-cell correlation of
 $0.936$, closer than the tested classical configuration ($0.220$ and $0.894$).
 On the 107 correctly paired fields, the in-line configuration recovers phase and
 cell masks from holograms on which the tested classical in-line configuration
-recovered no specimen contrast, and its matched-cell dry-mass error ($0.213$)
+recovered near-background specimen contrast, and its matched-cell dry-mass error ($0.213$)
 lies between those of the off-axis network and the off-axis classical pipeline;
 with one in-line run, the comparison with the off-axis network is not
 resolvable.
@@ -1373,7 +1373,7 @@ The field totals depend on how detection and measurement errors combine, and
 here the ordering of the two pipelines reverses: the classical pipeline has the
 higher matched-cell error but the lower field-total error ($0.109$ against
 $0.163$). Its field-level domain and phase factors deviate in opposite
-directions ($0.857$ and $1.055$), which indicates a compensatory error
+directions ($0.857$ and $1.055$), which describes a compensating error
 structure in which part of the domain deficit is offset by a raised phase. A
 field-total error alone would not separate this case from one in which both
 domain and phase are close to the reference.
@@ -1545,9 +1545,8 @@ lies in the predicted phase level rather than in the predicted cell domain. For
 the full reference population, detection coverage is a larger limitation than
 the measurement error of detected cells (coverage-adjusted dry-mass error
 $0.510$), and the missed cells are concentrated among boundary objects that the
-phase-derived labels retain. Field totals rank the two pipelines the other way,
-and the decomposition indicates a compensatory error structure in the classical
-pipeline. On correctly paired in-line holograms, a single training run recovered
+phase-derived labels retain. The field-total dry-mass MAPE was lower for the tested classical
+pipeline, and the decomposition describes a compensating error structure in it. On correctly paired in-line holograms, a single training run recovered
 phase where the tested classical in-line reconstruction did not.
 
 Terms designed to preserve the integrated phase per cell or per image increased

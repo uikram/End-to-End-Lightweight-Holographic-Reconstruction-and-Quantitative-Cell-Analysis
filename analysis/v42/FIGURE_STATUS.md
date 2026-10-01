@@ -19,3 +19,13 @@ All scripts above live in `results_for_manuscript/figures/scripts/` and read `re
 Archived (not used): the v4.1 scripts/PNGs and `assets/` are in `legacy/figures_v4.1/` (README inside). `figures/` (exploratory `scripts/make_figures.py` output) is kept but is not a manuscript figure set.
 
 **Limits:** the regenerated PNGs are not byte-identical to `HoloQPI_4.2/manuscript_images/` (the authoring versions of the scripts for figures 2, 4, 5, 6, 9 are outside the repo, in `paper/manuscript_images/`; fonts/matplotlib version also differ). Plotted data are the same; no figure pixels were edited.
+
+## Final-pass visual inspection (figures 1 and 3)
+
+Figures 1 (`figure_1_overview.png`) and 3 (`figure_3.png`) were inspected visually. They contain no
+stale terminology (labels: "+IPP (per-cell)", "+IPP (image)", "Classical Pipeline", "Integrated phase S_k",
+"Dry mass"), no seed or field-set statements, and no v4.1 values apart from the per-field MAE annotations in
+Fig. 3 (NCI 06: 0.248 rad, NCI 08: 0.296 rad). Fig. 1 shows the architecture and Fig. 3 shows two example
+fields; neither can be regenerated here (no checkpoints or image data). The Fig. 3 per-field MAE labels were
+**not** re-derived from stored files and are marked verified-by-inspection only. Figures 2 and 4-9 are
+regenerated from results_for_manuscript/ into figures/regenerated/.
