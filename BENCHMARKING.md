@@ -27,7 +27,7 @@ their randomness lives in different places.
 
 | Benchmark | Command | Where the randomness is | Independent replicate |
 |---|---|---|---|
-| Accuracy and measurement (phase, segmentation, detection, per-cell area / circularity / optical volume / dry mass, amplitude, forward model) | `main.py train` then `main.py evaluate` | **Training**: decoder initialisation, batch order, random crops, flips and rotations | one model **trained** at that seed, evaluated once |
+| Accuracy and measurement (phase, segmentation, detection, per-cell area / circularity / dry mass, amplitude, forward model) | `main.py train` then `main.py evaluate` | **Training**: decoder initialisation, batch order, random crops, flips and rotations | one model **trained** at that seed, evaluated once |
 | Latency, throughput, memory, parameters | `main.py benchmark` | the benchmark session (timing noise) | one separate benchmark **process** per seed, timing that seed's checkpoint |
 | Measurement-chain floor (synthetic ground truth) | `scripts/synthetic_validation.py` | the randomly generated synthetic cells | one set of synthetic fields per seed |
 | Classical baseline, boundary-error propagation, z scan | `conventional_baseline.py`, `error_propagation.py`, `calibrate_z.py` | none | deterministic: run once, n = 1 |
@@ -302,7 +302,7 @@ but are not the between-run interval.
 difference of means is `resolved` only if it exceeds `resolve_factor` (2) × the
 pooled between-seed SD, √(((n₁−1)s₁² + (n₂−1)s₂²)/(n₁+n₂−2)), computed by the same
 function `aggregate_seeds.py` and `collect_results.py` use. This is a resolution
-criterion, not a significance test, and no p-values are produced.
+criterion; no hypothesis test is performed and no p-values are produced.
 
 `collect_results.py` (→ `RESULTS.md`) now computes its between-seed spread from
 **all** planned seeds including seed 42 — it previously left the primary run out —
@@ -326,9 +326,9 @@ already has. Nothing is recomputed or renamed.
 | forward model | `forward_residual`, `forward_residual_reference`, `forward_residual_ratio`, `forward_residual_n`, `forward_distance_um` |
 | amplitude (D0, D1, D2) | `amplitude_mae`, `amplitude_unity_mae`, `amplitude_mae_over_unity`, `amplitude_mae_in_cell`, `amplitude_bias`, `amplitude_pearson_r`, `amplitude_pred_mean`, `amplitude_pred_sd`, `amplitude_reference_mean` |
 
-The integrated phase of a cell is its **optical volume**, V = Σφ·dx·dy; the
-`optical_volume_*` keys are the integrated-phase errors. Dry mass is V times the
-fixed scalar λ/(2πα), so its relative errors equal the optical-volume ones.
+The integrated phase of a cell is S = Σφ·dx·dy; the
+`optical_volume_*` keys (legacy name) are the integrated-phase errors. Dry mass is S times the
+fixed scalar λ/(2πα), so its relative errors equal the integrated-phase ones; the manuscript reports them once, as dry-mass MAPE.
 
 **Per hardware arm (from `main.py benchmark`),** for each of pytorch/onnx × fp32/fp16:
 `latency_mean_ms`, `latency_p50_ms`, `latency_p99_ms`, `latency_std_ms`,
