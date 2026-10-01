@@ -970,13 +970,39 @@
     "calculation": null
    },
    "in_line_neural": {
-    "value": "N/A (not yet computed)",
-    "reason": "Needs the trained checkpoints and the phase/mask data, which are not in the repository. Run scripts/neural_phase_contrast.py on the server (see AUDIT.md section 7) to create runs/common_fields/neural_phase_contrast.json; this compiler picks it up automatically."
+    "value": 0.8868686556816101,
+    "units": "rad",
+    "source_file": "runs/common_fields/neural_phase_contrast.json",
+    "source_key": "in_line_neural.median_contrast_rad",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 1,
+    "seeds": [
+     42
+    ],
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
    },
    "off_axis_neural": {
-    "value": "N/A (not yet computed)",
-    "reason": "Needs the trained checkpoints and the phase/mask data, which are not in the repository. Run scripts/neural_phase_contrast.py on the server (see AUDIT.md section 7) to create runs/common_fields/neural_phase_contrast.json; this compiler picks it up automatically."
-   }
+    "value": 0.8992382089296976,
+    "units": "rad",
+    "source_file": "runs/common_fields/neural_phase_contrast.json",
+    "source_key": "off_axis_neural.<seed>.median_contrast_rad",
+    "field_set": "107 common test fields; 3055 reference cells",
+    "n_runs": 3,
+    "seeds": [
+     42,
+     1337,
+     2024
+    ],
+    "derivation": "derived",
+    "derived_from": [
+     "runs/common_fields/neural_phase_contrast.json"
+    ],
+    "calculation": "mean over 3 seeds of the per-seed median contrast",
+    "sd": 0.03623130912225076
+   },
+   "reference_median_contrast_rad": 1.0969147682189941
   }
  },
  "checkpoint": {
