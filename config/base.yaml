@@ -227,7 +227,7 @@ data:
   crop_offset_px: [-6, -2]
   # Fields removed from the listed modalities at load time, in every split.
   # SNU_01-SNU_50: their Gabor frames do not show the same field as their
-  # off-axis hologram and reference phase (registration r 0.09-0.18, the level
+  # off-axis hologram and reference phase (registration r -0.13 to 0.18, the level
   # of randomly paired fields, while the other 750 fields register within 5 px;
   # 2026-09-30). Their off-axis holograms are correctly paired, so they stay in
   # every off-axis arm. Adding off_axis to modalities gives the common-field

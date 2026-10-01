@@ -54,3 +54,6 @@ Pre-final pass. Branch `claude/admiring-maxwell-xwtq43`. No training or re-evalu
 ## 4. What the manuscript tables/text still require from the author
 
 Nothing numeric. Wording decisions left to the author are listed in `MANUSCRIPT_SYNC.md`.
+
+
+**Update (final pass).** Registration files regenerated with `scripts/register_holograms.py` and stored in `runs/diagnostics/`; `compile_results.py` recomputes the Sec. 4.1 values (15 claims, all agree, `verified: true`; 526 consistency checks, 0 failed). The SNU_01-50 range is -0.1335 to 0.1769.

@@ -19,7 +19,7 @@ Training runs (n = trained models): baseline, +IPP (per-cell), +IPP (image) = 3 
 | `decomposition/decomposition.json` | Table 7: per-run and per-config domain/phase/total GM and median \|log\|, recall, comparisons | 7 | `runs/diagnostics/decomposition_*.csv` (recomputed) | A, B, B1: 3 runs; classical 1 | derived |
 | `boundary_sensitivity/boundary.json` | Table 8 (edge/interior, false positives); Table 12 boundary displacement and synthetic floor | 8, 12, Fig. 8 | decomposition CSVs, `unmatched_test.csv`, `error_propagation_summary.csv`, synthetic JSON | A, B, B1: 3 runs; classical 1 | derived |
 | `benchmarking/benchmarking.json` | latency mean/p50/p99, p99/p50, fps, params, GMACs, memory, protocol | 13, Fig. 9 | `runs/benchmark_results/results_hardware_arm_*.json`, `config/base.yaml` | benchmark sessions per training seed | direct (collector means) |
-| `metadata/gradient_registration_crop.json` | gradient ratio (0.373, 0.243–0.655), registration values (**unverified**, archive absent), crop offset | §3, §4.1 | see file | — | direct / author-supplied |
+| `metadata/gradient_registration_crop.json` | gradient ratio (0.373, 0.243–0.655), registration values (recomputed from `registration/hologram_registration.csv`, `verified: true`), crop offset | §3, §4.1 | see file | — | direct |
 | `metadata/splits.json`, `metadata/consistency_checks.json` | split sizes, 510 consistency checks | — | — | — | — |
 | `figures/` | `data/` (sources copied from `runs/`), `scripts/` (+ `make_all.py`), `regenerated/` (its output), `figure_index.json` | Figs. 2, 4–9 | `runs/` | — | direct |
 

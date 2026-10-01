@@ -118,76 +118,129 @@
   "check": "0.284871 / 0.211994 = 1.343769"
  },
  "registration": {
-  "verified": false,
-  "reason": "The diagnostics archive (registration_summary.json, hologram_registration.csv, classical_phase_shift.csv, hologram_inventory.csv) is not present in this repository, so these values cannot be re-derived or checked here. They are carried over as author-supplied.",
-  "values": {
-   "fields_total": {
-    "value": 800,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
+  "verified": true,
+  "source_files": [
+   "results_for_manuscript/registration/registration_summary.json",
+   "results_for_manuscript/registration/hologram_registration.csv",
+   "results_for_manuscript/registration/classical_phase_shift.csv",
+   "results_for_manuscript/registration/hologram_inventory.csv"
+  ],
+  "origin": "runs/diagnostics/ (scripts/register_holograms.py)",
+  "recomputed_from_hologram_registration_csv": {
+   "bandpass": {
+    "fields": 800,
+    "matched_within_1px": 734,
+    "control_within_1px": 3,
+    "auc_r": 0.974628125,
+    "auc_error": 0.97337734375,
+    "control_r_max": 0.2527603990067257,
+    "paired_fields": 750,
+    "paired_max_shift_px": 4.6647615649423795,
+    "paired_within_1px": 734,
+    "paired_r_min": 0.4672754693735671,
+    "paired_r_max": 0.9987403522599797,
+    "snu_fields": 50,
+    "snu_r_min": -0.13346932433956107,
+    "snu_r_max": 0.17692061718776603
    },
-   "correctly_paired_fields": {
-    "value": 750,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "mismatched_fields_SNU_01_to_SNU_50": {
-    "value": 50,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "matched_pairs_within_1px": {
-    "value": 734,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "control_pairs_within_1px": {
-    "value": 3,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "auc_correlation": {
-    "value": 0.975,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "auc_registration_error": {
-    "value": 0.973,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "lowpass_only_auc": {
-    "value": 0.506,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "paired_max_shift_px": {
-    "value": 4.7,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "snu_r_min": {
-    "value": -0.13,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "snu_r_max": {
-    "value": 0.18,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "paired_r_min": {
-    "value": 0.47,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
-   },
-   "control_r_max": {
-    "value": 0.25,
-    "source_file": "diagnostics/registration_summary.json, hologram_registration.csv (NOT in the repository)",
-    "verified": false
+   "lowpass": {
+    "fields": 800,
+    "matched_within_1px": 20,
+    "control_within_1px": 20,
+    "auc_r": 0.506225,
+    "auc_error": 0.5063984375,
+    "control_r_max": 0.906296228573751,
+    "paired_fields": 750,
+    "paired_max_shift_px": 417.0151643955115,
+    "paired_within_1px": 19,
+    "paired_r_min": -0.7904352424416213,
+    "paired_r_max": 0.9997352843337067,
+    "snu_fields": 50,
+    "snu_r_min": -0.732464954537606,
+    "snu_r_max": 0.8180625765898883
    }
   },
-  "flag": "SNU_01-50 correlation range: -0.13 to 0.18 here vs 0.09-0.18 in config/base.yaml comments.",
+  "manuscript_claims_checked": {
+   "matched_within_1px": {
+    "manuscript": 734,
+    "recomputed": 734,
+    "match": true
+   },
+   "control_within_1px": {
+    "manuscript": 3,
+    "recomputed": 3,
+    "match": true
+   },
+   "fields": {
+    "manuscript": 800,
+    "recomputed": 800,
+    "match": true
+   },
+   "paired_fields": {
+    "manuscript": 750,
+    "recomputed": 750,
+    "match": true
+   },
+   "paired_within_1px": {
+    "manuscript": 734,
+    "recomputed": 734,
+    "match": true
+   },
+   "snu_fields": {
+    "manuscript": 50,
+    "recomputed": 50,
+    "match": true
+   },
+   "auc_r": {
+    "manuscript": 0.975,
+    "recomputed": 0.974628125,
+    "match": true
+   },
+   "auc_error": {
+    "manuscript": 0.973,
+    "recomputed": 0.97337734375,
+    "match": true
+   },
+   "paired_max_shift_px": {
+    "manuscript": 4.7,
+    "recomputed": 4.6647615649423795,
+    "match": true
+   },
+   "paired_r_min": {
+    "manuscript": 0.47,
+    "recomputed": 0.4672754693735671,
+    "match": true
+   },
+   "paired_r_max": {
+    "manuscript": 1.0,
+    "recomputed": 0.9987403522599797,
+    "match": true
+   },
+   "control_r_max": {
+    "manuscript": 0.25,
+    "recomputed": 0.2527603990067257,
+    "match": true
+   },
+   "snu_r_min": {
+    "manuscript": -0.13,
+    "recomputed": -0.13346932433956107,
+    "match": true
+   },
+   "snu_r_max": {
+    "manuscript": 0.18,
+    "recomputed": 0.17692061718776603,
+    "match": true
+   },
+   "lowpass_auc_r": {
+    "manuscript": 0.506,
+    "recomputed": 0.506225,
+    "match": true
+   }
+  },
+  "summary_json_bandpass_separation": {
+   "auc_r_after_shift": 0.974628125,
+   "auc_minus_error": 0.9733765625
+  },
   "split_from_train_G_log": {
    "train_excluded": 39,
    "train": 521,
@@ -196,8 +249,7 @@
    "test": 107,
    "test_reference_cells": 3055,
    "test_excluded": 6
-  },
-  "config_base_yaml_mentions_0.09_to_0.18": true
+  }
  },
  "crop": {
   "configured_offset_px": {

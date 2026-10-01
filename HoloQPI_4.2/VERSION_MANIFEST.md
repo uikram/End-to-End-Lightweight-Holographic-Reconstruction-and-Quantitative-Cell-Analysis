@@ -16,6 +16,10 @@ and `config/`. In-line neural results remain one training run (seed 42).
 - Wording: field-total dry-mass MAPE "was lower for the tested classical pipeline"; classical in-line "near-background specimen contrast"; decomposition described as error structure, not mechanism; no significance language.
 - Counts (113/3186 off-axis, 107/3055 common, in-line 521/122/107) and the gradient ratio (median 0.373) corrected to stored values.
 
-**Not changed / open.** Sec. 4.1 registration statistics are author-supplied; the registration archive (`registration_summary.json`,
-`hologram_registration.csv`, `classical_phase_shift.csv`, `hologram_inventory.csv`) is not in the repository, so they are
-flagged unverified (`results_for_manuscript/metadata/gradient_registration_crop.json`). Figs 1 and 3 are not regenerated.
+**Registration provenance.** The original diagnostics archive could not be located. The four files (`registration_summary.json`,
+`hologram_registration.csv`, `classical_phase_shift.csv`, `hologram_inventory.csv`) were regenerated from `data/` with
+`scripts/register_holograms.py` (results_for_manuscript/registration/). All 15 Sec. 4.1 claims were recomputed from
+`hologram_registration.csv` and agree with the manuscript text at its reported precision (`verified: true`); the manuscript was not changed.
+The SNU_01-SNU_50 correlation range is -0.13 to 0.18 (recomputed -0.1335 to 0.1769).
+
+**Not changed / open.** Figs 1 and 3 are not regenerated (no checkpoints or image data here).

@@ -1,5 +1,5 @@
 {
- "n_checks": 511,
+ "n_checks": 526,
  "n_failed": 0,
  "checks": [
   {
@@ -2544,6 +2544,81 @@
   },
   {
    "check": "750 + 50 == 800 registration fields",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) matched_within_1px: manuscript 734 vs archive 734",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) control_within_1px: manuscript 3 vs archive 3",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) fields: manuscript 800 vs archive 800",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) paired_fields: manuscript 750 vs archive 750",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) paired_within_1px: manuscript 734 vs archive 734",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) snu_fields: manuscript 50 vs archive 50",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) auc_r: manuscript 0.975 vs archive 0.974628125",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) auc_error: manuscript 0.973 vs archive 0.97337734375",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) paired_max_shift_px: manuscript 4.7 vs archive 4.6647615649423795",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) paired_r_min: manuscript 0.47 vs archive 0.4672754693735671",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) paired_r_max: manuscript 1.0 vs archive 0.9987403522599797",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) control_r_max: manuscript 0.25 vs archive 0.2527603990067257",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) snu_r_min: manuscript -0.13 vs archive -0.13346932433956107",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (bandpass) snu_r_max: manuscript 0.18 vs archive 0.17692061718776603",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "check": "registration (lowpass) auc_r: manuscript 0.506 vs archive 0.506225",
    "passed": true,
    "detail": ""
   },
