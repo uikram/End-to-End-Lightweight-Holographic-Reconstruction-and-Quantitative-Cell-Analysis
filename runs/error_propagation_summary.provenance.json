@@ -1,0 +1,8 @@
+{
+  "script": "error_propagation.py",
+  "max_shift": 5,
+  "limit": null,
+  "created_at": 1790721645.7050762,
+  "config_digest": "b023c4d640230c8889b3f1f05a2c449f2a10e9644973aad3d9ca15bc5d8cd814",
+  "splits_sha256": "11d124828ce9c48fed26d540bf2f0c3adc3f34a1befc02899e1216f33e4120bf"
+}

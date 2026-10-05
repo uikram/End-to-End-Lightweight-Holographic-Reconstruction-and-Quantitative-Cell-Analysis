@@ -1,7 +1,7 @@
 """Agreement between predicted and reference cellular measurements.
 
-This is the metric family the professor's brief is ultimately about: whether a
-reconstruction is *measurement-ready*. Four views are accumulated.
+This is the metric family that decides whether a reconstruction is
+*measurement-ready*. Four views are accumulated.
 
 * per cell   -- cells paired between prediction and reference by IoU, giving
                 relative errors on area, optical volume and dry mass

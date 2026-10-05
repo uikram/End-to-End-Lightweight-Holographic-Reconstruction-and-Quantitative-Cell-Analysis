@@ -27,18 +27,16 @@ their randomness lives in different places.
 
 | Benchmark | Command | Where the randomness is | Independent replicate |
 |---|---|---|---|
-| Accuracy and measurement (phase, segmentation, detection, per-cell area / circularity / optical volume / dry mass, amplitude, forward model) | `main.py train` then `main.py evaluate` | **Training**: decoder initialisation, batch order, random crops, flips and rotations | one model **trained** at that seed, evaluated once |
+| Accuracy and measurement (phase, segmentation, detection, per-cell area / circularity / dry mass, amplitude, forward model) | `main.py train` then `main.py evaluate` | **Training**: decoder initialisation, batch order, random crops, flips and rotations | one model **trained** at that seed, evaluated once |
 | Latency, throughput, memory, parameters | `main.py benchmark` | the benchmark session (timing noise) | one separate benchmark **process** per seed, timing that seed's checkpoint |
 | Measurement-chain floor (synthetic ground truth) | `scripts/synthetic_validation.py` | the randomly generated synthetic cells | one set of synthetic fields per seed |
 | Classical baseline, boundary-error propagation, z scan | `conventional_baseline.py`, `error_propagation.py`, `calibrate_z.py` | none | deterministic: run once, n = 1 |
 
-**Evaluation is not replication.** It is deterministic in data and weights but
-not bit-exact: `cudnn.benchmark` selects the convolution algorithm at run time,
-so re-evaluating the same checkpoint can move a metric by up to about 0.002 —
-far below the between-seed spread. Repeating an accuracy benchmark therefore
-means training the configuration again at another seed.
+**Evaluation itself is deterministic.** Scoring the same checkpoint five times
+reproduces the same numbers, so it is not replication. Repeating an accuracy
+benchmark therefore means training the configuration again at another seed.
 
-**Images and cells are not replicates.** The 113 test fields and 3,186 reference cells are
+**Images and cells are not replicates.** The 113 test fields and ~3,000 cells are
 the *same* in every run. Inside one run the evaluator summarises them into one
 value per metric (its own within-run bootstrap intervals, over fields, are kept
 as metrics in their own right — `*_ci_lower`, `*_ci_upper`). Across runs, only
@@ -49,10 +47,10 @@ number of images or cells.
 
 The models that already exist, and nothing else — **no model is retrained**:
 
-| arms (manuscript names) | trained models (seeds) | n |
+| arms | trained models (seeds) | n |
 |---|---|---|
-| A (End-to-End Neural Baseline), B (+IPP (per-cell)), B′ = B1 (+IPP (image)) | 42, 1337, 2024 | 3 |
-| B″ = B2 (+Area), C (+BGA), D0 (+Amplitude), D1 (+Fwd (fixed z)), D2 (+Fwd (free z)), G (In-Line Neural Configuration), W01 / W03 / W30 (+IPP (per-cell) at w = 0.1 / 0.3 / 3.0), KA (Compact Baseline), KB (Compact +IPP) | 42 | 1 |
+| A, B, B′ | 42, 1337, 2024 | 3 |
+| B″, C, D0, D1, D2, G, W01, W03, W30, KA, KB | 42 | 1 |
 
 This is set in `config/base.yaml`: `evaluation.seed_replication.seeds: [1337, 2024]`
 plus `project.seed` (42), with the single-model arms listed in `reduced_arms`
@@ -304,15 +302,13 @@ but are not the between-run interval.
 difference of means is `resolved` only if it exceeds `resolve_factor` (2) × the
 pooled between-seed SD, √(((n₁−1)s₁² + (n₂−1)s₂²)/(n₁+n₂−2)), computed by the same
 function `aggregate_seeds.py` and `collect_results.py` use. This is a resolution
-criterion, not a significance test, and no p-values are produced.
+criterion; no hypothesis test is performed and no p-values are produced.
 
-`collect_results.py` (→ `RESULTS.md`) computes its between-seed spread from
-**all** planned seeds including seed 42 and, once both arms of a comparison are
-replicated, reports the difference of means rather than of the seed-42 values.
-The collected results (2026-09-21) resolve two comparisons, both worse than the
-baseline: B vs A, +0.0152 dry-mass MAPE against 2×SD 0.0070, and B′ vs A,
-+0.0172 against 0.0052. Every other comparison has n = 1 on at least one side
-and is reported as not resolvable.
+`collect_results.py` (→ `RESULTS.md`) now computes its between-seed spread from
+**all** planned seeds including seed 42 — it previously left the primary run out —
+and, once both arms of a comparison are replicated, reports the difference of
+means rather than of the seed-42 values. The 2×SD thresholds in `RESULTS.md`
+Table 2 will therefore change when it is regenerated.
 
 ## 9. Metrics collected
 
@@ -330,9 +326,9 @@ already has. Nothing is recomputed or renamed.
 | forward model | `forward_residual`, `forward_residual_reference`, `forward_residual_ratio`, `forward_residual_n`, `forward_distance_um` |
 | amplitude (D0, D1, D2) | `amplitude_mae`, `amplitude_unity_mae`, `amplitude_mae_over_unity`, `amplitude_mae_in_cell`, `amplitude_bias`, `amplitude_pearson_r`, `amplitude_pred_mean`, `amplitude_pred_sd`, `amplitude_reference_mean` |
 
-The integrated phase of a cell is its **optical volume**, V = Σφ·dx·dy; the
-`optical_volume_*` keys are the integrated-phase errors. Dry mass is V times the
-fixed scalar λ/(2πα), so its relative errors equal the optical-volume ones.
+The integrated phase of a cell is S = Σφ·dx·dy; the
+`optical_volume_*` keys (legacy name) are the integrated-phase errors. Dry mass is S times the
+fixed scalar λ/(2πα), so its relative errors equal the integrated-phase ones; the manuscript reports them once, as dry-mass MAPE.
 
 **Per hardware arm (from `main.py benchmark`),** for each of pytorch/onnx × fp32/fp16:
 `latency_mean_ms`, `latency_p50_ms`, `latency_p99_ms`, `latency_std_ms`,
@@ -429,5 +425,4 @@ for arm in ["A", "B", "B1"]:
 ```
 
 `benchmark_summary.csv` has the same numbers as one flat table for a
-spreadsheet. The manuscript's Tables 4–10 and Figures 2 and 4–9 are generated
-from these files.
+spreadsheet.

@@ -12,14 +12,13 @@
 # is the comparison that addresses the PER-CELL part.
 #
 # THE WEIGHT, AND WHY IT IS NOT 0.1. scripts/check_gradient_path.py measures
-# this term's gradient into the segmentation decoder as 0.302 times the
-# segmentation loss's gradient on the same parameters, AT WEIGHT 1.0 (median
-# over 30 batches, range 0.18-0.67; runs/gradient_path_b_cell_ipp_512.csv).
-# The objective adds w * term, so the effective ratio is w * 0.302: at w = 0.1
-# the segmentation loss is ahead 33 : 1 and the term is swamped, which would
-# make a null result a statement about the weight rather than about the
-# hypothesis. At w = 1.0 it is 3.3 : 1, which is heard without dominating.
-# config/v2/w_ipp_*.yaml brackets it.
+# this term's gradient into the segmentation decoder as 0.25-0.29 times the
+# segmentation loss's gradient on the same parameters, AT WEIGHT 1.0, as a
+# median over several batches. The objective adds w * term, so the effective
+# ratio is w * 0.27: at w = 0.1 the segmentation loss is ahead 37 : 1 and the
+# term is swamped, which would make a null result a statement about the weight
+# rather than about the hypothesis. At w = 1.0 it is 3.7 : 1, which is heard
+# without dominating. config/v2/w_ipp_*.yaml brackets it.
 #
 # The gradient ratio also carries a measured caveat: it roughly doubles at a
 # 256 px crop, because the per-cell mean divides by the number of cells while

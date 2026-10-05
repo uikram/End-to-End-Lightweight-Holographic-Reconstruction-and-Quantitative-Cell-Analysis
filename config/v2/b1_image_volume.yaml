@@ -32,7 +32,7 @@ model:
 loss:
   weights:
     classification: 0.0
-    phase_volume: 1.0                 # the image-level term, at B's weight (not gradient-matched)
+    image_integrated_phase: 1.0                 # the image-level term, at B's weight (not gradient-matched)
     cell_integrated_phase: 0.0        # off: that is the whole point of this arm
     boundary_gradient_alignment: 0.0
     projected_area_consistency: 0.0

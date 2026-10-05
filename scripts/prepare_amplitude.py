@@ -121,6 +121,7 @@ def main() -> int:
         "clip_max": clip_max,
         "phase_size": cfg.data.phase_size,
         "align": cfg.data.align,
+        "crop_offset_px": list(data_io.hologram_crop_offset(cfg.data)),
         "conjugate_enabled": bool(conjugate.enabled),
         "conjugate_detrend_order": conjugate.detrend_order,
         "conjugate_min_skewness": conjugate.min_skewness,
@@ -149,7 +150,8 @@ def main() -> int:
             data_io.hologram_path(root, cfg, stem, "off_axis")
         )
         hologram = data_io.align_to_phase_grid(
-            hologram, cfg.data.phase_size, cfg.data.align
+            hologram, cfg.data.phase_size, cfg.data.align,
+            data_io.hologram_crop_offset(cfg.data),
         )
         height, width = hologram.shape
         tensor = torch.from_numpy(hologram.astype(np.float32)).to(device).view(

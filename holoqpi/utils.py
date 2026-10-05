@@ -91,6 +91,7 @@ ANALYSIS_SECTIONS = (
     "evaluation.measurement", "evaluation.segmentation", "evaluation.phase",
     "evaluation.conventional_baseline", "evaluation.forward_model",
     "loss.forward_model", "data.phase_size", "data.align", "data.eval_size",
+    "data.crop_offset_px", "data.exclude",
     "paths.mask_dir", "paths.manual_mask_dir", "paths.splits_file",
 )
 

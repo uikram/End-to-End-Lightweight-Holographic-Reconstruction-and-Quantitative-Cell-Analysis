@@ -427,7 +427,7 @@ def test_loss_terms(cfg) -> None:
           f"active: {', '.join(sorted(active))}")
 
     check("phase term vanishes on an exact reconstruction", components["phase"] < 1e-4)
-    for name in ("phase_volume", "cell_integrated_phase"):
+    for name in ("image_integrated_phase", "cell_integrated_phase"):
         if name in components:
             check(f"'{name}' vanishes on an exact prediction",
                   components[name] < 1e-2, f"{components[name]:.5f}")
@@ -603,7 +603,7 @@ def test_physics(cfg) -> None:
     # Two cells, one over-measured by 20% and one under-measured by 20%. The
     # image-level phase-volume term sums them and scores zero; the per-cell term
     # must not. If this check ever fails, experiment B is measuring nothing.
-    from holoqpi.losses.terms import CellIntegratedPhase, PhaseVolumePreservation
+    from holoqpi.losses.terms import CellIntegratedPhase, ImageIntegratedPhase
 
     field = torch.zeros(1, 1, 64, 64)
     labels = torch.zeros(1, 64, 64, dtype=torch.long)
@@ -618,7 +618,7 @@ def test_physics(cfg) -> None:
     skewed[0, 0, 40:56, 40:56] *= 0.8        # -20% on cell 2
     ones = torch.ones_like(field)
 
-    image_level = PhaseVolumePreservation(1e-4)(ones, skewed, ones, truth)
+    image_level = ImageIntegratedPhase(1e-4)(ones, skewed, ones, truth)
     per_cell = CellIntegratedPhase(1e-4, 1.0, None)(ones, skewed, ones, truth, labels)
     check("image-level phase volume is blind to +20%/-20% cancelling cells",
           float(image_level) < 1e-6, f"loss {float(image_level):.2e}")
@@ -874,7 +874,7 @@ def test_autocast_integrals(cfg) -> None:
     from holoqpi.losses.terms import (
         CellIntegratedPhase,
         CellProjectedArea,
-        PhaseVolumePreservation,
+        ImageIntegratedPhase,
     )
 
     size = 128
@@ -902,7 +902,7 @@ def test_autocast_integrals(cfg) -> None:
 
     area_term = CellProjectedArea(1e-4, 1.0, None)
     phase_term = CellIntegratedPhase(1e-4, 1.0, None)
-    volume_term = PhaseVolumePreservation(1e-4)
+    volume_term = ImageIntegratedPhase(1e-4)
 
     # A 10% shortfall in both quantities, so the correct answer is exactly 0.1
     # and any accumulation error shows up directly in the number.

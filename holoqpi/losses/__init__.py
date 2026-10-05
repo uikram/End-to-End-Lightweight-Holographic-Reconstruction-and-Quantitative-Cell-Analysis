@@ -1,12 +1,12 @@
-"""Joint physics-aware objective for hologram reconstruction and cell analysis."""
+"""Joint objective (measurement-aware terms, forward-model consistency) for hologram reconstruction and cell analysis."""
 
-from .composite import JointPhysicsAwareLoss, build_loss
+from .composite import JointMeasurementLoss, build_loss
 from .terms import (
     BoundaryGradientAlignment,
     DryMassConsistency,
-    PhaseMaskContrast,
+    ImageIntegratedPhase,
+    LegacyPhaseMaskContrast,
     PhaseReconstructionLoss,
-    PhaseVolumePreservation,
     ProjectedAreaConsistency,
     SegmentationLoss,
     spatial_gradient,
@@ -14,15 +14,20 @@ from .terms import (
 )
 
 __all__ = [
-    "JointPhysicsAwareLoss",
+    "JointMeasurementLoss",
     "build_loss",
     "PhaseReconstructionLoss",
     "SegmentationLoss",
-    "PhaseMaskContrast",
+    "LegacyPhaseMaskContrast",
+    "ImageIntegratedPhase",
     "BoundaryGradientAlignment",
-    "PhaseVolumePreservation",
     "DryMassConsistency",
     "ProjectedAreaConsistency",
     "spatial_gradient",
     "structural_similarity",
 ]
+
+
+def __getattr__(name):  # deprecated names (see _legacy.py): importable with a warning, not exported
+    from ._legacy import resolve
+    return resolve(name, __name__)

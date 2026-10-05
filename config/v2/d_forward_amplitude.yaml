@@ -25,12 +25,6 @@
 # only deployable configuration is the one in which this term barely
 # discriminates at all.
 #
-# FINAL MEASUREMENT (runs/z_calibration.json, 32 validation fields, training
-# border 79 px): a 10% rescaled phase changes the residual by -5e-5, within the
-# 0.01 tolerance, and scores lower than the true phase on 22 of 32 fields. The
-# manuscript reports the term as blind near the truth and uses it as a
-# diagnostic.
-#
 # So this arm is not a loss ablation. Its weight is kept at 0.02 -- low enough
 # that the phase cannot be dragged by a wrong-signed gradient -- and the result
 # to report is what the term DOES to the amplitude and the phase, measured,

@@ -1,0 +1,307 @@
+{
+ "scope": "All statements apply to the implemented operator (angular-spectrum propagation with the stored aberration surface and amplitude convention); no general identifiability claim is made.",
+ "recording_distance_um": {
+  "value": 33.77,
+  "units": "um",
+  "source_file": "runs/v2_baseline_off_axis/resolved_config.yaml",
+  "source_key": "loss.forward_model.distance_um",
+  "field_set": "n/a",
+  "n_runs": null,
+  "seeds": null,
+  "derivation": "direct",
+  "derived_from": null,
+  "calculation": null
+ },
+ "z_calibration": {
+  "off_axis": {
+   "grid_minimum_z_um": {
+    "value": 33.68407094594592,
+    "units": "um",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "off_axis.curve.distances_um[argmin forward_residual]",
+    "field_set": "4 scan fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "derived",
+    "derived_from": [
+     "distances_um",
+     "forward_residual"
+    ],
+    "calculation": "distance at the minimum of the pooled forward residual"
+   },
+   "grid_step_um": {
+    "value": 4.812010135135139,
+    "units": "um",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "off_axis.grid_step_um",
+    "field_set": "",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "per_image_best_z_um": {
+    "value": [
+     -96.24020270270269,
+     96.24020270270269,
+     33.68407094594592,
+     33.68407094594592
+    ],
+    "units": "um",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "off_axis.curve.per_image_best_z_um",
+    "field_set": "4 scan fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "per_image_median_z_um": {
+    "value": 33.68407094594592,
+    "units": "um",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "off_axis.per_image_median_z_um",
+    "field_set": "",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "per_image_iqr_um": {
+    "value": 48.120101351351344,
+    "units": "um",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "off_axis.per_image_iqr_um",
+    "field_set": "",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "images_agree": false,
+   "identifiable_flag_in_file": false,
+   "forward_model_verdict": "marginal",
+   "reference_residual_validation": {
+    "value": 0.9146810993552208,
+    "units": "1",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "off_axis.discrimination.floor",
+    "field_set": "32 validation fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "residual_margin_0.9x": {
+    "value": 0.00034572556614875793,
+    "units": "1",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "off_axis.discrimination.margins.scaled_0.9",
+    "field_set": "32 validation fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "residual_margin_0.5x": {
+    "value": 0.007992720231413841,
+    "units": "1",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "off_axis.discrimination.margins.scaled_0.5",
+    "field_set": "32 validation fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  },
+  "gabor": {
+   "grid_minimum_z_um": {
+    "value": 33.68407094594592,
+    "units": "um",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "gabor.curve.distances_um[argmin forward_residual]",
+    "field_set": "4 scan fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "derived",
+    "derived_from": [
+     "distances_um",
+     "forward_residual"
+    ],
+    "calculation": "distance at the minimum of the pooled forward residual"
+   },
+   "grid_step_um": {
+    "value": 4.812010135135139,
+    "units": "um",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "gabor.grid_step_um",
+    "field_set": "",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "per_image_best_z_um": {
+    "value": [
+     33.68407094594592,
+     33.68407094594592,
+     33.68407094594592,
+     33.68407094594592
+    ],
+    "units": "um",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "gabor.curve.per_image_best_z_um",
+    "field_set": "4 scan fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "per_image_median_z_um": {
+    "value": 33.68407094594592,
+    "units": "um",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "gabor.per_image_median_z_um",
+    "field_set": "",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "per_image_iqr_um": {
+    "value": 0.0,
+    "units": "um",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "gabor.per_image_iqr_um",
+    "field_set": "",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "images_agree": true,
+   "identifiable_flag_in_file": true,
+   "forward_model_verdict": "marginal",
+   "reference_residual_validation": {
+    "value": 0.6993121644482017,
+    "units": "1",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "gabor.discrimination.floor",
+    "field_set": "32 validation fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "residual_margin_0.9x": {
+    "value": 0.004318851977586746,
+    "units": "1",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "gabor.discrimination.margins.scaled_0.9",
+    "field_set": "32 validation fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   },
+   "residual_margin_0.5x": {
+    "value": 0.06224722322076559,
+    "units": "1",
+    "source_file": "runs/z_calibration.json",
+    "source_key": "gabor.discrimination.margins.scaled_0.5",
+    "field_set": "32 validation fields",
+    "n_runs": 1,
+    "seeds": null,
+    "derivation": "direct",
+    "derived_from": null,
+    "calculation": null
+   }
+  }
+ },
+ "free_z": {
+  "learned_distance_at_selected_checkpoint_um": {
+   "value": 33.40824890136719,
+   "units": "um",
+   "source_file": "runs/v2_learned_z_off_axis/metrics_test.json",
+   "source_key": "forward_distance_um",
+   "field_set": "113 fields",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "selected_checkpoint_epoch": {
+   "value": 44,
+   "units": "epoch",
+   "source_file": "runs/benchmark_results/results_arm_D2.json",
+   "source_key": "runs[0].checkpoint_epoch",
+   "field_set": "",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "fixed_z_distance_um": {
+   "value": 33.77,
+   "units": "um",
+   "source_file": "runs/v2_forward_amplitude_off_axis/metrics_test.json",
+   "source_key": "forward_distance_um",
+   "field_set": "113 fields",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "trajectory_initial_after_epoch1_um": {
+   "value": 34.103,
+   "units": "um",
+   "source_file": "runs/RESULTS.md",
+   "source_key": "learned propagation distance, initial",
+   "field_set": "",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  },
+  "trajectory_final_um": {
+   "value": 33.407,
+   "units": "um",
+   "source_file": "runs/RESULTS.md",
+   "source_key": "learned propagation distance, final",
+   "field_set": "",
+   "n_runs": 1,
+   "seeds": [
+    42
+   ],
+   "derivation": "direct",
+   "derived_from": null,
+   "calculation": null
+  }
+ }
+}

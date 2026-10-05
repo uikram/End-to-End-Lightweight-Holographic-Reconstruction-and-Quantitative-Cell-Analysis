@@ -2,20 +2,31 @@
 #
 # WHY THIS FILE EXISTS, AND WHY IT IS NOT IN THE DEFAULT ARM LIST
 #
-# The LoRA machinery is implemented and tested (holoqpi/models/lora.py, with the
-# merge path exercised by the ONNX exporter; 35 encoder layers are injected at
-# the default rank 8). But `model.lora.enabled` is FALSE in config/base.yaml
-# and is switched on only in this file, so NO REPORTED ARM USES LoRA.
+# The project is titled "LoRA-Adapted Lightweight AI ...", and the
+# LoRA machinery is implemented and tested (holoqpi/models/lora.py, with the
+# merge path exercised by the ONNX exporter). But `model.lora.enabled` is FALSE
+# in config/base.yaml and is overridden nowhere, so as the study currently
+# stands NO ARM USES LoRA and the manuscript cannot claim it.
 #
-# DECISION: this arm was NOT trained. The manuscript reports LoRA as
-# implemented but never trained or evaluated and makes no LoRA claim; it is
-# left out of run_v2.sh's default ARMS. To train it later:
+# That is a study-scope decision rather than a defect, which is why this arm is
+# provided but left out of run_v2.sh's default ARMS: training it costs another
+# 3-4 h and only the person writing the paper can say whether the claim is being
+# made. The three options are all defensible:
 #
-#       ARMS="L" bash run_v2.sh --stage 6
+#   1. Train this arm and report LoRA as one more adaptation strategy:
+#          ARMS="L" bash run_v2.sh --stage 6
+#      L - A then isolates exactly what low-rank adaptation of a frozen encoder
+#      costs or buys, at the same objective, seed and schedule.
 #
-# L - A then isolates what low-rank adaptation of a frozen encoder costs or
-# buys, at the same objective, seed and schedule, and pairs naturally with
-# KA/KB, which attack the same cost from the decoder side.
+#   2. Leave it untrained and drop LoRA from the title and the claims, citing
+#      paper 1 (where it WAS used) for the LoRA result and describing this work
+#      as the end-to-end extension. Nothing in the current results
+#      supports a LoRA claim.
+#
+#   3. Train it as a parameter-efficiency comparison alongside K A/K B, which
+#      attack the same cost from the decoder side. This is the most informative
+#      version: KA/KB shrink the decoder, L freezes the encoder, and the two are
+#      independent.
 #
 # WHAT IT CHANGES, AND WHAT IT DELIBERATELY DOES NOT
 #
