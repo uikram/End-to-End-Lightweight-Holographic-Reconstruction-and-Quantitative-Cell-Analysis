@@ -4,6 +4,15 @@ Code, configurations, stored results and analysis scripts of the study. Every nu
 in the paper is traceable to a file under `runs/` or `config/` through `results_for_manuscript/`.
 The manuscript itself is not part of this repository.
 
+![Overview: raw hologram input, lightweight end-to-end network, predicted fields, per-cell measurement, supervision and evaluation](docs/figures/figure_1_overview.png)
+
+*Overview of the study (Fig. 1 of the paper). (a) Raw off-axis hologram (in-line Gabor holograms
+use a separately trained configuration). (b) MobileNetV2 encoder with phase and segmentation
+decoders (Baseline 9.60 M, Compact 3.36 M parameters). (c) Predicted quantitative phase,
+optional transmitted amplitude and cell instances. (d) Per-cell area, circularity, integrated
+phase and dry mass. (e) Phase-derived reference masks and the objective variants. (f) Evaluation
+against the reference, the tested classical pipeline and model-free sensitivity checks.*
+
 ## 1. Study overview
 
 Per-cell dry mass in quantitative phase imaging is the phase integrated over a
@@ -188,7 +197,7 @@ runs/                        stored experiment outputs (source of truth): one fo
 analysis/compile_results.py  builds results_for_manuscript/ from runs/ and config/
 results_for_manuscript/      result package: JSON per table, RESULTS_INDEX.md, figures/ (data, scripts, output)
 test/                        evaluation notebook for the trained checkpoints
-docs/documentation.md        technical documentation
+docs/documentation.md        technical documentation (docs/figures/: overview figure)
 BENCHMARKING.md              replication and benchmarking protocol
 ```
 
