@@ -64,7 +64,7 @@
    "runtimes": {
     "pytorch_fp32": {
      "latency_mean_ms": {
-      "value": 12.311246315638224,
+      "value": 12.27635344862938,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.pytorch_fp32.latency_mean_ms.mean",
@@ -78,12 +78,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.11575960191689581,
-      "session_min": 12.178199708461761,
-      "session_max": 12.388915725052357
+      "sd": 0.08329935554940963,
+      "session_min": 12.180182665586472,
+      "session_max": 12.32591125369072
      },
      "latency_p50_ms": {
-      "value": 12.236352389057478,
+      "value": 12.23285806675752,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.pytorch_fp32.latency_p50_ms.mean",
@@ -97,12 +97,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.09181281442655041,
-      "session_min": 12.13049702346325,
-      "session_max": 12.294337153434753
+      "sd": 0.08890708728690457,
+      "session_min": 12.133505195379257,
+      "session_max": 12.304922565817833
      },
      "latency_p99_ms": {
-      "value": 14.052153266966343,
+      "value": 13.429437664647898,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.pytorch_fp32.latency_p99_ms.mean",
@@ -116,12 +116,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.5257338040007961,
-      "session_min": 13.454729355871677,
-      "session_max": 14.444190114736557
+      "sd": 0.26301411900116123,
+      "session_min": 13.253553211688995,
+      "session_max": 13.731797523796557
      },
      "latency_p99_over_p50": {
-      "value": 1.1482230663128352,
+      "value": 1.0978371357870165,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.pytorch_fp32.latency_p99_over_p50.mean",
@@ -135,12 +135,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.034564706369020995,
-      "session_min": 1.1091655461311314,
-      "session_max": 1.174865300542143
+      "sd": 0.021507811869072472,
+      "session_min": 1.0770935892360987,
+      "session_max": 1.1200353594497574
      },
      "fps": {
-      "value": 81.23135769213975,
+      "value": 81.45992371969956,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.pytorch_fp32.fps.mean",
@@ -154,9 +154,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.7677959883297502,
-      "session_min": 80.7173139436118,
-      "session_max": 82.1139432707095
+      "sd": 0.5549049307029464,
+      "session_min": 81.12990426574524,
+      "session_max": 82.10057496308085
      },
      "timed_runs": {
       "value": 500.0,
@@ -237,7 +237,7 @@
     },
     "onnx_fp32": {
      "latency_mean_ms": {
-      "value": 14.209500722587109,
+      "value": 14.067720202108225,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.onnx_fp32.latency_mean_ms.mean",
@@ -251,12 +251,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.08152039825155352,
-      "session_min": 14.116448573768139,
-      "session_max": 14.268337301909924
+      "sd": 0.06251433325407836,
+      "session_min": 13.997043006122112,
+      "session_max": 14.115770697593689
      },
      "latency_p50_ms": {
-      "value": 14.176666115721067,
+      "value": 14.047810186942419,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.onnx_fp32.latency_p50_ms.mean",
@@ -270,12 +270,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.06111516129937108,
-      "session_min": 14.10609856247902,
-      "session_max": 14.212427660822868
+      "sd": 0.06342944333840642,
+      "session_min": 13.975145295262337,
+      "session_max": 14.092089608311653
      },
      "latency_p99_ms": {
-      "value": 15.244105669359366,
+      "value": 14.618513745566206,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.onnx_fp32.latency_p99_ms.mean",
@@ -289,12 +289,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.9119967550496041,
-      "session_min": 14.205440543591973,
-      "session_max": 15.913834869861603
+      "sd": 0.3001165930428532,
+      "session_min": 14.368640072643755,
+      "session_max": 14.951398484408852
      },
      "latency_p99_over_p50": {
-      "value": 1.0751263148041788,
+      "value": 1.0406168759890926,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.onnx_fp32.latency_p99_over_p50.mean",
@@ -308,12 +308,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.05991104959925539,
-      "session_min": 1.0070424845447483,
-      "session_max": 1.1197879242321416
+      "sd": 0.02010619123848705,
+      "session_min": 1.0207758134734222,
+      "session_max": 1.0609781018984132
      },
      "fps": {
-      "value": 70.3769983139678,
+      "value": 71.08566125030643,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.onnx_fp32.fps.mean",
@@ -327,9 +327,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.40496157033632973,
-      "session_min": 70.08525091890998,
-      "session_max": 70.83934707616531
+      "sd": 0.3165561760731266,
+      "session_min": 70.84274896662,
+      "session_max": 71.44366131922392
      },
      "timed_runs": {
       "value": 500.0,
@@ -353,7 +353,7 @@
     },
     "pytorch_fp16": {
      "latency_mean_ms": {
-      "value": 9.18600141753753,
+      "value": 9.26316042492787,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.pytorch_fp16.latency_mean_ms.mean",
@@ -367,12 +367,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.10165140816265088,
-      "session_min": 9.072807222604752,
-      "session_max": 9.269493021070957
+      "sd": 0.04864964710704164,
+      "session_min": 9.21765923500061,
+      "session_max": 9.314442045986652
      },
      "latency_p50_ms": {
-      "value": 9.113398691018423,
+      "value": 9.227472047011057,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.pytorch_fp16.latency_p50_ms.mean",
@@ -386,12 +386,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0921084187191091,
-      "session_min": 9.011322632431984,
-      "session_max": 9.190307930111885
+      "sd": 0.049611759721230046,
+      "session_min": 9.177777916193008,
+      "session_max": 9.277001023292542
      },
      "latency_p99_ms": {
-      "value": 10.115553711851438,
+      "value": 9.86823602269093,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.pytorch_fp16.latency_p99_ms.mean",
@@ -405,12 +405,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.6479965354058523,
-      "session_min": 9.376669339835642,
-      "session_max": 10.587157160043716
+      "sd": 0.2559606590944899,
+      "session_min": 9.677416011691086,
+      "session_max": 10.159111246466637
      },
      "latency_p99_over_p50": {
-      "value": 1.109563492770003,
+      "value": 1.0695552732509221,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.pytorch_fp16.latency_p99_over_p50.mean",
@@ -424,12 +424,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.06029557404491657,
-      "session_min": 1.0405430725661475,
-      "session_max": 1.1519915589939134
+      "sd": 0.033268410567058294,
+      "session_min": 1.0431621153639188,
+      "session_max": 1.1069249375213353
      },
      "fps": {
-      "value": 108.87022142829214,
+      "value": 107.95649932739649,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.pytorch_fp16.fps.mean",
@@ -443,9 +443,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 1.2101538269892969,
-      "session_min": 107.88076518606239,
-      "session_max": 110.21946961559111
+      "sd": 0.5664663927397255,
+      "session_min": 107.36016124882903,
+      "session_max": 108.48741253125027
      },
      "timed_runs": {
       "value": 500.0,
@@ -526,7 +526,7 @@
     },
     "onnx_fp16": {
      "latency_mean_ms": {
-      "value": 8.421359611054262,
+      "value": 8.385477811098099,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.onnx_fp16.latency_mean_ms.mean",
@@ -540,12 +540,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0651062677243082,
-      "session_min": 8.34618865698576,
-      "session_max": 8.459851644933224
+      "sd": 0.057177884563566476,
+      "session_min": 8.31976556032896,
+      "session_max": 8.423877902328968
      },
      "latency_p50_ms": {
-      "value": 8.421011889974276,
+      "value": 8.380445962150892,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.onnx_fp16.latency_p50_ms.mean",
@@ -559,12 +559,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.06152634218857391,
-      "session_min": 8.350159972906113,
-      "session_max": 8.460965007543564
+      "sd": 0.05068247498913866,
+      "session_min": 8.322365581989288,
+      "session_max": 8.4157083183527
      },
      "latency_p99_ms": {
-      "value": 8.482848989466826,
+      "value": 8.459396076699095,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.onnx_fp16.latency_p99_ms.mean",
@@ -578,12 +578,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.05116466061856045,
-      "session_min": 8.423838652670383,
-      "session_max": 8.514835610985756
+      "sd": 0.0717994711212918,
+      "session_min": 8.38030956685543,
+      "session_max": 8.520483635365958
      },
      "latency_p99_over_p50": {
-      "value": 1.0073494805702221,
+      "value": 1.009413896716814,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.onnx_fp16.latency_p99_over_p50.mean",
@@ -597,12 +597,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0013000278520690378,
-      "session_min": 1.0063669573617386,
-      "session_max": 1.0088236249369278
+      "sd": 0.003932070279427875,
+      "session_min": 1.0069624416634064,
+      "session_max": 1.0139492998731228
      },
      "fps": {
-      "value": 118.75042425023294,
+      "value": 119.25749934829291,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_A.json",
       "source_key": "statistics.onnx_fp16.fps.mean",
@@ -616,9 +616,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.9221825768501946,
-      "session_min": 118.2053825493406,
-      "session_max": 119.81516846770532
+      "sd": 0.8162582125067762,
+      "session_min": 118.71017263005768,
+      "session_max": 120.19569454796758
      },
      "timed_runs": {
       "value": 500.0,
@@ -704,7 +704,7 @@
    "runtimes": {
     "pytorch_fp32": {
      "latency_mean_ms": {
-      "value": 12.423797289530436,
+      "value": 12.300673472384611,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.pytorch_fp32.latency_mean_ms.mean",
@@ -718,12 +718,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.018552243593819254,
-      "session_min": 12.41169723123312,
-      "session_max": 12.445156700909138
+      "sd": 0.05087389026630058,
+      "session_min": 12.244072437286377,
+      "session_max": 12.3425899669528
      },
      "latency_p50_ms": {
-      "value": 12.315247828761736,
+      "value": 12.26890335480372,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.pytorch_fp32.latency_p50_ms.mean",
@@ -737,12 +737,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.020173225231836126,
-      "session_min": 12.29299046099186,
-      "session_max": 12.332327663898468
+      "sd": 0.06566593524602153,
+      "session_min": 12.19308190047741,
+      "session_max": 12.30740174651146
      },
      "latency_p99_ms": {
-      "value": 14.328075100978213,
+      "value": 12.933406283458075,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.pytorch_fp32.latency_p99_ms.mean",
@@ -756,12 +756,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.2653280049354884,
-      "session_min": 14.028086066246031,
-      "session_max": 14.531957320868967
+      "sd": 0.4508358485710784,
+      "session_min": 12.415349557995796,
+      "session_max": 13.236772939562794
      },
      "latency_p99_over_p50": {
-      "value": 1.163457599920742,
+      "value": 1.0542370551011107,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.pytorch_fp32.latency_p99_over_p50.mean",
@@ -775,12 +775,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.022683847031770697,
-      "session_min": 1.137505136788711,
-      "session_max": 1.1795012667666291
+      "sd": 0.03939806744361003,
+      "session_min": 1.0087709667489269,
+      "session_max": 1.0783242875044434
      },
      "fps": {
-      "value": 80.49080824860846,
+      "value": 81.29729032563529,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.pytorch_fp32.fps.mean",
@@ -794,9 +794,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.12009473654736001,
-      "session_min": 80.3525438877719,
-      "session_max": 80.56915838098062
+      "sd": 0.33678874422163857,
+      "session_min": 81.02027229920893,
+      "session_max": 81.67217281030946
      },
      "timed_runs": {
       "value": 500.0,
@@ -877,7 +877,7 @@
     },
     "onnx_fp32": {
      "latency_mean_ms": {
-      "value": 14.230582396189371,
+      "value": 14.077700681984425,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.onnx_fp32.latency_mean_ms.mean",
@@ -891,12 +891,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.03674271172485942,
-      "session_min": 14.188215002417564,
-      "session_max": 14.253710269927979
+      "sd": 0.01421286387835807,
+      "session_min": 14.061404943466187,
+      "session_max": 14.087534427642822
      },
      "latency_p50_ms": {
-      "value": 14.202602207660675,
+      "value": 14.062438781062761,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.onnx_fp32.latency_p50_ms.mean",
@@ -910,12 +910,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.031188476619218024,
-      "session_min": 14.166655018925667,
-      "session_max": 14.222465455532074
+      "sd": 0.023982484731633762,
+      "session_min": 14.034798368811607,
+      "session_max": 14.077730476856232
      },
      "latency_p99_ms": {
-      "value": 15.355732801059881,
+      "value": 14.559086784720419,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.onnx_fp32.latency_p99_ms.mean",
@@ -929,12 +929,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.239266655924794,
-      "session_min": 15.079859979450701,
-      "session_max": 15.506675839424133
+      "sd": 0.3283366321442157,
+      "session_min": 14.198696725070471,
+      "session_max": 14.841233752667904
      },
      "latency_p99_over_p50": {
-      "value": 1.0811704498023034,
+      "value": 1.0353401779968296,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.onnx_fp32.latency_p99_over_p50.mean",
@@ -948,12 +948,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.014509035503532487,
-      "session_min": 1.064461579625187,
-      "session_max": 1.0905842971316675
+      "sd": 0.02476001444600629,
+      "session_min": 1.0085927378999837,
+      "session_max": 1.0574597057018198
      },
      "fps": {
-      "value": 70.2715056246859,
+      "value": 71.03437574726526,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.onnx_fp32.fps.mean",
@@ -967,9 +967,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.18170528079772838,
-      "session_min": 70.15717178633608,
-      "session_max": 70.4810294902923
+      "sd": 0.07175559062733136,
+      "session_min": 70.98474222982422,
+      "session_max": 71.11664901341618
      },
      "timed_runs": {
       "value": 500.0,
@@ -993,7 +993,7 @@
     },
     "pytorch_fp16": {
      "latency_mean_ms": {
-      "value": 9.821981305877367,
+      "value": 9.226206930975119,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.pytorch_fp16.latency_mean_ms.mean",
@@ -1007,12 +1007,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.8741740515781339,
-      "session_min": 9.308017820119858,
-      "session_max": 10.831333585083485
+      "sd": 0.08153211862170588,
+      "session_min": 9.17802608013153,
+      "session_max": 9.320343345403671
      },
      "latency_p50_ms": {
-      "value": 9.723025684555372,
+      "value": 9.194561590751013,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.pytorch_fp16.latency_p50_ms.mean",
@@ -1026,12 +1026,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.8278789578044549,
-      "session_min": 9.236032143235207,
-      "session_max": 10.678920894861221
+      "sd": 0.08271165142427025,
+      "session_min": 9.138811379671097,
+      "session_max": 9.289594367146492
      },
      "latency_p99_ms": {
-      "value": 11.177467219531534,
+      "value": 9.63419583936532,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.pytorch_fp16.latency_p99_ms.mean",
@@ -1045,12 +1045,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 1.038086141925876,
-      "session_min": 10.560639537870882,
-      "session_max": 12.375974059104918
+      "sd": 0.13612980609290373,
+      "session_min": 9.516341425478457,
+      "session_max": 9.783201217651367
      },
      "latency_p99_over_p50": {
-      "value": 1.1491070316188416,
+      "value": 1.04779036439918,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.pytorch_fp16.latency_p99_over_p50.mean",
@@ -1064,12 +1064,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.009015968158002614,
-      "session_min": 1.1411819768249307,
-      "session_max": 1.158916165870311
+      "sd": 0.007327494971714381,
+      "session_min": 1.0394376183445524,
+      "session_max": 1.0531354579109031
      },
      "fps": {
-      "value": 102.32642965535898,
+      "value": 108.39251796426731,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.pytorch_fp16.fps.mean",
@@ -1083,9 +1083,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 8.662382538397246,
-      "session_min": 92.32473472861766,
-      "session_max": 107.43425929400757
+      "sd": 0.9530080252715571,
+      "session_min": 107.29218473406885,
+      "session_max": 108.95588999957047
      },
      "timed_runs": {
       "value": 500.0,
@@ -1166,7 +1166,7 @@
     },
     "onnx_fp16": {
      "latency_mean_ms": {
-      "value": 8.455295898020267,
+      "value": 8.384034402668476,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.onnx_fp16.latency_mean_ms.mean",
@@ -1180,12 +1180,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.02600776558305677,
-      "session_min": 8.425555519759655,
-      "session_max": 8.473776668310165
+      "sd": 0.016925720103861508,
+      "session_min": 8.372276596724987,
+      "session_max": 8.403433494269848
      },
      "latency_p50_ms": {
-      "value": 8.448362350463867,
+      "value": 8.380094543099403,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.onnx_fp16.latency_p50_ms.mean",
@@ -1199,12 +1199,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.030927144614415442,
-      "session_min": 8.412832394242287,
-      "session_max": 8.469242602586746
+      "sd": 0.018645557182656057,
+      "session_min": 8.367819711565971,
+      "session_max": 8.401550352573395
      },
      "latency_p99_ms": {
-      "value": 8.512259808679422,
+      "value": 8.459775658945242,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.onnx_fp16.latency_p99_ms.mean",
@@ -1218,12 +1218,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.031908542977531554,
-      "session_min": 8.4754828363657,
-      "session_max": 8.532583713531494
+      "sd": 0.020149286455144348,
+      "session_min": 8.443474546074867,
+      "session_max": 8.482303246855736
      },
      "latency_p99_over_p50": {
-      "value": 1.0075631982031148,
+      "value": 1.0095083438653554,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.onnx_fp16.latency_p99_over_p50.mean",
@@ -1237,12 +1237,12 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.0006077683377181652,
-      "session_min": 1.0070219116802914,
-      "session_max": 1.0082206735049395
+      "sd": 0.0007935167913792524,
+      "session_min": 1.0086682272312588,
+      "session_max": 1.0102451385539124
      },
      "fps": {
-      "value": 118.2698192775136,
+      "value": 119.27464345578818,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_B.json",
       "source_key": "statistics.onnx_fp16.fps.mean",
@@ -1256,9 +1256,9 @@
       "derivation": "direct",
       "derived_from": null,
       "calculation": null,
-      "sd": 0.3643795373781754,
-      "session_min": 118.01113472104514,
-      "session_max": 118.6865361761364
+      "sd": 0.2405303494503289,
+      "session_min": 118.99897829641685,
+      "session_max": 119.44182546371837
      },
      "timed_runs": {
       "value": 500.0,
@@ -1336,7 +1336,7 @@
    "runtimes": {
     "pytorch_fp32": {
      "latency_mean_ms": {
-      "value": 12.971086516976357,
+      "value": 12.905478484928608,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.pytorch_fp32.latency_mean_ms.mean",
@@ -1349,11 +1349,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 12.971086516976357,
-      "session_max": 12.971086516976357
+      "session_min": 12.905478484928608,
+      "session_max": 12.905478484928608
      },
      "latency_p50_ms": {
-      "value": 12.859880924224854,
+      "value": 12.890420854091644,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.pytorch_fp32.latency_p50_ms.mean",
@@ -1366,11 +1366,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 12.859880924224854,
-      "session_max": 12.859880924224854
+      "session_min": 12.890420854091644,
+      "session_max": 12.890420854091644
      },
      "latency_p99_ms": {
-      "value": 14.509333744645119,
+      "value": 13.278651945292948,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.pytorch_fp32.latency_p99_ms.mean",
@@ -1383,11 +1383,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 14.509333744645119,
-      "session_max": 14.509333744645119
+      "session_min": 13.278651945292948,
+      "session_max": 13.278651945292948
      },
      "latency_p99_over_p50": {
-      "value": 1.1282634598360162,
+      "value": 1.030117797983149,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.pytorch_fp32.latency_p99_over_p50.mean",
@@ -1400,11 +1400,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.1282634598360162,
-      "session_max": 1.1282634598360162
+      "session_min": 1.030117797983149,
+      "session_max": 1.030117797983149
      },
      "fps": {
-      "value": 77.09454398374535,
+      "value": 77.48647221161377,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.pytorch_fp32.fps.mean",
@@ -1417,8 +1417,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 77.09454398374535,
-      "session_max": 77.09454398374535
+      "session_min": 77.48647221161377,
+      "session_max": 77.48647221161377
      },
      "timed_runs": {
       "value": 500.0,
@@ -1491,7 +1491,7 @@
     },
     "onnx_fp32": {
      "latency_mean_ms": {
-      "value": 15.446215845644474,
+      "value": 15.263849906623363,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.onnx_fp32.latency_mean_ms.mean",
@@ -1504,11 +1504,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 15.446215845644474,
-      "session_max": 15.446215845644474
+      "session_min": 15.263849906623363,
+      "session_max": 15.263849906623363
      },
      "latency_p50_ms": {
-      "value": 15.406448394060135,
+      "value": 15.23374579846859,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.onnx_fp32.latency_p50_ms.mean",
@@ -1521,11 +1521,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 15.406448394060135,
-      "session_max": 15.406448394060135
+      "session_min": 15.23374579846859,
+      "session_max": 15.23374579846859
      },
      "latency_p99_ms": {
-      "value": 16.773046292364597,
+      "value": 16.190980300307274,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.onnx_fp32.latency_p99_ms.mean",
@@ -1538,11 +1538,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 16.773046292364597,
-      "session_max": 16.773046292364597
+      "session_min": 16.190980300307274,
+      "session_max": 16.190980300307274
      },
      "latency_p99_over_p50": {
-      "value": 1.0887029809434436,
+      "value": 1.0628364497151392,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.onnx_fp32.latency_p99_over_p50.mean",
@@ -1555,11 +1555,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.0887029809434436,
-      "session_max": 1.0887029809434436
+      "session_min": 1.0628364497151392,
+      "session_max": 1.0628364497151392
      },
      "fps": {
-      "value": 64.74077599284489,
+      "value": 65.51427104678717,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.onnx_fp32.fps.mean",
@@ -1572,8 +1572,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 64.74077599284489,
-      "session_max": 64.74077599284489
+      "session_min": 65.51427104678717,
+      "session_max": 65.51427104678717
      },
      "timed_runs": {
       "value": 500.0,
@@ -1595,7 +1595,7 @@
     },
     "pytorch_fp16": {
      "latency_mean_ms": {
-      "value": 11.259532168507576,
+      "value": 9.652686558663845,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.pytorch_fp16.latency_mean_ms.mean",
@@ -1608,11 +1608,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 11.259532168507576,
-      "session_max": 11.259532168507576
+      "session_min": 9.652686558663845,
+      "session_max": 9.652686558663845
      },
      "latency_p50_ms": {
-      "value": 11.162439361214638,
+      "value": 9.633608162403107,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.pytorch_fp16.latency_p50_ms.mean",
@@ -1625,11 +1625,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 11.162439361214638,
-      "session_max": 11.162439361214638
+      "session_min": 9.633608162403107,
+      "session_max": 9.633608162403107
      },
      "latency_p99_ms": {
-      "value": 12.556042857468128,
+      "value": 10.033316910266876,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.pytorch_fp16.latency_p99_ms.mean",
@@ -1642,11 +1642,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 12.556042857468128,
-      "session_max": 12.556042857468128
+      "session_min": 10.033316910266876,
+      "session_max": 10.033316910266876
      },
      "latency_p99_over_p50": {
-      "value": 1.1248475759783967,
+      "value": 1.0414910738661456,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.pytorch_fp16.latency_p99_over_p50.mean",
@@ -1659,11 +1659,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.1248475759783967,
-      "session_max": 1.1248475759783967
+      "session_min": 1.0414910738661456,
+      "session_max": 1.0414910738661456
      },
      "fps": {
-      "value": 88.81363675099723,
+      "value": 103.59810130812153,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.pytorch_fp16.fps.mean",
@@ -1676,8 +1676,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 88.81363675099723,
-      "session_max": 88.81363675099723
+      "session_min": 103.59810130812153,
+      "session_max": 103.59810130812153
      },
      "timed_runs": {
       "value": 500.0,
@@ -1750,7 +1750,7 @@
     },
     "onnx_fp16": {
      "latency_mean_ms": {
-      "value": 9.175913341343403,
+      "value": 9.096934162080288,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.onnx_fp16.latency_mean_ms.mean",
@@ -1763,11 +1763,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 9.175913341343403,
-      "session_max": 9.175913341343403
+      "session_min": 9.096934162080288,
+      "session_max": 9.096934162080288
      },
      "latency_p50_ms": {
-      "value": 9.164294227957726,
+      "value": 9.092587977647781,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.onnx_fp16.latency_p50_ms.mean",
@@ -1780,11 +1780,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 9.164294227957726,
-      "session_max": 9.164294227957726
+      "session_min": 9.092587977647781,
+      "session_max": 9.092587977647781
      },
      "latency_p99_ms": {
-      "value": 9.242319911718369,
+      "value": 9.174432903528214,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.onnx_fp16.latency_p99_ms.mean",
@@ -1797,11 +1797,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 9.242319911718369,
-      "session_max": 9.242319911718369
+      "session_min": 9.174432903528214,
+      "session_max": 9.174432903528214
      },
      "latency_p99_over_p50": {
-      "value": 1.00851409631989,
+      "value": 1.009001279512679,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.onnx_fp16.latency_p99_over_p50.mean",
@@ -1814,11 +1814,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.00851409631989,
-      "session_max": 1.00851409631989
+      "session_min": 1.009001279512679,
+      "session_max": 1.009001279512679
      },
      "fps": {
-      "value": 108.98097691205905,
+      "value": 109.92714492410043,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_D0.json",
       "source_key": "statistics.onnx_fp16.fps.mean",
@@ -1831,8 +1831,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 108.98097691205905,
-      "session_max": 108.98097691205905
+      "session_min": 109.92714492410043,
+      "session_max": 109.92714492410043
      },
      "timed_runs": {
       "value": 500.0,
@@ -1908,7 +1908,7 @@
    "runtimes": {
     "pytorch_fp32": {
      "latency_mean_ms": {
-      "value": 11.800876215100288,
+      "value": 11.442366398870945,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.pytorch_fp32.latency_mean_ms.mean",
@@ -1921,11 +1921,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 11.800876215100288,
-      "session_max": 11.800876215100288
+      "session_min": 11.442366398870945,
+      "session_max": 11.442366398870945
      },
      "latency_p50_ms": {
-      "value": 11.680103838443756,
+      "value": 11.409269645810127,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.pytorch_fp32.latency_p50_ms.mean",
@@ -1938,11 +1938,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 11.680103838443756,
-      "session_max": 11.680103838443756
+      "session_min": 11.409269645810127,
+      "session_max": 11.409269645810127
      },
      "latency_p99_ms": {
-      "value": 14.034759476780886,
+      "value": 12.521307431161404,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.pytorch_fp32.latency_p99_ms.mean",
@@ -1955,11 +1955,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 14.034759476780886,
-      "session_max": 14.034759476780886
+      "session_min": 12.521307431161404,
+      "session_max": 12.521307431161404
      },
      "latency_p99_over_p50": {
-      "value": 1.2015954370702633,
+      "value": 1.0974679203729447,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.pytorch_fp32.latency_p99_over_p50.mean",
@@ -1972,11 +1972,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.2015954370702633,
-      "session_max": 1.2015954370702633
+      "session_min": 1.0974679203729447,
+      "session_max": 1.0974679203729447
      },
      "fps": {
-      "value": 84.73947033868635,
+      "value": 87.39450959188592,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.pytorch_fp32.fps.mean",
@@ -1989,8 +1989,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 84.73947033868635,
-      "session_max": 84.73947033868635
+      "session_min": 87.39450959188592,
+      "session_max": 87.39450959188592
      },
      "timed_runs": {
       "value": 500.0,
@@ -2063,7 +2063,7 @@
     },
     "onnx_fp32": {
      "latency_mean_ms": {
-      "value": 13.320187039673328,
+      "value": 13.156905464828014,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.onnx_fp32.latency_mean_ms.mean",
@@ -2076,11 +2076,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 13.320187039673328,
-      "session_max": 13.320187039673328
+      "session_min": 13.156905464828014,
+      "session_max": 13.156905464828014
      },
      "latency_p50_ms": {
-      "value": 13.291878625750542,
+      "value": 13.147350400686264,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.onnx_fp32.latency_p50_ms.mean",
@@ -2093,11 +2093,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 13.291878625750542,
-      "session_max": 13.291878625750542
+      "session_min": 13.147350400686264,
+      "session_max": 13.147350400686264
      },
      "latency_p99_ms": {
-      "value": 14.679415859282015,
+      "value": 13.253014534711838,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.onnx_fp32.latency_p99_ms.mean",
@@ -2110,11 +2110,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 14.679415859282015,
-      "session_max": 14.679415859282015
+      "session_min": 13.253014534711838,
+      "session_max": 13.253014534711838
      },
      "latency_p99_over_p50": {
-      "value": 1.1043898513219477,
+      "value": 1.0080369147246626,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.onnx_fp32.latency_p99_over_p50.mean",
@@ -2127,11 +2127,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.1043898513219477,
-      "session_max": 1.1043898513219477
+      "session_min": 1.0080369147246626,
+      "session_max": 1.0080369147246626
      },
      "fps": {
-      "value": 75.07402088435873,
+      "value": 76.00571446479356,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.onnx_fp32.fps.mean",
@@ -2144,8 +2144,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 75.07402088435873,
-      "session_max": 75.07402088435873
+      "session_min": 76.00571446479356,
+      "session_max": 76.00571446479356
      },
      "timed_runs": {
       "value": 500.0,
@@ -2167,7 +2167,7 @@
     },
     "pytorch_fp16": {
      "latency_mean_ms": {
-      "value": 9.213946677744389,
+      "value": 9.122537285089493,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.pytorch_fp16.latency_mean_ms.mean",
@@ -2180,11 +2180,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 9.213946677744389,
-      "session_max": 9.213946677744389
+      "session_min": 9.122537285089493,
+      "session_max": 9.122537285089493
      },
      "latency_p50_ms": {
-      "value": 9.13248211145401,
+      "value": 9.09946858882904,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.pytorch_fp16.latency_p50_ms.mean",
@@ -2197,11 +2197,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 9.13248211145401,
-      "session_max": 9.13248211145401
+      "session_min": 9.09946858882904,
+      "session_max": 9.09946858882904
      },
      "latency_p99_ms": {
-      "value": 10.578853003680706,
+      "value": 9.422370232641697,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.pytorch_fp16.latency_p99_ms.mean",
@@ -2214,11 +2214,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 10.578853003680706,
-      "session_max": 10.578853003680706
+      "session_min": 9.422370232641697,
+      "session_max": 9.422370232641697
      },
      "latency_p99_over_p50": {
-      "value": 1.1583765371314168,
+      "value": 1.0354857693787818,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.pytorch_fp16.latency_p99_over_p50.mean",
@@ -2231,11 +2231,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.1583765371314168,
-      "session_max": 1.1583765371314168
+      "session_min": 1.0354857693787818,
+      "session_max": 1.0354857693787818
      },
      "fps": {
-      "value": 108.53112514916398,
+      "value": 109.61862569029664,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.pytorch_fp16.fps.mean",
@@ -2248,8 +2248,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 108.53112514916398,
-      "session_max": 108.53112514916398
+      "session_min": 109.61862569029664,
+      "session_max": 109.61862569029664
      },
      "timed_runs": {
       "value": 500.0,
@@ -2322,7 +2322,7 @@
     },
     "onnx_fp16": {
      "latency_mean_ms": {
-      "value": 7.973844341933727,
+      "value": 7.885871939361095,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.onnx_fp16.latency_mean_ms.mean",
@@ -2335,11 +2335,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 7.973844341933727,
-      "session_max": 7.973844341933727
+      "session_min": 7.885871939361095,
+      "session_max": 7.885871939361095
      },
      "latency_p50_ms": {
-      "value": 7.969565689563751,
+      "value": 7.883882150053978,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.onnx_fp16.latency_p50_ms.mean",
@@ -2352,11 +2352,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 7.969565689563751,
-      "session_max": 7.969565689563751
+      "session_min": 7.883882150053978,
+      "session_max": 7.883882150053978
      },
      "latency_p99_ms": {
-      "value": 8.023254461586475,
+      "value": 7.95137744396925,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.onnx_fp16.latency_p99_ms.mean",
@@ -2369,11 +2369,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 8.023254461586475,
-      "session_max": 8.023254461586475
+      "session_min": 7.95137744396925,
+      "session_max": 7.95137744396925
      },
      "latency_p99_over_p50": {
-      "value": 1.0067367249501475,
+      "value": 1.0085611748920942,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.onnx_fp16.latency_p99_over_p50.mean",
@@ -2386,11 +2386,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.0067367249501475,
-      "session_max": 1.0067367249501475
+      "session_min": 1.0085611748920942,
+      "session_max": 1.0085611748920942
      },
      "fps": {
-      "value": 125.41002270900754,
+      "value": 126.80905899684429,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_KA.json",
       "source_key": "statistics.onnx_fp16.fps.mean",
@@ -2403,8 +2403,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 125.41002270900754,
-      "session_max": 125.41002270900754
+      "session_min": 126.80905899684429,
+      "session_max": 126.80905899684429
      },
      "timed_runs": {
       "value": 500.0,
@@ -2480,7 +2480,7 @@
    "runtimes": {
     "pytorch_fp32": {
      "latency_mean_ms": {
-      "value": 12.015810653567314,
+      "value": 11.443256221711636,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.pytorch_fp32.latency_mean_ms.mean",
@@ -2493,11 +2493,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 12.015810653567314,
-      "session_max": 12.015810653567314
+      "session_min": 11.443256221711636,
+      "session_max": 11.443256221711636
      },
      "latency_p50_ms": {
-      "value": 11.861676350235939,
+      "value": 11.410810053348541,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.pytorch_fp32.latency_p50_ms.mean",
@@ -2510,11 +2510,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 11.861676350235939,
-      "session_max": 11.861676350235939
+      "session_min": 11.410810053348541,
+      "session_max": 11.410810053348541
      },
      "latency_p99_ms": {
-      "value": 13.77133335918188,
+      "value": 12.203252501785753,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.pytorch_fp32.latency_p99_ms.mean",
@@ -2527,11 +2527,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 13.77133335918188,
-      "session_max": 13.77133335918188
+      "session_min": 12.203252501785753,
+      "session_max": 12.203252501785753
      },
      "latency_p99_over_p50": {
-      "value": 1.160993855552968,
+      "value": 1.0694466426776308,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.pytorch_fp32.latency_p99_over_p50.mean",
@@ -2544,11 +2544,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.160993855552968,
-      "session_max": 1.160993855552968
+      "session_min": 1.0694466426776308,
+      "session_max": 1.0694466426776308
      },
      "fps": {
-      "value": 83.22368160013532,
+      "value": 87.3877138311969,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.pytorch_fp32.fps.mean",
@@ -2561,8 +2561,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 83.22368160013532,
-      "session_max": 83.22368160013532
+      "session_min": 87.3877138311969,
+      "session_max": 87.3877138311969
      },
      "timed_runs": {
       "value": 500.0,
@@ -2635,7 +2635,7 @@
     },
     "onnx_fp32": {
      "latency_mean_ms": {
-      "value": 13.334420830011368,
+      "value": 13.195857524871826,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.onnx_fp32.latency_mean_ms.mean",
@@ -2648,11 +2648,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 13.334420830011368,
-      "session_max": 13.334420830011368
+      "session_min": 13.195857524871826,
+      "session_max": 13.195857524871826
      },
      "latency_p50_ms": {
-      "value": 13.29515315592289,
+      "value": 13.177074491977692,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.onnx_fp32.latency_p50_ms.mean",
@@ -2665,11 +2665,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 13.29515315592289,
-      "session_max": 13.29515315592289
+      "session_min": 13.177074491977692,
+      "session_max": 13.177074491977692
      },
      "latency_p99_ms": {
-      "value": 14.708562269806858,
+      "value": 13.70213583111763,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.onnx_fp32.latency_p99_ms.mean",
@@ -2682,11 +2682,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 14.708562269806858,
-      "session_max": 14.708562269806858
+      "session_min": 13.70213583111763,
+      "session_max": 13.70213583111763
      },
      "latency_p99_over_p50": {
-      "value": 1.1063101039384646,
+      "value": 1.039846578954957,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.onnx_fp32.latency_p99_over_p50.mean",
@@ -2699,11 +2699,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.1063101039384646,
-      "session_max": 1.1063101039384646
+      "session_min": 1.039846578954957,
+      "session_max": 1.039846578954957
      },
      "fps": {
-      "value": 74.99388333007542,
+      "value": 75.78135775679445,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.onnx_fp32.fps.mean",
@@ -2716,8 +2716,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 74.99388333007542,
-      "session_max": 74.99388333007542
+      "session_min": 75.78135775679445,
+      "session_max": 75.78135775679445
      },
      "timed_runs": {
       "value": 500.0,
@@ -2739,7 +2739,7 @@
     },
     "pytorch_fp16": {
      "latency_mean_ms": {
-      "value": 9.387821197509766,
+      "value": 9.284345529973507,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.pytorch_fp16.latency_mean_ms.mean",
@@ -2752,11 +2752,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 9.387821197509766,
-      "session_max": 9.387821197509766
+      "session_min": 9.284345529973507,
+      "session_max": 9.284345529973507
      },
      "latency_p50_ms": {
-      "value": 9.310266003012657,
+      "value": 9.249459952116013,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.pytorch_fp16.latency_p50_ms.mean",
@@ -2769,11 +2769,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 9.310266003012657,
-      "session_max": 9.310266003012657
+      "session_min": 9.249459952116013,
+      "session_max": 9.249459952116013
      },
      "latency_p99_ms": {
-      "value": 10.671692304313183,
+      "value": 9.64897658675909,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.pytorch_fp16.latency_p99_ms.mean",
@@ -2786,11 +2786,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 10.671692304313183,
-      "session_max": 10.671692304313183
+      "session_min": 9.64897658675909,
+      "session_max": 9.64897658675909
      },
      "latency_p99_over_p50": {
-      "value": 1.1462285074196579,
+      "value": 1.0431935093196094,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.pytorch_fp16.latency_p99_over_p50.mean",
@@ -2803,11 +2803,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.1462285074196579,
-      "session_max": 1.1462285074196579
+      "session_min": 1.0431935093196094,
+      "session_max": 1.0431935093196094
      },
      "fps": {
-      "value": 106.52098915830035,
+      "value": 107.7081843595338,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.pytorch_fp16.fps.mean",
@@ -2820,8 +2820,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 106.52098915830035,
-      "session_max": 106.52098915830035
+      "session_min": 107.7081843595338,
+      "session_max": 107.7081843595338
      },
      "timed_runs": {
       "value": 500.0,
@@ -2894,7 +2894,7 @@
     },
     "onnx_fp16": {
      "latency_mean_ms": {
-      "value": 7.984796293079853,
+      "value": 7.920723907649517,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.onnx_fp16.latency_mean_ms.mean",
@@ -2907,11 +2907,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 7.984796293079853,
-      "session_max": 7.984796293079853
+      "session_min": 7.920723907649517,
+      "session_max": 7.920723907649517
      },
      "latency_p50_ms": {
-      "value": 7.972510531544685,
+      "value": 7.918588817119598,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.onnx_fp16.latency_p50_ms.mean",
@@ -2924,11 +2924,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 7.972510531544685,
-      "session_max": 7.972510531544685
+      "session_min": 7.918588817119598,
+      "session_max": 7.918588817119598
      },
      "latency_p99_ms": {
-      "value": 8.03767345845699,
+      "value": 7.9849908873438835,
       "units": "ms",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.onnx_fp16.latency_p99_ms.mean",
@@ -2941,11 +2941,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 8.03767345845699,
-      "session_max": 8.03767345845699
+      "session_min": 7.9849908873438835,
+      "session_max": 7.9849908873438835
      },
      "latency_p99_over_p50": {
-      "value": 1.0081734513431466,
+      "value": 1.0083855939180384,
       "units": "1",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.onnx_fp16.latency_p99_over_p50.mean",
@@ -2958,11 +2958,11 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 1.0081734513431466,
-      "session_max": 1.0081734513431466
+      "session_min": 1.0083855939180384,
+      "session_max": 1.0083855939180384
      },
      "fps": {
-      "value": 125.23801025038865,
+      "value": 126.25108660008212,
       "units": "1/s",
       "source_file": "runs/benchmark_results/results_hardware_arm_KB.json",
       "source_key": "statistics.onnx_fp16.fps.mean",
@@ -2975,8 +2975,8 @@
       "derived_from": null,
       "calculation": null,
       "sd": null,
-      "session_min": 125.23801025038865,
-      "session_max": 125.23801025038865
+      "session_min": 126.25108660008212,
+      "session_max": 126.25108660008212
      },
      "timed_runs": {
       "value": 500.0,

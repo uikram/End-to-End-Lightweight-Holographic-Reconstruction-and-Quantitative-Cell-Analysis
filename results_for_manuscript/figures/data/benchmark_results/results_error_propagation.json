@@ -13,7 +13,7 @@
     {
       "seed": null,
       "file": "runs/error_propagation_summary.csv",
-      "modified_at": 1790721645.7013052,
+      "modified_at": 1790849922.8319302,
       "metrics": {
         "shift_-5px.shift_um": -1.4243549999999998,
         "shift_-5px.dice": 0.8452103960352562,
@@ -871,6 +871,6 @@
       "n_missing": 0
     }
   },
-  "generated_at": "2026-09-30 23:40:44",
+  "generated_at": "2026-10-05 20:13:36",
   "ci_level": 0.95
 }

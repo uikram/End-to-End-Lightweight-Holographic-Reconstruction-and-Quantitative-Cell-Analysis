@@ -13,7 +13,7 @@
     {
       "seed": null,
       "file": "runs/z_calibration.json",
-      "modified_at": 1790719914.0334456,
+      "modified_at": 1790849923.0319347,
       "metrics": {
         "off_axis.reference_floor": 0.8110279738903046,
         "off_axis.z_forward_um": 33.68407094594592,
@@ -330,6 +330,6 @@
       "n_missing": 0
     }
   },
-  "generated_at": "2026-09-30 23:40:44",
+  "generated_at": "2026-10-05 20:13:36",
   "ci_level": 0.95
 }

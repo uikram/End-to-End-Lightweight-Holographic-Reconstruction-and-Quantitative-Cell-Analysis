@@ -1,5 +1,5 @@
 {
-  "rule": "resolved when |difference of means| > 2 x the pooled between-seed SD (holoqpi.utils.pooled_between_seed_sd); a resolution criterion, not a significance test",
+  "rule": "resolved when |difference of means| > 2 x the pooled between-seed SD (holoqpi.utils.pooled_between_seed_sd); a resolution criterion (no hypothesis test is performed)",
   "resolve_factor": 2.0,
   "comparisons": {
     "B_vs_A": {

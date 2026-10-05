@@ -53,7 +53,7 @@ def read_synthetic(root: Path) -> dict[str, tuple[float, float]]:
     keys = {
         "per-cell\ndry mass": "mass_abs_relative_error_mean",
         "per-cell\nprojected area": "area_abs_relative_error_mean",
-        "field-total\ndry mass": "field_total_mass_abs_error_mean",
+        "field-total\ndry mass\n(bias)": "field_total_mass_error_mean",
     }
     files = sorted(root.glob("seed*/synthetic_validation_summary.json"))
     if len(files) == 3:
@@ -66,7 +66,9 @@ def read_synthetic(root: Path) -> dict[str, tuple[float, float]]:
     out = {}
     for label, key in keys.items():
         values = 100 * np.array([r[key] for r in runs])
-        out[label] = (float(values.mean()), float(values.std(ddof=1)))
+        mean = float(values.mean())
+        # field-total entry is the signed mean bias (negative); the bar shows its magnitude
+        out[label] = (abs(mean) if "bias" in label else mean, float(values.std(ddof=1)))
     return out
 
 
@@ -138,7 +140,7 @@ def main() -> None:
                 ha="center", va="bottom")
     ax.set_yscale("log")
     ax.set_ylim(min(means) / 2.0, max(means) * 5.0)
-    ax.set_ylabel("mean |error| vs analytic value [%]")
+    ax.set_ylabel("|error| vs analytic value [%]")
     ax.grid(axis="x", visible=False)
     ax.set_title("(c)  Measurement-chain floor", pad=TITLE_PAD)
 

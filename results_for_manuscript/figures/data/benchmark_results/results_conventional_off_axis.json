@@ -13,7 +13,7 @@
     {
       "seed": null,
       "file": "runs/conventional_off_axis/metrics_test.json",
-      "modified_at": 1790762879.0248394,
+      "modified_at": 1790849922.783929,
       "metrics": {
         "phase_mae_rad": 0.19676522673231311,
         "phase_rmse_rad": 0.3006686947133885,
@@ -1300,6 +1300,6 @@
       "n_missing": 0
     }
   },
-  "generated_at": "2026-09-30 23:40:44",
+  "generated_at": "2026-10-05 20:13:36",
   "ci_level": 0.95
 }

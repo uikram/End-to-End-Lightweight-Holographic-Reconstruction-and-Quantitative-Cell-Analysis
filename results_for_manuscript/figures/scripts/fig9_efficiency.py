@@ -44,29 +44,41 @@ for code in ("A", "B", "D0", "KA", "KB"):
             "ratio_max": st[k + "latency_p99_over_p50"]["max"],
         })
 
-# The two decoder configurations, identified by parameter count rather than by
-# name, so a renamed experiment does not silently drop out of the figure.
-FULL = [d for d in data if d["params"] > 6e6]
-COMPACT = [d for d in data if d["params"] <= 6e6]
-print(f"  timing rows: {len(data)}  (full {len(FULL)}, compact {len(COMPACT)})")
+# Panel (a) shows the same two configurations as panel (b): the End-to-End
+# Neural Baseline (A, mean over its three sessions) and the Compact Baseline
+# (KA). +IPP (per-cell), +Amplitude and Compact +IPP are in Table S9 and in
+# the collector files, but plotting them here put several unlabelled points of
+# one colour on top of each other.
+SHOWN = [d for d in data if d["experiment"] in ("A", "KA")]
+print(f"  timing rows: {len(data)}  (plotted in (a): {len(SHOWN)})")
 print(f"  worst p99/p50 over every session: {max(d['ratio_max'] for d in data):.2f}")
 
-MARKERS = {("pytorch", "fp32"): "o", ("pytorch", "fp16"): "s",
-           ("onnx", "fp32"): "^", ("onnx", "fp16"): "D"}
+MARKERS = {("pytorch", "fp32"): "o", ("onnx", "fp32"): "^",
+           ("pytorch", "fp16"): "s", ("onnx", "fp16"): "D"}
+MARKER_LABELS = {("pytorch", "fp32"): "PyTorch fp32", ("onnx", "fp32"): "ONNX fp32",
+                 ("pytorch", "fp16"): "PyTorch fp16", ("onnx", "fp16"): "ONNX fp16"}
+COLOURS = {"A": M.C["blue"], "KA": M.C["green"]}
 
 fig, axes = plt.subplots(1, 3, figsize=(M.COL2, 2.35))
 
 # ---- (a) latency vs size -------------------------------------------------
 ax = axes[0]
-for group, colour, label in ((FULL, M.C["blue"], "standard decoder"),
-                             (COMPACT, M.C["green"], "compact decoder")):
-    for d in group:
-        ax.scatter(d["params"] / 1e6, d["p50"], s=30, color=colour,
-                   marker=MARKERS[(d["runtime"], d["precision"])],
-                   edgecolor="white", linewidth=0.6, zorder=3)
-        # p99 as a whisker: the tail is what a real-time budget must respect.
-        ax.plot([d["params"] / 1e6] * 2, [d["p50"], d["p99"]], color=colour,
-                lw=0.8, alpha=0.6, zorder=2)
+for d in SHOWN:
+    colour = COLOURS[d["experiment"]]
+    ax.scatter(d["params"] / 1e6, d["p50"], s=30, color=colour,
+               marker=MARKERS[(d["runtime"], d["precision"])],
+               edgecolor="white", linewidth=0.6, zorder=3)
+    # p99 as a whisker: the tail is what a real-time budget must respect.
+    ax.plot([d["params"] / 1e6] * 2, [d["p50"], d["p99"]], color=colour,
+            lw=0.8, alpha=0.6, zorder=2)
+# Marker legend (runtime and precision); colour is explained by panel (b).
+handles = [plt.Line2D([], [], marker=m, linestyle="none", markersize=4.5,
+                      markerfacecolor=M.INK2, markeredgecolor="white",
+                      label=MARKER_LABELS[k]) for k, m in MARKERS.items()]
+handles.append(plt.Line2D([], [], color=M.INK2, lw=0.8, alpha=0.6,
+                          label="whisker to $p_{99}$"))
+ax.legend(handles=handles, fontsize=5.6, loc="upper center", ncol=1,
+          handletextpad=0.3, borderaxespad=0.3)
 ax.set_xlabel("parameters [M]")
 ax.set_ylabel(r"latency $p_{50}$ [ms]  $\downarrow$")
 ax.set_title("(a)  Latency vs model size", pad=4)
@@ -94,7 +106,7 @@ for off, group, colour, name in ((-w / 2 - 0.015, BAR_A, M.C["blue"], "End-to-En
     for xi, v in zip(x + off, vals):
         if np.isfinite(v):
             ax.text(xi, v + 2.5, f"{v:.0f}", ha="center", va="bottom",
-                    fontsize=5.8)
+                    fontsize=5.0)
 ax.set_xticks(x)
 ax.set_xticklabels(labels, fontsize=6.2)
 ax.set_ylabel(r"throughput [fps]  $\uparrow$")
@@ -116,13 +128,13 @@ ax.axhspan(-2 * sd, 2 * sd, color=M.C["blue"], alpha=0.15, lw=0,
 ax.axhline(0, color=M.INK2, lw=0.8)
 ax.bar([0], [delta], width=0.34, color=M.C["green"], edgecolor="white",
        linewidth=0.6, zorder=3)
-ax.text(0, delta + 0.0004, f"+{delta:.4f}", ha="center", va="bottom",
+ax.text(0, max(delta, 0) + 0.0004, f"{delta:+.4f}", ha="center", va="bottom",
         fontsize=6.8, color=M.INK)
 ax.set_xlim(-0.55, 0.55)
 ax.set_xticks([0])
 ax.set_xticklabels(["Compact Baseline\n$-$ End-to-End\nNeural Baseline"], fontsize=6.2)
 ax.set_ylabel("change in dry mass MAPE")
-ax.set_title("(c)  Cost of the compact decoder", pad=4)
+ax.set_title("(c)  Measurement effect of the compact decoder", pad=4)
 lim = max(2.4 * sd, abs(delta) * 1.9)
 ax.set_ylim(-lim, lim)
 ax.grid(axis="x", visible=False)

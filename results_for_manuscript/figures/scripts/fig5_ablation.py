@@ -11,7 +11,7 @@ WHY IT IS INCLUDED
     The band is the whole point. Without it a reader ranks bars that are inside
     seed noise. With it, the figure shows that adding measurement-aware terms
     moves the primary metric outside the band in the WRONG direction, and that
-    the compact variant stays inside it.
+    (the compact-decoder variants are listed in Table S6, not plotted).
 
 INPUTS
     data/benchmark_results/results_arm_<ARM>.json   mean, SD and n per arm
@@ -28,8 +28,7 @@ M.style()
 # the internal code used by the result files; the second is the paper's name.
 ARMS = [("A", "End-to-End\nNeural Baseline"), ("B", "+IPP\n(per-cell)"),
         ("B1", "+IPP\n(image)"), ("B2", "+Area"), ("C", "+BGA"),
-        ("D0", "+Amplitude"), ("D1", "+Fwd\n(fixed z)"), ("D2", "+Fwd\n(free z)"),
-        ("KA", "Compact\nBaseline"), ("KB", "Compact\n+IPP")]
+        ("D0", "+Amplitude"), ("D1", "+Fwd\n(fixed z)"), ("D2", "+Fwd\n(free z)")]
 
 METRIC = {"mass MAPE": "dry_mass_mape", "Dice": "seg_dice"}
 
@@ -109,11 +108,10 @@ panel(axes[1], "Dice", "Segmentation Dice", "(b)  Segmentation overlap", False)
 handles, labels = axes[0].get_legend_handles_labels()
 extra = [plt.Line2D([], [], marker="o", linestyle="none", markersize=5,
                     markerfacecolor=c, markeredgecolor="white")
-         for c in (M.C["blue"], M.C["orange"], M.C["purple"], M.C["green"])]
+         for c in (M.C["blue"], M.C["orange"], M.C["purple"])]
 fig.legend(handles + extra,
            labels + ["End-to-End Neural Baseline", "measurement-aware objectives",
-                     "amplitude output / physics-based forward model",
-                     "compact decoder"],
+                     "amplitude output / forward-model term"],
            loc="lower center", ncol=3, bbox_to_anchor=(0.5, -0.085),
            frameon=False)
 axes[1].set_xlabel("configuration  (error bars: between-seed SD, n = 3 where shown)",

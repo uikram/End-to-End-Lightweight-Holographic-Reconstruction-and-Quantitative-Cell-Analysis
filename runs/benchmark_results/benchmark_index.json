@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-30 23:40:45",
+  "generated_at": "2026-10-05 20:13:36",
   "config": "config/base.yaml",
   "overrides": {},
   "seeds": [
@@ -35,12 +35,6 @@
     "D1": [
       42
     ],
-    "D2": [
-      42
-    ],
-    "G": [
-      42
-    ],
     "W01": [
       42
     ],
@@ -54,6 +48,12 @@
       42
     ],
     "KB": [
+      42
+    ],
+    "D2": [
+      42
+    ],
+    "G": [
       42
     ]
   },
@@ -208,42 +208,6 @@
       "complete": true,
       "replication": "independent_runs"
     },
-    "arm_D2": {
-      "file": "results_arm_D2.json",
-      "n_runs": 1,
-      "seeds": [
-        42
-      ],
-      "complete": true,
-      "replication": "independent_runs"
-    },
-    "arm_D2_membrane": {
-      "file": "results_arm_D2_membrane.json",
-      "n_runs": 1,
-      "seeds": [
-        42
-      ],
-      "complete": true,
-      "replication": "independent_runs"
-    },
-    "arm_G": {
-      "file": "results_arm_G.json",
-      "n_runs": 1,
-      "seeds": [
-        42
-      ],
-      "complete": true,
-      "replication": "independent_runs"
-    },
-    "arm_G_membrane": {
-      "file": "results_arm_G_membrane.json",
-      "n_runs": 1,
-      "seeds": [
-        42
-      ],
-      "complete": true,
-      "replication": "independent_runs"
-    },
     "arm_W01": {
       "file": "results_arm_W01.json",
       "n_runs": 1,
@@ -327,6 +291,42 @@
     },
     "arm_KB_membrane": {
       "file": "results_arm_KB_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_D2": {
+      "file": "results_arm_D2.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_D2_membrane": {
+      "file": "results_arm_D2_membrane.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_G": {
+      "file": "results_arm_G.json",
+      "n_runs": 1,
+      "seeds": [
+        42
+      ],
+      "complete": true,
+      "replication": "independent_runs"
+    },
+    "arm_G_membrane": {
+      "file": "results_arm_G_membrane.json",
       "n_runs": 1,
       "seeds": [
         42

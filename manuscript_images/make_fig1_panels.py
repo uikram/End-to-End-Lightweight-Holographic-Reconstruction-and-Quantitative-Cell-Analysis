@@ -148,8 +148,12 @@ def main() -> int:
     parser.add_argument("--zoom", type=int, default=40, help="fringe-detail window in px")
     parser.add_argument("--overlay-crop", type=int, default=420,
                         help="side of the square crop used for the measurement overlay")
-    parser.add_argument("--label-cells", type=int, default=6,
-                        help="how many cells get a dry-mass label on the overlay")
+    parser.add_argument("--label-cells", type=int, default=20,
+                        help="maximum number of cells that get a dry-mass label on the overlay")
+    parser.add_argument("--label-fontsize", type=float, default=11.0,
+                        help="font size of the dry-mass labels on the overlay (border-cut cells use 7/8 of it)")
+    parser.add_argument("--min-visible-px", type=int, default=1500,
+                        help="smallest visible part (px) of a border-cut cell that still gets a label")
     args = parser.parse_args()
 
     project = Path(args.project).resolve()
@@ -290,13 +294,33 @@ def main() -> int:
         if label == 0 or label not in kept:
             continue
         ax.contour(window == label, levels=[0.5], colors=["#F2A900"], linewidths=1.0)
-    inside = [c for c in cells
-              if y0 + 20 < c["centroid_y"] < y0 + crop - 20
-              and x0 + 20 < c["centroid_x"] < x0 + crop - 20]
-    inside.sort(key=lambda c: -c["area_px"])
-    for c in inside[: args.label_cells]:
-        ax.text(c["centroid_x"] - x0, c["centroid_y"] - y0, f"{c['dry_mass_pg']:.0f} pg",
-                ha="center", va="center", fontsize=8, color="white", weight="bold",
+    # Label every measured cell that has a visible part in the crop. The label sits at
+    # the centre of the VISIBLE part, pulled inside the frame, so cells cut by the crop
+    # border are labelled too (the value is the dry mass of the whole cell in the
+    # field). Slivers smaller than --min-visible-px are skipped.
+    by_label = {c["label"]: c for c in cells}
+    placed = []
+    for label in np.unique(window):
+        if label == 0 or label not in by_label:
+            continue
+        yy, xx = np.nonzero(window == label)
+        if yy.size < args.min_visible_px:
+            continue
+        placed.append((yy.size, label, float(xx.mean()), float(yy.mean()),
+                       bool(yy.min() == 0 or xx.min() == 0
+                            or yy.max() == crop - 1 or xx.max() == crop - 1)))
+    placed.sort(reverse=True)
+    for _, label, px, py, cut in placed[: args.label_cells]:
+        # Cells cut by the crop border: anchor the label at the frame side that touches
+        # the cell (text extends inwards over the visible part), not at the centroid.
+        ha, x = "center", px
+        if cut and px < 75:
+            ha, x = "left", 6.0
+        elif cut and px > crop - 75:
+            ha, x = "right", crop - 6.0
+        y = float(np.clip(py, 14, crop - 14))
+        ax.text(x, y, f"{by_label[label]['dry_mass_pg']:.0f} pg",
+                ha=ha, va="center", fontsize=args.label_fontsize * (0.875 if cut else 1.0), color="white", weight="bold",
                 bbox=dict(boxstyle="round,pad=0.15", fc="black", ec="none", alpha=0.55))
     ax.set_axis_off()
     fig.savefig(out / "p4_measurement_overlay.png")
