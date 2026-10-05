@@ -1,7 +1,7 @@
 # HoloQPI — Technical Documentation
 
-Formulation, parameter reference and protocol of the code that produced the results of
-`HoloQPI_4.2/`. Terminology follows the manuscript: integrated phase S_k, L_IPP^cell,
+Formulation, parameter reference and protocol of the code that produced the study's
+results. Terminology: integrated phase S_k, L_IPP^cell,
 L_IPP^img, measurement-aware objectives, forward-model consistency, dry mass, matched
 cells, field totals. Values quoted here come from `config/` and from
 `results_for_manuscript/`; the README gives the overview.
@@ -44,12 +44,14 @@ line × condition: 560 / 127 / 113 (train / validation / test), identical for ev
 configuration and seed. The 113 test fields contain 3186 reference cells.
 
 In-line: the frames of SNU_01–SNU_50 do not show the same field as the off-axis hologram
-and the reference phase (band-pass registration against a derangement control; see the
-manuscript, Sec. 4.1) and are excluded from the in-line modality only
+and the reference phase (band-pass registration against a derangement control, `scripts/register_holograms.py`)
+and are excluded from the in-line modality only
 (`data.exclude`, 39 + 5 + 6 fields), giving 521 / 122 / 107. The 107 in-line test fields
-(3055 reference cells) define the common-field evaluation of Table 5. The registration
-statistics quoted in the manuscript come from a diagnostics archive that is not in this
-repository (`analysis/v42/AUDIT.md`, §6).
+(3055 reference cells) define the common-field evaluation (paper Table S3). The
+registration output is in `runs/diagnostics/` (`registration_summary.json`,
+`hologram_registration.csv`, `classical_phase_shift.csv`, `hologram_inventory.csv`): 734 of 800
+matched fields and 3 of 800 controls register within 1 px (AUC 0.975), and SNU_01–SNU_50 give
+r = −0.13 to 0.18, at the level of the unmatched control.
 
 Holograms are cropped 1024 → 900 px without resampling; the origin is moved by (−6, −2) px
 in (y, x) from the centred crop (`data.crop_offset_px`), determined by registering the
@@ -71,7 +73,7 @@ S_k = Σ_{p∈Ω_k} φ_p dx dy   [rad·µm²]          m_k = λ / (2π α) · S_
 Dry mass is a fixed multiple of the integrated phase, so the relative integrated-phase
 error equals the relative dry-mass error; reported once, as dry-mass MAPE. (Stored metric
 keys named `optical_volume_*` carry the same numbers as `dry_mass_*` for relative
-statistics and are not used in the manuscript.) `scripts/selftest.py` checks the chain
+statistics and are not reported.) `scripts/selftest.py` checks the chain
 against analytic synthetic cells.
 
 Propagation: angular-spectrum operator P_z (evanescent components attenuated); in-line
@@ -130,7 +132,7 @@ All weights except those of L_phase and L_seg are zero in the baseline.
   the unexplained fraction of the hologram variance after discarding a 79 px border. z is fixed
   at 33.77 µm or, in one configuration, trainable (learning rate 100× the base rate, no weight decay).
   The configured tolerance for a usable margin is 0.01 (`loss.forward_model.discrimination_tolerance`).
-* Legacy terms, weight 0 in every manuscript configuration and retained so that old configs
+* Legacy terms, weight 0 in every configuration of the study and retained so that old configs
   load: `phase_mask_contrast` (class `LegacyPhaseMaskContrast`), `dry_mass_consistency`,
   `projected_area_consistency`. Old Python names are resolved through
   `holoqpi/losses/_legacy.py` with a deprecation warning.
@@ -171,8 +173,8 @@ Edge cell: reference instance with a pixel within 3 px of the field boundary
   run once.
 * Common-field evaluation: `--tag common` with `data.exclude.modalities` extended to off-axis
   (107 fields).
-* Result package: `analysis/v42/compile_results.py` → `results_for_manuscript/`; checks:
-  `analysis/v42/check_numbers.py`.
+* Result package: `analysis/compile_results.py` → `results_for_manuscript/` (526 consistency
+  checks; `results_for_manuscript/RESULTS_INDEX.md` maps it to the paper's tables and figures).
 
 ## 9. Verified diagnostics
 

@@ -91,8 +91,8 @@ optics:
   # which was a plausible literature mean but not what this dataset was
   # analysed with.
   refraction_increment_ml_per_g: 0.2
-  # Literature range for alpha, propagated onto ABSOLUTE dry mass by
-  # legacy/scripts/mass_uncertainty.py. Zhao, Brown & Schuck (Biophys. J. 2011) give a
+  # Literature range for alpha (an earlier analysis propagated it onto ABSOLUTE
+  # dry mass; that script is in the git history, not in the working tree). Zhao, Brown & Schuck (Biophys. J. 2011) give a
   # protein mean of 0.190 mL/g (SD 0.003) spanning 0.173-0.215; Barer & Joseph
   # (1954) recommend 0.18 for whole protoplasm; Schuermann et al. (2016) use 0.2.
   #
@@ -393,7 +393,8 @@ model:
   # scratch while every config still says pretrained_encoder: true. The
   # encoder's own log line reports which of the three routes was taken
   # (`weights=local (...)` / `weights=download cache or random`), so check it
-  # in logs/v2_*/train_A.log before trusting a run.
+  # in the run's training log (run_v2.sh writes logs/v2_*/train_A.log) before
+  # trusting a run.
   #
   # null disables the local search and uses the download cache only.
   pretrained_dir: weights

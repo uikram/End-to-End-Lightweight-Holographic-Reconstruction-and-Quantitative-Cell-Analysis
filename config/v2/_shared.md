@@ -24,7 +24,7 @@ origin (−6, −2); propagation distance 33.77 µm.
 | +Fwd (free z) | `d2_learned_z.yaml` | z trainable | +Fwd (fixed z) | 1 (42) |
 | Compact Baseline | `k_compact_a.yaml` | shared 1×1 projection to 256 channels | Baseline | 1 (42) |
 | Compact +IPP | `k_compact_b.yaml` | compact decoder with L_IPP^cell | +IPP (per-cell) | 1 (42) |
-| (not used in the manuscript) | `l_lora.yaml` | LoRA-adapted encoder; defined, not trained | – | – |
+| (not used in the paper) | `l_lora.yaml` | LoRA-adapted encoder; defined, not trained | – | – |
 
 The loss weight key of L_IPP^img is `image_integrated_phase` (older configs and stored resolved configs use the
 deprecated alias `phase_volume`). Comparisons in which either side has fewer than three training runs are not
@@ -51,7 +51,7 @@ The ratio depends on the crop size (it was higher at 256 px, with about 7 cells 
 
 `scripts/calibrate_z.py` and `scripts/amplitude_sensitivity.py` (off-axis, z = 33.77 µm, crops and augmentation
 disabled) give the residual when the reference phase is scaled; values and field counts are in
-`results_for_manuscript/amplitude/amplitude.json` and in Table 11 of the manuscript. Under the implemented
+`results_for_manuscript/amplitude/amplitude.json` and in Table S7 of the paper. Under the implemented
 operator, scaling the reference phase by 0.9 raises the off-axis residual by 0.00035 on 32 validation fields
 (18 of 32 fields), below the configured tolerance of 0.01, so the residual does not resolve the phase scale near
 the reference. The +Fwd configurations are therefore reported as a measurement of the term's behaviour.

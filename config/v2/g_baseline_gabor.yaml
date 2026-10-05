@@ -39,7 +39,7 @@
 #
 # ALSO WORTH KNOWING BEFORE READING ITS NUMBERS
 #
-# legacy/scripts/null_input_probe.py already established that neither arm has an
+# An earlier null-input probe (script in the git history) established that neither arm has an
 # unconditional shape prior -- a constant input produces zero cells in both --
 # and that the in-line arm invents LESS structure on out-of-distribution input
 # than off-axis does (2.7% of real foreground area against 11.7%). So a

@@ -1,5 +1,5 @@
 {
- "generated_by": "analysis/v42/compile_results.py",
+ "generated_by": "analysis/compile_results.py",
  "design": {
   "three_seed_configurations": [
    "End-to-End Neural Baseline",

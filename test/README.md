@@ -5,7 +5,6 @@
 | file | what it is |
 |---|---|
 | `HoloQPI_Evaluation.ipynb` | the notebook to open and run |
-| `HoloQPI_Evaluation.EXAMPLE_RUN.ipynb` | the same notebook already executed, so you can see the expected output without running it. **Its numbers are not the study's results** — see the caveat below |
 | `test_outputs/` | created on the first run: `predictions/`, `figures/`, `tables/` |
 
 ## Run it
@@ -30,7 +29,8 @@ Loads the real `best_model.pt` checkpoints and runs them through the project's o
 preprocessing, measurement chain and metric classes — everything is imported from
 `holoqpi/`, nothing is reimplemented. For each field it reports:
 
-- the raw hologram, and the 900 px centre crop the network actually sees
+- the raw hologram, and the 900 px crop the network actually sees (1024 → 900 px onto the
+  phase grid, origin moved by `data.crop_offset_px`)
 - predicted **quantitative phase** (rad), with the reference and a signed error map
 - predicted **amplitude**, for an arm whose amplitude head is on, against both the
   reconstruction reference and the thin-phase assumption A = 1
@@ -69,7 +69,7 @@ rather than faked.
 
 Three things that will bite you, in order of likelihood:
 
-1. **Size.** The loader centre-crops 1024 → 900 and never resamples, because interpolated
+1. **Size.** The loader crops 1024 → 900 (origin moved by `data.crop_offset_px`) and never resamples, because interpolated
    fringes no longer encode optical path length. A hologram smaller than 900 px fails.
 2. **Modality.** An off-axis checkpoint on an in-line hologram produces confident nonsense.
    Set `MODALITY` and load `config/v2/g_baseline_gabor.yaml` for in-line data.
@@ -77,14 +77,9 @@ Three things that will bite you, in order of likelihood:
    to this instrument. Relative metrics are invariant to them; absolute picograms and µm²
    are not.
 
-## The caveat on `EXAMPLE_RUN`
+## Notebook numbers versus the study's results
 
-That file was executed in a CPU container holding **13 of the 800 fields**, of which only
-**2** belong to the test split. Its numbers are therefore single-field observations, not the
-study's results — expect them to differ from `runs/RESULTS.md`, which averages 113 test
-fields. It is there to show the notebook working, not to report performance.
-
-Per-field variation is large and real: on one field arm A scored a phase MAE of 0.222 rad
-against the study's 113-field mean of 0.159, and a detection recall of 0.41 against 0.59.
-Quote `runs/RESULTS.md` for results; use this notebook to inspect individual fields and to
+The notebook scores whatever fields it finds. Per-field variation is large, so numbers from a
+few fields will differ from the study's 113-field results. Quote
+`results_for_manuscript/` for results. Use this notebook to inspect individual fields and to
 run new data.

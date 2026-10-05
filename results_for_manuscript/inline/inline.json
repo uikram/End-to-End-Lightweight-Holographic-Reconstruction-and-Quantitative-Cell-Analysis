@@ -1016,7 +1016,7 @@
   "train_excluded": {
    "value": 39,
    "units": "fields",
-   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_file": "runs/provenance/train_G.log",
    "source_key": "train_excluded",
    "field_set": "in-line Gabor",
    "n_runs": 1,
@@ -1030,7 +1030,7 @@
   "train": {
    "value": 521,
    "units": "fields",
-   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_file": "runs/provenance/train_G.log",
    "source_key": "train",
    "field_set": "in-line Gabor",
    "n_runs": 1,
@@ -1044,7 +1044,7 @@
   "val_excluded": {
    "value": 5,
    "units": "fields",
-   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_file": "runs/provenance/train_G.log",
    "source_key": "val_excluded",
    "field_set": "in-line Gabor",
    "n_runs": 1,
@@ -1058,7 +1058,7 @@
   "val": {
    "value": 122,
    "units": "fields",
-   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_file": "runs/provenance/train_G.log",
    "source_key": "val",
    "field_set": "in-line Gabor",
    "n_runs": 1,
@@ -1072,7 +1072,7 @@
   "test": {
    "value": 107,
    "units": "fields",
-   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_file": "runs/provenance/train_G.log",
    "source_key": "test",
    "field_set": "in-line Gabor",
    "n_runs": 1,
@@ -1086,7 +1086,7 @@
   "test_reference_cells": {
    "value": 3055,
    "units": "fields",
-   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_file": "runs/provenance/train_G.log",
    "source_key": "test_reference_cells",
    "field_set": "in-line Gabor",
    "n_runs": 1,
@@ -1100,7 +1100,7 @@
   "test_excluded": {
    "value": 6,
    "units": "fields",
-   "source_file": "logs/v2_20260930_074055_gpu3/train_G.log",
+   "source_file": "runs/provenance/train_G.log",
    "source_key": "test_excluded",
    "field_set": "in-line Gabor",
    "n_runs": 1,
