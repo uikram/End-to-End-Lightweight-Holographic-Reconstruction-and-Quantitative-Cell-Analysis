@@ -3,3 +3,8 @@ __pycache__/
 *.onnx
 *.pt
 .DS_Store
+
+# run-time output of run_v2.sh and the scripts
+logs/
+*.log
+!runs/provenance/*.log

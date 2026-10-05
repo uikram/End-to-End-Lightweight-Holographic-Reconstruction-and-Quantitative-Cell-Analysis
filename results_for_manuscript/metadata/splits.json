@@ -15,5 +15,5 @@
   "test_excluded": 6
  },
  "common_fields": 107,
- "source_file": "data/splits.json; logs/v2_20260930_074055_gpu3/train_G.log"
+ "source_file": "data/splits.json; runs/provenance/train_G.log"
 }

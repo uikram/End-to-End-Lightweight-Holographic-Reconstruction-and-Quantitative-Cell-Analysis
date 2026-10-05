@@ -2,10 +2,12 @@
 
     python results_for_manuscript/figures/scripts/make_all.py
 
-Figure numbers are the v4.2 manuscript numbers. Fig. 1 (hand-built from server panels) and
-Fig. 3 (needs checkpoints) are not regenerated here. The output is a regeneration from the
-corrected results, not a byte copy of HoloQPI_4.2/manuscript_images/: font/matplotlib version
-and small layout differences are expected; the plotted data are the same.
+File names keep the original figure numbering; the paper labels are in
+../figure_index.json ("paper") and ../../RESULTS_INDEX.md (figure_6 -> Fig. S1,
+figure_7 -> Fig. 6, figure_8 -> Fig. 7, figure_9 -> Fig. S2). Fig. 1 panels
+(fig1_panels.py) and Fig. 3 (fig3_qualitative.py) need checkpoints and image data,
+so they are not part of this run. Font/matplotlib versions can change the layout
+slightly; the plotted data are the same.
 """
 import shutil
 import subprocess

@@ -1,4 +1,4 @@
-"""Figure 7 (HoloQPI_4.2): forward-model consistency on the corrected runs.
+"""Forward-model figure (Fig. 6 of the paper; key figure_7 in figure_index.json): consistency on the corrected runs.
 
 (a) Forward-model residual of every trained off-axis configuration on the 113
     test fields, divided by the residual obtained with the reference phase in
@@ -13,7 +13,7 @@ Inputs (all under <repository>/runs, or $HOLOQPI_RUNS):
     RESULTS.md                                 learned-z trajectory
     z_calibration.json                         residual scans, both geometries
 
-Run:  python figure_7.py      -> manuscript_images/figure_7.png
+Run:  python fig7_forward_model.py      -> ../regenerated/figure_7.png
 """
 import matplotlib.pyplot as plt
 import numpy as np

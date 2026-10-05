@@ -1,8 +1,8 @@
 # Joint Phase Reconstruction and Cell Segmentation from Raw Holograms for Per-Cell Dry-Mass Measurement
 
-Code, configurations, result files and analysis scripts for the manuscript in
-`HoloQPI_4.2/`. Every number in the manuscript is traceable to a file under
-`runs/`, `logs/` or `config/` through `results_for_manuscript/`.
+Code, configurations, stored results and analysis scripts of the study. Every number reported
+in the paper is traceable to a file under `runs/` or `config/` through `results_for_manuscript/`.
+The manuscript itself is not part of this repository.
 
 ## 1. Study overview
 
@@ -86,9 +86,9 @@ Each differs from its comparator by one term, output or capacity choice
 Single-run configurations do not support a between-seed comparison. `w_ipp_10.yaml`
 is a separate seed-42 training of the +IPP (per-cell) configuration (a repeat
 check, not a fourth seed). `config/v2/l_lora.yaml` is an optional LoRA variant
-not used in the manuscript.
+not used in the paper.
 
-Loss (Eq. in the manuscript, §3.5): `L = L_phase + L_seg + w·L_IPP^cell + w·L_IPP^img +
+Loss (Methods of the paper): `L = L_phase + L_seg + w·L_IPP^cell + w·L_IPP^img +
 w·L_area + w·L_BGA + w·L_amp + w·L_fwd`; weights other than the first two are zero
 in the baseline. Measurement-aware objectives: L_IPP^cell, L_IPP^img, L_area, L_BGA
 (config keys `cell_integrated_phase`, `image_integrated_phase`,
@@ -119,7 +119,7 @@ error equals the relative dry-mass error; it is reported once, as dry-mass MAPE.
   non-additive, so it has no field total).
 * Mass-error decomposition: domain factor `S(Ω̂,φ)/S(Ω,φ)` × phase factor
   `S(Ω̂,φ̂)/S(Ω̂,φ)`; geometric mean and median |log| spread.
-* Recovered in-cell phase contrast (Table 5): median over fields of the mean phase
+* Recovered in-cell phase contrast (paper Table S3): median over fields of the mean phase
   inside the reference cells minus the mean outside.
 * Resolution criterion: a difference is resolved if |Δ| > 2·sqrt((s₁²+s₂²)/2)
   (between-seed SD, ddof = 1) **and** both configurations have ≥ 3 training
@@ -130,59 +130,66 @@ error equals the relative dry-mass error; it is reported once, as dry-mass MAPE.
 ```bash
 conda env create -f environment.yml && conda activate qpi_extended     # Python 3.11
 python main.py prepare   --config config/base.yaml                      # masks, splits, manifest
-python scripts/selftest.py                                              # 143 checks; must end "All checks passed."
+python scripts/selftest.py                                              # must end "All checks passed."
 python main.py train     --config config/v2/a_baseline.yaml --seed 42
 python main.py evaluate  --config config/v2/a_baseline.yaml --seed 42
-bash run_v2.sh                                                          # whole study (stages, seeds, benchmark)
+bash run_v2.sh                                                          # whole study (stages, seeds, benchmark; logs in logs/)
 ```
 
 Supporting analyses (each documented in its docstring): `scripts/conventional_baseline.py`
 (classical pipelines), `scripts/decompose_mass_error.py`, `scripts/calibrate_z.py`,
 `scripts/amplitude_sensitivity.py`, `scripts/error_propagation.py`,
 `scripts/synthetic_validation.py`, `scripts/check_gradient_path.py`,
-`scripts/register_holograms.py`, `scripts/measure_crop_offset.py`,
-`scripts/summarise_common_fields.py`, `scripts/neural_phase_contrast.py`.
+`scripts/register_holograms.py` (off-axis/in-line pairing; writes `runs/diagnostics/`),
+`scripts/measure_crop_offset.py`, `scripts/summarise_common_fields.py`,
+`scripts/neural_phase_contrast.py`. `BENCHMARKING.md` describes the stages of `run_v2.sh`,
+the seed replication and the benchmark protocol.
 Checkpoints (`best_model.pt`) are not in the repository; their SHA-256 values are
 recorded in `results_for_manuscript/metadata/configurations.json`.
 
-Rebuild and check the manuscript numbers (no GPU needed):
+Rebuild the result package and the figures from the stored results (no GPU needed):
 
 ```bash
-python analysis/v42/compile_results.py     # runs/ + logs/ + config/  ->  results_for_manuscript/ (511 consistency checks)
-python analysis/v42/check_numbers.py       # -> analysis/v42/check_numbers.csv
-python analysis/v42/update_tables.py       # tables 3-7, 10, 11 of HoloQPI_4.2 from the JSON files
-python results_for_manuscript/figures/scripts/make_all.py   # figures 2, 4-9 into figures/regenerated/
+python analysis/compile_results.py                          # runs/ + config/ -> results_for_manuscript/ (526 consistency checks)
+python results_for_manuscript/figures/scripts/make_all.py   # Figs. 2, 4, 5, 6, 7, S1, S2 -> figures/regenerated/
 ```
 
-## 9. Manuscript / result correspondence
+Fig. 3 and the image panels of Fig. 1 run the trained network
+(`results_for_manuscript/figures/scripts/fig3_qualitative.py`, `fig1_panels.py`), so they need
+the checkpoints and the image data.
 
-`results_for_manuscript/RESULTS_INDEX.md` maps every manuscript table and figure to its
-JSON file, source file, source key, training runs, seeds and field set.
-`analysis/v42/AUDIT.md`, `SYNC_AUDIT.md`, `MANUSCRIPT_SYNC.md` and `FIGURE_STATUS.md`
-record the audit.
+## 9. Paper / result correspondence
+
+`results_for_manuscript/RESULTS_INDEX.md` maps every table and figure of the paper (main text
+and supplementary) to its JSON file, source file, source key, training runs, seeds and field
+set. `results_for_manuscript/README.md` describes each file of the package.
 
 ## 10. Computational benchmarking
 
 900×900 input, batch 1, one NVIDIA RTX A5000, PyTorch 2.6 and ONNX Runtime (opset 17),
 FP32 and FP16, 50 warm-up and 500 timed passes. Baseline (9,598,099 parameters,
-45.85 GMAC): 12.31 ± 0.12 ms (PyTorch FP32), 8.42 ± 0.07 ms (ONNX FP16);
-Compact Baseline (3,360,403 parameters): 7.97 ms (ONNX FP16). Values:
-`results_for_manuscript/benchmarking/benchmarking.json`. These are measurements on
+45.85 GMAC; mean ± SD over three benchmark sessions, one per training seed):
+12.28 ± 0.08 ms (PyTorch FP32), 9.26 ± 0.05 ms (PyTorch FP16), 8.39 ± 0.06 ms (ONNX FP16).
+Compact Baseline (3,360,403 parameters, one session): 11.44 ms (PyTorch FP32), 7.89 ms
+(ONNX FP16). Values: `results_for_manuscript/benchmarking/benchmarking.json`. These are measurements on
 one workstation GPU; no deployment on other hardware was evaluated.
 
 ## 11. Repository structure
 
 ```
 main.py                      prepare | train | evaluate | compare | benchmark | export
+run_v2.sh                    the whole study in stages (training, seeds, evaluation, benchmark)
 holoqpi/                     data, models, losses, physics, metrics, engine, deploy
-config/base.yaml, config/v2/ one file per configuration
-scripts/                     analyses, diagnostics, collectors (see §8)
-runs/                        raw experiment outputs (source of truth), benchmark_results/, diagnostics/
-logs/                        server logs of the corrected study
-analysis/v42/                compile_results.py, check_numbers.py, update_tables.py, audit documents
-results_for_manuscript/      manuscript-facing result package (+ README.md, RESULTS_INDEX.md, figures/)
-HoloQPI_4.2/                 manuscript (LaTeX, tables, figures)
+config/base.yaml, config/v2/ shared settings; one file per configuration (config/v2/_shared.md)
+data/                        manifest.csv, splits.json (image data are not in the repository)
+scripts/                     analyses, diagnostics, collectors, selftest (see §8)
+runs/                        stored experiment outputs (source of truth): one folder per training run,
+                             benchmark_results/, common_fields/, diagnostics/, provenance/ (split logs)
+analysis/compile_results.py  builds results_for_manuscript/ from runs/ and config/
+results_for_manuscript/      result package: JSON per table, RESULTS_INDEX.md, figures/ (data, scripts, output)
+test/                        evaluation notebook for the trained checkpoints
 docs/documentation.md        technical documentation
 BENCHMARKING.md              replication and benchmarking protocol
-legacy/                      archived historical scripts (not used)
 ```
+
+Checkpoints (`*.pt`), ONNX exports, image data and run logs (`logs/`) are not tracked.

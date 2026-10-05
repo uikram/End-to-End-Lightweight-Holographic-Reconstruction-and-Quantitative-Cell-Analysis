@@ -27,7 +27,7 @@ Run on the server (needs the checkpoints and the data), one GPU:
         --config config/base.yaml --device cuda
 
 Writes runs/common_fields/neural_phase_contrast.json, which
-analysis/v42/compile_results.py reads. ``--with-classical`` additionally re-runs
+analysis/compile_results.py reads. ``--with-classical`` additionally re-runs
 the classical off-axis predictor through the same function and checks it
 reproduces the stored 0.9216 rad (a check that this script's definition equals
 the classical one).
